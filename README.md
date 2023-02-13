@@ -5,6 +5,12 @@ This is a repo for the coming R course for graduate students, School of Psycholo
 
 Instructor: Prof. Hu Chuan-Peng
 
-Teaching assistants: Bai, Songshi; Cai, Zheng; Hu, Mengzhen; Tian, Caiyu; Zheng, Yuanrui.
+Teaching assistants: 
+
+此仓库为南京师范大学心理学研究生课程。
+
+教师：胡传
+
+助教：
 
 ## 课程大纲 (Syllabus)
