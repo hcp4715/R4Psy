@@ -11,6 +11,7 @@ Teaching assistants:
 
 教师：胡传鹏
 
-助教：孙禾嘉
+助教：yuki; 孙禾嘉
+
 
 ## 课程大纲 (Syllabus)
