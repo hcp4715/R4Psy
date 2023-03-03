@@ -5,7 +5,7 @@ This is a repo for the coming R course for graduate students, School of Psycholo
 
 Instructor: Prof. Hu Chuan-Peng
 
-Teaching assistants: 
+Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 此仓库为南京师范大学心理学研究生课程。
 
@@ -15,8 +15,7 @@ Teaching assistants:
 
 ## 课程大纲 (Syllabus)
 
-第一讲：为什么要学习R（3学时）
-
+#### 第一讲：为什么要学习R（3学时）
 1.1 R在心理科学及社会科学中的运用
 
 1.2 R语言使用的示例展示
@@ -25,9 +24,7 @@ Teaching assistants:
 
 1.4 如何学好这门课
 
-
-
-第二讲：如何开始使用R:（3学时）
+#### 第二讲：如何开始使用R:（3学时）
 
 2.1 要解决的数据分析问题简介？
 
@@ -134,7 +131,6 @@ Teaching assistants:
 13.2 多人协作与git 
 
 
-
 第十四章：如何帮助我们计划下一个研究？（3学时）
 
 14.1 计算效应量：Meta-analysis
@@ -145,14 +141,11 @@ Teaching assistants:
 
 14.4 并行处理
 
-
-
 第十五章：如何让导师/合作者完全重复我的分析？（3 学时）
 
 15.1 软件版本记录
 
 15.2 容器技术与docker的使用
-
 
 
 Chapter 1: Why Learn R (3 lessons) 
@@ -266,6 +259,7 @@ Chapter 15: How do I get my mentor/collaborator to exactly replicate my analysis
 15.2 Container technology and the use of docker
 
 ## 文件夹(Files)
+```
 |-root_dir
 |---README.md
 |---Charpter_1
@@ -284,3 +278,4 @@ Chapter 15: How do I get my mentor/collaborator to exactly replicate my analysis
 |---Charpter_13
 |---Charpter_14
 |---Charpter_15
+```
