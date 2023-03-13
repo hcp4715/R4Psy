@@ -19,9 +19,17 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 ```
 root_dir
 |----css/             # folder for Xaringan
+|
 |----data/            # folder for data used in the lecture
+|     |----- match    # folder for match data
+|     |----- penguin  # folder for penguin data
+| 
 |----picture/         # folder for picture in html
+|     |----- chp3     # folder for pictures in chapter 3
+|     |----- chp4     # folder for pictures in chapter 4
+|
 |----libs/            # folder for Xaringan
+|
 |----chapter_1.pptx   # slides for chapter 1
 |----chapter_2.pptx   # slides for chapter 2
 |----chapter_3.Rmd    # Rmarkdown for chapter 3
