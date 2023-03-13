@@ -13,6 +13,22 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
+
+```
+root_dir
+|----libs/            # folder for Xaringan
+|----css/             # folder for Xaringan
+|----picture/         # folder for picture in html
+|----data/            # folder for data used in the lecture
+|----chapter_1.pptx   # slides for chapter 1
+|----chapter_2.pptx   # slides for chapter 2
+|----chapter_3.Rmd    # Rmarkdown for chapter 3
+|----chapter_3.html   # html for chapter 3
+|----chapter_4.Rmd    # Rmarkdown for chapter 4
+|----chapter_4.html   # html for chapter 4
+|....
+```
+
 ## 课程大纲 (Syllabus)
 
 #### 第一讲：为什么要学习R（3学时）
@@ -32,9 +48,7 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 2.2 如何方便使用？Rstudio的安装与界面介绍
 
-
-
-第三章：如何导入数据（3学时）
+#### 第三章：如何导入数据（3学时）
 
 3.1 路径与工作目录
 
@@ -42,9 +56,7 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 3.3 了解R里的数据 （R语言中的对象）
 
-
-
-第四章：如何清理数据一 R语言编程基础（3学时）
+#### 第四章：如何清理数据一 R语言编程基础（3学时）
 
 4.1 R对象的操控
 
@@ -52,9 +64,7 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 4.3 函数
 
-
-
-第五章：如何清理数据二 数据的预处理（3学时）
+#### 第五章：如何清理数据二 数据的预处理（3学时）
 
 5.1 数据预处理准备
 
@@ -63,8 +73,7 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 5.3 数据预处理的进阶操作
 
 
-
-第六章：如何探索数据: 描述性统计与数据可视化基础（3学时）
+#### 第六章：如何探索数据: 描述性统计与数据可视化基础（3学时）
 
 6.1 描述性统计
 
@@ -73,48 +82,37 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 6.3 ggplot2的元素控制
 
 
-
-第七章：如何进行基本的数据分析: *t*-test和anova（3学时）
+#### 第七章：如何进行基本的数据分析: *t*-test和anova（3学时）
 
 7.1 语法实现
 
 7.2 分析的流程
 
-
-
-第八章：如何进行基本的数据分析: 相关与回归（3学时）
+#### 第八章：如何进行基本的数据分析: 相关与回归（3学时）
 
 8.1 语法实现
 
 8.2 分析的流程
 
-
-
-第九章：如何进行基本的数据分析: 中介分析（3学时）
+#### 第九章：如何进行基本的数据分析: 中介分析（3学时）
 
 9.1 语法实现
 
 9.2 分析的流程
 
-
-
-第十章：结果稳健吗？使用Multiverse比较方法选择对结果的影响（3学时）
+#### 第十章：结果稳健吗？使用Multiverse比较方法选择对结果的影响（3学时）
 
 10.1. 多种分析方法的实现
 
 10.2 代码整合与规范化
 
-
-
-第十一章: 如何得到可发表的图像: 数据可视化进阶（3学时）
+#### 第十一章: 如何得到可发表的图像: 数据可视化进阶（3学时）
 
 11.1 ggplot2的图层与面板控制
 
 11.2 ggplot2与其他工具的结合
 
-
-
-第十二章：从分析到手稿（3学时）
+#### 第十二章：从分析到手稿（3学时）
 
 12.1 Rmarkdown
 
@@ -122,16 +120,13 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 12.3 papaja工具包的介绍
 
-
-
-第十三章：多人协作版本控制:Git？（3学时）
+#### 第十三章：多人协作版本控制:Git？（3学时）
 
 13.1 版本控制与git
 
 13.2 多人协作与git 
 
-
-第十四章：如何帮助我们计划下一个研究？（3学时）
+#### 第十四章：如何帮助我们计划下一个研究？（3学时）
 
 14.1 计算效应量：Meta-analysis
 
@@ -141,13 +136,13 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 14.4 并行处理
 
-第十五章：如何让导师/合作者完全重复我的分析？（3 学时）
+#### 第十五章：如何让导师/合作者完全重复我的分析？（3 学时）
 
 15.1 软件版本记录
 
 15.2 容器技术与docker的使用
 
-
+### In English
 Chapter 1: Why Learn R (3 lessons) 
 
 1.1 The use of R in psychological sciences and social sciences

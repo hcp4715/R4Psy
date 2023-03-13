@@ -6,7 +6,7 @@ institute: ""
 date: ""
 output:
   xaringan::moon_reader:
-    css: [default, zh-CN.css, Custumed_Style.css]
+    css: [default, css/zh-CN.css, css/Custumed_Style.css]
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -115,7 +115,7 @@ getwd()
 ```
 ```{r seted}
 # 修改当前工作路径
-setwd("./test/little_test")
+setwd("./picture/chapter3")
 getwd()
 ```
 
@@ -142,7 +142,7 @@ here::here()
 ## Here包的使用
 ```{r Here or getwd}
 # 当我更改目录之后会出现什么情况？
-setwd("./test/little_test")
+setwd("./picture/chapter3")
 getwd()
 here::here()
 ```
@@ -289,7 +289,7 @@ DT::datatable(head(match.data, 10),
 
 - <font size=6> 经过以上的操作，我们的"Environment"里发生了什么变化？</font>
 
-![show_env](./picture/fig_3_1.png)
+![show_env](./picture/chapter3/fig_3_1.png)
 ---
 
 # 3.3 认识R里的数据 （R语言中的对象）
