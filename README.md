@@ -14,12 +14,14 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
 
+## 本Repo的文件夹结构(folder structure of this repo)
+
 ```
 root_dir
-|----libs/            # folder for Xaringan
 |----css/             # folder for Xaringan
-|----picture/         # folder for picture in html
 |----data/            # folder for data used in the lecture
+|----picture/         # folder for picture in html
+|----libs/            # folder for Xaringan
 |----chapter_1.pptx   # slides for chapter 1
 |----chapter_2.pptx   # slides for chapter 2
 |----chapter_3.Rmd    # Rmarkdown for chapter 3
@@ -27,6 +29,7 @@ root_dir
 |----chapter_4.Rmd    # Rmarkdown for chapter 4
 |----chapter_4.html   # html for chapter 4
 |....
+
 ```
 
 ## 课程大纲 (Syllabus)
