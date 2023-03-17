@@ -23,56 +23,36 @@ class: center, middle
 <span style="font-size: 30px;">`r Sys.Date()`</span> <br>
 
 ---
-#回顾
-##了解函数
-##向量类型
-##比较运算
-##数据筛选
+# <h1 lang="zh-CN">回顾</h1>
+# <h2 lang="zh-CN">了解函数</h2>
+# <h2 lang="zh-CN">向量类型</h2>
+# <h2 lang="zh-CN">比较运算</h2>
+# <h2 lang="zh-CN">数据筛选</h2>
 <br>
-#本节课内容
-##函数拓展（批量读取数据）
-##dplyr包的函数应用（filter, select, mutate等）
-##tidyr包的函数应用（separate, drop_na等）
+# <h1 lang="zh-CN">本节课内容</h1>
+# <h2 lang="zh-CN">函数拓展（批量读取数据）</h2>
+# <h2 lang="zh-CN">dplyr包的函数应用（filter, select, mutate等）</h2>
+# <h2 lang="zh-CN">tidyr包的函数应用（separate, drop_na等）</h2>
 
 ---
-# <h2 lang="zh-CN">批量读取文件</h2>
-<font size=5>
-&emsp;&emsp;在第二节课中，我们使用了`read.csv()`读取了一个数据文件，但是一些行为实验中，一个被试的全部数据存在一个文件中，一个一个读取效率就很低了。这时，我们可以批量读取这些文件。<br>
-这里，我们介绍如何使用`lapply()`函数进行读取。
-</font>
-```{r}
-#首先使用list.files()获取文件列表
-file_list <- list.files(path = "./data/match", 
-                        pattern = "data_exp7_rep_match_.*\\.out")
-```
+# <h1 lang="zh-CN">批量读取文件</h1>
+在第二节课中，我们使用了`read.csv()`读取了一个.out文件，<br>
+但是一些行为实验中，多个被试的数据存在一个文件夹中，一个一个读取效率就很低了。<br>
+这时，我们可以批量读取这些文件。
+<br>
+
+# <h2 lang="en">Plan A: for loop</h2> 
+_思维难度低，书写难度高_<br>
+_更好理解，但是代码更长_<br>
+_存在中间变量_<br>
+
+# <h2 lang="en">Plan B: lapply</h2>
+_思维难度高，书写难度低_<br>
+_更难理解，但是代码更简洁_<br>
+_存在"看不见"的局部变量_<br>
 
 ---
-# <h2 lang="zh-CN">批量读取文件</h2>
-```{r}
-#使用list.files()获取文件列表
-file_list <- list.files(path = "./data/match", 
-                        pattern = "data_exp7_rep_match_.*\\.out")
-file_list#查看list
-```
-
----
-# <h2 lang="zh-CN">批量读取文件</h2>
-```{r}
-#使用list.files()获取文件列表
-file_list <- list.files(path = "./data/match", #制定所读文件夹路径
-                  pattern = "data_exp7_rep_match_.*\\.out",#使用通配符
-                  full.names = TRUE)
-#使用lapply批量读取文件
-data_list <- lapply(file_list, #指定读取file_list里的文件名
-                    read.csv, #应用read.csv函数
-                    header = TRUE, #使用第一行作为列名
-                    sep = "",#读取文件的分隔符
-                    stringsAsFactors = FALSE)
-```
-
----
-# <h1 lang="zh-CN">补充</h1>
-## <h2 lang="zh-CN">什么是通配符</h2>
+## <h1 lang="zh-CN">什么是通配符</h1>
 <font size=5>
 &emsp;&emsp;通配符是一种特殊字符，它可以在匹配文件名或其他文本字符串时代替其他字符。<br>
 <br>
@@ -82,23 +62,6 @@ data_list <- lapply(file_list, #指定读取file_list里的文件名
 &emsp;&emsp;[]：用于匹配指定的一组字符。例如，file[123].txt将匹配file1.txt，file2.txt和file3.txt。
 </font>
 
----
-#for loop
-<font size=5>
-&emsp;&emsp;对于我们之前使用lapply的例子，它本质上是将`read.csv()`应用在file_list里的每一个文件上，并得到一个新的列表，其中的一个元素是读取一个文件的结果。<br>
-&emsp;&emsp;我们可以使用for loop循环来看看读取过程中究竟发生了什么。
-</font>
-```{r}
-datalist <- list()#创建一个新的列表来存储数据
-forloop <- for (i in seq_along(file_list)) {#遍历file_list中的每个文件名
-  data <- read.csv(file.path("./", file_list[i]),sep = "")#读取数据
-  datalist[[i]] <- data #将读取的数据存储到列表中
-}
-```
-
----
-class: center, middle
-<span style="font-size: 60px;">5.1 数据预处理准备</span> <br>
 ---
 # <h1 lang="zh-CN">载入包</h1>
 ```{r used pacakge}
@@ -115,6 +78,101 @@ library(tidyverse)
 WD <-  here::here()
 getwd()
 ```
+
+---
+# <h1 lang="zh-CN">批量读取文件</h1>
+## <h2 lang="en">for loop</h2>
+```{r for loop list.files, error=FALSE}
+# 把所有符合某种标题的文件全部读取到一个list中
+files <- list.files(file.path("data/match"), pattern = "data_exp7_rep_match_.*\\.out$")
+
+
+head(files, n = 10L)
+
+str(files)
+```
+
+*P.S.尽管函数叫list.files，但它得到的变量的属性是value，而不是list*
+
+---
+# <h1 lang="zh-CN">批量读取文件</h1>
+## <h2 lang="en">for loop</h2>
+```{r df.mt.out.fl}
+# 创建一个空的列表来存储读取的数据框
+df_list <- list()
+# 循环读取每个文件，处理数据并添加到列表中
+for (i in seq_along(files)) { # 重复"读取到的.out个数"的次数
+  # 对每个.out，使用read.table
+  df <- read.table(file.path("data/match", files[i]), header = TRUE) #read.table似乎比read.csv更聪明，不需要指定分隔符
+  # 给读取到的每个.out文件的每个变量统一变量格式
+  df <- dplyr::filter(df, Date != "Date") %>% # 因为有些.out文件中部还有变量名，所需需要用filter把这些行过滤掉
+    dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),Age = as.numeric(Age),Sex = as.character(Sex),Hand = as.character(Hand),
+                  Block = as.numeric(Block),Bin = as.numeric(Bin),Trial = as.numeric(Trial),
+                  Shape = as.character(Shape),Label = as.character(Shape),Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),RT = as.numeric(RT))
+  # 将数据框添加到列表中
+  df_list[[i]] <- df
+}
+# 合并所有数据框，只有当变量的属性一致时，才可以bind_rows
+# bind_rows 意味着把list中的所有表格整合成一个大表格
+df.mt.out.fl <- dplyr::bind_rows(df_list)
+# 清除中间变量
+rm(df,df_list,files,i)
+# 如果你将这个步骤写成函数，则这些变量自然不会出现在全局变量中
+```
+
+---
+# <h1 lang="zh-CN">批量读取文件</h1>
+## <h2 lang="en">for loop</h2>
+_应该是25920 obs 16 variables_
+```{r df.mt.out DT, echo=FALSE}
+DT::datatable(head(df.mt.out.fl, 100),
+              fillContainer = TRUE, options = list(pageLength = 7))
+```
+
+---
+# <h1 lang="zh-CN">批量读取文件</h1>
+## <h2 lang="en">lapply</h2>
+```{r df.mt.raw.la}
+# 获取所有的.out文件名
+df.mt.out.la <- list.files(file.path("data/match"), pattern = "data_exp7_rep_match_.*\\.out$") %>%
+  # 对读取到的所有.out文件x都执行函数read.table
+  lapply(function(x) read.table(file.path("data/match", x), header = TRUE)) %>% 
+  # 对所有被read.table处理过的数据执行dplyr的清洗
+  lapply(function(df) dplyr::filter(df, Date != "Date") %>% # 因为有些.out文件中部还有变量名，所需需要用filter把这些行过滤掉
+                      dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
+                                    Sub = as.numeric(Sub),Age = as.numeric(Age),Sex = as.character(Sex),Hand = as.character(Hand),
+                                    Block = as.numeric(Block),Bin = as.numeric(Bin),Trial = as.numeric(Trial),
+                                    Shape = as.character(Shape),Label = as.character(Shape),Match = as.character(Match),
+                                    CorrResp = as.character(CorrResp),Resp = as.character(Resp),
+                                    ACC = as.numeric(ACC),RT = as.numeric(RT)
+                                    ) # 有些文件里读出来的数据格式不同，在这里统一所有out文件中的数据格式
+         ) %>%
+  bind_rows()
+```
+
+---
+# <h1 lang="zh-CN">批量读取文件</h1>
+## <h2 lang="en">lapply</h2>
+_应该是25920 obs 16 variables_
+```{r df.mt.out.la DT, echo=FALSE}
+DT::datatable(head(df.mt.out.la, 100),
+              fillContainer = TRUE, options = list(pageLength = 7))
+```
+
+---
+# <h1 lang="zh-CN">保存文件</h1>
+```{r write.csv}
+#for loop 或 lapply的都可以
+#write.csv(df.mt.out.fl, file = "./data/match/match_raw.csv",row.names = FALSE)
+write.csv(df.mt.out.la, file = "./data/match/match_raw.csv",row.names = FALSE)
+```
+
+---
+class: center, middle
+<span style="font-size: 60px;">5.1 数据预处理准备</span> <br>
 
 ---
 # <h1 lang="zh-CN">读取原始数据 </h1>
@@ -136,7 +194,7 @@ DT::datatable(head(df.pg.raw, 10),
 ## <h2 lang="en">Raw Data: Match Task </h2>
 ```{r Read Match Task RawData}
 # 读取原始数据
-df.mt.raw <-  read.csv('./data/match/MS_rep_matchingTask_raw.csv',
+df.mt.raw <-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) 
 ```
 ```{r Read Match Task RawData DT, echo=FALSE}
@@ -184,7 +242,7 @@ class: center, middle
 # <h1 lang="zh-CN">接下来就要正式讲dplyr了</h1>
 <img src="https://dplyr.tidyverse.org/logo.png" alt="dplyr" style="display: block; margin: 0 auto;">
 <br>
-_我会在标题中写出这个过程对应的SPSS名称_
+
 
 ---
 # <h1 lang="en">dplyr::filter</h1>
@@ -219,7 +277,7 @@ DT::datatable(head(df.clean.select, 10),
 
 ---
 # <h1 lang="en">dplyr::mutate</h1>
-## <h2 lang="zh-CN">计算变量 方法1</h2>
+## <h2 lang="zh-CN">计算变量 对指定列求和</h2>
 ```{r example of mutate_1 rawdata_penguin}
 # 把ALEX1 - 4求和
 df.clean.mutate_1 <- df.pg.raw %>% 
@@ -233,9 +291,9 @@ DT::datatable(head(df.clean.mutate_1, 10),
 
 ---
 # <h1 lang="en">dplyr::mutate</h1>
-## <h2 lang="zh-CN">计算变量 方法2 ~~chatGPT告诉我的~~</h2>
+## <h2 lang="zh-CN">计算变量 对含有某个字符的列求和</h2>
 ```{r example of mutate_2 rawdata_penguin}
-# 这个函数怎么运行的不重要，以后你只需要把ALEX改成你的文件里的变量名
+# 对所有含有ALEX的列求和
 df.clean.mutate_2 <- df.pg.raw %>% 
   dplyr::mutate(ALEX_SUM = rowSums(select(., starts_with("ALEX"))))
 ```
@@ -243,6 +301,8 @@ df.clean.mutate_2 <- df.pg.raw %>%
 DT::datatable(head(df.clean.mutate_2, 10),
               fillContainer = TRUE, options = list(pageLength = 3))
 ```
+
+
 
 ---
 # <h1 lang="en">dplyr::mutate</h1>
@@ -253,11 +313,33 @@ df.clean.mutate_3 <- df.pg.raw %>%
   dplyr::mutate(decade = case_when(age <= 1969 ~ 60,
                                    age >= 1970 & age <= 1979 ~ 70,
                                    age >= 1980 & age <= 1989 ~ 80,
-                                   age >= 1990 & age <= 1999 ~ 90)
-                ) #当括号多的时候注意括号的位置
+                                   age >= 1990 & age <= 1999 ~ 90,
+                                   TRUE ~ NA_real_)
+                ) %>% #当括号多的时候注意括号的位置 
+  dplyr::select(.,decade, everything())
 ```
 ```{r example of mutate_3 rawdata_penguin DT, echo=FALSE}
 DT::datatable(head(df.clean.mutate_3, 10),
+              fillContainer = TRUE, options = list(pageLength = 3))
+```
+
+---
+# <h1 lang="en">dplyr::mutate</h1>
+## <h2 lang="zh-CN">重新编码为相同变量（反向计分）</h2>
+
+```{r example of mutate_4 rawdata_penguin}
+df.clean.mutate_4 <- df.pg.raw %>% 
+  dplyr::mutate(ALEX1 = case_when(ALEX1 == '1' ~ '5',
+                                  ALEX1 == '2' ~ '4',
+                                  ALEX1 == '3' ~ '3',
+                                  ALEX1 == '4' ~ '2',
+                                  ALEX1 == '5' ~ '1',
+                                  TRUE ~ as.character(ALEX1))
+                ) %>%
+  dplyr::mutate(ALEX1 = as.numeric(ALEX1))
+```
+```{r example of mutate_4 rawdata_penguin DT, echo=FALSE}
+DT::datatable(head(df.clean.mutate_4, 10),
               fillContainer = TRUE, options = list(pageLength = 3))
 ```
 
@@ -281,26 +363,41 @@ DT::datatable(head(df.clean.group_by, 4),
 # <h1 lang="en">dplyr::functions</h1>
 ## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
 
+Step1: 选择eatdrink为1的被试<br>
+<br>
+Step2: 选择我们需要的变量<br>
+<br>
+Step3: 对反向计分题目重新编码<br>
+<br>
+Step4: 将出生年份编码为出生年代<br>
+<br>
+Step5: 按年代计算ALEX的平均值<br>
+<br>
+
+---
+# <h1 lang="en">dplyr::functions</h1>
+## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
+
 ```{r example of total rawdata_penguin}
 df.pg.clean <- df.pg.raw %>%
-  dplyr::filter(eatdrink == 1) %>% 
-  # 选择eatdrink为1的被试
+  dplyr::filter(eatdrink == 1) %>% # 选择eatdrink为1的被试
   dplyr::select(age, starts_with("ALEX"), eatdrink, avoidance) %>%
-  # 选择四个变量，分别是age，ALEX，eatdrink和avoidance
-  dplyr::mutate(ALEX_SUM = rowSums(select(., starts_with("ALEX"))),
-                # 把所有ALEX的题目分数求和
-                decade = case_when(age <= 1969 ~ 60,
+  dplyr::mutate(ALEX1 = case_when(ALEX1 == '1' ~ '5', # 反向计分
+                                  ALEX1 == '2' ~ '4',
+                                  ALEX1 == '3' ~ '3',
+                                  ALEX1 == '4' ~ '2',
+                                  ALEX1 == '5' ~ '1',
+                                  TRUE ~ as.character(ALEX1))) %>%
+  dplyr::mutate(ALEX1 = as.numeric(ALEX1)) %>%
+  dplyr::mutate(ALEX_SUM = rowSums(select(., starts_with("ALEX"))), # 把所有ALEX的题目分数求和
+                decade = case_when(age <= 1969 ~ 60, # 把出生年份转换为年代
                                    age >= 1970 & age <= 1979 ~ 70,
                                    age >= 1980 & age <= 1989 ~ 80,
-                                   age >= 1990 & age <= 1999 ~ 90)
-                # 把年龄按照年代来重新编码 
-                ) %>%
-  dplyr::group_by(decade) %>%
-  # 按照年代将数据拆分
-  dplyr::summarise(mean_ALEX = mean(ALEX_SUM)) %>%
-  # 计算每个年代的被试的平均的ALEX_SUM
-  dplyr::ungroup()
-  # 解除对数据的拆分
+                                   age >= 1990 & age <= 1999 ~ 90,
+                                   TRUE ~ NA_real_)) %>%
+  dplyr::group_by(decade) %>% # 按照年代将数据拆分
+  dplyr::summarise(mean_ALEX = mean(ALEX_SUM)) %>% # 计算每个年代的被试的平均的ALEX_SUM
+  dplyr::ungroup() # 解除对数据的拆分
 ```
 
 ---
@@ -344,18 +441,16 @@ class: center, middle
 # <h1 lang="zh-CN">接下来就要正式讲tidyr了</h1>
 <img src="https://tidyr.tidyverse.org/logo.png" alt="dplyr" style="display: block; margin: 0 auto;">
 <br>
-_我很少能在SPSS实现这些功能，或者说很难实现_
+
 ---
 # <h1 lang="en">tidyr::separate</h1>
 ## <h2 lang="zh-CN">拆分单元格内字符串</h2>
 
 ```{r tidyr::separate | rawdata_matchtask}
 df.clean.separate <- df.mt.raw %>%
-  tidyr::separate(., col = Shape, into = c("Shape_moral", "Shape_self"), 
+  tidyr::separate(., col = Shape, into = c("Valence", "Identity"), 
                                   sep = "(?<=moral|immoral)(?=Self|Other)") %>%
-  tidyr::separate(., col = Label, into = c("Label_moral", "Label_self"), 
-                                  sep = "(?<=moral|immoral)(?=Self|Other)") %>%
-  dplyr::select(Subject, Shape_moral, Shape_self, Label_moral, Label_self, everything())
+  dplyr::select(Sub, Valence, Identity, everything())
 ```
 ```{r tidyr::separate | rawdata_matchtask DT, echo=FALSE}
 DT::datatable(head(df.clean.separate, 10),
@@ -367,11 +462,9 @@ DT::datatable(head(df.clean.separate, 10),
 
 ```{r tidyr::extract | rawdata_matchtask}
 df.clean.extract <- df.mt.raw %>% 
-  tidyr::extract(Shape, into = c("Shape_moral", "Shape_self"),
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
                         regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>% 
-  tidyr::extract(Label, into = c("Label_moral", "Label_self"), 
-                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>% 
-  dplyr::select(Subject, Shape_moral, Shape_self, Label_moral, Label_self, everything())
+  dplyr::select(Sub, Valence, Identity, everything())
 ```
 ```{r tidyr::extract | rawdata_matchtask DT, echo=FALSE}
 DT::datatable(head(df.clean.extract, 10),
@@ -384,8 +477,7 @@ DT::datatable(head(df.clean.extract, 10),
 
 ```{r tidyr::unite | rawdata_matchtask}
 df.clean.unite <- df.clean.separate %>%
-  tidyr::unite(Shape, Shape_moral, Shape_self, sep = "") %>%
-  tidyr::unite(Label, Label_moral, Label_self, sep = "") 
+  tidyr::unite(Shape, Valence, Identity, sep = "") 
 ```
 ```{r tidyr::unite | rawdata_matchtask DT, echo=FALSE}
 DT::datatable(head(df.clean.unite, 10),
@@ -398,7 +490,7 @@ DT::datatable(head(df.clean.unite, 10),
 
 ```{r pivot_wider | rawdata_matchtask, warning=FALSE}
 df.clean.wide <- df.mt.raw %>% 
-  dplyr::select(Subject, Block, Bin, Trial, RT) %>%
+  dplyr::select(Sub, Block, Bin, Trial, RT) %>%
   tidyr::pivot_wider(names_from = "Trial", values_from = "RT")
 ```
 ```{r pivot_wider | rawdata_matchtask DT, echo=FALSE}
@@ -442,115 +534,145 @@ any(is.na(df.mt.raw)); sum(is.na(df.mt.raw))
 # <h1 lang="en">dplyr & tidyr::functions</h1>
 ## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
 
-```{r example of total part1 rawdata_matchtask}
+Step1: 选择我们需要的变量<br>
+<br>
+Step2: 删除缺失值，选择符合标准的被试(右利手，有效反应试次，反应时[200ms,1500ms])<br>
+<br>
+Step3: 分实验条件计算平均反应时和正确率，以及效率 = 平均反应时/平均正确率<br>
+<br>
+Step4: 将Shape变量拆分为Valence和Identity，选取Match-Moral组<br>
+<br>
+Step5: 将长数据转化为宽数据，得到Self和Other情况下的efficiency<br>
+<br>
+Step6: 计算实验条件为Match-Moral时efficiency的SPE<br>
+<br>
+
+---
+# <h1 lang="en">dplyr & tidyr::functions</h1>
+## <h2 lang="zh-CN">Step1: 选择我们需要的变量</h2>
+
+```{r example of total part1 rawdata_matchtask,message=FALSE}
 df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Subject, Age, Sex, Hand, #人口统计学
+  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
                 Block, Bin, Trial, # 试次
                 Shape, Label, Match, # 刺激
-                Resp, ACC, RT, # 反应结果
-                Morality, Identity # 自变量
-                ) %>% 
+                Resp, ACC, RT) # 反应结果
+```
+```{r example of total part1 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df.mt.clean, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">dplyr & tidyr::functions</h1>
+## <h2 lang="zh-CN">Step2: 删除缺失值，选择符合标准的被试</h2>
+
+```{r example of total part2 rawdata_matchtask,message=FALSE}
+df.mt.clean <- df.mt.clean %>%
+  tidyr::drop_na() %>% #删除缺失值
   dplyr::filter(.,Hand == "R", # 选择右利手被试
-                  ACC != "-1" # 删除缺失值（无效应答试次）
-                ) %>%
-  dplyr::group_by(Subject, 
-                  Shape, Label, Match, 
-                  Morality, Identity) %>%
+                  ACC == 0 | ACC == 1 , # 排除无效应答（ACC = -1 OR 2)
+                  RT >= 0.2 & RT <= 1.5)  # 选择RT属于[200,1500]
+```
+```{r example of total part2 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df.mt.clean, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">dplyr & tidyr::functions</h1>
+## <h2 lang="zh-CN">Step3: 分实验条件计算</h2>
+
+```{r example of total part3 rawdata_matchtask,message=FALSE}
+df.mt.clean <- df.mt.clean %>%
+  dplyr::group_by(Sub, Shape, Label, Match) %>%
   dplyr::summarise(mean_ACC = mean(ACC),
                    mean_RT = mean(RT)) %>%
   dplyr::ungroup() %>%
   dplyr::mutate(efficiency = mean_RT/mean_ACC) 
 ```
-
----
-# <h1 lang="en">dplyr & tidyr::functions</h1>
-## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
-
-```{r example of total part1 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df.mt.clean, 24),
-              fillContainer = TRUE, options = list(pageLength = 8))
-```
-
----
-# <h1 lang="en">dplyr & tidyr::functions</h1>
-## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
-
-```{r example of total part2 rawdata_matchtask}
-df.mt.clean <- df.mt.clean %>%
-  dplyr::filter(Match == "match") %>%
-  # 自我优势效应一般讨论的是匹配条件下
-  # 人们对自己相关的信息反应快于非自我相关的
-  tidyr::extract(Shape, into = c("Shape_moral", "Shape_self"),
-                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>% 
-  tidyr::extract(Label, into = c("Label_moral", "Label_self"), 
-                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>% 
-  tidyr::unite(M_I, Morality, Identity, sep = "") 
-```
-
----
-# <h1 lang="en">dplyr & tidyr::functions</h1>
-## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
-
-Shape_moral == immoral --> Morality == Bad <br>
-Shape_Self == Self --> Identity == Self <br>
-```{r example of total part2 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df.mt.clean, 24),
-              fillContainer = TRUE, options = list(pageLength = 8))
-```
-
----
-# <h1 lang="en">dplyr & tidyr::functions</h1>
-## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
-
-```{r example of total part3 rawdata_matchtask}
-df.mt.clean <- df.mt.clean %>%
-  dplyr::select(Subject, Shape, efficiency) %>%
-  tidyr::pivot_wider(names_from = "Shape", values_from = "efficiency")
-```
 ```{r example of total part3 rawdata_matchtask DT, echo=FALSE}
 DT::datatable(head(df.mt.clean, 24),
-              fillContainer = TRUE, options = list(pageLength = 8))
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">dplyr & tidyr::functions</h1>
+## <h2 lang="zh-CN">Step4: 将Shape变量拆分</h2>
+
+```{r example of total part4 rawdata_matchtask}
+df.mt.clean <- df.mt.clean %>%
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>%
+  dplyr::filter(Match == "match" & Valence == "moral") 
+  # 自我优势效应一般讨论的是匹配条件下
+  # 人们对自己相关的信息反应快于非自我相关的
+
+```
+```{r example of total part4 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df.mt.clean, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">dplyr & tidyr::functions</h1>
+## <h2 lang="zh-CN">Step5: 将长数据转化为宽数据</h2>
+
+```{r example of total part5 rawdata_matchtask}
+df.mt.clean <- df.mt.clean %>%
+  dplyr::select(Sub, Identity, efficiency) %>%
+  tidyr::pivot_wider(names_from = "Identity", values_from = "efficiency")
+```
+```{r example of total part5 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df.mt.clean, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">dplyr & tidyr::functions</h1>
+## <h2 lang="zh-CN">Step6: 计算SPE</h2>
+
+```{r example of total part6 rawdata_matchtask}
+df.mt.clean <- df.mt.clean %>%
+  dplyr::mutate(eff_moral_SPE = Self - Other) %>%
+  dplyr::select(Sub, eff_moral_SPE) 
+```
+```{r example of total part6 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df.mt.clean, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
 ```
 
 ---
 ## <h2 lang="zh-CN">感受一下如果所有数据清洗的代码放在一起是什么样子</h2>
 
-```{r example of total part4 rawdata_matchtask, message=FALSE}
+```{r example of total rawdata_matchtask, message=FALSE}
 df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Subject, Age, Sex, Hand, #人口统计学
+  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
                 Block, Bin, Trial, # 试次
                 Shape, Label, Match, # 刺激
                 Resp, ACC, RT, # 反应结果
-                Morality, Identity # 自变量
                 ) %>% 
+  tidyr::drop_na() %>% #删除缺失值
   dplyr::filter(.,Hand == "R", # 选择右利手被试
-                  ACC != "-1" # 删除缺失值（无效应答试次）
+                  ACC == 0 | ACC == 1 , # 排除无效应答（ACC = -1 OR 2)
+                  RT >= 0.2 & RT <= 1.5 # 选择RT属于[200,1500]
                 ) %>%
-  dplyr::group_by(Subject, 
-                  Shape, Label, Match, 
-                  Morality, Identity) %>%
+  dplyr::group_by(Sub, 
+                  Shape, Label, Match) %>%
   dplyr::summarise(mean_ACC = mean(ACC),
                    mean_RT = mean(RT)) %>%
   dplyr::ungroup() %>%
   dplyr::mutate(efficiency = mean_RT/mean_ACC) %>%
-  dplyr::filter(Match == "match") %>%
-  tidyr::extract(Shape, into = c("Shape_moral", "Shape_self"),
-                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>% 
-  tidyr::extract(Label, into = c("Label_moral", "Label_self"), 
-                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>% 
-  tidyr::unite(M_I, Morality, Identity, sep = "") %>%
-  dplyr::select(Subject, Shape, efficiency) %>%
-  tidyr::pivot_wider(names_from = "Shape", values_from = "efficiency")
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>%
+  dplyr::filter(Match == "match" & Valence == "moral") %>%
+  dplyr::select(Sub, Identity, efficiency) %>%
+  tidyr::pivot_wider(names_from = "Identity", values_from = "efficiency") %>%
+  dplyr::mutate(eff_moral_SPE = Self - Other) %>%
+  dplyr::select(Sub, eff_moral_SPE) 
 ```
 
----
-# <h1 lang="en">dplyr & tidyr::functions</h1>
-## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
-接下来，你就可以把immoral条件下和moral条件下自我和他人的值相减。得到所谓的自我优势效应的一个指标（efficiency上的差异） <br>
-同样的操作，你也可以应用在RT和ACC上 <br>
-最后，你可以比较每个被试，在immoral下的SEP和moral条件下的SPE有没有差异（重复度量t检验） <br>
 
-<img src="http://y.qichejiashi.com/tupian/upload/198079649.jpg" alt="dplyr" style="display: block; margin: 0 auto;">
 
 
 
