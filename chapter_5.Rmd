@@ -485,31 +485,33 @@ DT::datatable(head(df.clean.unite, 10),
 ```
 
 ---
-# <h1 lang="en">tidyr::pivot_wider</h1>
-## <h2 lang="zh-CN">长数据与宽数据的相互转换</h2>
-
-```{r pivot_wider | rawdata_matchtask, warning=FALSE}
-df.clean.wide <- df.mt.raw %>% 
-  dplyr::select(Sub, Block, Bin, Trial, RT) %>%
-  tidyr::pivot_wider(names_from = "Trial", values_from = "RT")
-```
-```{r pivot_wider | rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df.clean.wide, 10),
-              fillContainer = TRUE, options = list(pageLength = 3))
-```
-
----
 # <h1 lang="en">tidyr::pivot_longer</h1>
 ## <h2 lang="zh-CN">长数据与宽数据的相互转换</h2>
 
 ```{r pivot_longer | rawdata_matchtask}
-df.clean.long <- df.clean.wide %>% 
-  tidyr::pivot_longer(cols = 4:27,
-                      names_to = "Trial",
-                      values_to = "RT") 
+df.clean.long <- df.mt.raw %>% 
+  tidyr::pivot_longer(cols = c(RT, ACC),
+                      names_to = "DV",
+                      values_to = "Value") 
 ```
 ```{r pivot_longer | rawdata_matchtask DT, echo=FALSE}
 DT::datatable(head(df.clean.long, 48),
+              fillContainer = TRUE, options = list(pageLength = 3))
+```
+
+---
+# <h1 lang="en">tidyr::pivot_wider</h1>
+## <h2 lang="zh-CN">长数据与宽数据的相互转换</h2>
+
+```{r pivot_wider | rawdata_matchtask, warning=FALSE}
+df.clean.wide <- df.clean.long %>% 
+  dplyr::select(Sub, Trial, Shape, DV, Value) %>%
+  dplyr::group_by(Sub, Shape, DV) %>%
+  dplyr::summarise(mean_Value = mean(Value)) %>%
+  tidyr::pivot_wider(names_from = c("Shape", "DV"), values_from = "mean_Value", names_glue = "{Shape}_{DV}")
+```
+```{r pivot_wider | rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df.clean.wide, 10),
               fillContainer = TRUE, options = list(pageLength = 3))
 ```
 
