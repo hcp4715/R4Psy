@@ -363,15 +363,15 @@ DT::datatable(head(df.clean.group_by, 4),
 # <h1 lang="en">dplyr::functions</h1>
 ## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
 
-Step1: 选择eatdrink为1的被试<br>
+Step1: 选择eatdrink为1的被试    [filter]<br>
 <br>
-Step2: 选择我们需要的变量<br>
+Step2: 选择我们需要的变量   [select]<br>
 <br>
-Step3: 对反向计分题目重新编码<br>
+Step3: 对反向计分题目重新编码   [mutate]<br>
 <br>
-Step4: 将出生年份编码为出生年代<br>
+Step4: 将出生年份编码为出生年代   [mutate]<br>
 <br>
-Step5: 按年代计算ALEX的平均值<br>
+Step5: 按年代计算ALEX的平均值   [group_by, summarise]<br>
 <br>
 
 ---
@@ -534,17 +534,17 @@ any(is.na(df.mt.raw)); sum(is.na(df.mt.raw))
 # <h1 lang="en">dplyr & tidyr::functions</h1>
 ## <h2 lang="zh-CN">把之前学到的函数一起使用</h2>
 
-Step1: 选择我们需要的变量<br>
+Step1: 选择我们需要的变量   [select]<br>
 <br>
-Step2: 删除缺失值，选择符合标准的被试(右利手，有效反应试次，反应时[200ms,1500ms])<br>
+Step2: 删除缺失值，选择符合标准的被试   [drop_na, filter]<br>
 <br>
-Step3: 分实验条件计算平均反应时和正确率，以及效率 = 平均反应时/平均正确率<br>
+Step3: 分实验条件计算平均反应时和正确率   [group_by, summarise]<br>
 <br>
-Step4: 将Shape变量拆分为Valence和Identity，选取Match-Moral组<br>
+Step4: 将Shape变量拆分为Valence和Identity，选取Match-Moral组    [extract, filter]<br>
 <br>
-Step5: 将长数据转化为宽数据，得到Self和Other情况下的efficiency<br>
+Step5: 将长数据转化为宽数据，得到Self和Other情况下的efficiency    [pivot_wide]<br>
 <br>
-Step6: 计算实验条件为Match-Moral时efficiency的SPE<br>
+Step6: 计算实验条件为Match-Moral时efficiency的SPE   [mutate, select]<br>
 <br>
 
 ---
@@ -672,13 +672,47 @@ df.mt.clean <- df.mt.raw %>%
   dplyr::select(Sub, eff_moral_SPE) 
 ```
 
+---
+# <h1 lang="zh-CN">课堂练习题</h1>
 
+计算不同Shape情况下（immoralself，moralself，immoralother，moralother）<br>
+基于信号检测论match与mismatch之间的d值（match为信号，mismatch噪音）<br>
+为了方便大家写代码。以下是计算信号检测论d值的公式 <br>
 
+```{r, eval=FALSE}
+dplyr::summarise(
+      hit = length(ACC[Match == "match" & ACC == 1]),
+      fa = length(ACC[Match == "mismatch" & ACC == 0]),
+      miss = length(ACC[Match == "match" & ACC == 0]),
+      cr = length(ACC[Match == "mismatch" & ACC == 1]),
+      Dprime = qnorm(
+        ifelse(hit / (hit + miss) < 1,
+               hit / (hit + miss),
+               1 - 1 / (2 * (hit + miss))
+              )
+        ) 
+             - qnorm(
+        ifelse(fa / (fa + cr) > 0,
+              fa / (fa + cr),
+              1 / (2 * (fa + cr))
+              )
+                    )
+      ) 
+```
 
-
-
-
-
-
-
+---
+# <h1 lang="zh-CN">课堂练习题</h1>
+## <h2 lang="zh-CN">思路</h2>
+Step1: 选择需要的变量 <br>
+<br>
+Step2: 基于Sub，Block，Bin和Shape分组 <br>
+<br>
+Step3: 使用计算公式 <br>
+<br>
+Step4: 删除击中、虚报、误报、正确拒绝 <br>
+<br>
+Step5: 按Sub和Shape分组 <br>
+<br>
+Step6: 长转宽，得到每个Shape情况下的信号检测论d值 <br>
+<br>
 
