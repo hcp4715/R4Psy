@@ -1,0 +1,272 @@
+---
+title: ""
+author: "Pac_B"
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [default, css/Custumed_Style.css, css/zh-CN.css]
+    lib_dir: libs
+    nature:
+      highlightLines: true
+      highlightStyle: github
+      countIncrementalSlides: false
+
+---
+class: center, middle
+<span style="font-size: 50px;">**第六章**</span> <br>
+<span style="font-size: 50px;">__如何探索数据: __</span> <br>
+<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 20px;"> </span> <br>
+<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
+
+---
+#回顾
+##批量读取数据（正则表达）
+##数据清理dplyr包的函数应用（filter, select, mutate等）
+<br><br>
+#本节课内容
+##描述性统计
+##数据可视化基础
+##--ggplot2介绍
+##--ggplot2可视化基础
+
+---
+# 描述性统计
+## 了解你的数据
+<font size=5>
+&emsp;&emsp;在之前的课上，我们可以借助`str()`、`summary()`等函数来帮助我们简单了解自己的数据信息。
+</font><br>
+```{r}
+#加载所需要的R包
+library("tidyverse")
+#读取数据
+penguin.data <- read.csv("./data/penguin/penguin_rawdata.csv",
+                         header = TRUE, sep=",",
+                         stringsAsFactors = FALSE)
+str(penguin.data, #指定数据
+    list.len = 10 #显示前10个变量信息
+    )
+```
+
+---
+# 描述性统计
+## 了解你的数据
+```{r, out.width = "10px", out.height = "300px"}
+DT::datatable(summary(penguin.data))
+```
+
+---
+# 描述性统计
+## 了解你的数据
+<font size=5>
+&emsp;&emsp;使用 dim() 函数可以查看数据框的维度，即行数和列数。
+</font><br>
+```{r}
+dim(penguin.data)
+#当然，这一结果你可以在Rstudio的Environment模块里直接得到。
+```
+
+---
+# 描述性统计
+## 计算
+<font size=5>
+&emsp;&emsp;如果我想知道被试的平均年龄、中位数和标准差等统计量应该怎么办？
+</font><br>
+```{r, width = 400, height = 300}
+#使用psych包中的describe()函数
+DT::datatable(psych::describe(penguin.data))
+#需要注意的是，describe()函数不会帮你处理缺失值，它会跳过缺失值。
+```
+
+---
+# 描述性统计
+## 计算
+<font size=5>
+&emsp;&emsp;如果我想知道被试的平均年龄、中位数和标准差等统计量应该怎么办？
+</font><br>
+```{r}
+#使用dplyr包中的summarise()函数
+penguin.data %>%
+  summarise(mean_age = mean(age),
+            sd_age = sd(age),
+            n_values = n())
+#summarise函数不会忽略缺失值。
+```
+
+---
+# 描述性统计
+## 计算
+<font size=5>
+&emsp;&emsp;如果我想知道被试的平均年龄、中位数和标准差等统计量应该怎么办？
+</font><br>
+```{r}
+#使用dplyr包中的summarise()函数
+penguin.data %>%
+  tidyr::drop_na(age) %>% 
+  summarise(mean_age = mean(age),
+            sd_age = sd(age),
+            n_values = n())
+#可以对比一下summarise和describe的结果。
+```
+
+---
+# 可视化
+## ggplot2包
+<font size=5>
+&emsp;&emsp;我们介绍一个最常用的包：ggplot2。<br>
+&emsp;&emsp;所谓gg源于“grammar of graphics”，即图形语法。<br>
+&emsp;&emsp;ggplot2绘图的核心在于使用图层去描述和构建图形。<br>
+&emsp;&emsp;我们在这里给出一个示例，探究体温和健康的关系，并简单了解一下ggplot2的语法。
+</font>
+<div style="text-align:center;">
+  <img src="https://picb.zhimg.com/v2-1ea8eef8abdab39c4e5cfcc0285f9d95_720w.jpg?source=172ae18b" alt="layer" style="width:50%; height:auto;" />
+</div>
+
+---
+# 可视化
+## 柱状图
+<font size=5>
+&emsp;&emsp;比方说，我们想要看看被试对自己健康的评价情况，可以使用直方图进行可视化。
+</font>
+```{r warning=FALSE, fig.width=6, fig.height=4}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x=penguin.data$health))+#确定映射到x轴的变量
+  geom_bar()+#绘制直方图
+  scale_x_discrete(name = "Health")+
+  theme_minimal()#设定绘图风格
+```
+---
+# 可视化
+## 直方图
+<font size=5>
+&emsp;&emsp;对于连续变量，我们可以使用直方图进行可视化。比如说，我们想看看被试的体温分布如何。
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x=penguin.data$Temperature_t1))+#确定映射到x轴的变量
+  geom_histogram()+#绘制直方图
+  stat_bin(bins = 40)+#设定连续变量分组数量
+  scale_x_continuous(name = "Temperature_t1")+#命名x轴
+  theme_minimal()#设定绘图风格
+```
+---
+# 可视化
+## 密度图
+<font size=5>
+&emsp;&emsp;同样的我们可以使用密度图来描述体温的分布情况。
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x=penguin.data$Temperature_t1))+#确定映射到x轴的变量
+  geom_density()+#绘制密度曲线
+  scale_x_discrete(name = "Temperature_t1")+#命名x轴
+  theme_minimal()#设定绘图风格
+```
+---
+# 可视化
+## 图层叠加
+<font size=5>
+&emsp;&emsp;有时，我们会希望在呈现直方图的同时呈现密度曲线，这时ggplot2可以很方便地让我们把图层进行叠加。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x = penguin.data$Temperature_t1,
+                    y = stat(density),
+                    alpha=0.8))+#确定映射到x轴的变量，y轴对应的是密度曲线
+  geom_histogram()+#绘制直方图
+  geom_density()+#绘制密度曲线
+  theme_minimal()+#设定绘图风格
+  guides(alpha=FALSE)#隐藏透明度alpha设置带来的图例
+```
+
+---
+# 可视化
+## 箱线图
+<font size=5>
+&emsp;&emsp;如果我们想知道被试不同的健康情况，是否体温的分布不同，我们可以使用箱线图。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x = penguin.data$health,
+                    y = penguin.data$Temperature_t1
+                    ))+#确定映射到xy轴的变量
+  geom_boxplot()+#绘制箱线图
+  theme_minimal()#设定绘图风格
+```
+
+---
+# 可视化
+## 箱线图
+<font size=5>
+&emsp;&emsp;为什么没有像我们想象的那样分不同的health评分绘图，因为health的类型需要转换。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x = as.factor(penguin.data$health),
+                    y = penguin.data$Temperature_t1
+                    ))+#确定映射到xy轴的变量
+  geom_boxplot()+#绘制箱线图
+  theme_minimal()#设定绘图风格
+```
+
+---
+# 可视化
+## 散点图
+<font size=5>
+&emsp;&emsp;我们可以用散点图来简单看看健康和体温的关系。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x = penguin.data$health,
+                    y = penguin.data$Temperature_t1
+                    ))+#确定映射到xy轴的变量
+  geom_point()+#绘制散点图
+  theme_minimal()#设定绘图风格
+```
+
+---
+# 可视化
+## 散点图
+<font size=5>
+&emsp;&emsp;再上一个例子中，health并不是一个离散变量，我们这里看看被试在做问卷前后体温的关系。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x = penguin.data$Temperature_t1,
+                    y = penguin.data$Temperature_t2
+                    ))+#确定映射到xy轴的变量
+  geom_point()+#绘制散点图
+  scale_x_continuous(name = "Temperature_t1") + 
+  scale_y_continuous(name = "Temperature_t2") + 
+  theme_minimal()#设定绘图风格
+```
+
+---
+# 可视化
+## 散点图
+<font size=5>
+&emsp;&emsp;事实上，当我们进行探索时往往需要先对数据进行处理，再进行可视化。以下我们想看看手机使用和焦虑是否存在关系。
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+penguin.data %>% 
+  mutate(stress_ave = rowMeans(.[,c("stress1", "stress2", "stress3","stress4", "stress5", "stress6","stress7", "stress8", "stress9","stress10", "stress11", "stress12","stress13", "stress14")])) %>%
+  mutate(phone_ave = rowMeans(.[,c("phone1","phone2","phone3","phone4","phone5","phone6","phone7","phone8","phone9")])) %>% 
+  ggplot(aes(x=stress_ave, y=phone_ave))+
+  geom_point()+
+  theme_minimal()
+```
+
+---
+#练习
+## 1. 读取match数据，对自己感兴趣的变量进行描述性统计。
+## 2. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
+## 3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
+## 4. 对两个数据中自己感兴趣的变量们进行可视化，也可以使用自己的数据。
+
+
+
+
+
+
