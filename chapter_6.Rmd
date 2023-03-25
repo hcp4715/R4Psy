@@ -1,0 +1,293 @@
+---
+title: ""
+author: "Pac_B"
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [default, css/Custumed_Style.css, css/zh-CN.css]
+    lib_dir: libs
+    nature:
+      highlightLines: true
+      highlightStyle: github
+      countIncrementalSlides: false
+
+---
+class: center, middle
+<span style="font-size: 50px;">**第六章**</span> <br>
+<span style="font-size: 50px;">__如何探索数据: __</span> <br>
+<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 20px;"> </span> <br>
+<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
+
+---
+#回顾
+##批量读取数据（正则表达）
+##数据清理dplyr包的函数应用（filter, select, mutate等）
+<br><br>
+#本节课内容
+##探索性数据分析
+##--描述性统计
+##--数据可视化基础
+##----ggplot2介绍
+##----ggplot2可视化基础
+
+---
+# 回顾
+## for loop
+<font size=5>
+&emsp;&emsp;利用for loop批量读取数据分为以下步骤：<br>
+&emsp;&emsp;1.df_list <- list()创建一个空的数据框存储结果<br>
+&emsp;&emsp;2.for (i in seq_along(files))旨在一个一个遍历文件夹中的文件<br>
+&emsp;&emsp;接着是for中的语句<br>
+&emsp;&emsp;3.df <- read.table(file.path("data/match", files[i]))做的是，使用'read.table'读取第i个文件，这个i是有for()中的i控制的。<br>
+&emsp;&emsp;4. df_list[[i]] <- df做的是将读取的结果放进数据框中<br>
+&emsp;&emsp;5.df.mt.out.fl <- dplyr::bind_rows(df_list)的作用在于，因为数据框里每一行都是一个文件的结果，使用bind_rows将这些结果合进一个数据框中。
+</font>
+
+---
+# 回顾
+## group_by()
+<font size=5>
+&emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
+</font>
+```{r}
+df.mt.raw <-  read.csv('./data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+group <- df.mt.raw %>% 
+  group_by(.,Shape) %>% 
+  summarise(n())
+DT::datatable(group)
+```
+---
+# 回顾
+## group_by()
+<font size=5>
+&emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
+</font>
+```{r}
+ungroup <- df.mt.raw %>% 
+  summarise(n())
+DT::datatable(ungroup)
+```
+
+---
+# 回顾
+## group_by()
+<font size=5>
+&emsp;&emsp;从对比中可以看出，使用了group_by()后，实际上对数据框进行了分组，summarise针对的是每一个按照Shape列拆分开的数据框。
+</font>
+```{r}
+remove(group,ungroup)
+ 
+```
+
+
+
+---
+# 探索性数据分析
+## What is exploratory data analysis?
+<font size=5>
+&emsp;&emsp;在介绍描述性统计和可视化之前，我们先了解一个概念：探索性数据分析(Exploratory Data Analysis, EDA)。<br>
+&emsp;&emsp;In statistics, exploratory data analysis(EDA) is an approach to analyzing data sets to summarize their maincharacteristics, often with visual methods (Wikipedia).
+</font>
+<div style="text-align:center;">
+  <img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" alt="layer" style="width:70%; height:auto;" />
+</div>
+
+---
+# 探索性数据分析
+## What is exploratory data analysis?
+<font size=5>
+&emsp;&emsp;要进行EDA，首先要了解自己的数据，并提出有质量的问题。但是提出有质量的问题前，我们可以先从几个基础的简单问题开始：<br>
+&emsp;&emsp;有哪些变量，类型如何？变量的值是如何变化的？变量之间有什么关系？
+</font>
+```{r}
+#加载所需要的R包
+library("tidyverse")
+#读取数据
+df.pg.raw <- read.csv("./data/penguin/penguin_rawdata.csv",
+                      header = TRUE, sep=",", stringsAsFactors = FALSE)
+df.mt.raw <-  read.csv('./data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+```
+
+---
+# 探索性数据分析
+## 有哪些变量，类型如何？
+## 了解你的数据
+```{r, out.width = "10px", out.height = "300px"}
+colnames(df.mt.raw)#查看列名，观察有哪些变量
+DT::datatable(head(df.mt.raw,10))#了解数据内容
+```
+
+---
+# 探索性数据分析
+## 了解你的数据
+```{r, out.width = "10px", out.height = "300px"}
+#前几节课提过的summary()函数
+#这里使用datatable()是为了方便在ppt呈现
+DT::datatable(summary(df.mt.raw))
+```
+
+---
+# 探索性数据分析
+## 了解你的数据
+<font size=5>
+&emsp;&emsp;更进一步，如果我想知道变量的平均数、中位数和标准差等统计量应该怎么办？
+</font><br>
+```{r, width = 400, height = 300}
+#使用psych包中的describe()函数
+DT::datatable(psych::describe(df.mt.raw))
+#需要注意的是，describe()函数不会帮你处理缺失值，它会跳过缺失值。
+```
+
+---
+# 探索性数据分析
+## 了解你的数据
+<font size=5>
+&emsp;&emsp;更进一步，如果我想知道变量的平均数、中位数和标准差等统计量应该怎么办？
+</font><br>
+```{r}
+#使用dplyr包中的summarise()函数
+df.mt.raw %>%
+  summarise(mean_RT = mean(RT),
+            sd_RT = sd(RT),
+            n_values = n())
+#summarise函数不会忽略缺失值，如果计算的列中有缺失值，会有报错。
+```
+
+---
+# 探索性数据分析
+## 变量的值是如何变化的？可视化
+<font size=5>
+&emsp;&emsp;可视化的部分我们介绍一个最常用的包：ggplot2。<br>
+&emsp;&emsp;所谓gg源于“grammar of graphics”，即图形语法。<br>
+&emsp;&emsp;ggplot2绘图的核心在于使用图层去描述和构建图形。<br>
+&emsp;&emsp;我们在这里给出一个示例，探究体温和健康的关系，并简单了解一下ggplot2的语法。
+</font>
+<div style="text-align:center;">
+  <img src="https://picb.zhimg.com/v2-1ea8eef8abdab39c4e5cfcc0285f9d95_720w.jpg?source=172ae18b" alt="layer" style="width:60%; height:auto;" />
+</div>
+
+---
+# 可视化
+## 柱状图
+<font size=5>
+&emsp;&emsp;比方说，我们想要看看被试回答正确率的情况。
+</font>
+```{r warning=FALSE, fig.width=6, fig.height=4}
+ggplot2::ggplot(data = df.mt.raw,#指定数据
+                aes(x=df.mt.raw$ACC))+#确定映射到x轴的变量
+  geom_bar()+#绘制直方图
+  theme_minimal()#设定绘图风格
+```
+---
+# 可视化
+## 直方图
+<font size=5>
+&emsp;&emsp;对于连续变量，我们可以使用直方图进行可视化。比如说，我们想看看被试的反应时分布。
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = df.mt.raw,#指定数据
+                aes(x=df.mt.raw$RT))+#确定映射到x轴的变量
+  geom_histogram()+#绘制直方图
+  stat_bin(bins = 40)+#设定连续变量分组数量
+  scale_x_continuous(name = "RT")+#命名x轴
+  theme_minimal()#设定绘图风格
+```
+---
+# 可视化
+## 密度图
+<font size=5>
+&emsp;&emsp;同样的我们可以使用密度图来描述反应时的分布情况。
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = df.mt.raw,#指定数据
+                aes(x=df.mt.raw$RT))+#确定映射到x轴的变量
+  geom_density()+#绘制密度曲线
+  scale_x_discrete(name = "RT")+#命名x轴
+  theme_minimal()#设定绘图风格
+```
+---
+# 可视化
+## 图层叠加
+<font size=5>
+&emsp;&emsp;有时，我们会希望在呈现直方图的同时呈现密度曲线，这时ggplot2可以很方便地让我们把图层进行叠加。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = df.mt.raw,#指定数据
+                aes(x = df.mt.raw$RT,
+                    y = stat(density),
+                    alpha=0.8))+#确定映射到x轴的变量，y轴对应的是密度曲线
+  geom_histogram()+#绘制直方图
+  geom_density()+#绘制密度曲线
+  theme_minimal()+#设定绘图风格
+  guides(alpha=FALSE)#隐藏透明度alpha设置带来的图例
+```
+
+---
+# 可视化
+## 箱线图
+<font size=5>
+&emsp;&emsp;除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。
+&emsp;&emsp;这里我们利用箱线图看看不同Label的RT如何。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = df.mt.raw,#指定数据
+                aes(x = df.mt.raw$Label,
+                    y = df.mt.raw$RT
+                    ))+#确定映射到xy轴的变量
+  geom_boxplot()+#绘制箱线图
+  theme_minimal()#设定绘图风格
+```
+
+---
+# 可视化
+## 散点图
+<font size=5>
+&emsp;&emsp;而对于两个连续变量，我们可以使用散点图。比如，我们可以看看被试在做penguin问卷前后体温的关系。
+</font>
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+ggplot2::ggplot(data = penguin.data,#指定数据
+                aes(x = penguin.data$Temperature_t1,
+                    y = penguin.data$Temperature_t2
+                    ))+#确定映射到xy轴的变量
+  geom_point()+#绘制散点图
+  scale_x_continuous(name = "Temperature_t1") + 
+  scale_y_continuous(name = "Temperature_t2") + 
+  theme_minimal()#设定绘图风格
+```
+
+---
+# 可视化
+## 散点图
+<font size=5>
+&emsp;&emsp;事实上，当我们进行探索时往往需要先对数据进行处理，再进行可视化。以下我们想看看手机使用和焦虑是否存在关系。
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+#利用管道符，可以帮助我们更简洁地合并数据处理和可视化的过程。
+penguin.data %>% 
+  mutate(stress_ave = rowMeans(.[,c("stress1", "stress2", "stress3","stress4", "stress5", "stress6","stress7", "stress8", "stress9","stress10", "stress11", "stress12","stress13", "stress14")])) %>%
+  mutate(phone_ave = rowMeans(.[,c("phone1","phone2","phone3","phone4","phone5","phone6","phone7","phone8","phone9")])) %>% 
+  ggplot(aes(x=stress_ave, y=phone_ave))+
+  geom_point()+
+  geom_smooth(method = "lm")+#在散点图上叠加回归线，语法可以查找帮助文档
+  theme_minimal()
+```
+
+---
+#练习
+## 1. 读取match数据，对自己感兴趣的变量进行描述性统计。
+## 2. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
+## 3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
+## 4. 对两个数据中自己感兴趣的变量们进行可视化，也可以使用自己的数据。
+#探索
+## 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
+
+
+
+
+
+
