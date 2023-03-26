@@ -23,8 +23,11 @@ class: center, middle
 
 ---
 #回顾
-##批量读取数据（正则表达）
-##数据清理dplyr包的函数应用（filter, select, mutate等）
+##函数及用法
+##-函数名及语句
+##-group_by()
+##for loop
+##练习题
 <br><br>
 #本节课内容
 ##探索性数据分析
@@ -34,25 +37,79 @@ class: center, middle
 ##----ggplot2可视化基础
 
 ---
-# 回顾
-## for loop
+#回顾
+##函数及用法
 <font size=5>
-&emsp;&emsp;利用for loop批量读取数据分为以下步骤：<br>
-&emsp;&emsp;1.df_list <- list()创建一个空的数据框存储结果<br>
-&emsp;&emsp;2.for (i in seq_along(files))旨在一个一个遍历文件夹中的文件<br>
-&emsp;&emsp;接着是for中的语句<br>
-&emsp;&emsp;3.df <- read.table(file.path("data/match", files[i]))做的是，使用'read.table'读取第i个文件，这个i是有for()中的i控制的。<br>
-&emsp;&emsp;4. df_list[[i]] <- df做的是将读取的结果放进数据框中<br>
-&emsp;&emsp;5.df.mt.out.fl <- dplyr::bind_rows(df_list)的作用在于，因为数据框里每一行都是一个文件的结果，使用bind_rows将这些结果合进一个数据框中。
+&emsp;&emsp;我们已经接触和使用了不少函数了，但是我们对R中的函数还是有陌生的感觉，这时我们再重新看看函数的定义。
+</font>
+```{r}
+df.mt.raw <-  read.csv('./data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+```
+<font size=5>
+&emsp;&emsp;在R中函数有函数名和语句两个部分，以用的最多的read.csv()为例，read.csv是函数名，它是某一个操作的名字。而这个操作如何达成，需要的是()中的argument。<br>
+&emsp;&emsp;比如，read.csv在执行过程中，需要argument比如“file=…”来指定文件的路径、需要“header=…”来确定是否要使用第一行作为列名、需要“sep=…”来指定所读文件的分割符为什么，这些内容有些是必不可少的，比如没有file那么函数就无法知道你要打开的文件究竟是哪一个。<br>
+&emsp;&emsp;但也会疑惑我们例子中就没有写file=或是省略了很多东西，为什么argument却识别了呢，这和函数的argument有默认顺序和默认值。可以在Console中使用?read.csv来查看帮助文档，其中有顺序和默认值的设定。
 </font>
 
 ---
+#回顾
+##函数及用法
+<font size=5>
+&emsp;&emsp;比如，完整地写出argument应该是这样。
+</font>
+```{r}
+df.mt.raw <-  read.csv(file = './data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+```
+
+---
+#回顾
+##函数及用法
+<font size=5>
+&emsp;&emsp;有同学反应不理解“TRUE ~ NA_real_”，其实也可以归为对argument的不熟悉，可以通过查找函数的帮助文档了解这个argument的作用。<br>
+</font>
+
+![p1](./picture/chp6/real.png)
+<br>
+<font size=5>
+&emsp;&emsp;首先，查找case_when()，但是我们并未发现对这一语句的描述，这可能是因为该argument已经在最新的语句中有了替代。<br>
+&emsp;&emsp;因此，我们直接查找Na_real_，可以发现它表示这个默认值是一个缺失值（NA），并且是数值类型（real），那再结合case_when()的作用就很好理解了，那些“TRUE”，也即不在给出的任何条件中的值，被赋为NA。<br>
+&emsp;&emsp;同学们也可以尝试使用case_when()文档中提供的语句重新写。
+</font>
+
+---
+#回顾
+##函数及用法
+<font size=5>
+&emsp;&emsp;关于函数，也有同学对group_by函数的作用不了解，我们还是可以使用函数的帮助文档了解具体的作用。此外，一个函数有什么作用最直接的是看结果。
+</font>   
+```{r}
+library("tidyverse")
+group <- df.mt.raw %>% 
+  group_by(Shape)
+group#注意看数据框的第二行，有Groups:   Shape [4]的信息
+```
+---
+#回顾
+##函数及用法
+<font size=5>
+&emsp;&emsp;当某一列作为group_by分类的对象时，生成的数据框具有此分类列的信息，这个信息是数据框的一个基本信息，你甚至无法删除这一列。
+</font>   
+```{r}
+group <- group %>% 
+  select(-Shape)
+#注意返回的提示，因为数据框已经按照此列分类，所以不能再检索到此列。
+```
+
+---
 # 回顾
-## group_by()
+## 函数及用法
 <font size=5>
 &emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
 </font>
 ```{r}
+library("tidyverse")
 df.mt.raw <-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) 
 group <- df.mt.raw %>% 
@@ -62,7 +119,7 @@ DT::datatable(group)
 ```
 ---
 # 回顾
-## group_by()
+## 函数及用法
 <font size=5>
 &emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
 </font>
@@ -74,7 +131,7 @@ DT::datatable(ungroup)
 
 ---
 # 回顾
-## group_by()
+## 函数及用法
 <font size=5>
 &emsp;&emsp;从对比中可以看出，使用了group_by()后，实际上对数据框进行了分组，summarise针对的是每一个按照Shape列拆分开的数据框。
 </font>
@@ -83,8 +140,178 @@ remove(group,ungroup)
  
 ```
 
+---
+# 回顾
+## for loop
+<font size=5>
+&emsp;&emsp;我们看一下for loop语句最基础的结构：<br>
+&emsp;&emsp; __for (variable in sequence) {statement}__ <br>
+&emsp;&emsp;其中，variable是循环变量，sequence是一个向量或列表，statement是要重复执行的语句。在每次循环中，variable会被赋值为sequence中的下一个元素，然后执行statement。<br>
+比如，我如果想计算1到100的和：
+</font>
+```{r}
+sum <- 0
+for (i in 1:100) {
+  sum <- sum + i
+}
+print(sum)
+```
 
+---
+# 回顾
+## for loop
+<font size=5>
+&emsp;&emsp;理解了这一点我们再来看使用for loop如何批量读取文件。
+</font>
+```{r}
+files <- list.files(file.path("data/match"), 
+                    pattern = "data_exp7_rep_match_.*\\.out$")
 
+df_list <- list()
+
+for (i in seq_along(files)) {
+  df <- read.table(file.path("data/match", files[i]), header = TRUE) 
+  df_list[[i]] <- df
+}
+```
+
+```{r include=FALSE}
+remove(files,i,sum,df,df_list)
+```
+<font size=5>
+&emsp;&emsp;1.利用list.files读取所有的文件保存成value<br>
+&emsp;&emsp;2.创建新的df_list存储结果<br>
+&emsp;&emsp;3.for (i in seq_along(files))……部分是，对files里的第一个值执行read.table()，并将结果放进df_list中。接着对第二个值执行，直至循环结束整个files
+</font>
+---
+# 回顾
+## 练习题
+<font size=5>
+&emsp;&emsp;我们在实际使用这些函数时，是带着目的去使用的。想要计算击中率虚报率，我们首先要知道什么情况是击中，也要让计算机知道什么情况是击中，一旦分类了，计算的时候也需要进行判断。但在分类判断之前，我们要先告诉计算机什么是正确情况什么是错误情况，哪些是这个被试做的，哪些不是，所以也需要分组。<br>
+&emsp;&emsp;梳理到这，我们有了基本的思路：1.分组，使用group_by。2.告诉计算机什么是hit，什么是miss，使用summarise函数。3.利用判断语句进行分类计算，我们这里使用了ifelse。<br>
+&emsp;&emsp;当然，具体执行时，我们也需要考虑缺失值等细节，但总体的思路不会有变。
+<br>
+&emsp;&emsp;以上次的练习为例。首先我们需要加载数据。
+</font>
+
+```{r}
+# 读取原始数据
+df.mt.raw <-  read.csv('./data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+```
+---
+# 回顾
+## 练习题
+<font size=5>
+&emsp;&emsp;接着，我们选出需要的几列，包括自变量和因变量，以及分组变量。使用select()函数
+</font>
+```{r}
+df.mt.clean <- df.mt.raw %>%
+  dplyr::select(Sub, Block, Bin,  # block and bin
+                Shape, Match, # 自变量
+                ACC, RT, # 反应结果
+                )
+```
+<font size=5>
+&emsp;&emsp;因为数据中存在缺失值，所以也需要除去它们。
+</font>
+```{r}
+df.mt.clean <- df.mt.raw %>%
+  dplyr::select(Sub, Block, Bin,  # block and bin
+                Shape, Match, # 自变量
+                ACC, RT, # 反应结果
+                ) %>% 
+  tidyr::drop_na()
+```
+
+---
+# 回顾
+## 练习题
+<font size=5>
+&emsp;&emsp;在计算击中率误报率等的时候，我们针对的是被试的在某一特定实验条件下的反应。所以我们需要通过bin、block、shape、sub进行分组，这样进行计算时，就是每一个条件组下分别计算。不会出现在虚报的实验条件下计算正确拒绝的情况。
+</font>
+```{r}
+df.mt.clean <- df.mt.raw %>%
+  dplyr::select(Sub, Block, Bin,  # block and bin
+                Shape, Match, # 自变量
+                ACC, RT, # 反应结果
+                ) %>% 
+  tidyr::drop_na()  %>% #删除缺失值
+  dplyr::group_by(Sub, Block, Bin, Shape)
+```
+---
+# 回顾
+## 练习题
+<font size=5>
+&emsp;&emsp;接下来就是要使用summarise函数来给击中、虚报等分类，并使用ifelse函数根据分类计算概率
+</font>
+```{r}
+df.mt.clean <- df.mt.raw %>%
+  dplyr::select(Sub, Block, Bin,  # block and bin
+                Shape, Match, # 自变量
+                ACC, RT, # 反应结果
+                ) %>% 
+  tidyr::drop_na()  %>% #删除缺失值
+  dplyr::group_by(Sub, Block, Bin, Shape) %>%
+  dplyr::summarise(
+      hit = length(ACC[Match == "match" & ACC == 1]),
+      fa = length(ACC[Match == "mismatch" & ACC == 0]),
+      miss = length(ACC[Match == "match" & ACC == 0]),
+      cr = length(ACC[Match == "mismatch" & ACC == 1]),
+      Dprime = qnorm(
+        ifelse(hit / (hit + miss) < 1,
+               hit / (hit + miss),
+               1 - 1 / (2 * (hit + miss))
+              )
+           ) - qnorm(
+        ifelse(fa / (fa + cr) > 0,
+               fa / (fa + cr),
+               1 / (2 * (fa + cr))
+              )
+                    ))
+```
+
+---
+# 回顾
+## 练习题
+<font size=5>
+&emsp;&emsp;最后使用ungroup、select等函数对数据进行清理，除去计算中的过程变量，并进行长宽转换方便查看。
+</font>
+```{r}
+df.mt.clean <- df.mt.raw %>%
+  dplyr::select(Sub, Block, Bin,  # block and bin
+                Shape, Match, # 自变量
+                ACC, RT, # 反应结果
+                ) %>% 
+  tidyr::drop_na()  %>% #删除缺失值
+  dplyr::group_by(Sub, Block, Bin, Shape) %>%
+  dplyr::summarise(
+      hit = length(ACC[Match == "match" & ACC == 1]),
+      fa = length(ACC[Match == "mismatch" & ACC == 0]),
+      miss = length(ACC[Match == "match" & ACC == 0]),
+      cr = length(ACC[Match == "mismatch" & ACC == 1]),
+      Dprime = qnorm(
+        ifelse(hit / (hit + miss) < 1,
+               hit / (hit + miss),
+               1 - 1 / (2 * (hit + miss))
+              )
+           ) - qnorm(
+        ifelse(fa / (fa + cr) > 0,
+               fa / (fa + cr),
+               1 / (2 * (fa + cr))
+              )
+                    )) %>% 
+  dplyr::ungroup() %>%
+  select(-"hit",-"fa",-"miss",-"cr") %>%
+  dplyr::group_by(Sub, Shape)  %>%
+  tidyr::pivot_wider(names_from = Shape,
+                     values_from = Dprime) 
+```
+---
+class: center, middle
+<span style="font-size: 50px;">**第六章**</span> <br>
+<span style="font-size: 50px;">__如何探索数据: __</span> <br>
+<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
 ---
 # 探索性数据分析
 ## What is exploratory data analysis?
@@ -250,9 +477,9 @@ ggplot2::ggplot(data = df.mt.raw,#指定数据
 &emsp;&emsp;而对于两个连续变量，我们可以使用散点图。比如，我们可以看看被试在做penguin问卷前后体温的关系。
 </font>
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data = penguin.data,#指定数据
-                aes(x = penguin.data$Temperature_t1,
-                    y = penguin.data$Temperature_t2
+ggplot2::ggplot(data = df.pg.raw,#指定数据
+                aes(x = df.pg.raw$Temperature_t1,
+                    y = df.pg.raw$Temperature_t2
                     ))+#确定映射到xy轴的变量
   geom_point()+#绘制散点图
   scale_x_continuous(name = "Temperature_t1") + 
@@ -268,7 +495,7 @@ ggplot2::ggplot(data = penguin.data,#指定数据
 </font>
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
 #利用管道符，可以帮助我们更简洁地合并数据处理和可视化的过程。
-penguin.data %>% 
+df.pg.raw %>% 
   mutate(stress_ave = rowMeans(.[,c("stress1", "stress2", "stress3","stress4", "stress5", "stress6","stress7", "stress8", "stress9","stress10", "stress11", "stress12","stress13", "stress14")])) %>%
   mutate(phone_ave = rowMeans(.[,c("phone1","phone2","phone3","phone4","phone5","phone6","phone7","phone8","phone9")])) %>% 
   ggplot(aes(x=stress_ave, y=phone_ave))+
@@ -282,7 +509,7 @@ penguin.data %>%
 ## 1. 读取match数据，对自己感兴趣的变量进行描述性统计。
 ## 2. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
 ## 3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
-## 4. 对两个数据中自己感兴趣的变量们进行可视化，也可以使用自己的数据。
+## 4. 对两个数据中自己感兴趣的变量们做探索性数据分析。
 #探索
 ## 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
 
