@@ -1,0 +1,494 @@
+---
+title: "R course"
+subtitle: ""
+author: ""
+institute: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [default, Font_Style.css]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle
+<span style="font-size: 60px;">第七章</span> <br>
+<span style="font-size: 50px;">如何进行基本的数据分析</span> <br>
+<span style="font-size: 50px;">t-test和anova</span> <br>
+<br>
+<br>
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 30px;">2023/04/03</span> <br>
+
+---
+class: center, middle
+<span style="font-size: 60px;">7.1  T-test</span> <br>
+---
+# <h1 lang="zh-CN">回顾t检验基础知识</h1>
+<br>
+<center>
+<h2 lang="en">One sample t-test：单样本t检验</h2>
+</center>
+<br>
+<h4 lang="en">In the one sample t test, we compare the sample mean against a fixed value.</h4>
+<br>
+<h3 lang="en">The hypotheses:</h3>
+<br>
+<h3 lang="en">H0:The current sample is sampled from a population with μ of the current value.</h3>
+<h3 lang="en">H1:The current sample is sampled from a population with μ that different from the current value.</h3>
+<h3 lang="en">The significance level: α = 0.05</h3>
+<br>
+---
+# <h1 lang="zh-CN">回归t检验基础知识</h1>
+<br>
+<h2 lang="en">Typical research questions are:：与某一特定值比较的三种情况（大于/小于或等于）</h2>
+<br>
+<h3 lang="en">1.whether the mean (m) of the sample is equal to the theoretical mean (μ)?</h3>
+<br>
+<h3 lang="en">2.whether the mean (m) of the sample is less than the theoretical mean (μ)?</h3>
+<br>
+<h3 lang="en">3.whether the mean (m) of the sample is greater than the theoretical mean (μ)?</h3>
+<br>
+
+---
+# <h1 lang="zh-CN">回归t检验基础知识</h1>
+<br>
+<h2 lang="en">In statistics, we can define the corresponding null hypothesis (H0) as follow:</h2>
+<br>
+<h3 lang="en">H0:m = μ</h3>
+<h3 lang="en">H0:m <= μ</h3>
+<h3 lang="en">H0:m => μ</h3>
+<br>
+<br>
+<h2 lang="en">The corresponding alternative hypotheses (H1) are as follow:</h2>
+<br>
+<h3 lang="en">H1:m ≠ μ (not equal to)</h3>
+<h3 lang="en">H1:m > μ(greater than)</h3>
+<h3 lang="en">H1:m < μ (less than)</h3>
+---
+# <h1 lang="zh-CN">回归t检验基础知识</h1>
+<br>
+<center>
+<h2 lang="en">Two-sample t-test ：双样本t检验</h2>
+</center>
+<br>
+<h2 lang="en">Dependent(paried) t-test</h2>
+<h3 lang="en">Population of difference scores has a normal distribution [population normality]</h3>
+<h3 lang="en">Correlation between pairs of scores [dependent data]</h3>
+<br>
+<br>
+<h2 lang="en">Independent t-test</h2>
+<br>
+<h3 lang="en">Population of difference scores has a normal distribution [population normality]</h3>
+<h3 lang="en">The variances in two populations are similar [homogeneity of variance]</h3>
+---
+# <h1 lang="zh-CN">回归t检验基础知识</h1>
+<br>
+<h2 lang="en">Dependent (Paired) t-test：配对样本t检验</h2>
+<h3 lang="en">The paired t-test is used to compare the means between two related groups of samples. In this case, you have two values (i.e., pair of values) for the same samples.</h3>
+<br>
+<br>
+<br>
+<h2 lang="en">Independent t-test:独立样本t检验</h2>
+<h3 lang="en">The independent samples t-test is used to compare the mean of two independent groups.</h3>
+<br>
+<h3 lang="en">Typical research questions are:</h3>
+<h3 lang="en">whether the mean of group A (mA) is equal to the mean of group B (mB)?</h3>
+<h3 lang="en">whether the mean of group A (mA) is less than the mean of group B (mB)?</h3>
+<h3 lang="en">whether the mean of group A (mA) is greather than the mean of group B (mB )?</h3>
+---
+class: center, middle
+<span style="font-size: 60px;">7.2 T-test process in R</span> <br>
+---
+# <h1 lang="zh-CN">为代码实现编造几个问题</h1>
+<br>
+<br>
+<h2 lang="zh-CN">1. “在penguin数据中，参与者对于家的依恋水平是否小于/等于/大于均值水平(假设在总体水平上，人们对家庭的依恋水平(HOME)均值为3.5)？”</h2>
+<br>
+<h2 lang="zh-CN">2. “在penguin数据中，男女生在亲密关系经验(ECR)中的得分是否存在显著差异？”</h2>
+<br>
+<h2 lang="zh-CN">3. “在penguin数据中，参与者在不同时间的温度差异是否具有显著性？”</h2>
+
+---
+
+# <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
+```{r pacakge, message=FALSE}
+#install.packages("bruceR")
+#library(bruceR)
+library(dplyr)
+library(tidyr)
+# 载入bruceR有点慢，PPT中就不载入了
+
+```
+
+---
+# <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
+```{r WD & df.pg.raw}
+WD <-  here::here()
+
+df.pg.raw <-  read.csv('../DATA/penguin_rawdata.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+```{r df.pg.raw DT, echo=FALSE}
+DT::datatable(head(df.pg.raw, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="zh-CN">清洗数据</h1>
+# <h2 lang="zh-CN">对模型涉及变量的题目求均值</h2>
+```{r df.pg.mean, message = FALSE}
+df.pg.mean <- df.pg.raw %>%
+  dplyr::filter(sex > 0 & sex < 3) %>%
+  dplyr::mutate(ECR_mean = rowMeans(select(., starts_with("ECR")),na.rm = T),
+                HOME_mean = rowMeans(select(., starts_with("HOME")),na.rm = T),
+                sex=as.factor(sex)
+                ) %>%
+  dplyr::select(sex, ECR_mean, HOME_mean, Temperature_t1,Temperature_t2)
+
+```  
+```{r df.pg.mean DT, echo=FALSE}
+DT::datatable(head(df.pg.mean, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="zh-CN">TTEST()：t检验的相关参数</h1>
+![](fig/PROCESS_19.png)
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="zh-CN">问题1CODE_单样本t检验</h2>
+```{r}
+  #bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = ">")
+  #bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = "<")
+  result.PROCESS <- capture.output({
+  bruceR::TTEST(data=df.pg.mean, 
+                y="HOME_mean", 
+                test.value = 3.5, 
+                test.sided = "=")
+})
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md") # .md最整齐
+                
+```
+
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="en">OUTPUT</h2>
+![](fig/PROCESS_1.png)
+
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="zh-CN">问题2CODE_独立样本t检验</h2>
+```{r}
+    result.PROCESS <- capture.output({   
+    bruceR::TTEST(data=df.pg.mean, 
+                y="ECR_mean",
+                x="sex")
+})
+
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+                
+```
+
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="en">OUTPUT</h2>
+![](fig/PROCESS_2.png)
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="zh-CN">问题3CODE_配对样本t检验</h2>
+```{r}
+   result.PROCESS <- capture.output({
+   bruceR::TTEST(data=df.pg.mean, 
+                 y = c("Temperature_t1",              
+                       "Temperature_t2"),
+                 paired = T)  #是否为配对样本t检验？默认是FALSE
+})
+
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md") 
+                
+```
+
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="en">OUTPUT</h2>
+![](fig/PROCESS_3.png)
+---
+# <h1 lang="en">Reporting T-test results in APA</h1>
+<br>
+<br>
+<h3 lang="en">The basic format for reporting the result of a t-test is the same in each case:</h3>
+<h3 lang="en">t(degress of freedom) = the t-value , p = p-value, Cohen's d = effect size</h3>
+<br>
+![](fig/PROCESS_8.png)
+
+<h4 lang="zh-CN">该示例和课程设置的问题无关，实际中可结合研究假设进行改写</h4>
+---
+class: center, middle
+<span style="font-size: 60px;">7.3 anova</span> <br>
+
+---
+# <h1 lang="zh-CN">回顾anova的基础知识</h1>
+<br>
+<center>
+<h2 lang="zh-CN">one-way ANOVA:单因素方差分析</h2>
+</center>
+<br>
+<h3 lang="zh-CN">概述</h3>
+<h4 lang="zh-CN">单因素方差分析可以看成基础统计中两样本t检验的一个推广，即要比较试验观测值的某个因变量按照一个分组变量（即“因素”）分组后，各组的因变量均值有无显著差异。设因素 A 将所有观测分为 m个组，且各次观测相互独立。</h4>
+<br>
+![](fig/PROCESS_4.png)
+<br>
+---
+# <h1 lang="zh-CN">回顾anova的基础知识</h1>
+<br>
+<center>
+<h2 lang="zh-CN">one-way ANOVA:单因素方差分析</h2>
+</center>
+<br>
+<h3 lang="zh-CN">单因素方差分析的统计预设</h3>
+<br>
+![](fig/PROCESS_5.png)
+---
+# <h1 lang="zh-CN">回顾anova的基础知识</h1>
+<br>
+<center>
+<h2 lang="zh-CN">one-way ANOVA:单因素方差分析</h2>
+</center>
+<br>
+<br>
+<h3 lang="zh-CN">方差分析中的效应量</h3>
+<br>
+![](fig/PROCESS_6.png)
+---
+# <h1 lang="zh-CN">回顾anova的基础知识</h1>
+<br>
+<center>
+<h2 lang="zh-CN">多因素方差分析概述</h2>
+</center>
+<br>
+<br>
+<h4 lang="zh-CN">多因素方差分析原理与单因素方差分析基本一致，即利用方差比较的方法，通过假设检验的过程来判断多个因素是否对因变量产生显著性影响。当有两个及以上因素对因变量产生影响时，使用多因素方差分析。多因素方差分析不仅要考虑每个因素的主效应，往往还要考虑因素之间的交互效应。</h4>
+<br>
+![](fig/PROCESS_7.png)
+---
+class: center, middle
+<span style="font-size: 60px;">7.4 anova process in R</span> <br>
+---
+# <h1 lang="zh-CN">为代码实现编造几个问题</h1>
+<br>
+<br>
+<h2 lang="zh-CN">1. “在match数据中，被试在匹配任务和不匹配任务上的反应时是否存在差异？”</h2>
+<br>
+<h2 lang="zh-CN">2. “在match数据中，被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异？”</h2>
+<br>
+---
+# <h1 lang="zh-CN">载入包</h1>
+```{r}
+#install.packages("bruceR")
+#library(bruceR)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+# 载入bruceR有点慢，PPT中就不载入了
+
+```
+---
+# <h1 lang="zh-CN">设置工作路径 - 导入数据与预处理</h1>
+```{r}
+WD <-  here::here()
+
+df.match.raw <-  read.csv('../DATA/MS_rep_matchingTask_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)%>%
+                 dplyr::filter(ACC == 1) %>% #只选择回答正确的数据
+                 dplyr::filter(RT > quantile(RT, 0.0015) & RT < quantile(RT, 0.9985)) %>% #remove outliers below and above 3rd sd
+                 dplyr::mutate(RT = as.numeric(RT)) %>%
+                 dplyr::mutate(across("ACC", as.factor)) %>%
+                 dplyr::mutate(Morality = as.factor(Morality)) %>%
+                 dplyr::mutate(Identity = as.factor(Identity)) %>%
+                 dplyr::filter(!is.na(RT)) #剔除缺失值
+```
+---
+<br>
+<br>
+```{r}
+DT::datatable(head(df.match.raw, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="zh-CN">CODE_问题1处理</h1>
+# <h2 lang="zh-CN">计算被试匹配与不匹配任务上的平均反应时间及其标准差</h2>
+```{r}
+df.match.mean <- df.match.raw %>%
+    dplyr::group_by(Subject, Match) %>%
+    dplyr::summarise(
+        n = n(),
+        rt_sd = sd(as.numeric(RT), na.rm = T),
+        rt_mean = mean(as.numeric(RT), na.rm = T),
+        acc_mean=mean(as.numeric(as.character(ACC)),na.rm=T)#对于factor数据，先转成character，再变成numeric
+        ) %>%
+    dplyr::ungroup()
+```
+---
+<br>
+<br>
+```{r}
+DT::datatable(head(df.match.mean, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="zh-CN">CODE_问题1处理</h1>
+# <h2 lang="zh-CN">单因素被试内设计</h2>
+```{r}
+#比较被试在匹配任务和不匹配任务上的反应时是否存在差异
+#单因素被试内设计（长型数据）
+result.PROCESS <- capture.output({
+df_within <- df.match.mean%>%
+  bruceR::MANOVA(subID="Subject",#被试id
+                 dv="rt_mean",#因变量，因为是MANOVA，实际上因变量可以再后面设置很多个
+                 within="Match") #设置条件，因素分析的条件
+})
+
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+# 若不符合球形假设要加上：sph.correction = "GG"
+```
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="en">OUTPUT</h2>
+![](fig/PROCESS_10.png)
+---
+# <h1 lang="zh-CN">CODE_问题2处理</h1>
+# <h2 lang="zh-CN">计算被试在不同身份和效价条件下的平均反应时间及其标准差</h2>
+```{r}
+df.match.mean <- df.match.raw %>%
+    dplyr::group_by(Subject,Morality,Identity) %>%
+    dplyr::summarise(
+        n = n(),
+        rt_sd = sd(as.numeric(RT), na.rm = T),
+        rt_mean = mean(as.numeric(RT), na.rm = T)
+        ) %>%
+    dplyr::ungroup()
+```
+---
+<br>
+<br>
+```{r}
+DT::datatable(head(df.match.mean, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="zh-CN">MANOVA()：多因素被试间/被试内/混合设计方差分析ANOVA</h1>
+# <h2 lang="zh-CN">主要参数</h2>
+![](fig/PROCESS_16.png)
+---
+# <h1 lang="zh-CN">CODE_问题2处理</h1>
+# <h2 lang="zh-CN">长数据转换为宽数据</h2>
+```{r}
+df.match.within <- df.match.mean %>%
+    dplyr::select(-c(n, rt_sd)) %>%
+    dplyr::mutate(Morality = paste("A_", Morality, sep = ""),#将变量的名称进行修改转换，不生产新的变量
+                  Identity = paste("B_", Identity, sep = "")) %>%
+    tidyr::unite("Conds", Morality:Identity, sep = "&",remove=TRUE) %>%#将morality和identity组合名称起来生成一个新的变量"Conds"
+    tidyr::pivot_wider(names_from = Conds,
+                       values_from = rt_mean)
+head(df.match.within)
+#str(df.match.within)
+```
+
+---
+# <h1 lang="zh-CN">CODE_问题2处理</h1>
+# <h2 lang="zh-CN">两因素被试内设计_宽数据</h2>
+```{r}
+#被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异）
+  result.PROCESS <- capture.output({
+  res_rmANOVA_1 <- bruceR::MANOVA(data=df.match.within,
+                   dvs="A_Bad&B_Other:A_Good&B_Self",
+                   dvs.pattern="A_(.+)B_(.+)",#正则表达式
+                   within=c("A_","B_"))#表示2个主条件
+  })
+
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+```
+
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="en">OUTPUT</h2>
+![](fig/PROCESS_17.png)
+---
+# <h1 lang="en">bruceR::PROCESS</h1>
+## <h2 lang="en">OUTPUT</h2>
+![](fig/PROCESS_18.png)
+---
+# <h1 lang="zh-CN">CODE_问题2处理</h1>
+# <h2 lang="zh-CN">两因素被试内设计_长数据</h2>
+```{r}
+#被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异）
+#head(df.match.mean)
+  result.PROCESS <- capture.output({
+  res_rmANOVA_2 <- bruceR::MANOVA(data=df.match.mean,
+                   dv="rt_mean",
+                   within=c("Morality","Identity"),
+                   subID="Subject")
+  })
+
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+```
+
+---
+# <h1 lang="zh-CN">简单效应检验与多重比较</h1>
+# <h2 lang="zh-CN">主要参数</h2>
+![](fig/PROCESS_13.png)
+---
+# <h1 lang="zh-CN">简单效应检验与多重比较</h1>
+# <h2 lang="zh-CN">问题2的简单效应比较_CODE</h2>
+```{r}
+result.PROCESS <- capture.output({
+sim_eff_1 <- res_rmANOVA_1 %>%
+  bruceR::EMMEANS("A_", by="B_")#简单效应分析
+})
+writeLines(result.PROCESS, "../OUTPUT/PROCESS.md") 
+
+#sim_eff_1 <- res_rmANOVA_1 %>%
+  #EMMEANS("B_", by="A_")   和上一个同理，只是转换了不同的形式
+```
+
+---
+# <h1 lang="zh-CN">被试间设计的语法实现</h1>
+# <h2 lang="en">CODE</h2>
+
+```{r}
+#MANOVA(data, dv="SCORE", between=c("A", "B"))
+#data 代表两因素的数据类型
+#dv 因变量
+# between 被试间因素的名称，此处表示两因素被试间设计，如果只有一个就是单因素被试间设计
+```
+
+---
+# <h1 lang="zh-CN">混合设计的语法实现</h1>
+# <h2 lang="en">CODE</h2>
+<h3 lang="zh-CN">以2个被试间1个被试内的混合设计形式为例</h3>
+
+```{r}
+# 假设数据集是mixed.3_2b1w
+# A、C是被试间变量，B是被试内变量
+#MANOVA(mixed.3_2b1w, dvs="B1:B2", dvs.pattern="B(.)",
+       #between=c("A", "C"), within="B")
+
+```
+
+---
+# <h1 lang="zh-CN">课堂练习</h1>
+<br>
+<br>
+<h2 lang="zh-CN">1. “在match数据中，男性和女性的反应时是否存在差异(请分别使用t检验和方差分析来解决这个问题)？”</h2>
+<br>
+<h2 lang="zh-CN">2. “在match数据中，假设每名被试只参加了不同身份和效价组合的其中一种实验条件，那么不同身份与不同效价的条件组合下的反应时水平是否存在差异？”</h2>
+<br>
+---
+class: center, middle
+<span style="font-size: 60px;">本章内容结束<br>
