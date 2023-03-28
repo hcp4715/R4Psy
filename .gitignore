@@ -1,2 +1,8 @@
-.Rhistory
 
+#  R files
+.Rhistory
+.RData
+.Rproj.user
+
+## Mac OS files
+.DS_Store
