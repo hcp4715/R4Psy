@@ -40,17 +40,62 @@ class: center, middle
 #回顾
 ##函数及用法
 <font size=5>
-&emsp;&emsp;我们已经接触和使用了不少函数了，但是我们对R中的函数还是有陌生的感觉，这时我们再重新看看函数的定义。
+&emsp;&emsp;重新了解函数：
 </font>
 ```{r}
 df.mt.raw <-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) 
 ```
 <font size=5>
-&emsp;&emsp;在R中函数有函数名和语句两个部分，以用的最多的read.csv()为例，read.csv是函数名，它是某一个操作的名字。而这个操作如何达成，需要的是()中的argument。<br>
-&emsp;&emsp;比如，read.csv在执行过程中，需要argument比如“file=…”来指定文件的路径、需要“header=…”来确定是否要使用第一行作为列名、需要“sep=…”来指定所读文件的分割符为什么，这些内容有些是必不可少的，比如没有file那么函数就无法知道你要打开的文件究竟是哪一个。<br>
-&emsp;&emsp;但也会疑惑我们例子中就没有写file=或是省略了很多东西，为什么argument却识别了呢，这和函数的argument有默认顺序和默认值。可以在Console中使用?read.csv来查看帮助文档，其中有顺序和默认值的设定。
+&emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名；“()”中的输入参数。<br>
+&emsp;&emsp;比如，“header=…”：是否要使用第一行作为列名；<br>
+&emsp;&emsp;再如，“sep=…” ：指定分割符什么 <br>
+
 </font>
+
+---
+#回顾
+##函数及用法
+<font size=5>
+&emsp;&emsp;重新了解函数：
+</font>
+```{r}
+df.mt.raw <-  read.csv('./data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+```
+<font size=5>
+&emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名；“()”中的输入参数。<br>
+&emsp;&emsp;比如，“header=…”：是否要使用第一行作为列名；<br>
+&emsp;&emsp;再如，“sep=…” ：指定分割符什么 <br>
+<br>
+&emsp;&emsp;为什么第一个文件名没有相应的argument？。
+</font>
+
+---
+#回顾
+##函数及用法
+<font size=5>
+&emsp;&emsp;重新了解函数：
+</font>
+
+完整输入arguments
+```{r, eval=FALSE}
+result1 <- functionName(arg1 = value1, arg2 = value2, arg3 = value3)
+result1 <- functionName(arg3 = value3, arg1 = value1, arg2 = value2)
+```
+
+省略arguments,按照顺序输入argument的值
+```{r, eval=FALSE}
+result2 <- functionName(value1, value2, value3)
+
+result2 <- functionName(value3, value1, value2) # will not return expected
+```
+
+省略有默认值的arguments
+```{r, eval=FALSE}
+result3 <- functionName(arg1 = value1)
+
+```
 
 ---
 #回顾
@@ -60,14 +105,16 @@ df.mt.raw <-  read.csv('./data/match/match_raw.csv',
 </font>
 ```{r}
 df.mt.raw <-  read.csv(file = './data/match/match_raw.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
+                       header = T, 
+                       sep=",",
+                       stringsAsFactors = FALSE) 
 ```
 
 ---
 #回顾
 ##函数及用法
 <font size=5>
-&emsp;&emsp;有同学反应不理解“TRUE ~ NA_real_”，其实也可以归为对argument的不熟悉，可以通过查找函数的帮助文档了解这个argument的作用。<br>
+&emsp;&emsp;argument: “TRUE ~ NA_real_”?<br>
 </font>
 
 ![p1](./picture/chp6/real.png)
@@ -82,7 +129,7 @@ df.mt.raw <-  read.csv(file = './data/match/match_raw.csv',
 #回顾
 ##函数及用法
 <font size=5>
-&emsp;&emsp;关于函数，也有同学对group_by函数的作用不了解，我们还是可以使用函数的帮助文档了解具体的作用。此外，一个函数有什么作用最直接的是看结果。
+&emsp;&emsp;关于函数“dplyr::group_by()"的作用: 比较操作前后的结果。
 </font>   
 ```{r}
 library("tidyverse")
@@ -136,11 +183,38 @@ DT::datatable(ungroup)
 &emsp;&emsp;从对比中可以看出，使用了group_by()后，实际上对数据框进行了分组，summarise针对的是每一个按照Shape列拆分开的数据框。
 </font>
 ```{r}
-remove(group,ungroup)
+remove(group, ungroup)
  
 ```
 
 ---
+
+# 回顾
+## 函数及用法
+<font size=5>
+&emsp;&emsp; 理解函数的最好办法：创建函数
+</font>
+```{r}
+simpleFun <- function(a = 1, b = 100){
+  sum <- a + b
+  product <- a * b
+  
+  res <- c(sum, product)
+  
+  return(res)
+}
+
+```
+
+```{r}
+simpleFun()
+```
+
+```{r}
+simpleResult <- simpleFun(a=1, b=5)
+```
+---
+
 # 回顾
 ## for loop
 <font size=5>
@@ -184,6 +258,12 @@ remove(files,i,sum,df,df_list)
 &emsp;&emsp;3.for (i in seq_along(files))……部分是，对files里的第一个值执行read.table()，并将结果放进df_list中。接着对第二个值执行，直至循环结束整个files
 </font>
 ---
+# 回顾
+## 练习
+
+定义一下函数，其有两个整数型的arguments (a, b)，第一个比第二个小，函数的输出是计算从a到b的所有整数之和。
+
+```
 # 回顾
 ## 练习题
 <font size=5>
