@@ -6,7 +6,7 @@ institute: ""
 date: ""
 output:
   xaringan::moon_reader:
-    css: [default, Font_Style.css]
+    css: [default, css/Font_Style.css]
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -100,7 +100,7 @@ class: center, middle
 <h3 lang="en">whether the mean of group A (mA) is greather than the mean of group B (mB )?</h3>
 ---
 class: center, middle
-<span style="font-size: 60px;">7.2 T-test process in R</span> <br>
+<span style="font-size: 60px;">7.2 T-test in R</span> <br>
 ---
 # <h1 lang="zh-CN">为代码实现编造几个问题</h1>
 <br>
@@ -128,7 +128,7 @@ library(tidyr)
 ```{r WD & df.pg.raw}
 WD <-  here::here()
 
-df.pg.raw <-  read.csv('../DATA/penguin_rawdata.csv',
+df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
                        header = T, sep=",", stringsAsFactors = FALSE)
 ```
 ```{r df.pg.raw DT, echo=FALSE}
@@ -156,65 +156,67 @@ DT::datatable(head(df.pg.mean, 10),
 
 ---
 # <h1 lang="zh-CN">TTEST()：t检验的相关参数</h1>
-![](fig/PROCESS_19.png)
+![](./picture/chp7/process_19.png)
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::TTEST</h1>
 ## <h2 lang="zh-CN">问题1CODE_单样本t检验</h2>
 ```{r}
   #bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = ">")
   #bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = "<")
-  result.PROCESS <- capture.output({
+  result.ttest <- capture.output({
   bruceR::TTEST(data=df.pg.mean, 
                 y="HOME_mean", 
                 test.value = 3.5, 
                 test.sided = "=")
 })
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md") # .md最整齐
+writeLines(result.ttest, "./output/chp7/single_t.md") # .md最整齐
                 
 ```
 
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::TTEST</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](fig/PROCESS_1.png)
+![](./picture/chp7/process_1.png)
 
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::TTEST</h1>
 ## <h2 lang="zh-CN">问题2CODE_独立样本t检验</h2>
 ```{r}
-    result.PROCESS <- capture.output({   
+    result.ttest <- capture.output({   
     bruceR::TTEST(data=df.pg.mean, 
                 y="ECR_mean",
                 x="sex")
 })
 
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+writeLines(result.ttest, "./output/chp7/inde_t.md")
                 
 ```
 
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::TTEST</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](fig/PROCESS_2.png)
+![](./picture/chp7/process_2.png)
+
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::TTEST</h1>
 ## <h2 lang="zh-CN">问题3CODE_配对样本t检验</h2>
 ```{r}
-   result.PROCESS <- capture.output({
+   result.ttest <- capture.output({
    bruceR::TTEST(data=df.pg.mean, 
                  y = c("Temperature_t1",              
                        "Temperature_t2"),
                  paired = T)  #是否为配对样本t检验？默认是FALSE
 })
 
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md") 
+writeLines(result.ttest, "./output/chp7/pair_t.md")
                 
 ```
 
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::TTEST</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](fig/PROCESS_3.png)
+![](./picture/chp7/process_3.png)
+
 ---
 # <h1 lang="en">Reporting T-test results in APA</h1>
 <br>
@@ -222,7 +224,8 @@ writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
 <h3 lang="en">The basic format for reporting the result of a t-test is the same in each case:</h3>
 <h3 lang="en">t(degress of freedom) = the t-value , p = p-value, Cohen's d = effect size</h3>
 <br>
-![](fig/PROCESS_8.png)
+![](./picture/chp7/process_8.png)
+
 
 <h4 lang="zh-CN">该示例和课程设置的问题无关，实际中可结合研究假设进行改写</h4>
 ---
@@ -231,58 +234,38 @@ class: center, middle
 
 ---
 # <h1 lang="zh-CN">回顾anova的基础知识</h1>
-<br>
-<center>
-<h2 lang="zh-CN">one-way ANOVA:单因素方差分析</h2>
-</center>
-<br>
-<h3 lang="zh-CN">概述</h3>
-<h4 lang="zh-CN">单因素方差分析可以看成基础统计中两样本t检验的一个推广，即要比较试验观测值的某个因变量按照一个分组变量（即“因素”）分组后，各组的因变量均值有无显著差异。设因素 A 将所有观测分为 m个组，且各次观测相互独立。</h4>
-<br>
-![](fig/PROCESS_4.png)
+![](./picture/chp7/process_4.png)
+
 <br>
 ---
 # <h1 lang="zh-CN">回顾anova的基础知识</h1>
-<br>
-<center>
-<h2 lang="zh-CN">one-way ANOVA:单因素方差分析</h2>
-</center>
-<br>
-<h3 lang="zh-CN">单因素方差分析的统计预设</h3>
-<br>
-![](fig/PROCESS_5.png)
+![](./picture/chp7/process_5.png)
+
+---
+# <h1 lang="zh-CN">回顾anova的基础知识</h1>
+![](./picture/chp7/process_6.png)
+
+
+
 ---
 # <h1 lang="zh-CN">回顾anova的基础知识</h1>
 <br>
-<center>
-<h2 lang="zh-CN">one-way ANOVA:单因素方差分析</h2>
-</center>
-<br>
-<br>
-<h3 lang="zh-CN">方差分析中的效应量</h3>
-<br>
-![](fig/PROCESS_6.png)
----
-# <h1 lang="zh-CN">回顾anova的基础知识</h1>
-<br>
-<center>
 <h2 lang="zh-CN">多因素方差分析概述</h2>
-</center>
 <br>
+<h3 lang="zh-CN">多因素方差分析原理与单因素方差分析基本一致，即利用方差比较的方法，通过假设检验的过程来判断多个因素是否对因变量产生显著性影响。当有两个及以上因素对因变量产生影响时，使用多因素方差分析。多因素方差分析不仅要考虑每个因素的主效应，往往还要考虑因素之间的交互效应。</h3>
 <br>
-<h4 lang="zh-CN">多因素方差分析原理与单因素方差分析基本一致，即利用方差比较的方法，通过假设检验的过程来判断多个因素是否对因变量产生显著性影响。当有两个及以上因素对因变量产生影响时，使用多因素方差分析。多因素方差分析不仅要考虑每个因素的主效应，往往还要考虑因素之间的交互效应。</h4>
-<br>
-![](fig/PROCESS_7.png)
+![](./picture/chp7/process_7.png)
+
 ---
 class: center, middle
-<span style="font-size: 60px;">7.4 anova process in R</span> <br>
+<span style="font-size: 60px;">7.4 anova in R</span> <br>
 ---
 # <h1 lang="zh-CN">为代码实现编造几个问题</h1>
 <br>
 <br>
 <h2 lang="zh-CN">1. “在match数据中，被试在匹配任务和不匹配任务上的反应时是否存在差异？”</h2>
 <br>
-<h2 lang="zh-CN">2. “在match数据中，被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异？”</h2>
+<h2 lang="zh-CN">2. “在match数据中，被试在不同身份(self vs other)与不同效价(moral vs immoral)的条件组合下反应时是否存在差异？”</h2>
 <br>
 ---
 # <h1 lang="zh-CN">载入包</h1>
@@ -300,13 +283,16 @@ library(tidyverse)
 ```{r}
 WD <-  here::here()
 
-df.match.raw <-  read.csv('../DATA/MS_rep_matchingTask_raw.csv',
+df.match.raw <-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE)%>%
+                 tidyr::separate(., col=Shape,into = c("Valence","Identity"),
+                                              sep = "(?<=moral|immoral)(?=Self|Other)")%>% #拆分单元格内字符串
+                 dplyr::select(Sub,Valence,Identity,everything())%>%
                  dplyr::filter(ACC == 1) %>% #只选择回答正确的数据
                  dplyr::filter(RT > quantile(RT, 0.0015) & RT < quantile(RT, 0.9985)) %>% #remove outliers below and above 3rd sd
                  dplyr::mutate(RT = as.numeric(RT)) %>%
                  dplyr::mutate(across("ACC", as.factor)) %>%
-                 dplyr::mutate(Morality = as.factor(Morality)) %>%
+                 dplyr::mutate(Valence = as.factor(Valence)) %>%
                  dplyr::mutate(Identity = as.factor(Identity)) %>%
                  dplyr::filter(!is.na(RT)) #剔除缺失值
 ```
@@ -323,7 +309,7 @@ DT::datatable(head(df.match.raw, 10),
 # <h2 lang="zh-CN">计算被试匹配与不匹配任务上的平均反应时间及其标准差</h2>
 ```{r}
 df.match.mean <- df.match.raw %>%
-    dplyr::group_by(Subject, Match) %>%
+    dplyr::group_by(Sub, Match) %>%
     dplyr::summarise(
         n = n(),
         rt_sd = sd(as.numeric(RT), na.rm = T),
@@ -346,26 +332,27 @@ DT::datatable(head(df.match.mean, 10),
 ```{r}
 #比较被试在匹配任务和不匹配任务上的反应时是否存在差异
 #单因素被试内设计（长型数据）
-result.PROCESS <- capture.output({
+result.anova <- capture.output({
 df_within <- df.match.mean%>%
-  bruceR::MANOVA(subID="Subject",#被试id
+  bruceR::MANOVA(subID="Sub",#被试id
                  dv="rt_mean",#因变量，因为是MANOVA，实际上因变量可以再后面设置很多个
                  within="Match") #设置条件，因素分析的条件
 })
 
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+writeLines(result.anova, "./output/chp7/anova_1.md")
 # 若不符合球形假设要加上：sph.correction = "GG"
 ```
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::MANOVA</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](fig/PROCESS_10.png)
+![](./picture/chp7/process_10.png)
+
 ---
 # <h1 lang="zh-CN">CODE_问题2处理</h1>
 # <h2 lang="zh-CN">计算被试在不同身份和效价条件下的平均反应时间及其标准差</h2>
 ```{r}
 df.match.mean <- df.match.raw %>%
-    dplyr::group_by(Subject,Morality,Identity) %>%
+    dplyr::group_by(Sub,Valence,Identity) %>%
     dplyr::summarise(
         n = n(),
         rt_sd = sd(as.numeric(RT), na.rm = T),
@@ -384,16 +371,17 @@ DT::datatable(head(df.match.mean, 10),
 ---
 # <h1 lang="zh-CN">MANOVA()：多因素被试间/被试内/混合设计方差分析ANOVA</h1>
 # <h2 lang="zh-CN">主要参数</h2>
-![](fig/PROCESS_16.png)
+![](./picture/chp7/process_16.png)
+
 ---
 # <h1 lang="zh-CN">CODE_问题2处理</h1>
 # <h2 lang="zh-CN">长数据转换为宽数据</h2>
 ```{r}
 df.match.within <- df.match.mean %>%
     dplyr::select(-c(n, rt_sd)) %>%
-    dplyr::mutate(Morality = paste("A_", Morality, sep = ""),#将变量的名称进行修改转换，不生产新的变量
+    dplyr::mutate(Valence = paste("A_", Valence, sep = ""),#将变量的名称进行修改转换，不生产新的变量
                   Identity = paste("B_", Identity, sep = "")) %>%
-    tidyr::unite("Conds", Morality:Identity, sep = "&",remove=TRUE) %>%#将morality和identity组合名称起来生成一个新的变量"Conds"
+    tidyr::unite("Conds", Valence:Identity, sep = "&",remove=TRUE) %>%#将morality和identity组合名称起来生成一个新的变量"Conds"
     tidyr::pivot_wider(names_from = Conds,
                        values_from = rt_mean)
 head(df.match.within)
@@ -404,54 +392,56 @@ head(df.match.within)
 # <h1 lang="zh-CN">CODE_问题2处理</h1>
 # <h2 lang="zh-CN">两因素被试内设计_宽数据</h2>
 ```{r}
-#被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异）
-  result.PROCESS <- capture.output({
+#被试在不同身份(self vs other)与不同效价(moral vs moral)的条件组合下反应时是否存在差异）
+  result.anova <- capture.output({
   res_rmANOVA_1 <- bruceR::MANOVA(data=df.match.within,
-                   dvs="A_Bad&B_Other:A_Good&B_Self",
+                   dvs="A_immoral&B_Other:A_moral&B_Self",
                    dvs.pattern="A_(.+)B_(.+)",#正则表达式
                    within=c("A_","B_"))#表示2个主条件
   })
 
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+writeLines(result.anova, "./output/chp7/anova_2.md")
 ```
 
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::MANOVA</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](fig/PROCESS_17.png)
+![](./picture/chp7/process_17.png)
+
 ---
-# <h1 lang="en">bruceR::PROCESS</h1>
+# <h1 lang="en">bruceR::MANOVA</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](fig/PROCESS_18.png)
+![](./picture/chp7/process_18.png)
 ---
 # <h1 lang="zh-CN">CODE_问题2处理</h1>
 # <h2 lang="zh-CN">两因素被试内设计_长数据</h2>
 ```{r}
 #被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异）
 #head(df.match.mean)
-  result.PROCESS <- capture.output({
+  result.anova <- capture.output({
   res_rmANOVA_2 <- bruceR::MANOVA(data=df.match.mean,
                    dv="rt_mean",
-                   within=c("Morality","Identity"),
-                   subID="Subject")
+                   within=c("Valence","Identity"),
+                   subID="Sub")
   })
 
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md")
+writeLines(result.anova, "./output/chp7/anova_3.md")
 ```
 
 ---
 # <h1 lang="zh-CN">简单效应检验与多重比较</h1>
 # <h2 lang="zh-CN">主要参数</h2>
-![](fig/PROCESS_13.png)
+![](./picture/chp7/process_13.png)
+
 ---
 # <h1 lang="zh-CN">简单效应检验与多重比较</h1>
 # <h2 lang="zh-CN">问题2的简单效应比较_CODE</h2>
 ```{r}
-result.PROCESS <- capture.output({
+result.check <- capture.output({
 sim_eff_1 <- res_rmANOVA_1 %>%
   bruceR::EMMEANS("A_", by="B_")#简单效应分析
 })
-writeLines(result.PROCESS, "../OUTPUT/PROCESS.md") 
+writeLines(result.check, "./output/chp7/check.md")
 
 #sim_eff_1 <- res_rmANOVA_1 %>%
   #EMMEANS("B_", by="A_")   和上一个同理，只是转换了不同的形式
