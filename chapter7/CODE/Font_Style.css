@@ -1,0 +1,87 @@
+/* 字体源 */
+@font-face {
+  font-family: 'Kaiti';
+  src: local('楷体'), local('Kaiti'), url('path/to/kaiti.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Times New Roman';
+  src: local('Times New Roman'), url('path/to/times-new-roman.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Yanone Kaffeesatz';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Yanone Kaffeesatz Regular'), local('YanoneKaffeesatz-Regular'),
+       url('https://github.com/yihui/xaringan/releases/download/v0.1/yanone-kaffeesatz.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Serif'), local('DroidSerif'),
+       url('https://github.com/yihui/xaringan/releases/download/v0.1/droid-serif.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro'), local('SourceCodePro-Regular'),
+       url('https://github.com/yihui/xaringan/releases/download/v0.1/source-code-pro.woff') format('woff');
+}
+
+/* 正文字体 */
+body { font-family: 'Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Songti SC', serif; }
+
+/* 标题字体 */
+/* 中文标题用楷体 */
+h1[lang="zh-CN"],
+h2[lang="zh-CN"],
+h3[lang="zh-CN"], 
+h4[lang="zh-CN"], 
+h5[lang="zh-CN"] {
+  font-family: "KaiTi",'Yanone Kaffeesatz', 'Palatino Linotype', 'Book Antiqua', Palatino, 'STHeiti', 'SimHei', 'Microsoft YaHei', serif;
+}
+
+/* 英文标题用 Times New Roman */
+h1[lang="en"],
+h2[lang="en"],
+h3[lang="en"], 
+h4[lang="en"], 
+h5[lang="en"] {
+  font-family: "Times New Roman",'Yanone Kaffeesatz', 'Palatino Linotype', 'Book Antiqua', Palatino, 'STHeiti', 'SimHei', 'Microsoft YaHei', serif;
+}
+
+/* 代码字体 */
+/* 代码用 Source Code Pro */
+.remark-code, .remark-inline-code { font-family: 'Source Code Pro', 'Lucida Console', Monaco, monospace; }
+
+/* span 字体 */
+span {font-family: 'Times New Roman', 'Kaiti', serif;}
+
+/* 标题之间的行间距 */
+.remark-slide-content h1,
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5,
+.remark-slide-content h6 {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+/* 标题的字号 */
+.remark-slide-content h1 {
+  font-size: 2em;
+}
+
+.remark-slide-content h2 {
+  font-size: 1.5em;
+}
+
+.remark-slide-content h3 {
+  font-size: 1em;
+}
