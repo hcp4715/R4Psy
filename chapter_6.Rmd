@@ -10,7 +10,8 @@ output:
       highlightLines: true
       highlightStyle: github
       countIncrementalSlides: false
-
+params:
+  output_dir: "../output"
 ---
 class: center, middle
 <span style="font-size: 50px;">**第六章**</span> <br>
@@ -155,12 +156,14 @@ group <- group %>%
 <font size=5>
 &emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
 </font>
+
 ```{r}
 library("tidyverse")
 df.mt.raw <-  read.csv('./data/match/match_raw.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
+                       header = T, sep=",", 
+                       stringsAsFactors = FALSE) 
 group <- df.mt.raw %>% 
-  group_by(.,Shape) %>% 
+  group_by(., Shape) %>% 
   summarise(n())
 DT::datatable(group)
 ```
@@ -387,17 +390,19 @@ df.mt.clean <- df.mt.raw %>%
   tidyr::pivot_wider(names_from = Shape,
                      values_from = Dprime) 
 ```
+
 ---
 class: center, middle
 <span style="font-size: 50px;">**第六章**</span> <br>
 <span style="font-size: 50px;">__如何探索数据: __</span> <br>
 <span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
 ---
+
 # 探索性数据分析
 ## What is exploratory data analysis?
 <font size=5>
 &emsp;&emsp;在介绍描述性统计和可视化之前，我们先了解一个概念：探索性数据分析(Exploratory Data Analysis, EDA)。<br>
-&emsp;&emsp;In statistics, exploratory data analysis(EDA) is an approach to analyzing data sets to summarize their maincharacteristics, often with visual methods (Wikipedia).
+&emsp;&emsp;In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their maincharacteristics, often with visual methods (Wikipedia).
 </font>
 <div style="text-align:center;">
   <img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" alt="layer" style="width:70%; height:auto;" />
@@ -410,10 +415,15 @@ class: center, middle
 &emsp;&emsp;要进行EDA，首先要了解自己的数据，并提出有质量的问题。但是提出有质量的问题前，我们可以先从几个基础的简单问题开始：<br>
 &emsp;&emsp;有哪些变量，类型如何？变量的值是如何变化的？变量之间有什么关系？
 </font>
-```{r}
-#加载所需要的R包
-library("tidyverse")
-#读取数据
+```{r prepare the packages}
+
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 加载所需要的R包
+pacman::p_load("tidyverse")
+# 读取数据
 df.pg.raw <- read.csv("./data/penguin/penguin_rawdata.csv",
                       header = TRUE, sep=",", stringsAsFactors = FALSE)
 df.mt.raw <-  read.csv('./data/match/match_raw.csv',
@@ -423,18 +433,18 @@ df.mt.raw <-  read.csv('./data/match/match_raw.csv',
 ---
 # 探索性数据分析
 ## 有哪些变量，类型如何？
-## 了解你的数据
+
 ```{r, out.width = "10px", out.height = "300px"}
-colnames(df.mt.raw)#查看列名，观察有哪些变量
-DT::datatable(head(df.mt.raw,10))#了解数据内容
+colnames(df.mt.raw)                # 查看列名，观察有哪些变量
+DT::datatable(head(df.mt.raw, 3))  # 了解数据内容
 ```
 
 ---
 # 探索性数据分析
-## 了解你的数据
+## 了解数据
 ```{r, out.width = "10px", out.height = "300px"}
-#前几节课提过的summary()函数
-#这里使用datatable()是为了方便在ppt呈现
+# 前几节课提过的summary()函数
+# 这里使用datatable()是为了方便在ppt呈现
 DT::datatable(summary(df.mt.raw))
 ```
 
@@ -445,9 +455,9 @@ DT::datatable(summary(df.mt.raw))
 &emsp;&emsp;更进一步，如果我想知道变量的平均数、中位数和标准差等统计量应该怎么办？
 </font><br>
 ```{r, width = 400, height = 300}
-#使用psych包中的describe()函数
+# 使用psych包中的describe()函数
 DT::datatable(psych::describe(df.mt.raw))
-#需要注意的是，describe()函数不会帮你处理缺失值，它会跳过缺失值。
+# 需要注意的是，describe()函数不会帮你处理缺失值，它会跳过缺失值。
 ```
 
 ---
@@ -457,12 +467,12 @@ DT::datatable(psych::describe(df.mt.raw))
 &emsp;&emsp;更进一步，如果我想知道变量的平均数、中位数和标准差等统计量应该怎么办？
 </font><br>
 ```{r}
-#使用dplyr包中的summarise()函数
+# 使用dplyr包中的summarise()函数
 df.mt.raw %>%
   summarise(mean_RT = mean(RT),
             sd_RT = sd(RT),
             n_values = n())
-#summarise函数不会忽略缺失值，如果计算的列中有缺失值，会有报错。
+# summarise函数不会忽略缺失值，如果计算的列中有缺失值，会有报错。
 ```
 
 ---
@@ -485,24 +495,39 @@ df.mt.raw %>%
 &emsp;&emsp;比方说，我们想要看看被试回答正确率的情况。
 </font>
 ```{r warning=FALSE, fig.width=6, fig.height=4}
-ggplot2::ggplot(data = df.mt.raw,#指定数据
-                aes(x=df.mt.raw$ACC))+#确定映射到x轴的变量
-  geom_bar()+#绘制直方图
-  theme_minimal()#设定绘图风格
+ggplot2::ggplot(data=df.mt.raw,       # 指定数据
+                aes(x=ACC)) +         # 确定映射到x轴的变量
+  geom_bar() +                        # 绘制直方图
+  theme_classic()                     # 设定绘图风格
 ```
 ---
+# 可视化
+## 柱状图
+<font size=5>
+&emsp;&emsp;消除图形与x轴之间的空白。
+</font>
+```{r warning=FALSE, fig.width=6, fig.height=4}
+ggplot2::ggplot(data=df.mt.raw,         # 指定数据
+                aes(x=ACC)) +           # 确定映射到x轴的变量
+  geom_bar() +                          # 绘制直方图
+  scale_y_continuous(expand=c(0, 0)) +  # x轴在 y=0 处  
+  theme_classic()                       # 设定绘图风格
+```
+---
+
 # 可视化
 ## 直方图
 <font size=5>
 &emsp;&emsp;对于连续变量，我们可以使用直方图进行可视化。比如说，我们想看看被试的反应时分布。
 </font>
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data = df.mt.raw,#指定数据
-                aes(x=df.mt.raw$RT))+#确定映射到x轴的变量
-  geom_histogram()+#绘制直方图
-  stat_bin(bins = 40)+#设定连续变量分组数量
-  scale_x_continuous(name = "RT")+#命名x轴
-  theme_minimal()#设定绘图风格
+ggplot2::ggplot(data=df.mt.raw,      # 指定数据
+                aes(x=RT)) + # 确定映射到x轴的变量
+  geom_histogram() +                   # 绘制直方图
+  stat_bin(bins = 40) +                # 设定连续变量分组数量
+  scale_x_continuous(name = "RT") +    # 命名x轴
+  scale_y_continuous(expand=c(0, 0)) + # x轴在 y=0 处 
+  theme_classic()                      # 设定绘图风格
 ```
 ---
 # 可视化
@@ -511,27 +536,26 @@ ggplot2::ggplot(data = df.mt.raw,#指定数据
 &emsp;&emsp;同样的我们可以使用密度图来描述反应时的分布情况。
 </font>
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data = df.mt.raw,#指定数据
-                aes(x=df.mt.raw$RT))+#确定映射到x轴的变量
-  geom_density()+#绘制密度曲线
-  scale_x_discrete(name = "RT")+#命名x轴
-  theme_minimal()#设定绘图风格
+ggplot2::ggplot(data=df.mt.raw,         # 指定数据
+                aes(x=RT)) +  # 确定映射到x轴的变量
+  geom_density() +                      # 绘制密度曲线
+  scale_x_discrete(name="RT") +         # 命名x轴
+  scale_y_continuous(expand=c(0, 0)) +  # x轴在 y=0 处 
+  theme_classic()                       # 设定绘图风格
 ```
 ---
 # 可视化
 ## 图层叠加
-<font size=5>
-&emsp;&emsp;有时，我们会希望在呈现直方图的同时呈现密度曲线，这时ggplot2可以很方便地让我们把图层进行叠加。
-</font>
+
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data = df.mt.raw,#指定数据
-                aes(x = df.mt.raw$RT,
-                    y = stat(density),
-                    alpha=0.8))+#确定映射到x轴的变量，y轴对应的是密度曲线
-  geom_histogram()+#绘制直方图
-  geom_density()+#绘制密度曲线
-  theme_minimal()+#设定绘图风格
-  guides(alpha=FALSE)#隐藏透明度alpha设置带来的图例
+ggplot2::ggplot(data=df.mt.raw,             # 指定数据
+                aes(x=RT,                   # x轴的变量
+                    y=after_stat(density),  # y轴对应的是密度曲线
+                    alpha=0.8)) +           # 透明度
+  geom_histogram() +                        # 绘制直方图
+  geom_density() +                          # 绘制密度曲线
+  guides(alpha=FALSE) +                     # 隐藏透明度alpha设置带来的图例
+  theme_classic()                           # 设定绘图风格
 ```
 
 ---
@@ -542,12 +566,11 @@ ggplot2::ggplot(data = df.mt.raw,#指定数据
 &emsp;&emsp;这里我们利用箱线图看看不同Label的RT如何。
 </font>
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data = df.mt.raw,#指定数据
-                aes(x = df.mt.raw$Label,
-                    y = df.mt.raw$RT
-                    ))+#确定映射到xy轴的变量
-  geom_boxplot()+#绘制箱线图
-  theme_minimal()#设定绘图风格
+ggplot2::ggplot(data=df.mt.raw,  # 指定数据
+                aes(x=Label,     # 确定映射到xy轴的变量
+                    y=RT)) +                 
+  geom_boxplot() +               # 绘制箱线图
+  theme_classic()                # 设定绘图风格
 ```
 
 ---
@@ -557,14 +580,13 @@ ggplot2::ggplot(data = df.mt.raw,#指定数据
 &emsp;&emsp;而对于两个连续变量，我们可以使用散点图。比如，我们可以看看被试在做penguin问卷前后体温的关系。
 </font>
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data = df.pg.raw,#指定数据
-                aes(x = df.pg.raw$Temperature_t1,
-                    y = df.pg.raw$Temperature_t2
-                    ))+#确定映射到xy轴的变量
-  geom_point()+#绘制散点图
-  scale_x_continuous(name = "Temperature_t1") + 
-  scale_y_continuous(name = "Temperature_t2") + 
-  theme_minimal()#设定绘图风格
+ggplot2::ggplot(data=df.pg.raw,                  # 指定数据
+                aes(x=Temperature_t1,            # 确定映射到xy轴的变量
+                    y=Temperature_t2)) +
+  geom_point() +                                 # 绘制散点图
+  scale_x_continuous(name = "Temperature_t1") +  # 修改X轴的名称
+  scale_y_continuous(name = "Temperature_t2") +  # 修改Y轴的名称
+  theme_classic()                                # 设定绘图风格
 ```
 
 ---
@@ -574,17 +596,125 @@ ggplot2::ggplot(data = df.pg.raw,#指定数据
 &emsp;&emsp;事实上，当我们进行探索时往往需要先对数据进行处理，再进行可视化。以下我们想看看手机使用和焦虑是否存在关系。
 </font>
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-#利用管道符，可以帮助我们更简洁地合并数据处理和可视化的过程。
+# 利用管道符，可以帮助我们更简洁地合并数据处理和可视化的过程。
 df.pg.raw %>% 
-  mutate(stress_ave = rowMeans(.[,c("stress1", "stress2", "stress3","stress4", "stress5", "stress6","stress7", "stress8", "stress9","stress10", "stress11", "stress12","stress13", "stress14")])) %>%
-  mutate(phone_ave = rowMeans(.[,c("phone1","phone2","phone3","phone4","phone5","phone6","phone7","phone8","phone9")])) %>% 
-  ggplot(aes(x=stress_ave, y=phone_ave))+
-  geom_point()+
-  geom_smooth(method = "lm")+#在散点图上叠加回归线，语法可以查找帮助文档
-  theme_minimal()
+  dplyr::mutate(stress_ave=rowMeans(.[,c("stress1", "stress2", "stress3","stress4", "stress5", 
+                                         "stress6","stress7", "stress8", "stress9","stress10", 
+                                         "stress11", "stress12","stress13", "stress14")]),
+                phone_ave=rowMeans(.[,c("phone1","phone2","phone3","phone4","phone5",
+                                        "phone6","phone7","phone8","phone9")])
+                ) %>% 
+  ggplot(aes(x=stress_ave, 
+             y=phone_ave)) +
+  geom_point() +
+  geom_smooth(method="lm") +    # 在散点图上叠加回归线，语法可以查找帮助文档
+  theme_classic()
 ```
 
 ---
+
+# 可视化
+## ggplot2小组
+
+* 化繁为简：大量的默认值
+* 精准定制：所有元素均可控
+* 易于叠加：丰富的信息
+* 日益丰富的生态系统 https://r-graph-gallery.com/
+
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+# load DataExplorer
+pacman::p_load("DataExplorer")
+
+DataExplorer::plot_str(df.pg.raw)
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_str(df.mt.raw)
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_intro(df.mt.raw)
+```
+---
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_missing(df.mt.raw)
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_bar(df.mt.raw)
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_bar(df.mt.raw, by="Match")
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_histogram(df.mt.raw)
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_qq(df.pg.raw[,2:10])
+```
+---
+
+# 可视化
+## Explore data with DataExplorer
+<font size=5>
+&emsp;&emsp;DataExplorer可能是是一个不错的工具
+</font>
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+DataExplorer::plot_correlation(na.omit(df.pg.raw[, 2:30]))
+```
+---
+
 #练习
 ## 1. 读取match数据，对自己感兴趣的变量进行描述性统计。
 ## 2. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。

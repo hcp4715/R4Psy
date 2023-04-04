@@ -6,3 +6,6 @@
 
 ## Mac OS files
 .DS_Store
+
+## files for html
+*_files/*
