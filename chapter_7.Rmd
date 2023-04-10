@@ -1,5 +1,5 @@
 ---
-title: "R course"
+title: ""
 subtitle: ""
 author: ""
 institute: ""
@@ -29,35 +29,39 @@ class: center, middle
 # <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
 <br>
 <center>
-<h2 lang="en">One sample *t*-test：单样本*t*检验</h2>
+##  One sample *t*-test：单样本*t*检验
 </center>
 <br>
-<h4 lang="en">Compare the sample mean against a fixed value.</h4>
 <br>
-<h2 lang="en">The hypotheses:</h2>
+### **Compare the sample mean against a fixed value.**
 <br>
-<h2 lang="en">H0:The current sample is sampled from a population with μ of the current value.</h2>
-<h2 lang="en">H1:The current sample is sampled from a population with μ that different from the current value.</h2>
-<h2 lang="en">The significance level: α = 0.05</h2>
-<br>
+## The hypotheses:
+* $H_0$: The current sample is sampled from a population with μ of the current value.
+* $H_1$: The current sample is sampled from a population with μ that different from the current value.
+* The significance level: $\alpha$ = 0.05
 ---
-# 回顾*t*检验基础知识
-## Typical research questions are:与某一特定值比较的三种情况（大于/小于或等于)
+# <h1 lang="zh-CN">回顾*t*检验基础知识 </h1>
 
-* whether the mean (m) of the sample is equal to the theoretical mean (μ)?
+<br>
+## Typical research questions are:
 
-* whether the mean (m) of the sample is less than the theoretical mean (μ)?
+  与某一特定值比较的三种情况（大于/小于或等于)
+<br>
 
-* whether the mean (m) of the sample is greater than the theoretical mean (μ)?
+* whether the mean (m) of the sample is equal to the theoretical mean, $\mu$?
+* whether the mean (m) of the sample is less than the theoretical mean, $\mu$?
+* whether the mean (m) of the sample is greater than the theoretical mean, $\mu$?
 
 ---
 # <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
 <br>
-<h2 lang="en">In statistics, we can define the corresponding null hypothesis (H0) as follow:</h2>
+<h2 lang="en">In statistics, we can define the corresponding null hypothesis ($H_0$) as follow:</h2>
 <br>
-<h3 lang="en">H0:m = μ</h3>
-<h3 lang="en">H0:m <= μ</h3>
-<h3 lang="en">H0:m => μ</h3>
+
+* $H_0$: m = μ
+* $H_0$: m <= μ
+* $H_0$: m => μ
+
 <br>
 <br>
 <h2 lang="en">The corresponding alternative hypotheses (H1) are as follow:</h2>
@@ -95,7 +99,7 @@ class: center, middle
 <h2 lang="en">Typical research questions are:</h2>
 <h2 lang="en">whether the mean of group A (μ) is equal to the mean of group B (μ)?</h2>
 <h2 lang="en">whether the mean of group A (μ) is less than the mean of group B (μ)?</h2>
-<h2 lang="en">whether the mean of group A (μ) is greather than the mean of group B (μ)?</h2>
+<h2 lang="en">whether the mean of group A (μ) is greater than the mean of group B (μ)?</h2>
 ---
 class: center, middle
 <span style="font-size: 60px;">7.2 *t*-test in R</span> <br>
