@@ -1,6 +1,7 @@
 # R语言在心理学研究中的应用 (R for psychological research)
 
 ## 关于(About)
+
 This is a repo for the coming R course for graduate students, School of Psychology, Nanjing Normal University, Nanjing, China.
 
 Instructor: Prof. Hu Chuan-Peng
@@ -13,22 +14,10 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
-
 ## 本Repo的文件夹结构(folder structure of this repo)
 
-```
+```         
 root_dir
-|----css/             # folder for Xaringan
-|
-|----data/            # folder for data used in the lecture
-|     |----- match    # folder for match data
-|     |----- penguin  # folder for penguin data
-| 
-|----picture/         # folder for picture in html
-|     |----- chp3     # folder for pictures in chapter 3
-|     |----- chp4     # folder for pictures in chapter 4
-|
-|----libs/            # folder for Xaringan
 |
 |----chapter_1.pptx   # slides for chapter 1
 |----chapter_2.pptx   # slides for chapter 2
@@ -36,13 +25,34 @@ root_dir
 |----chapter_3.html   # html for chapter 3
 |----chapter_4.Rmd    # Rmarkdown for chapter 4
 |----chapter_4.html   # html for chapter 4
+|----chapter_5.Rmd    # Rmarkdown for chapter 5
+|----chapter_5.html   # html for chapter 5
+|----chapter_6.Rmd    # Rmarkdown for chapter 6
+|----chapter_6.html   # html for chapter 6
+|----chapter_7.Rmd    # Rmarkdown for chapter 7
+|----chapter_7.html   # html for chapter 7
+|
+|----css/             # folder for Xaringan
+|----data/            # folder for data used in the lecture
+|     |----- match    # folder for match data
+|     |----- penguin  # folder for penguin data
+| 
+|----libs/            # folder for Xaringan
+|
+|----output/          # folder for Xaringan output?
+|
+|----picture/         # folder for picture in html
+|     |----- chp3     # folder for pictures in chapter 3
+|     |----- chp4     # folder for pictures in chapter 4
+|     |----- ...
+|
 |....
-
 ```
 
 ## 课程大纲 (Syllabus)
 
 #### 第一讲：为什么要学习R（3学时）
+
 1.1 R在心理科学及社会科学中的运用
 
 1.2 R语言使用的示例展示
@@ -83,15 +93,13 @@ root_dir
 
 5.3 数据预处理的进阶操作
 
-
 #### 第六章：如何探索数据: 描述性统计与数据可视化基础（3学时）
 
 6.1 描述性统计
 
 6.2 ggplot2的基本使用
 
-6.3 ggplot2的元素控制
-
+6.3 探索性数据分析(DataExplorer)
 
 #### 第七章：如何进行基本的数据分析: *t*-test和anova（3学时）
 
@@ -135,7 +143,7 @@ root_dir
 
 13.1 版本控制与git
 
-13.2 多人协作与git 
+13.2 多人协作与git
 
 #### 第十四章：如何帮助我们计划下一个研究？（3学时）
 
@@ -154,7 +162,8 @@ root_dir
 15.2 容器技术与docker的使用
 
 ### In English
-Chapter 1: Why Learn R (3 lessons) 
+
+Chapter 1: Why Learn R (3 lessons)
 
 1.1 The use of R in psychological sciences and social sciences
 
@@ -164,7 +173,7 @@ Chapter 1: Why Learn R (3 lessons)
 
 1.4 How to learn this course well
 
-Chapter 2: How to start using R: (3 lessons) 
+Chapter 2: How to start using R: (3 lessons)
 
 2.1 Introduction to the data analysis problem to be solved?
 
@@ -172,7 +181,7 @@ Chapter 2: How to start using R: (3 lessons)
 
 2.2 How to facilitate the use of? Introduction to the installation and interface of RStudio
 
-Chapter 3: How to Import Data (3 lessons) 
+Chapter 3: How to Import Data (3 lessons)
 
 3.1 Path and working directory
 
@@ -188,7 +197,7 @@ Chapter 4: How to Clean Up Data I: R Programming Basics (3 lessons)
 
 4.3 Functions
 
-Chapter 5: How to Clean Up Data II: Data Preprocessing (3 lessons) 
+Chapter 5: How to Clean Up Data II: Data Preprocessing (3 lessons)
 
 5.1 Data Preprocessing Preparation
 
@@ -196,7 +205,7 @@ Chapter 5: How to Clean Up Data II: Data Preprocessing (3 lessons)
 
 5.3 Advanced operations of data preprocessing
 
-Chapter 6: How to Explore Data: Fundamentals of Descriptive Statistics and Data Visualization (3 lessons) 
+Chapter 6: How to Explore Data: Fundamentals of Descriptive Statistics and Data Visualization (3 lessons)
 
 6.1 Descriptive Statistics
 
@@ -228,13 +237,13 @@ Chapter 10: Are the Results Robust? The effect of using Multiverse comparison me
 
 10.2 Code integration and normalization
 
-Chapter 11: How to Get Publishable Images: Advanced Data Visualization (3 lessons) 
+Chapter 11: How to Get Publishable Images: Advanced Data Visualization (3 lessons)
 
 11.1 Layers and Panel Controls for ggplot2
 
 11.2 Combining ggplot2 with other tools
 
-Chapter 12: From Analysis to Manuscript (3 lessons) 
+Chapter 12: From Analysis to Manuscript (3 lessons)
 
 12.1 Rmarkdown
 
@@ -242,11 +251,11 @@ Chapter 12: From Analysis to Manuscript (3 lessons)
 
 12.3 Introduction to the papaja toolkit
 
-Chapter 13: Collaborative Version Control: Git? (3 lessons) 
+Chapter 13: Collaborative Version Control: Git? (3 lessons)
 
 13.1 Version Control and git
 
-13.2 Multi-Person Collaboration and git 
+13.2 Multi-Person Collaboration and git
 
 Chapter 14: How Can We Help Plan Our Next Study?
 
@@ -258,30 +267,8 @@ Chapter 14: How Can We Help Plan Our Next Study?
 
 14.4 Parallel processing
 
-Chapter 15: How do I get my mentor/collaborator to exactly replicate my analysis? (3 lessons) 
+Chapter 15: How do I get my mentor/collaborator to exactly replicate my analysis? (3 lessons)
 
 15.1 Software Version Logging
 
 15.2 Container technology and the use of docker
-
-## 文件夹(Files)
-```
-|-root_dir
-|---README.md
-|---Charpter_1
-|----PPT
-|---Charpter_2
-|---Charpter_3
-|---Charpter_4
-|---Charpter_5
-|---Charpter_6
-|---Charpter_7
-|---Charpter_8
-|---Charpter_9
-|---Charpter_10
-|---Charpter_11
-|---Charpter_12
-|---Charpter_13
-|---Charpter_14
-|---Charpter_15
-```
