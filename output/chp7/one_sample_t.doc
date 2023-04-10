@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset='utf-8'>
+<title></title>
+<style>
+body, pre {font-size: 10.5pt; font-family: Times New Roman;}
+p {margin: 0px;}
+table {border-collapse: collapse; border-spacing: 0px; color: #000000;
+       border-top: 2px solid #000000; border-bottom: 2px solid #000000;}
+table thead th {border-bottom: 1px solid #000000;}
+table th, table td {padding-left: 5px; padding-right: 5px; height: 19px;}
+</style>
+</head>
+
+<body>
+<p>One-Sample t-test</p>
+<table>
+<thead>
+<tr> <th align='left'></th> <th align='right'><i>t</i></th> <th align='right'><i>df</i></th> <th align='right'><i>p</i></th> <th align='right'> </th> <th align='right'>Difference [95% CI]</th> <th align='right'>Cohen’s <i>d</i> [95% CI]</th> <th align='right'>BF<sub>10</sub></th> </tr>
+</thead>
+<tbody>
+<tr> <td align='left'>HOME_mean: (HOME_mean - 3.5)</td> <td align='right'>25.97</td> <td align='right'>1489</td> <td align='right'>< .001</td> <td align='left'>***</td> <td align='right'>0.49 [0.45, 0.53]</td> <td align='right'>0.67 [0.62, 0.72]</td> <td align='right'>1.21e+119</td> </tr>
+</tbody>
+</table>
+<p></p>
+</body>
+
+</html>
