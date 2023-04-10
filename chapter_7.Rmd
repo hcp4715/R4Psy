@@ -36,35 +36,35 @@ class: center, middle
 <br>
 <h2 lang="en">The hypotheses:</h2>
 <br>
-<h2 lang="en">H0:The current sample is sampled from a population with $\mu$ of the current value.</h2>
-<h2 lang="en">H1:The current sample is sampled from a population with $\mu$ that different from the current value.</h2>
+<h2 lang="en">H0:The current sample is sampled from a population with μ of the current value.</h2>
+<h2 lang="en">H1:The current sample is sampled from a population with μ that different from the current value.</h2>
 <h2 lang="en">The significance level: α = 0.05</h2>
 <br>
 ---
 # 回顾*t*检验基础知识
 ## Typical research questions are:与某一特定值比较的三种情况（大于/小于或等于)
 
-* whether the mean (m) of the sample is equal to the theoretical mean ($\mu$)?
+* whether the mean (m) of the sample is equal to the theoretical mean (μ)?
 
-* whether the mean (m) of the sample is less than the theoretical mean ($\mu$)?
+* whether the mean (m) of the sample is less than the theoretical mean (μ)?
 
-* whether the mean (m) of the sample is greater than the theoretical mean ($\mu$)?
+* whether the mean (m) of the sample is greater than the theoretical mean (μ)?
 
 ---
 # <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
 <br>
 <h2 lang="en">In statistics, we can define the corresponding null hypothesis (H0) as follow:</h2>
 <br>
-<h3 lang="en">H0:m = $\mu$</h3>
-<h3 lang="en">H0:m <= $\mu$</h3>
-<h3 lang="en">H0:m => $\mu$</h3>
+<h3 lang="en">H0:m = μ</h3>
+<h3 lang="en">H0:m <= μ</h3>
+<h3 lang="en">H0:m => μ</h3>
 <br>
 <br>
 <h2 lang="en">The corresponding alternative hypotheses (H1) are as follow:</h2>
 <br>
-<h3 lang="en">H1:m ≠ $\mu$ (not equal to)</h3>
-<h3 lang="en">H1:m > $\mu$ (greater than)</h3>
-<h3 lang="en">H1:m < $\mu$ (less than)</h3>
+<h3 lang="en">H1:m ≠ μ (not equal to)</h3>
+<h3 lang="en">H1:m > μ (greater than)</h3>
+<h3 lang="en">H1:m < μ (less than)</h3>
 ---
 # <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
 <br>
@@ -93,9 +93,9 @@ class: center, middle
 <h2 lang="en">The independent samples *t*-test is used to compare the mean of two independent groups.</h2>
 <br>
 <h2 lang="en">Typical research questions are:</h2>
-<h2 lang="en">whether the mean of group A ($\mu_A$) is equal to the mean of group B ($\mu_B$)?</h2>
-<h2 lang="en">whether the mean of group A ($\mu_A$) is less than the mean of group B ($\mu_B$)?</h2>
-<h2 lang="en">whether the mean of group A ($\mu_A$) is greather than the mean of group B ($\mu_B$)?</h2>
+<h2 lang="en">whether the mean of group A (μ) is equal to the mean of group B (μ)?</h2>
+<h2 lang="en">whether the mean of group A (μ) is less than the mean of group B (μ)?</h2>
+<h2 lang="en">whether the mean of group A (μ) is greather than the mean of group B (μ)?</h2>
 ---
 class: center, middle
 <span style="font-size: 60px;">7.2 *t*-test in R</span> <br>
@@ -230,7 +230,7 @@ writeLines(result.ttest, "./output/chp7/pair_t.md")
 ![](./picture/chp7/process_8.png)
 
 
-<h4 lang="zh-CN">以上均为假想的问题无关，大家可结合自己的数据改写代码</h4>
+<h4 lang="zh-CN">以上均与假想的问题无关，大家可结合自己的数据改写代码</h4>
 ---
 class: center, middle
 <span style="font-size: 60px;">7.3 anova</span> <br>
