@@ -188,7 +188,8 @@ writeLines(result.ttest, "./output/chp7/single_t.md") # .md最整齐
     result.ttest <- capture.output({   
     bruceR::TTEST(data=df.pg.mean, 
                 y="ECR_mean",
-                x="sex")
+                x="sex",
+                var.equal = FALSE)#方差不齐
 })
 
 writeLines(result.ttest, "./output/chp7/inde_t.md")
@@ -459,7 +460,10 @@ writeLines(result.check, "./output/chp7/check.md")
 #sim_eff_1 <- res_rmANOVA_1 %>%
   #EMMEANS("B_", by="A_")   和上一个同理，只是转换了不同的形式
 ```
-
+---
+# <h1 lang="zh-CN">简单效应检验与多重比较</h1>
+# <h2 lang="zh-CN">OUTPUT</h2>
+![](./picture/chp7/process_20.png)
 ---
 # <h1 lang="zh-CN">被试间设计的语法实现</h1>
 # <h2 lang="en">性别与亲密关系对ECR得分的效应</h2>
