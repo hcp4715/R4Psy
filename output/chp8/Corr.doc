@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset='utf-8'>
+<title></title>
+<style>
+body, pre {font-size: 10.5pt; font-family: Times New Roman;}
+p {margin: 0px;}
+table {border-collapse: collapse; border-spacing: 0px; color: #000000;
+       border-top: 2px solid #000000; border-bottom: 2px solid #000000;}
+table thead th {border-bottom: 1px solid #000000;}
+table th, table td {padding-left: 5px; padding-right: 5px; height: 19px;}
+</style>
+</head>
+
+<body>
+<p><b>Table 1. Descriptive Statistics and Correlation Matrix.</b></p>
+<table>
+<thead>
+<tr> <th align='left'>Variable</th> <th align='center'><i>M</i></th> <th align='center'><i>SD</i></th> <th align='center' style='width:49px'>1</th> </tr>
+</thead>
+<tbody>
+<tr> <td align='left'>1. stress_mean</td> <td align='right'>3.24</td> <td align='right'>0.37</td> <td align='left'>&ensp;&nbsp;—</td> </tr>
+<tr> <td align='left'>2. scontrol_mean</td> <td align='right'>2.76</td> <td align='right'>0.33</td> <td align='left'>&ensp;.05<sup>&ensp;&ensp;&ensp;</sup></td> </tr>
+</tbody>
+</table>
+<p><i>Note</i>. * <i>p</i> < .05. ** <i>p</i> < .01. *** <i>p</i> < .001.</p><p><br/><br/></p><p><b>Table 2. Correlations and 95% Confidence Intervals.</b></p>
+<table>
+<thead>
+<tr> <th align='left'>Pairs</th> <th align='center'><i>r</i> [95% CI]</th> <th align='center'><i>p</i></th> <th align='center'><i>N</i></th> </tr>
+</thead>
+<tbody>
+<tr> <td align='left'>stress_mean-scontrol_mean</td> <td align='left'>.05 [–.00, .10]</td> <td align='right'>.050</td> <td align='right'>1490</td> </tr>
+</tbody>
+</table>
+<p><i>Note</i>.</p>
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title></title>
+<style>
+body {font-size: 10.5pt; font-family: Times New Roman;}
+p {margin: 0px;}
+th, td {height: 19px;}
+table.texreg {margin: 1px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;}
+table.texreg thead .rule {border-bottom: 1px solid #000000;}
+table.texreg tbody tr.rule td {border-top: 1px solid #000000;}
+table.texreg tbody tr.bottomrule td {border-bottom: 2px solid #000000;}
+table.texreg tfoot td {font-size: 0.8em;}
+table.texreg th, table.texreg td {padding-left: 5px;padding-right: 5px;}
+</style>
+</head>
+<body>
+<p><b>Table X. Regression Models.</b></p>
+<table class="texreg">
+<thead>
+<tr>
+<th></th>
+<th>(1) stress_Mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="rule">
+<td>scontrol_mean</td>
+<td>–.554<sup>&#42;&#42;</sup></td>
+</tr>
+<tr>
+<td></td>
+<td>(.204)</td>
+</tr>
+<tr>
+<td>sex2</td>
+<td>–1.678<sup>&#42;</sup></td>
+</tr>
+<tr>
+<td></td>
+<td>(.635)</td>
+</tr>
+<tr>
+<td>scontrol_mean:sex2</td>
+<td>&ensp;1.738<sup>&#42;</sup></td>
+</tr>
+<tr>
+<td></td>
+<td>(.660)</td>
+</tr>
+<tr class="rule">
+<td><i>R</i><sup>2</sup></td>
+<td>&ensp;.145</td>
+</tr>
+<tr>
+<td>Adj. <i>R</i><sup>2</sup></td>
+<td>&ensp;.092</td>
+</tr>
+<tr class="bottomrule">
+<td>Num. obs.</td>
+<td>53</td>
+</tr>
+</tbody>
+</table>
+<p><i>Note</i>. Standardized regression coefficients are displayed, with standard errors in parentheses.</p><p>* <i>p</i> < .05. ** <i>p</i> < .01. *** <i>p</i> < .001.</p></body>
+</html>
