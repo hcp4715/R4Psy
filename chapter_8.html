@@ -4,9 +4,9 @@
     <title>chapter_8.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <script src="libs/htmlwidgets-1.6.1/htmlwidgets.js"></script>
+    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
     <script src="libs/datatables-binding-0.27/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -91,16 +91,50 @@ class: center, middle
 # &lt;h1 lang="zh-CN"&gt;载入包&lt;/h1&gt;
 
 ```r
-# 检查安装包 performance
-packages &lt;- c("performance")
-not_installed &lt;- packages[!(packages %in% installed.packages()[,"Package"])]
-if (length(not_installed) &gt; 0) {
-  install.packages(not_installed)
-}
-rm(packages,not_installed)
-# 调用以下包，在后续代码中会大量使用
-library(tidyverse)
-library(bruceR)
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("tidyverse", "bruceR", "performance")
+```
+
+```
+## 
+## bruceR (version 0.8.9)
+## BRoadly Useful Convenient and Efficient R functions
+## 
+## Packages also loaded:
+## √ dplyr     	√ emmeans     	√ ggplot2
+## √ tidyr     	√ effectsize  	√ ggtext
+## √ stringr   	√ performance 	√ cowplot
+## √ forcats   	√ lmerTest    	√ see
+## √ data.table
+## 
+## Main functions of `bruceR`:
+## cc()          	Describe() 	TTEST()
+## add()         	Freq()     	MANOVA()
+## .mean()       	Corr()     	EMMEANS()
+## set.wd()      	Alpha()    	PROCESS()
+## import()      	EFA()      	model_summary()
+## print_table() 	CFA()      	lavaan_summary()
+## 
+## https://psychbruce.github.io/bruceR/
+## 
+## NEWS: A new version of bruceR (0.8.10) is available on 2023-03-03!
+## ***** Please Update *****
+## install.packages("bruceR", dep=TRUE)
+## 
+## These R packages are dependencies of `bruceR` but not installed:
+## lmtest, vars, phia, GGally, GPArotation
+## ***** Please Install All Dependencies *****
+## install.packages("bruceR", dep=TRUE)
+```
+
+```r
+# 或者直接使用 easystats这个系列
+
+pacman::p_load("tidyverse", "bruceR", "easystats")
 ```
 
 ---
@@ -112,7 +146,7 @@ getwd()
 ```
 
 ```
-## [1] "D:/Github/R4Psy"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/2023NNU_R/R4Psy"
 ```
 
 ```r
@@ -122,7 +156,6 @@ df.pg.raw &lt;- read.csv('./data/penguin/penguin_rawdata.csv',
                       sep=",", 
                       stringsAsFactors = FALSE)
 ```
-
 
 ---
 # &lt;h1 lang="zh-CN"&gt;准备数据&lt;/h1&gt;
@@ -135,14 +168,11 @@ df.pg.corr &lt;- df.pg.raw %&gt;%
   dplyr::select(sex, 
                 starts_with("scontrol"), 
                 starts_with("stress")) %&gt;% # 筛选出需要的变量
-  dplyr::mutate(across(c(scontrol2, scontrol3,
-                         scontrol4, scontrol5,
-                         scontrol7, scontrol9,
-                         scontrol10,scontrol12,
-                         scontrol13,stress4, 
-                         stress5, stress6,
-                         stress7, stress9,
-                         stress10,stress13), 
+  dplyr::mutate(across(c(scontrol2, scontrol3,scontrol4, 
+                         scontrol5,scontrol7, scontrol9,
+                         scontrol10,scontrol12,scontrol13,
+                         stress4, stress5, stress6,stress7, 
+                         stress9, stress10,stress13), 
                      ~ case_when(. == '1' ~ '5',
                                  . == '2' ~ '4',
                                  . == '3' ~ '3',
@@ -167,8 +197,8 @@ df.pg.corr &lt;- df.pg.raw %&gt;%
 ---
 # &lt;h1 lang="zh-CN"&gt;准备数据&lt;/h1&gt;
 # &lt;h3 lang="zh-CN"&gt;数据预处理&lt;/h3&gt;
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-68f567c98b1fc9f52483" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-68f567c98b1fc9f52483">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5"],[1,1,1,2,1],[2.93846153846154,2.96410256410256,3.42564102564103,3.12307692307692,3.5025641025641],[3,2.38461538461538,2.38461538461538,3.46153846153846,2.46153846153846]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sex<\/th>\n      <th>stress_mean<\/th>\n      <th>scontrol_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a9c426e8528b58c4ce5d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a9c426e8528b58c4ce5d">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5"],[1,1,1,2,1],[2.93846153846154,2.96410256410256,3.42564102564103,3.12307692307692,3.5025641025641],[3,2.38461538461538,2.38461538461538,3.46153846153846,2.46153846153846]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sex<\/th>\n      <th>stress_mean<\/th>\n      <th>scontrol_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="zh-CN"&gt;bruceR::Corr()相关分析函数的参数&lt;/h1&gt;
@@ -280,6 +310,7 @@ df.pg.lm &lt;- df.pg.corr %&gt;%
 # 根据分组获得stress的平均值，。groups属性保留了之前的group_by
   summarise(stress_Mean = mean(stress_mean),.groups = 'keep')
 ```
+
 ---
 
 # &lt;h1 lang="zh-CN"&gt;CODE_问题处理&lt;/h1&gt;
@@ -301,6 +332,7 @@ ggplot(df.pg.lm, aes(x = scontrol_mean, y = stress_Mean, color = sex)) +
 ```
 
 ![](chapter_8_files/figure-html/plot.lm-1.png)&lt;!-- --&gt;
+
 ---
 # &lt;h1 lang="zh-CN"&gt;CODE_问题处理&lt;/h1&gt;
 # &lt;h2 lang="zh-CN"&gt;建立回归模型&lt;/h2&gt;
@@ -319,6 +351,11 @@ writeLines(result.lm, "./output/chp8/Lm.md")
 ```
 
 ---
+
+# &lt;h1 lang="en"&gt;bruceR::lm()&lt;/h1&gt;
+## &lt;h2 lang="zh-CN"&gt;显著性检验&lt;/h2&gt;
+![](./picture/chp8/lm_result.png)
+---
 # &lt;h1 lang="en"&gt;CODE_问题处理&lt;/h1&gt;
 ## &lt;h2 lang="zh-CN"&gt;进一步检查模型&lt;/h2&gt;
 
@@ -329,14 +366,12 @@ performance::check_model(mod)
 
 ![](chapter_8_files/figure-html/check.model-1.png)&lt;!-- --&gt;
 
-
-
 ---
 
 # &lt;h1 lang="zh-CN"&gt;课堂练习&lt;/h1&gt;
 &lt;br&gt;
 &lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;1. “在Penguin数据中，被试的依恋水平（ECR）和压力程度（stress）以及在线情况（onlineide）是否相关？”&lt;/h2&gt;
+&lt;h2 lang="zh-CN"&gt;1. “在Penguin数据中，被试的依恋水平（ECR）和压力程度（stress）以及在线情况（onlineid）是否相关？”&lt;/h2&gt;
 &lt;br&gt;
 &lt;h2 lang="zh-CN"&gt;2. “对上述数据建立可靠的回归模型”&lt;/h2&gt;
 &lt;br&gt;

@@ -82,17 +82,16 @@ class: center, middle
 
 # <h1 lang="zh-CN">载入包</h1>
 ```{r pacakge, message=FALSE}
-# 检查安装包 performance
-packages <- c("performance")
-not_installed <- packages[!(packages %in% installed.packages()[,"Package"])]
-if (length(not_installed) > 0) {
-  install.packages(not_installed)
-}
-rm(packages,not_installed)
-# 调用以下包，在后续代码中会大量使用
-library(tidyverse)
-library(bruceR)
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
 
+# 使用p_load来载入需要的包
+pacman::p_load("tidyverse", "bruceR", "performance")
+
+# 或者直接使用 easystats这个系列
+
+pacman::p_load("tidyverse", "bruceR", "easystats")
 ```
 
 ---
@@ -107,7 +106,6 @@ df.pg.raw <- read.csv('./data/penguin/penguin_rawdata.csv',
                       sep=",", 
                       stringsAsFactors = FALSE)
 ```
-
 
 ---
 # <h1 lang="zh-CN">准备数据</h1>
