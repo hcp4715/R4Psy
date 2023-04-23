@@ -78,6 +78,8 @@ library(here)
 library(dplyr)
 library(tidyr)
 
+library(lavaan)
+library(lavaanPlot)
 # 载入bruceR有点慢，PPT中就不载入了
 ```
 
@@ -87,7 +89,13 @@ library(tidyr)
 WD <-  here::here()
 
 df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE)
+                       header = T, sep=",", stringsAsFactors = FALSE) %>%
+  dplyr::select(., age, language, avgtemp, 
+                   starts_with("ALEX"),
+                   starts_with("ECR"),
+                   starts_with("HOME"),
+                   starts_with("KAMF"),) 
+# 这些包含原始题目的数据集，将在SEM lavaan中直接使用
 ```
 ```{r df.pg.raw DT, echo=FALSE}
 DT::datatable(head(df.pg.raw, 10),
@@ -109,8 +117,9 @@ _<h5 lang="zh-CN">来源未知</h5>_
 KAMF：7题 <br>
 _<h5 lang="zh-CN">来源未知</h5>_
 <br>
-查找量表的维度与题目对应关系在PROCESS，或者说在"仅有结构模型的结构方程模型"中并不重要<br>
-因为一个变量内的所有题目会被求平均分。（换句话说，量表的信度被视作1，没有测量模型，不考虑测量误差）
+在PROCESS中由于一个变量内的题目都会求平均分，所以是否知道题目与维度的对应并不重要<br>
+但在lavaan(SEM)中，必须知道题目与维度的对应关系，才可以构建模型
+
 ---
 # <h1 lang="zh-CN">清洗数据</h1>
 # <h2 lang="zh-CN">对模型涉及变量的题目求均值</h2>
@@ -120,11 +129,9 @@ df.pg.mean <- df.pg.raw %>%
   dplyr::mutate(ALEX_mean = rowMeans(select(., starts_with("ALEX"))),
                 ECR_mean = rowMeans(select(., starts_with("ECR"))),
                 HOME_mean = rowMeans(select(., starts_with("HOME"))),
-                KAMF_mean = rowMeans(select(., starts_with("KAMF")))
-                ) %>%
+                KAMF_mean = rowMeans(select(., starts_with("KAMF"))),) %>%
   dplyr::select(age, language, avgtemp, 
                 ALEX_mean, ECR_mean, HOME_mean, KAMF_mean)
-
 ```  
 ```{r df.pg.mean DT, echo=FALSE}
 DT::datatable(head(df.pg.mean, 10),
@@ -134,65 +141,7 @@ DT::datatable(head(df.pg.mean, 10),
 ---
 class: center, middle
 <span style="font-size: 60px;">9.2 PROCESS in R</span> <br>
----
-# <h1 lang="zh-CN">想~~编~~一个模型</h1>
-<div style="display:flex; align-items:center;">
-  <img src="picture/chp9/model1_hayse.png" style="width:45%; height: 45%;margin-right: 90px;">
-  <font size=20> Model 1 </font> 
-</div>
 
----
-# <h1 lang="zh-CN">想~~编~~一个模型</h1>
-<br>
-<div style="display:flex; align-items:center;">
-  <img src="picture/chp9/model1.png" style="width:100%; height: 100%;"> <br>
-</div>
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">CODE</h2>
-```{r bruceR::PROCESS model 1, message=FALSE, eval=FALSE}
-result.PROCESS <- capture.output({
-# capture.output 可以将这段代码的结果存储进一个变量中
-  bruceR::PROCESS(df.pg.mean,
-                  x = "ALEX_mean", #自变量
-                  y = "ECR_mean", # 因变量
-                  #meds = c(), # 中介变量 
-                  mods = c("KAMF_mean"), # 调节变量
-                  covs = c("age", "language", "avgtemp"), # 控制变量（协变量）
-                  #clusters = c(), #类似调节变量 分组变量
-                  #hlm.re.m = "",hlm.re.y = "",hlm.type = c("1-1-1", "2-1-1", "2-2-1"),
-                  #med.type = c("parallel", "serial"), # 中介变量之间是并列还是连续
-                  #mod.type = c("2-way", "3-way"), # 两项交互还是三项交互
-                  mod.path = c("x-y"), # 调节哪条路径
-                  cov.path = c("y"), # 控制变量进入几个方程，both意味着中介和因变量都会考虑控制变量
-                  #mod1.val = NULL,mod2.val = NULL, # 调节变量高低水平对应的值
-                  ci = c("boot"), # 置信区间使用bootstrap 或其他抽样方法
-                  nsim = 1000, # 抽样的次数
-                  #seed = NULL, # 设置seed可以让每次的抽样结果都一样
-                  center = FALSE, # 是否对自变量和调节变量中心化。非中心化在解释时更方便
-                  std = FALSE, # 是否在计算钱对所有变量进行标准化
-                  digits = 3, # 保留的小数位数
-                  #nsmall = digits,file = NULL
-                  ) 
-})
-writeLines(result.PROCESS, "./output/chp9/PROCESS_model_1.md") # .md最整齐
-```
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_1_1.png)
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_1_2.png)
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_1_3.png)
 ---
 # <h1 lang="zh-CN">想~~编~~一个模型</h1>
 <div style="display:flex; align-items:center;">
@@ -241,17 +190,18 @@ writeLines(result.PROCESS, "./output/chp9/PROCESS_model_4.md") # .md最整齐
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_4_1.png)
+<img src="./picture/chp9/PROCESS_model_4_1.png" width="90%">
 
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_4_2.png)
+<img src="./picture/chp9/PROCESS_model_4_2.png" width="70%">
 
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_4_3.png)
+<img src="./picture/chp9/PROCESS_model_4_3.png" width="80%">
+
 ---
 # <h1 lang="zh-CN">想~~编~~一个模型</h1>
 <div style="display:flex; align-items:center;">
@@ -299,29 +249,152 @@ writeLines(result.PROCESS, "./output/chp9/PROCESS_model_7.md") # .md最整齐
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_7_1.png)
+<img src="./picture/chp9/PROCESS_model_7_1.png" width="100%">
 
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_7_2.png)
+<img src="./picture/chp9/PROCESS_model_7_2.png" width="80%">
 
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_7_3.png)
+<img src="./picture/chp9/PROCESS_model_7_3.png" width="100%">
 
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp9/PROCESS_model_7_4.png)
+<img src="./picture/chp9/PROCESS_model_7_4.png" width="100%">
 
 ---
 class: center, middle
-<span style="font-size: 60px;">9.3 SEM in R</span> <br>
+<span style="font-size: 60px;">9.3 SEM in R(lavaan)</span> <br>
 
 ---
-# <h1 lang="en">SEM</h1>
+# <h1 lang="en">lavaan::cfa</h1>
+# <h2 lang="en">CODE</h2>
+```{r CFA_total, eval=FALSE}
+result.CFA <- capture.output({
+CFA<- 'DIDF =~ ALEX1 + ALEX3 + ALEX5 + ALEX6 + ALEX7 + ALEX10 + ALEX11 + ALEX2 + ALEX4 + ALEX8 + ALEX9
+       EOF =~ ALEX12 + ALEX13 + ALEX14 + ALEX15 + ALEX16
+            
+       ANX =~ ECR1 + ECR2 + ECR3 + ECR4 + ECR5 + ECR6 + ECR7 + ECR8 + ECR9 + ECR10 + ECR11 + ECR12 + ECR13 + ECR14 + ECR15 + ECR16 + ECR17 + ECR18
+       AVO =~ ECR19 + ECR20 + ECR21 + ECR22 + ECR23 + ECR24 + ECR25 + ECR26 + ECR27 + ECR28 + ECR29 + ECR30 + ECR31 + ECR32 + ECR33 + ECR34 + ECR35 + ECR36
+            
+       HOME =~ HOME1 + HOME2 + HOME3 + HOME4 + HOME5 + HOME6 + HOME7 + HOME8 + HOME9
+            
+       KAMF =~ KAMF1 + KAMF2 + KAMF3 + KAMF4 + KAMF5 + KAMF6 + KAMF7' %>%
+       # ALEX =~ DIDF + EOF
+       # ECR =~ ANX + AVO
+       # 为了简化，这里没有做二阶
+  lavaan::cfa(.,data=df.pg.raw,estimator="ML") 
+  lavaan::summary(CFA,fit.measures=TRUE,standardized=TRUE)
+})
+writeLines(result.CFA, "./output/chp9/CFA.md")
+```
+_<h4 lang="zh-CN">- 这里并不是完全正确的做法，该论文penguin对原始量表做了一些修改</h4>_
+_<h4 lang="zh-CN">- 原始量表中ALEX是一个二阶潜变量，由三个一阶潜变量DIF, DDF, EOF构成</h4>_
+_<h4 lang="zh-CN">- 但是DIF和DDF被合并为DIDF了（penguin没有说这是为什么）</h4>_
+_<h4 lang="zh-CN">- 如果你每个维度单独做CFA，就能找到问题所在（是因为这两个维度共线性太高）</h4>_
+
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Model Fit</h2>
+<img src="./picture/chp9/CFA_1.png" width="100%">
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Model Fit</h2>
+<img src="./picture/chp9/CFA_2.png" width="60%">
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Factor Loading</h2>
+<img src="./picture/chp9/CFA_3.png" width="100%">
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Factor Loading</h2>
+<img src="./picture/chp9/CFA_4.png" width="100%">
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Factor Loading</h2>
+<img src="./picture/chp9/CFA_5.png" width="100%">
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Factor Loading</h2>
+<img src="./picture/chp9/CFA_6.png" width="100%">
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Covariances</h2>
+<img src="./picture/chp9/CFA_7.png" width="70%">
+<br>
+如果有两个变量之间协方差（相关）过高，则说明存在共线性，可以删除其中一个
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">OUTPUT: Variances</h2>
+<img src="./picture/chp9/CFA_8.png" width="70%">
+<br>
+残差和方差必须为正且显著，否则模型可能不收敛
+_<h5 lang="en">- Heywood Case</h3>_
+_<h5 lang="en">- Van Driel, O. P. (1978). On various causes of improper solutions in maximum likelihood factor analysis. Psychometrika, 43, 225-243.</h5>_
+
+---
+# <h1 lang="en">lavaan::cfa</h1>
+## <h2 lang="en">Plot</h2>
+```{r CFA PLOT, eval=FALSE}
+lavaanPlot(model = CFA, edge_options = list(color = "grey"))
+```
+
+由于模型的题目比较多，这里的图片已经看不清了，就不打印在PPT上了<br>
+lavaan的画图比较鸡肋，AMOS在画图上会更好看一些(如下图) <br>
+有兴趣的同学可以跑一下试试看<br>
+<img src="./picture/chp9/AMOS.png" width="70%">
+
+---
+# <h1 lang="en">lavaan::sem</h1>
+## <h2 lang="en">CODE</h2>
+```{r SEM, eval=FALSE}
+# 这里拿model 4举例
+# 因为lavaan的调节变量不能是潜变量. 如果是潜变量作为调节变量，需要手动与其他变量相乘
+result.SEM <- capture.output({
+SEM<- 'DIDF =~ ALEX1 + ALEX3 + ALEX5 + ALEX6 + ALEX7 + ALEX10 + ALEX11 + ALEX2 + ALEX4 + ALEX8 + ALEX9
+       EOF =~ ALEX12 + ALEX13 + ALEX14 + ALEX15 + ALEX16
+       ALEX =~ DIDF + EOF
+            
+       ANX =~ ECR1 + ECR2 + ECR3 + ECR4 + ECR5 + ECR6 + ECR7 + ECR8 + ECR9 + ECR10 + ECR11 + ECR12 + ECR13 + ECR14 + ECR15 + ECR16 + ECR17 + ECR18
+       AVO =~ ECR19 + ECR20 + ECR21 + ECR22 + ECR23 + ECR24 + ECR25 + ECR26 + ECR27 + ECR28 + ECR29 + ECR30 + ECR31 + ECR32 + ECR33 + ECR34 + ECR35 + ECR36
+       ECR =~ ANX + AVO
+            
+       HOME =~ HOME1 + HOME2 + HOME3 + HOME4 + HOME5 + HOME6 + HOME7 + HOME8 + HOME9
+
+       ECR ~ a*ALEX + age + language + avgtemp
+       HOME ~ b*ECR + age + language + avgtemp
+
+       ind_eff:=a*b ' %>%
+  lavaan::sem(.,data=df.pg.raw,estimator="ML") 
+  lavaan::summary(SEM,fit.measures=TRUE, standardized=TRUE, ci=TRUE)
+})
+writeLines(result.SEM, "./output/chp9/SEM.md")
+```
+
+---
+# <h1 lang="en">lavaan::sem</h1>
+## <h2 lang="en">OUTPUT: Path Analysis and Indirect Effect</h2>
+<img src="./picture/chp9/SEM_1.png" width="100%"> <br>
+<img src="./picture/chp9/SEM_2.png" width="100%"> <br>
+大多数结果与CFA类似，但是多了路径系数，以及我们设定的中介效应值
+
+---
+class: center, middle
+<span style="font-size: 60px;">9.4 Others</span> <br>
+
+---
+# <h1 lang="zh-CN">其他有用的包</h1>
+1. 如果你的SEM模型中一定用latent moderator，你可以使用Mplus，或者回到PROCESS <br>
+2. Mplus某种意义上也是一个R包，install.packages("MplusAutomation") <br>
+3. CFA得到之后，可以借助semTools这个包来提取矩阵lambda, theta, psi, beta. 这些矩阵用于制作收敛和区别效度表 <br>
+
+其他SEM的细节就不在R课里讲述了
+---
+# <h1 lang="en">Videos</h1>
 <div style="display:flex; align-items:center;">
   <img src="./picture/chp9/SEM_bilibili.png" style="width:100%; height: 100%;">
 </div>
@@ -331,7 +404,7 @@ https://www.bilibili.com/video/BV1Bt4y127xq/?spm_id_from=333.999.0.0&vd_source=4
 有兴趣的同学可以去看这个视频学习怎么做SEM
 
 ---
-# <h1 lang="en">SEM</h1>
+# <h1 lang="en">Videos</h1>
 <div style="display:flex; align-items:center;">
   <img src="./picture/chp9/SEM_youtube.png" style="width:100%; height: 100%;">
 </div>
