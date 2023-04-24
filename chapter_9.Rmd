@@ -88,19 +88,61 @@ pacman::p_load("tidyverse", "bruceR", "performance", "lavaan", "lavaanPlot")
 
 ```{r WD & df.pg.raw}
 
-df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_full.csv',
+df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_new.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) %>%
-  dplyr::select(., age, language, avgtemp, socialdiversity, DEQ,
+  dplyr::select(., age, language, avgtemp,socialdiversity, DEQ,
                    starts_with("ALEX"),
                    starts_with("ECR"),
                    starts_with("HOME"),
-                   starts_with("KAMF"),) 
+                   starts_with("KAMF"),
+                   starts_with("SNI"),
+                ) 
 # 这些包含原始题目的数据集，将在SEM lavaan中直接使用
 ```
 
 ```{r df.pg.raw DT, echo=FALSE}
 DT::datatable(head(df.pg.raw, 10),
               fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+```{r get socialdiversity, eval = FALSE, echo = FALSE}
+snDivNames  <- c("SNI3" , "SNI5", "SNI7" , "SNI9" , "SNI11"  , "SNI13",  "SNI15", "SNI17","SNI18","SNI19",
+                "SNI21")
+extrDivName <- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
+
+### get data for diversity
+snDivData <- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(df.pg.raw))), snDivNames)
+
+### recode spouse/partner Q10 (spouse): 1-> 1; else ->0
+snDivData$SNI1_r <- car::recode(df.pg.raw$SNI1,"1= 1; else = 0")
+
+### re-code Q12 ~ Q30: NA -> 0; 0 -> 0; 1~10 -> 1
+snDivData[,snDivNames] <- apply(df.pg.raw[,snDivNames],2,function(x) {x <- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
+colnames(snDivData[,snDivNames]) <- paste(snDivNames,"div",  sep = "_")   # add suffix to the colnames
+
+snDivData$SNIwork   <- snDivData$SNI17 + snDivData$SNI18                  # combine the diversity of work (SNI17, SNI18)
+snDivData$SNIwork_r <- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
+
+### re-code extra groups, 0/NA --> 0; more than 0 --> 1
+extrDivData <- df.pg.raw[,extrDivName]  # Get extra data
+
+### sum and recode the extra groups
+extrDivData$sum <- rowSums(extrDivData)
+snDivData$extrDiv_r <- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")
+
+### combine the recoded variables
+snDivNames_r <- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
+                  "SNI19","SNI21","extrDiv_r")
+
+### get the social diveristy score
+snDivData$SNdiversity   <- rowSums(snDivData[,snDivNames_r])
+
+### save the social diversity index
+df.pg.raw$socialdiversity <- snDivData$SNdiversity
+
+rm(extrDivData, snDivData, extrDiv_r, snDivNames, snDivNames_r, extrDivName)
+write.csv(df.pg.raw, "./data/penguin/penguin_rawdata_new.csv")
 ```
 
 ---
