@@ -1,5 +1,5 @@
 ---
-title: "R course"
+title: ""
 subtitle: ""
 author: ""
 institute: ""
@@ -17,17 +17,18 @@ class: center, middle
 <span style="font-size: 60px;">第九章</span> <br>
 <span style="font-size: 50px;">如何进行基本的数据分析</span> <br>
 <span style="font-size: 50px;">中介和调节分析</span> <br>
-<span style="font-size: 30px;">PROCESS and lavaan(SEM)</span> <br>
+<br>
+<span style="font-size: 30px;">bruceR::PROCESS & lavaan</span> <br>
 <br>
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
-<span style="font-size: 30px;">2023/04/17</span> <br>
+<span style="font-size: 30px;">2023/04/24</span> <br>
 
 ---
 class: center, middle
 <span style="font-size: 60px;">9.1 事前准备</span> <br>
 ---
-# <h1 lang="zh-CN">必须要知道的东西</h1>
+# <h1 lang="zh-CN">相关知识点</h1>
 <br>
 <center>
 <h2 lang="en">中介调节的鼻祖：Baron & Kenny (1986)</h2>
@@ -41,7 +42,7 @@ class: center, middle
 <br>
 _<h5 lang="en">- Baron, R. M., & Kenny, D. A. (1986). The moderator–mediator variable distinction in social psychological research: Conceptual, strategic, and statistical considerations. Journal of personality and social psychology, 51(6), 1173. </h5>_
 ---
-# <h1 lang="zh-CN">必须要知道的东西</h1>
+# <h1 lang="zh-CN">相关知识点</h1>
 <br>
 <center>
 <h2 lang="en">PROCESS的作者：Andrew F. Hayes </h2>
@@ -56,7 +57,7 @@ _<h5 lang="en">- Baron, R. M., & Kenny, D. A. (1986). The moderator–mediator v
 _<h5 lang="en">- Hayes, A. F. (2017). Introduction to mediation, moderation, and conditional process analysis: A regression-based approach. Guilford publications. </h5>_
 
 ---
-# <h1 lang="zh-CN">必须要知道的东西</h1>
+# <h1 lang="zh-CN">相关的R包：</h1>
 <br>
 <center>
 <h2 lang="en">bruceR::PROCESS & lavaan </h2>
@@ -72,21 +73,20 @@ _<h5 lang="en">- Bao, H.-W.-S. (2022). bruceR: Broadly useful convenient and eff
 _<h5 lang="en">- Rosseel Y (2012). “lavaan: An R Package for Structural Equation Modeling.” Journal of Statistical Software, 48(2), 1–36. doi:10.18637/jss.v048.i02. </h5>_
 ---
 # <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
-```{r pacakge, message=FALSE}
-library(here)
-#library(bruceR)
-library(dplyr)
-library(tidyr)
+```{r pacakge, echo=TRUE, message=FALSE}
 
-library(lavaan)
-library(lavaanPlot)
-# 载入bruceR有点慢，PPT中就不载入了
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("tidyverse", "bruceR", "performance", "lavaan", "lavaanPlot")
 ```
 
 ---
 # <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
+
 ```{r WD & df.pg.raw}
-WD <-  here::here()
 
 df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) %>%
@@ -97,6 +97,7 @@ df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
                    starts_with("KAMF"),) 
 # 这些包含原始题目的数据集，将在SEM lavaan中直接使用
 ```
+
 ```{r df.pg.raw DT, echo=FALSE}
 DT::datatable(head(df.pg.raw, 10),
               fillContainer = TRUE, options = list(pageLength = 5))
