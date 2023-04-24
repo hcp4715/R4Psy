@@ -86,27 +86,12 @@ pacman::p_load("tidyverse", "bruceR", "performance", "lavaan", "lavaanPlot")
 ---
 # <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
 
-```{r WD & df.pg.raw}
-
-df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_new.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) %>%
-  dplyr::select(., age, language, avgtemp,socialdiversity, DEQ,
-                   starts_with("ALEX"),
-                   starts_with("ECR"),
-                   starts_with("HOME"),
-                   starts_with("KAMF"),
-                   starts_with("SNI"),
-                ) 
-# 这些包含原始题目的数据集，将在SEM lavaan中直接使用
-```
-
-```{r df.pg.raw DT, echo=FALSE}
-DT::datatable(head(df.pg.raw, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
 ---
 ```{r get socialdiversity, eval = FALSE, echo = FALSE}
+
+df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_full.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) 
+
 snDivNames  <- c("SNI3" , "SNI5", "SNI7" , "SNI9" , "SNI11"  , "SNI13",  "SNI15", "SNI17","SNI18","SNI19",
                 "SNI21")
 extrDivName <- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
@@ -144,6 +129,27 @@ df.pg.raw$socialdiversity <- snDivData$SNdiversity
 rm(extrDivData, snDivData, extrDiv_r, snDivNames, snDivNames_r, extrDivName)
 write.csv(df.pg.raw, "./data/penguin/penguin_rawdata_new.csv")
 ```
+
+
+```{r WD & df.pg.raw}
+
+df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_new.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) %>%
+  dplyr::select(., age, language, avgtemp,socialdiversity, DEQ,
+                   starts_with("ALEX"),
+                   starts_with("ECR"),
+                   starts_with("HOME"),
+                   starts_with("KAMF"),
+                   starts_with("SNI"),
+                ) 
+# 这些包含原始题目的数据集，将在SEM lavaan中直接使用
+```
+
+```{r df.pg.raw DT, echo=FALSE}
+DT::datatable(head(df.pg.raw, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
 
 ---
 # <h1 lang="zh-CN">查找量表题目与维度的对应关系</h1>
@@ -200,8 +206,10 @@ class: center, middle
 </div>
 
 ---
+
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">CODE</h2>
+
 ```{r bruceR::PROCESS model 4, message=FALSE, eval=FALSE}
 result.PROCESS <- capture.output({
 # capture.output 可以将这段代码的结果存储进一个变量中
@@ -261,6 +269,7 @@ writeLines(result.PROCESS, "./output/chp9/PROCESS_model_4.md") # .md最整齐
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">CODE</h2>
+
 ```{r bruceR::PROCESS model 7, message=FALSE, eval=FALSE}
 result.PROCESS <- capture.output({
 # capture.output 可以将这段代码的结果存储进一个变量中
@@ -311,7 +320,7 @@ writeLines(result.PROCESS, "./output/chp9/PROCESS_model_7.md") # .md最整齐
 
 ---
 class: center, middle
-<span style="font-size: 60px;">9.3 SEM in R(lavaan)</span> <br>
+<span style="font-size: 60px;">9.3 SEM in R (lavaan)</span> <br>
 
 ---
 # <h1 lang="en">lavaan::cfa</h1>
