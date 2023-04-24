@@ -88,9 +88,9 @@ pacman::p_load("tidyverse", "bruceR", "performance", "lavaan", "lavaanPlot")
 
 ```{r WD & df.pg.raw}
 
-df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
+df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_full.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) %>%
-  dplyr::select(., age, language, avgtemp, 
+  dplyr::select(., age, language, avgtemp, socialdiversity, DEQ,
                    starts_with("ALEX"),
                    starts_with("ECR"),
                    starts_with("HOME"),
@@ -144,14 +144,14 @@ class: center, middle
 <span style="font-size: 60px;">9.2 PROCESS in R</span> <br>
 
 ---
-# <h1 lang="zh-CN">想~~编~~一个模型</h1>
+# <h1 lang="en">Penguin Model 4</h1>
 <div style="display:flex; align-items:center;">
   <img src="picture/chp9/model4_hayse.png" style="width:45%; height: 45%;margin-right: 90px;">
   <font size=20> Model 4 </font> 
 </div>
 
 ---
-# <h1 lang="zh-CN">想~~编~~一个模型</h1>
+# <h1 lang="en">Penguin Model 4</h1>
 <br>
 <div style="display:flex; align-items:center;">
   <img src="picture/chp9/model4.png" style="width:100%; height: 100%;"> <br>
@@ -163,12 +163,12 @@ class: center, middle
 ```{r bruceR::PROCESS model 4, message=FALSE, eval=FALSE}
 result.PROCESS <- capture.output({
 # capture.output 可以将这段代码的结果存储进一个变量中
-  bruceR::PROCESS(df.pg.mean,
-                  x = "ALEX_mean", #自变量
-                  y = "HOME_mean", # 因变量
-                  meds = c("ECR_mean"), # 中介变量 
+  bruceR::PROCESS(df.pg.raw,
+                  x = "DEQ", #自变量
+                  y = "avgtemp", # 因变量
+                  meds = c("socialdiversity"), # 中介变量 
                   #mods = c(), # 调节变量
-                  covs = c("age", "language", "avgtemp"), # 控制变量（协变量）
+                  #covs = c(), # 控制变量（协变量）
                   #clusters = c(), #类似调节变量 分组变量
                   #hlm.re.m = "",hlm.re.y = "",hlm.type = c("1-1-1", "2-1-1", "2-2-1"),
                   #med.type = c("parallel", "serial"), # 中介变量之间是并列还是连续
@@ -196,12 +196,12 @@ writeLines(result.PROCESS, "./output/chp9/PROCESS_model_4.md") # .md最整齐
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_4_2.png" width="70%">
+<img src="./picture/chp9/PROCESS_model_4_2.png" width="100%">
 
 ---
 # <h1 lang="en">bruceR::PROCESS</h1>
 ## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_4_3.png" width="80%">
+<img src="./picture/chp9/PROCESS_model_4_3.png" width="100%">
 
 ---
 # <h1 lang="zh-CN">想~~编~~一个模型</h1>
