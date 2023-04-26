@@ -1,0 +1,260 @@
+---
+title: "R course"
+subtitle: ""
+author: ""
+institute: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [default, css/Font_Style.css]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle
+<span style="font-size: 60px;">第十章</span> <br>
+<span style="font-size: 50px;"> Git and Tidy Codes</span> <br>
+<span style="font-size: 30px;">版本控制与整洁的代码</span> <br>
+<br>
+<br>
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 30px;">2023/05/08</span> <br>
+
+---
+<br>
+<br>
+<br>
+<br>
+<span style="font-size: 60px;">10.1 Git and GitHub</span></center> <br>
+<br>
+<span style="font-size: 30px;">- 10.1.1 Download Git</span> <br>
+<span style="font-size: 30px;">- 10.1.2 Sign up GitHub</span> <br>
+<span style="font-size: 30px;">- 10.1.3 New repository</span> <br>
+<span style="font-size: 30px;">- 10.1.4 Download GitHub Desktop</span> <br>
+<span style="font-size: 30px;">- 10.1.5 GitHub Desktop: Clone repository</span> <br>
+<span style="font-size: 30px;">- 10.1.6 Create README</span> <br>
+<span style="font-size: 30px;">- 10.1.7 First Commit</span> <br>
+
+---
+## <h1 lang="en">10.1.1 Download Git</h1> 
+<img src="./picture/chp10/git.png" width="100%"> <br>
+- Git是版本控制的工具，GitHub是存放你历史版本的平台 <br>
+- 首先，我们要下载Git https://git-scm.com/downloads <br>
+- ~~(可能你直接安装GitHub Desktop也会自动安装Git)~~
+
+---
+## <h1 lang="en">10.1.2 Sign up GitHub</h1> 
+<img src="./picture/chp10/signup_github_1.png" width="100%"> <br>
+- 注册一个GitHub账号 https://github.com <br>
+- ~~推荐使用outlook, gmail, icloud, hotmail, yahoo等"你懂的"邮箱~~
+
+---
+## <h1 lang="en">10.1.3 New repository</h1> 
+<img src="./picture/chp10/new_repo.png" width="100%"> <br>
+- 在自己的用户界面找到repository，点击new <br>
+
+---
+## <h1 lang="en">10.1.3 New repository</h1> 
+<img src="./picture/chp10/repo_name.png" width="70%"> <br>
+- 设定一个repository的名字，然后点击create repository <br>
+
+---
+## <h1 lang="en">10.1.4 Download GitHub Desktop</h1> 
+<img src="./picture/chp10/github_desktop.png" width="100%"> <br>
+- 下载安装 GitHub Desktop https://desktop.github.com/ <br>
+
+---
+## <h1 lang="en">10.1.5 GitHub Desktop: Clone repository</h1> 
+<img src="./picture/chp10/desktop_clone.png" width="100%"> <br>
+- 打开GitHub Desktop，点击 Add -- Clone repository <br>
+
+---
+## <h1 lang="en">10.1.5 GitHub Desktop: Clone repository</h1> 
+<img src="./picture/chp10/desktop_clone_path.png" width="90%"> <br>
+- 选择你刚刚创建的repository <br>
+- 设定你想保存的本地地址，点击clone  <br>
+
+---
+## <h1 lang="en">10.1.5 GitHub Desktop: Clone repository</h1> 
+<img src="./picture/chp10/hide_file.png" width="100%"> <br>
+- 点击"查看"，点击"显示隐藏的项目" <br>
+
+---
+## <h1 lang="en">10.1.5 GitHub Desktop: Clone repository</h1> 
+<img src="./picture/chp10/git_hide.png" width="100%"> <br>
+- 可以看到一个半透明的git文件夹 <br>
+- git文件夹内会记录你对Example这个文件夹的每一次修改 <br>
+
+---
+## <h1 lang="en">10.1.6 Create README</h1> 
+<img src="./picture/chp10/README.png" width="100%"> <br>
+- 我们创建一个READEME <br>
+
+---
+## <h1 lang="en">10.1.7 First Commit</h1> 
+<img src="./picture/chp10/README_commit.png" width="90%"> <br>
+ - 左下角，如果你只是更改了一个文件，GitHub Desktop会自动帮你命名(版本名) <br>
+ - 你只需要写一个Description来描述你这一次做了些什么<br>
+ - 写完后点击Commit to main <br>
+
+---
+## <h1 lang="en">10.1.7 First Commit</h1> 
+<img src="./picture/chp10/publish_branch.png" width="90%"> <br>
+- 点击右侧的publish_branch，上传到GitHub <br>
+- (如果是第二次写commit，这里会变成push origin) <br>
+
+---
+## <h1 lang="en">10.1.7 First Commit</h1> 
+<img src="./picture/chp10/readme_web.png" width="100%"> <br>
+- README会在网页上显示，方便他人查看 <br>
+
+---
+<br>
+<br>
+<br>
+<br>
+<span style="font-size: 60px;">10.2 Tidy Code</span></center> <br>
+<br>
+<span style="font-size: 30px;">- 10.2.1 Create a R project</span> <br>
+<span style="font-size: 30px;">- 10.2.2 Create a R markdown</span> <br>
+<span style="font-size: 30px;">- 10.2.3 Write Codes in Chunks</span> <br>
+<span style="font-size: 30px;">- 10.2.4 Create Folders</span> <br>
+<span style="font-size: 30px;">- 10.2.5 Create Lists for (df, out, p,...)</span> <br>
+<span style="font-size: 30px;">- 10.2.6 df: Clean Data</span> <br>
+<span style="font-size: 30px;">- 10.2.7 out: MANOVA</span> <br>
+<span style="font-size: 30px;">- 10.2.8 plot: ggplot2</span> <br>
+
+---
+## <h1 lang="en">10.2.1 Create a R project</h1> 
+<img src="./picture/chp10/new_project.png" width="100%"> <br>
+- 如果你要做一个新的项目，创建一个R project <br>
+
+---
+## <h1 lang="en">10.2.1 Create a R project</h1> 
+<img src="./picture/chp10/new_project_path.png" width="90%"> <br>
+- 设定路径为我们刚刚创建的git文件夹Example <br>
+
+---
+## <h1 lang="en">10.2.1 Create a R project</h1> 
+<img src="./picture/chp10/new_project_window.png" width="90%"> <br>
+- 创建完成后会打开一个新的R studio窗口 <br>
+- (可以看到R studio识别到这是一个git文件夹，自动帮我们创建了R相关的.gitignore) <br>
+
+---
+## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+<img src="./picture/chp10/new_rmarkdown.png" width="100%"> <br>
+- 创建一个rmarkdown用来写代码 <br>
+- 不要创建R script, 它没有Chunk，代码会很乱<br>
+
+---
+## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+<img src="./picture/chp10/create_rmarkdown_title.png" width="90%"> <br>
+- 给这个Rmarkdown取一个名字，最好使用驼峰式大小写<br>
+- ~~(如果你没有强迫症，可以全部小写或全部大写)~~ <br>
+
+---
+## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+<img src="./picture/chp10/new_rmarkdown_1.png" width="100%"> <br>
+- 这就算创建好了一个R markdown，会有默认的几行代码作为示例<br>
+
+---
+## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+<img src="./picture/chp10/new_rmarkdown_save.png" width="90%"> <br>
+- 保存这个R markdown，名字可以与之前的Title一致，也可以不一致<br>
+- ~~强迫症一定会写一致~~ <br>
+- 你刚刚只是创建了这个R markdown，可以在右侧的Files看到，并没有rmd文件<br>
+
+---
+## <h1 lang="en">10.2.3 Write Codes in Chunks</h1> 
+<img src="./picture/chp10/chunk_library.png" width="100%"> <br>
+- 一个Chunk由这样几部分组成<br>
+1. 三个 "`" 数字键1左边的点，表示这个Chunk的开始<br>
+2. 大括号 "{}" 字母键P右边，表示这个Chunk内的语言是什么语言<br>
+3. 大括号内， ","逗号后的argument，比如warning = FALSE 意味着这段Chunk在运行后不会出现warning<br>
+4. 三个 "`" 表示这个Chunk的结束<br>
+5. 最右侧的绿色三角，表示运行这个Chunk
+<br>
+_- 一些强迫症的东西_<br>
+_a. 等号左右的空格_<br>
+_b. 逗号后面的空格_<br>
+_c. 赋值符号 " <- " 左右的空格_<br>
+
+---
+## <h1 lang="en">10.2.4 Create Folders</h1> 
+<img src="./picture/chp10/folders.png" width="90%"> <br>
+- 创建三个文件夹，分别用来存放数据，结果和图片
+
+---
+## <h1 lang="en">10.2.5 Create Lists for (df, out, p,...)</h1> 
+<img src="./picture/chp10/NULL_list.png" width="100%"> <br>
+- 创建三个list，分别存放所有的数据集，所有的结果文件，所有的图片 <br>
+- 对应刚才在根目录下创建的三个文件夹<br>
+
+---
+## <h1 lang="en">10.2.6 df: Clean Data</h1> 
+<img src="./picture/chp10/df_clean_data.png" width="90%"> <br>
+- 每一步操作，对应df这个list中的一个元素 <br>
+- 做完每一步操作，都给这个list中的对应元素命名 <br>
+
+---
+## <h1 lang="en">10.2.6 df: Clean Data</h1> 
+<img src="./picture/chp10/df_environment.png" width="100%"> <br>
+- 这样可以保持Global Environment很干净 <br>
+
+---
+## <h1 lang="en">10.2.6 df: Clean Data</h1> 
+<img src="./picture/chp10/df_list.png" width="100%"> <br>
+- 这里是举例子，清洗数据一般不可能只有两步，每步两三行 <br>
+- 基本上都有很多步流程，每一步有非常复杂的操作 <br>
+- 当你日后打开这个list的时候，结合你之前写的注释 <br>
+- 你可以清楚的知道你当时每一步清洗数据在做什么 <br>
+- 我个人认为，这种存入list的做法 <br>
+- 比使用全局变量，然后起名"df_mt_longer,..." 的方法更好 <br>
+
+---
+## <h1 lang="en">10.1.8 Second Commit</h1> 
+<img src="./picture/chp10/second_commit.png" width="100%"> <br>
+- 假设今天做到这里下班了，你可以上传你刚刚的成果到GitHub上 <br>
+
+---
+## <h1 lang="en">10.1.8 Second Commit</h1> 
+<img src="./picture/chp10/second_commit_web.png" width="80%"> <br>
+- 网页上会显示你刚刚的更新 <br>
+
+---
+## <h1 lang="en">10.2.7 out: MANOVA</h1> 
+<img src="./picture/chp10/OUTPUT_1.png" width="80%"> <br>
+- 我们新建一个RMD来写结果部分的代码 <br>
+- 你可能现在觉得，之前Clean Data的RMD只有几行，为什么不接着写，而要重开一个新的RMD <br>
+- 但如果当你所有代码有上千行的时候，都放在一个RMD里，哪怕你标题层级再清晰，也会很难找到你想修改的那部分代码了 <br>
+
+---
+## <h1 lang="en">10.2.8 plot: ggplot2</h1> 
+<img src="./picture/chp10/palette.png" width="100%"> <br>
+- 再新建一个RMD写画图的代码 <br>
+- 为了画图，我们预先设定好一个调色盘palette，便于之后提取颜色 <br>
+- ~~颜色搭配来源于知乎~~ <br>
+- 由于三种颜色组合都被存入了list palette中，因此这三个颜色变量就是冗余数据了，应该及时从环境变量中清除 <br>
+
+---
+## <h1 lang="en">10.2.8 plot: ggplot2</h1> 
+<img src="./picture/chp10/ggplot2.png" width="100%"> <br>
+- 用ggplot2画一个云雨图 <br>
+- 与之前类似，将图片存入list中，并且命名为"RainCloud Plot" <br>
+- 具体画法将在下一节课讲解 <br>
+
+---
+## <h1 lang="en">10.2.8 plot: ggplot2</h1> 
+<img src="./picture/chp10/plot.png" width="100%"> <br>
+
+---
+## <h1 lang="en">10.1.9 Third Commit</h1> 
+<img src="./picture/chp10/third_commit.png" width="100%"> <br>
+- 至此我们就算用整洁的代码完成一个项目了 <br>
+
+---
+## <h1 lang="en">Extra</h1> 
+<img src="./picture/chp10/code_file.png" width="100%"> <br>
+- 做完后，感觉还可以更整洁一点，就把所有代码RMD文件放在了code文件夹中 <br>
