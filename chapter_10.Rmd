@@ -1,5 +1,5 @@
 ---
-title: "R course"
+title: ""
 subtitle: ""
 author: ""
 institute: ""
@@ -128,13 +128,20 @@ class: center, middle
 <br>
 <span style="font-size: 60px;">10.2 Files and Folders System</span></center> <br>
 <br>
-<span style="font-size: 30px;">- 10.2.0 Root Directory</span> <br>
-<span style="font-size: 30px;">- 10.2.1 "1_Protocol"</span> <br>
-<span style="font-size: 30px;">- 10.2.2 "2_Literature_Search"</span> <br>
-<span style="font-size: 30px;">- 10.2.3 "3_Article_Screen"</span> <br>
-<span style="font-size: 30px;">- 10.2.4 "4_Data_Extraction"</span> <br>
-<span style="font-size: 30px;">- 10.2.5 "5_Analysis"</span> <br>
-<span style="font-size: 30px;">- 10.2.6 "6_Reports"</span> <br>
+<span style="font-size: 30px;"> - 10.2.0 Root Directory</span> <br>
+<span style="font-size: 30px;"> - 10.2.1 "1_Protocol"</span> <br>
+<span style="font-size: 30px;"> - 10.2.2 "2_Literature_Search"</span> <br>
+<span style="font-size: 30px;"> - 10.2.3 "3_Article_Screen"</span> <br>
+<span style="font-size: 30px;"> - 10.2.4 "4_Data_Extraction"</span> <br>
+<span style="font-size: 30px;"> - 10.2.5 "5_Analysis"</span> <br>
+<span style="font-size: 30px;"> - 10.2.6 "6_Reports"</span> <br>
+<br>
+<br>
+<br>
+<br>
+Reference: <br>
+[https://psych-transparency-guide.uni-koeln.de/folder-structure.html](https://psych-transparency-guide.uni-koeln.de/folder-structure.html)
+
 
 ---
 ## <h1 lang="en">10.2.0 Root Directory </h1> 
@@ -171,10 +178,10 @@ _仅供举例，非Example中内容_
 ---
 ## <h1 lang="en">10.2.3 "3_Article_Screen"</h1> 
 <img src="./picture/chp10/3_article_screen.png" width="120%"> <br>
-- yuki一般会在这里存放Endnote文件 <br>
+- 例如，助教乙一般会在这里存放Endnote文件 <br>
 - 阅读文献时的笔记，也可以记录在Endnote中 <br>
 - 这个文件夹内的文件可以忽略，也可以保留 <br>
-- yuki上传了".enl"文件，这样当yuki在其他电脑上修改文章中的引用信息时，仍然可以使用Endnote来管理 <br>
+- 例如，助教乙上传了".enl"文件，这样当他在其他电脑上修改文章中的引用信息时，仍然可以使用Endnote来管理 <br>
 
 _仅供举例，非Example中内容_
 
@@ -252,7 +259,7 @@ _仅供举例，非Example中内容_
 ---
 ## <h1 lang="en">10.3.2 Create a R markdown</h1> 
 <img src="./picture/chp10/create_rmarkdown_title.png" width="90%"> <br>
-- 给这个Rmarkdown取一个名字，最好使用驼峰式大小写<br>
+- 给这个Rmarkdown取一个名字，最好使用驼峰式大小写，最好不要加空格<br>
 - ~~(如果你没有强迫症，可以全部小写或全部大写)~~ <br>
 
 ---
@@ -333,7 +340,7 @@ _仅供举例，非Example中内容_
 ---
 ## <h1 lang="en">10.3.4 Create Folders</h1> 
 <img src="./picture/chp10/folders.png" width="80%"> <br>
-- yuki认为更好的方法是将每一步操作，每一个结果都存放进list中 <br>
+- 助教乙认为更好的方法是将每一步操作，每一个结果都存放进list中 <br>
 - 首先，我们创建三个文件夹，分别用来存放数据，结果和图片
 
 ---
@@ -406,7 +413,7 @@ _仅供举例，非Example中内容_
 ---
 ## <h1 lang="en">10.3.8 plot: ggplot2</h1> 
 <img src="./picture/chp10/ggplot2.png" width="100%"> <br>
-- 用ggplot2画一个云雨图 <br>
+- 用ggplot2画一个雨云图 <br>
 - 与之前类似，将图片存入list中，并且命名为"RainCloud Plot" <br>
 - 具体画法将在下一节课讲解 <br>
 
@@ -448,7 +455,7 @@ _仅供举例，非Example中内容_
 <img src="./picture/chp10/create_R.png" width="100%"> <br>
 - 创建一个R script文件 <br>
 - 将我们的重复操作变成一个函数 <br>
-- 待会儿会讲到的source和打包，都只识别R script，而不识别R markdown <br>
+- 注意：`source()`和打包，都只识别R script，而不识别R markdown <br>
 
 ---
 ## <h1 lang="en">10.4.2 Functions</h1> 
@@ -494,7 +501,7 @@ _仅供举例，非Example中内容_
 ## <h1 lang="en">10.4.5 Packages</h1> 
 - 或许最整洁的方法，是把自己写的函数打包 <br>
 - 但这一部分可能比较困难，会出现很多bug <br>
-- 有兴趣的可以去yuki的GitHub上看PPT学习(遇到bug问yuki) <br>
+- 有兴趣的可以去助教乙的GitHub上看PPT学习(遇到bug问助教乙) <br>
 https://github.com/sinnyuki/Presentation/tree/main/230511_foreach%26package/PPT
 <br>
 <img src="./picture/chp10/anya.png" width="50%"> <br>
@@ -509,3 +516,9 @@ https://github.com/sinnyuki/Presentation/tree/main/230511_foreach%26package/PPT
 - 但是封装成包后，就只有一个命令 batch::shr <br>
 <br>
 _仅供举例，非Example中内容_
+
+---
+## <h1>小结</h1> 
+- Git & Github: 代码管理与版本控制<br>
+- 项目管理：文件夹管理系统R Project <br>
+- 代码管理：变量名管理、tidy风格、与封装（函数、打包） <br>
