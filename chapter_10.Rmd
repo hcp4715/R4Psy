@@ -21,6 +21,18 @@ class: center, middle
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 30px;">2023/05/08</span> <br>
+---
+<br>
+<br>
+<br>
+<br>
+<br>
+<span style="font-size: 60px;">10.1 Git and GitHub</span></center> <br>
+<span style="font-size: 60px;">10.2 Files and Folders System</span></center> <br>
+<span style="font-size: 60px;">10.3 Tidy Code</span></center> <br>
+<span style="font-size: 60px;">10.4 OCD-level Codes</span></center> <br>
+<br>
+
 
 ---
 <br>
@@ -109,65 +121,154 @@ class: center, middle
 ## <h1 lang="en">10.1.7 First Commit</h1> 
 <img src="./picture/chp10/readme_web.png" width="100%"> <br>
 - README会在网页上显示，方便他人查看 <br>
+---
+<br>
+<br>
+<br>
+<br>
+<span style="font-size: 60px;">10.2 Files and Folders System</span></center> <br>
+<br>
+<span style="font-size: 30px;">- 10.2.0 Root Directory</span> <br>
+<span style="font-size: 30px;">- 10.2.1 "1_Protocol"</span> <br>
+<span style="font-size: 30px;">- 10.2.2 "2_Literature_Search"</span> <br>
+<span style="font-size: 30px;">- 10.2.3 "3_Article_Screen"</span> <br>
+<span style="font-size: 30px;">- 10.2.4 "4_Data_Extraction"</span> <br>
+<span style="font-size: 30px;">- 10.2.5 "5_Analysis"</span> <br>
+<span style="font-size: 30px;">- 10.2.6 "6_Reports"</span> <br>
+
+---
+## <h1 lang="en">10.2.0 Root Directory </h1> 
+<br>
+- 1_Protocol <br>
+- 2_Literature_Search <br>
+- 3_Article_Screen <br>
+- 4_Data_Extraction <br>
+- 5_Analysis <br>
+- 6_Reports <br>
+<br>
+- .git <br>
+- .gitignore <br>
+- README.md(.txt) <br>
+
+---
+## <h1 lang="en">10.2.1 "1_Protocol"</h1> 
+<img src="./picture/chp10/1_protocol.png" width="120%"> <br>
+- 包含"预注册报告的文章"和"该研究会用到的所有代码" <br>
+- 当然，这些代码是使用模拟数据运行的 <br>
+- About.txt是类似README一样的说明文档 <br>
+
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.2.2 "2_Literature_Search"</h1> 
+<img src="./picture/chp10/2_literature_search.png" width="120%"> <br>
+- 这一部分相对自由 <br>
+- 主要包含了你在进行这个项目中阅读过的参考文献 <br>
+- 这个文件夹通常会被放在gitignore中，因为这些pdf并不需要被上传到GitHub <br>
+
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.2.3 "3_Article_Screen"</h1> 
+<img src="./picture/chp10/3_article_screen.png" width="120%"> <br>
+- yuki一般会在这里存放Endnote文件 <br>
+- 阅读文献时的笔记，也可以记录在Endnote中 <br>
+- 这个文件夹内的文件可以忽略，也可以保留 <br>
+- yuki上传了".enl"文件，这样当yuki在其他电脑上修改文章中的引用信息时，仍然可以使用Endnote来管理 <br>
+
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.2.4 "4_Data_Extraction"</h1> 
+<img src="./picture/chp10/4_data_extraction.png" width="90%"> <br>
+- 这个文件夹内存放你所有的实验数据 <br>
+- 图片中的项目是对SPMT这个范式进行信度分析 <br>
+- 因此有一份传鹏自己的数据，以及其他很多公开的数据 <br>
+- 这部分的文件也相对自由，你需要根据自己的实验来整理 <br>
+- 比如4_1_Study1, 4_2_Study2 <br>
+
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.2.5 "5_Analysis"</h1> 
+<img src="./picture/chp10/5_analysis.png" width="60%"> <br>
+- 这个部分存放你正式实验时的分析代码 <br>
+- 今天的Example就是单独将这一部分演示了上传与同步GitHub <br>
+- 当你正式开展一个项目时，应该包含10.2 Files and Folders System 的所有内容  <br>
+
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.2.6 "6_Reports"</h1> 
+<img src="./picture/chp10/6_reports.png" width="120%"> <br>
+- 这个部分存放你汇报时的PPT <br>
+
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">Extra</h1> 
+<img src="./picture/chp10/jyqwbxqz.png" width="100%"> <br>
+- 不要让你的文件夹外部看起来非常整洁 <br>
+- 但当打开几个文件夹后，内部文件的存放毫无逻辑 <br>
 
 ---
 <br>
 <br>
 <br>
 <br>
-<span style="font-size: 60px;">10.2 Tidy Code</span></center> <br>
+<span style="font-size: 60px;">10.3 Tidy Code</span></center> <br>
 <br>
-<span style="font-size: 30px;">- 10.2.1 Create a R project</span> <br>
-<span style="font-size: 30px;">- 10.2.2 Create a R markdown</span> <br>
-<span style="font-size: 30px;">- 10.2.3 Write Codes in Chunks</span> <br>
-<span style="font-size: 30px;">- 10.2.4 Create Folders</span> <br>
-<span style="font-size: 30px;">- 10.2.5 Create Lists for (df, out, p,...)</span> <br>
-<span style="font-size: 30px;">- 10.2.6 df: Clean Data</span> <br>
-<span style="font-size: 30px;">- 10.2.7 out: MANOVA</span> <br>
-<span style="font-size: 30px;">- 10.2.8 plot: ggplot2</span> <br>
+<span style="font-size: 30px;">- 10.3.1 Create a R project</span> <br>
+<span style="font-size: 30px;">- 10.3.2 Create a R markdown</span> <br>
+<span style="font-size: 30px;">- 10.3.3 Write Codes in Chunks</span> <br>
+<span style="font-size: 30px;">- 10.3.4 Create Folders</span> <br>
+<span style="font-size: 30px;">- 10.3.5 Create Lists for (df, out, p,...)</span> <br>
+<span style="font-size: 30px;">- 10.3.6 df: Clean Data</span> <br>
+<span style="font-size: 30px;">- 10.3.7 out: MANOVA</span> <br>
+<span style="font-size: 30px;">- 10.3.8 plot: ggplot2</span> <br>
 
 ---
-## <h1 lang="en">10.2.1 Create a R project</h1> 
+## <h1 lang="en">10.3.1 Create a R project</h1> 
 <img src="./picture/chp10/new_project.png" width="100%"> <br>
 - 如果你要做一个新的项目，创建一个R project <br>
 
 ---
-## <h1 lang="en">10.2.1 Create a R project</h1> 
+## <h1 lang="en">10.3.1 Create a R project</h1> 
 <img src="./picture/chp10/new_project_path.png" width="90%"> <br>
 - 设定路径为我们刚刚创建的git文件夹Example <br>
 
 ---
-## <h1 lang="en">10.2.1 Create a R project</h1> 
+## <h1 lang="en">10.3.1 Create a R project</h1> 
 <img src="./picture/chp10/new_project_window.png" width="90%"> <br>
 - 创建完成后会打开一个新的R studio窗口 <br>
 - (可以看到R studio识别到这是一个git文件夹，自动帮我们创建了R相关的.gitignore) <br>
 
 ---
-## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+## <h1 lang="en">10.3.2 Create a R markdown</h1> 
 <img src="./picture/chp10/new_rmarkdown.png" width="100%"> <br>
 - 创建一个rmarkdown用来写代码 <br>
 - 不要创建R script, 它没有Chunk，代码会很乱<br>
 
 ---
-## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+## <h1 lang="en">10.3.2 Create a R markdown</h1> 
 <img src="./picture/chp10/create_rmarkdown_title.png" width="90%"> <br>
 - 给这个Rmarkdown取一个名字，最好使用驼峰式大小写<br>
 - ~~(如果你没有强迫症，可以全部小写或全部大写)~~ <br>
 
 ---
-## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+## <h1 lang="en">10.3.2 Create a R markdown</h1> 
 <img src="./picture/chp10/new_rmarkdown_1.png" width="100%"> <br>
 - 这就算创建好了一个R markdown，会有默认的几行代码作为示例<br>
 
 ---
-## <h1 lang="en">10.2.2 Create a R markdown</h1> 
+## <h1 lang="en">10.3.2 Create a R markdown</h1> 
 <img src="./picture/chp10/new_rmarkdown_save.png" width="90%"> <br>
 - 保存这个R markdown，名字可以与之前的Title一致，也可以不一致<br>
 - ~~强迫症一定会写一致~~ <br>
 - 你刚刚只是创建了这个R markdown，可以在右侧的Files看到，并没有rmd文件<br>
 
 ---
-## <h1 lang="en">10.2.3 Write Codes in Chunks</h1> 
+## <h1 lang="en">10.3.3 Write Codes in Chunks</h1> 
 <img src="./picture/chp10/chunk_library.png" width="100%"> <br>
 - 一个Chunk由这样几部分组成<br>
 1. 三个 "`" 数字键1左边的点，表示这个Chunk的开始<br>
@@ -182,36 +283,100 @@ _b. 逗号后面的空格_<br>
 _c. 赋值符号 " <- " 左右的空格_<br>
 
 ---
-## <h1 lang="en">10.2.4 Create Folders</h1> 
-<img src="./picture/chp10/folders.png" width="90%"> <br>
-- 创建三个文件夹，分别用来存放数据，结果和图片
+## <h1 lang="en">10.3.3.1 Notes</h1> 
+```{r, eval=FALSE}
+  # Scientific notation
+  options(scipen = 999)
+
+  # Convert data.frame to data.table
+  setDT(df.split)
+
+  # setting subject and splitting the data by var1, var2, var3
+  split_data <- split(df.split, list(df.split[[sub]], df.split[[var1]],
+                                     df.split[[var2]], df.split[[var3]]))
+```
+- 每写一行代码，写一行注释 <br>
+- 如果你让GPT帮你写代码(比如这里的代码)，他自然就会给每行代码添加注释 <br>
+<br>
+_仅供举例，非Example中内容_
 
 ---
-## <h1 lang="en">10.2.5 Create Lists for (df, out, p,...)</h1> 
+## <h1 lang="en">10.3.3.2 Variable Names</h1> 
+```{r, eval=FALSE}
+# 局部变量的变量名可以不带任何定语,状语
+data <- read.csv("./yourdata.csv")
+
+# 当然这不是真正意义上的局部变量。只是说这个变量只在这个chunk中使用
+# 这样的局部变量，在使用完后，一定要清除
+rm(data)
+
+# 全局变量的变量名尽可能用简单的字母描述他是什么
+df.icc <- df.raw %>%
+  dplyr::filter(ACC == 1 | ACC == 0)
+
+# 其实，除非你在function内写代码，你的变量都是全局变量
+# 我这里指的全局变量是你在之后的代码中依然会使用的变量
+# 因此它的名字一定是可以让你直觉的想到，这是做什么的
+```
+- 但是这种做法也有弊端 <br>
+- 当你需要用到非常多变量的时候，如果所有变量都是全局变量，再标准化的变量名，也不能让读者甚至让你自己明白这个变量指代的是什么 <br>
+<br>
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.3.3.2 Variable Names</h1> 
+<img src="./picture/chp10/badexample.png" width="100%"> <br>
+- 你也不想你的代码变成这样吧 <br>
+<br>
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.3.4 Create Folders</h1> 
+<img src="./picture/chp10/folders.png" width="80%"> <br>
+- yuki认为更好的方法是将每一步操作，每一个结果都存放进list中 <br>
+- 首先，我们创建三个文件夹，分别用来存放数据，结果和图片
+
+---
+## <h1 lang="en">10.3.5 Create Lists for (df, out, p,...)</h1> 
 <img src="./picture/chp10/NULL_list.png" width="100%"> <br>
-- 创建三个list，分别存放所有的数据集，所有的结果文件，所有的图片 <br>
-- 对应刚才在根目录下创建的三个文件夹<br>
+- 代码中，我们对应创建三个list <br>
+- 分别存放所有的数据集，所有的结果文件，所有的图片<br>
 
 ---
-## <h1 lang="en">10.2.6 df: Clean Data</h1> 
+## <h1 lang="en">10.3.6 df: Clean Data</h1> 
 <img src="./picture/chp10/df_clean_data.png" width="90%"> <br>
 - 每一步操作，对应df这个list中的一个元素 <br>
 - 做完每一步操作，都给这个list中的对应元素命名 <br>
+- Chunk的名字，很多时候比Notes注释更好用。
 
 ---
-## <h1 lang="en">10.2.6 df: Clean Data</h1> 
+## <h1 lang="en">10.3.6 df: Clean Data</h1> 
+<img src="./picture/chp10/cleandata_example.png" width="100%"> <br>
+- 尤其是当你做完每一个清洗数据的Chunk，然后把所有Chunk收起时 <br>
+- 你的每一步操作，一目了然 <br>
+<br>
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.3.6 df: Clean Data</h1> 
+<img src="./picture/chp10/cleandata_list.png" width="110%"> <br>
+- 点开df这个list <br>
+- 相较于全局变量中的变量名，list中元素的名称可以更长，更多"非法字符" <br>
+- 换句话说，更容易让你自己理解每一步在做什么 <br>
+<br>
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.3.6 df: Clean Data</h1> 
 <img src="./picture/chp10/df_environment.png" width="100%"> <br>
-- 这样可以保持Global Environment很干净 <br>
+- 同时，这样也可以保证你的Global Environment很干净 <br>
 
 ---
-## <h1 lang="en">10.2.6 df: Clean Data</h1> 
-<img src="./picture/chp10/df_list.png" width="100%"> <br>
-- 这里是举例子，清洗数据一般不可能只有两步，每步两三行 <br>
-- 基本上都有很多步流程，每一步有非常复杂的操作 <br>
-- 当你日后打开这个list的时候，结合你之前写的注释 <br>
-- 你可以清楚的知道你当时每一步清洗数据在做什么 <br>
-- 我个人认为，这种存入list的做法 <br>
-- 比使用全局变量，然后起名"df_mt_longer,..." 的方法更好 <br>
+## <h1 lang="en">10.3.6 df: Clean Data</h1> 
+<img src="./picture/chp10/cleandata_bad.png" width="80%"> <br>
+- 你也不想你的Global Environment变成这样吧 <br>
+<br>
+_仅供举例，非Example中内容_
 
 ---
 ## <h1 lang="en">10.1.8 Second Commit</h1> 
@@ -224,14 +389,14 @@ _c. 赋值符号 " <- " 左右的空格_<br>
 - 网页上会显示你刚刚的更新 <br>
 
 ---
-## <h1 lang="en">10.2.7 out: MANOVA</h1> 
+## <h1 lang="en">10.3.7 out: MANOVA</h1> 
 <img src="./picture/chp10/OUTPUT_1.png" width="80%"> <br>
 - 我们新建一个RMD来写结果部分的代码 <br>
 - 你可能现在觉得，之前Clean Data的RMD只有几行，为什么不接着写，而要重开一个新的RMD <br>
 - 但如果当你所有代码有上千行的时候，都放在一个RMD里，哪怕你标题层级再清晰，也会很难找到你想修改的那部分代码了 <br>
 
 ---
-## <h1 lang="en">10.2.8 plot: ggplot2</h1> 
+## <h1 lang="en">10.3.8 plot: ggplot2</h1> 
 <img src="./picture/chp10/palette.png" width="100%"> <br>
 - 再新建一个RMD写画图的代码 <br>
 - 为了画图，我们预先设定好一个调色盘palette，便于之后提取颜色 <br>
@@ -239,14 +404,14 @@ _c. 赋值符号 " <- " 左右的空格_<br>
 - 由于三种颜色组合都被存入了list palette中，因此这三个颜色变量就是冗余数据了，应该及时从环境变量中清除 <br>
 
 ---
-## <h1 lang="en">10.2.8 plot: ggplot2</h1> 
+## <h1 lang="en">10.3.8 plot: ggplot2</h1> 
 <img src="./picture/chp10/ggplot2.png" width="100%"> <br>
 - 用ggplot2画一个云雨图 <br>
 - 与之前类似，将图片存入list中，并且命名为"RainCloud Plot" <br>
 - 具体画法将在下一节课讲解 <br>
 
 ---
-## <h1 lang="en">10.2.8 plot: ggplot2</h1> 
+## <h1 lang="en">10.3.8 plot: ggplot2</h1> 
 <img src="./picture/chp10/plot.png" width="100%"> <br>
 
 ---
@@ -258,3 +423,89 @@ _c. 赋值符号 " <- " 左右的空格_<br>
 ## <h1 lang="en">Extra</h1> 
 <img src="./picture/chp10/code_file.png" width="100%"> <br>
 - 做完后，感觉还可以更整洁一点，就把所有代码RMD文件放在了code文件夹中 <br>
+
+---
+<br>
+<br>
+<br>
+<br>
+<span style="font-size: 60px;">10.4 OCD-level Codes</span></center> <br>
+<br>
+
+<span style="font-size: 30px;">- 10.4.3 Separate Codes</span> <br>
+<span style="font-size: 30px;">- 10.4.4 Functions</span> <br>
+<span style="font-size: 30px;">- 10.4.5 Packages</span> <br>
+
+---
+## <h1 lang="en">10.4.1 Separate Codes</h1> 
+<img src="./picture/chp10/separate_codes.png" width="100%"> <br>
+- 第一步，其实我们在刚刚的操作中几乎完成了 <br>
+- 我们将清洗数据，方差分析和画图的代码分开了 <br>
+- 但如果你代码中总会重复同一个操作，那么单单将不同内容的代码分开，可能并不能让代码更简洁 <br>
+
+---
+## <h1 lang="en">10.4.2 Functions</h1> 
+<img src="./picture/chp10/create_R.png" width="100%"> <br>
+- 创建一个R script文件 <br>
+- 将我们的重复操作变成一个函数 <br>
+- 待会儿会讲到的source和打包，都只识别R script，而不识别R markdown <br>
+
+---
+## <h1 lang="en">10.4.2 Functions</h1> 
+```{r, eval=FALSE}
+myfunction <- function(df, Sub = "Sub", var1, var2, y) {
+  df.clean <- df %>%
+    # 输入的是字符串，需要用!!sym()将字符串转化为dplyr识别的列名
+    dplyr::group_by(!!sym(Sub), !!sym(var1), !!sym(var2)) %>%
+    dplyr::summarise(RT_mean = mean(!!sym(y))) %>%
+    dplyr::ungroup()
+  return(df.clean)
+}
+```
+- 一个函数由这几部分构成 <br>
+- 小括号内的argument，大括号内的函数本体 <br>
+- 本质上是你告诉函数argument是什么，函数将这些argument带入本体中进行运算 <br>
+- 最终返回一个你设定好的东西，可能是图片，可能是表格，可能是一个向量 <br>
+- NOTE: 如果你在小括号内设定了某个argument的值，则是在设定这个argument的默认值 <br>
+
+---
+## <h1 lang="en">10.4.2 Functions</h1> 
+<img src="./picture/chp10/cleandata_withmyfunction.png" width="100%"> <br>
+- 如果你的重复操作(比如这里的清洗数据)非常长 <br>
+- 那么使用function可以帮你节约很多行 <br>
+- 最重要的是，这样代码看起来非常整洁(强迫症狂喜) <br>
+<br>
+- 但其实大多数情况下清洗数据并不会使用函数来封装，你需要展示你清洗数据的细节 <br>
+- 当你需要重复计算某个值时，比如我想计算某个数据集的D prime，才会使用到函数 <br>
+
+---
+## <h1 lang="en">10.4.2 Functions</h1> 
+```{r, eval=FALSE}
+source("../functions/Functions.R")
+```
+- 如果你写了非常多的函数，可以用source命令一次调取 <br>
+- 但这样的做法会让你的Global Environment充斥着函数 <br>
+<img src="./picture/chp10/functions_inGE.png" width="80%"> <br>
+- 你也不想你的Global Environment变成这样吧 <br>
+<br>
+_仅供举例，非Example中内容_
+
+---
+## <h1 lang="en">10.4.5 Packages</h1> 
+- 或许最整洁的方法，是把自己写的函数打包 <br>
+- 但这一部分可能比较困难，会出现很多bug <br>
+- 有兴趣的可以去yuki的GitHub上看PPT学习(遇到bug问yuki) <br>
+https://github.com/sinnyuki/Presentation/tree/main/230511_foreach%26package/PPT
+<br>
+<img src="./picture/chp10/anya.png" width="50%"> <br>
+
+---
+## <h1 lang="en">10.4.5 Packages</h1> 
+<img src="./picture/chp10/batch_shr.png" width="100%"> <br>
+- 比如我想计算一个数据集的蒙特卡洛分半信度(是否是蒙特卡洛，2种可能)<br>
+- 每种指标的分半信度我都想计算，比如rt，acc，dprime等等(6种Indice) <br>
+- 我还想指定这个分半信度是针对Self和Friend之间的，还是Self和Stranger之间的(2种Target) <br>
+- 这种情况下，如果我要写函数，全局变量会出现2x6x2 = 24个函数 <br>
+- 但是封装成包后，就只有一个命令 batch::shr <br>
+<br>
+_仅供举例，非Example中内容_
