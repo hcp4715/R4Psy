@@ -29,7 +29,7 @@ class: center, middle
 &lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2023/05/08&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2023/05/15&lt;/span&gt; &lt;br&gt;
 
 ---
 class: center, middle
@@ -99,6 +99,7 @@ library(tidyverse)
 ```r
 library(ggplot2)
 library(ggdist) # 可以叠加在ggplot2的图层上，但是比ggplot2更漂亮
+library(tidybayes) # 贝叶斯的画图包
 ```
 
 ---
@@ -347,29 +348,183 @@ ggsave(filename = "./picture/chp11/plot15.png", plot = p[[15]], height = 5, widt
 &lt;img src="./picture/chp11/plot15.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;Layers and Facets Full Codes&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;fill = interaction()&lt;/h1&gt; 
 
 ```r
-ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = interaction(Shape, Match),)) + # fill的颜色基于Shape和Match
-  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + # 箱线图左移0.2个单位
+# 基于交互项填充颜色
+p[[16]] &lt;- ggplot2::ggplot(df[[2]], 
+                           aes(x = Shape, y = RT_mean, 
+                               fill = interaction(Shape, Match),)) + # fill的颜色基于Shape和Match
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
   ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
   ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
   ggplot2::labs(x = "Moral &amp; Identity", y = "Mean of Reaction Time", title = "RainCloud Plot of RT_mean by Moral &amp; Identity") +
   ggplot2::coord_flip() +
+  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + # 需要八种颜色来填充图片
+  ggplot2::facet_wrap(~Match, ncol = 1) 
+
+names(p)[16] &lt;- "Layers and Facets Full Codes"; p[[16]]
+ggsave(filename = "./picture/chp11/plot16.png",plot = p[[16]], height = 7, width = 10, dpi = 300)
+```
+
+---
+## &lt;h1 lang="en"&gt;fill = interaction()&lt;/h1&gt; 
+&lt;img src="./picture/chp11/plot16.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme&lt;/h1&gt; 
+
+```r
+# APA 主题
+p[[17]] &lt;- p[[16]] +
+  ggplot2::theme_bw() + # 主要是为了去掉背景的灰色, 
   ggplot2::theme(legend.position = "none",
                  axis.text = element_text(size = 12),
                  axis.title = element_text(size = 14),
                  strip.text = element_text(size = 14),
-                 plot.title = element_text(size = 16),) +
-  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + # 需要八种颜色来填充图片
-  ggplot2::facet_wrap(~Match, ncol = 1) 
-
-ggsave(filename = "./picture/chp11/plot.png",plot = last_plot(), height = 7, width = 10, dpi = 300)
+                 plot.title = element_text(size = 16),
+                 strip.background = element_blank(), # 去掉facet标题底色
+                 panel.grid.major=element_blank(), # 隐藏主要网格线
+                 panel.grid.minor=element_blank(), # 隐藏次要网格线
+                 panel.border=element_blank(), # 隐藏边框
+                 text=element_text(family='Times New Roman'), # 字体调整为Times New Roman
+                 # 使用windowsFonts()查看字体对应的名字是什么
+                 # 如果没有，可以导入 extrafont 包 library(extrafont)
+                 # 这个包很笨，只能添加一个文件夹内的字体，但是默认字体文件夹内"C:/WINDOWS/FONT/"字体太多了,
+                 # 因此建议你把需要的字体放到桌面，然后导入font_import(path = "C:/user/desktop/")
+                 # 列出已导入的字体 fonttable()，使用FamilyName就可以了
+                 ) 
+names(p)[17] &lt;- "APA theme"; p[[17]]
+ggsave(filename = "./picture/chp11/plot17.png", plot = p[[17]], height = 6, width = 8, dpi = 300)
 ```
 
 ---
-## &lt;h1 lang="en"&gt;Layers and Facets Final Plot&lt;/h1&gt; 
-&lt;img src="./picture/chp11/plot.png" width="100%"&gt;
+## &lt;h1 lang="en"&gt;APA theme&lt;/h1&gt; 
+&lt;img src="./picture/chp11/plot17.png" width="100%"&gt;
+
+---
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;11.2 Tips&lt;/span&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;ase&lt;/h1&gt; 
+
+```r
+df[[3]] &lt;- df[[1]] %&gt;%
+  dplyr::group_by(Shape, Match) %&gt;%
+  dplyr::summarise(RT_mean = mean(RT)) %&gt;%
+  dplyr::ungroup() %&gt;%
+  dplyr::arrange(Match, Shape) %&gt;%
+  dplyr::mutate(RT_mean = round(RT_mean, 2))
+names(df)[3] &lt;- "Summary"
+```
+
+- 其实ggplot2的每一行代码，都代表一个独立的图片(当然这不包括theme这样的代码，主要指geom这样的) &lt;br&gt;
+- 我们一般都会在第一行写ggplot2::ggplot(data = ?, ase(x = ?, y = ?)) &lt;br&gt;
+- 这让我们错觉，ggplot的 "+" 就是dplyr中的 "%&gt;%"，我们后面的每一行是对上一行得到的对象的修饰 &lt;br&gt;
+- 但其实我们是对同一个对象画不同的图，然后重叠 &lt;br&gt;
+- 这意味着，在每一行画图代码中，我们都可以设定data和aes &lt;br&gt;
+- 而第一行ggplot(data = ?, ase(x = ?, y = ?))其实是在设定坐标轴， &lt;br&gt;
+- 第一行实际的意义是，如果后面的画图不再指定data和aes，就默认使用第一行的data和aes &lt;br&gt;
+&lt;br&gt;
+为了让解释这一点，我们创建了df[[3]]，一个简单的八行三列的数据集
+
+---
+## &lt;h1 lang="en"&gt;ggplot2::geom_text&lt;/h1&gt; 
+
+```r
+# geom_text
+p[[18]] &lt;- p[[17]] +
+  ggplot2::geom_text(data = df[[3]], aes(x = Shape, y = 0.9, label = RT_mean), 
+                     hjust = 0, family='Times New Roman') 
+names(p)[18] &lt;- "geom_text"; p[[18]]
+ggsave(filename = "./picture/chp11/plot18.png", plot = p[[18]], height = 6, width = 10, dpi = 300)
+```
+
+&lt;img src="./picture/chp11/plot18.png" width="80%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;[aes(fill = ?)] &amp; [aes(),fill= ?]&lt;/h1&gt; 
+
+```r
+# fill 在aes里面和外面的区别
+p[[19]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean), fill = interaction(Shape, Match)) + # fill的颜色基于Shape和Match
+  tidybayes::stat_halfeye() +
+  ggplot2::coord_flip() +
+  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + # 需要八种颜色来填充图片
+  ggplot2::facet_wrap(~Match, ncol = 1) 
+
+names(p)[19] &lt;- "tidybayes::stat_halfeye"; p[[19]]
+ggsave(filename = "./picture/chp11/plot19_out.png", plot = p[[19]], height = 6, width = 10, dpi = 300)
+```
+
+&lt;img src="./picture/chp11/plot19_out.png" width="80%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;[aes(fill = ?)] &amp; [aes(),fill= ?]&lt;/h1&gt; 
+
+```r
+# fill 在aes里面和外面的区别
+p[[19]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = interaction(Shape, Match))) + # fill的颜色基于Shape和Match
+  tidybayes::stat_halfeye() +
+  ggplot2::coord_flip() +
+  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + # 需要八种颜色来填充图片
+  ggplot2::facet_wrap(~Match, ncol = 1) 
+
+names(p)[19] &lt;- "tidybayes::stat_halfeye"; p[[19]]
+ggsave(filename = "./picture/chp11/plot19_in.png", plot = p[[19]], height = 6, width = 10, dpi = 300)
+```
+
+&lt;img src="./picture/chp11/plot19_in.png" width="80%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;Width&lt;/h1&gt; 
+
+```r
+# 相对大小, 想调整每个水平下图片的间距。需要同时调整ggplot中的width和ggsave中的width
+p[[20]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = interaction(Shape, Match))) + 
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
+  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+  ggdist::stat_dots(side = "left",justification = 1.25, alpha = 0.5, width = 0.5) + 
+  # 调整stat_dots的width会让图片之间相关更宽，但代价是点的数量变少了
+  ggplot2::coord_flip() +
+  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + 
+  ggplot2::facet_wrap(~Match, ncol = 1) +
+  theme(legend.position = "none")
+names(p)[20] &lt;- "Plot Width"; p[[20]]
+ggsave(filename = "./picture/chp11/plot20_less.png", plot = p[[20]], height = 6, width = 10, dpi = 300)
+```
+
+---
+## &lt;h1 lang="en"&gt;Width&lt;/h1&gt; 
+
+&lt;img src="./picture/chp11/plot20_less.png" style="width:100%;"&gt;
+
+---
+## &lt;h1 lang="en"&gt;Width&lt;/h1&gt; 
+
+```r
+# 相对大小
+p[[20]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = interaction(Shape, Match))) + 
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
+  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+  ggdist::stat_dots(side = "left",justification = 1.25, alpha = 0.5, width = 0.5) + 
+  # 调整stat_dots的width会让图片之间相关更宽，但代价是点的数量变少了
+  ggplot2::coord_flip() +
+  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + 
+  ggplot2::facet_wrap(~Match, ncol = 1) +
+  theme(legend.position = "none")
+names(p)[20] &lt;- "Plot Width"; p[[20]]
+ggsave(filename = "./picture/chp11/plot20_more.png", plot = p[[20]], height = 10, width = 10, dpi = 300)
+# 我们可以在调整了width的基础上，再调整ggsave中的height，让点的数量和之前一致
+```
+
+---
+## &lt;h1 lang="en"&gt;Width&lt;/h1&gt; 
+
+&lt;img src="./picture/chp11/plot20_more.png" style="width:70%;"&gt;
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
