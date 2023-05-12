@@ -298,6 +298,7 @@ ggsave(filename = "./picture/chp11/plot15.png", plot = p[[15]], height = 5, widt
 ---
 ## <h1 lang="en">fill = interaction()</h1> 
 ```{r plot16, eval=FALSE, warning=FALSE}
+# 基于交互项填充颜色
 p[[16]] <- ggplot2::ggplot(df[[2]], 
                            aes(x = Shape, y = RT_mean, 
                                fill = interaction(Shape, Match),)) + # fill的颜色基于Shape和Match
@@ -320,7 +321,7 @@ ggsave(filename = "./picture/chp11/plot16.png",plot = p[[16]], height = 7, width
 ---
 ## <h1 lang="en">APA theme</h1> 
 ```{r plot 17, eval=FALSE, warning=FALSE}
-# Facet文字的大小
+# APA 主题
 p[[17]] <- p[[16]] +
   ggplot2::theme_bw() + # 主要是为了去掉背景的灰色, 
   ggplot2::theme(legend.position = "none",
@@ -389,6 +390,7 @@ ggsave(filename = "./picture/chp11/plot18.png", plot = p[[18]], height = 6, widt
 ---
 ## <h1 lang="en">[aes(fill = ?)] & [aes(),fill= ?]</h1> 
 ```{r plot 19_fill out, eval=FALSE, warning=FALSE}
+# fill 在aes里面和外面的区别
 p[[19]] <- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean), fill = interaction(Shape, Match)) + # fill的颜色基于Shape和Match
   tidybayes::stat_halfeye() +
   ggplot2::coord_flip() +
@@ -404,6 +406,7 @@ ggsave(filename = "./picture/chp11/plot19_out.png", plot = p[[19]], height = 6, 
 ---
 ## <h1 lang="en">[aes(fill = ?)] & [aes(),fill= ?]</h1> 
 ```{r plot 19_fill in, eval=FALSE, warning=FALSE}
+# fill 在aes里面和外面的区别
 p[[19]] <- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = interaction(Shape, Match))) + # fill的颜色基于Shape和Match
   tidybayes::stat_halfeye() +
   ggplot2::coord_flip() +
