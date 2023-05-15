@@ -4,7 +4,7 @@
     <title>chapter_11.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
   </head>
@@ -109,8 +109,6 @@ pacman::p_load("tidyverse", "ggplot2", "ggdist", "patchwork", "papaja")
 # &lt;h1 lang="zh-CN"&gt;读取数据&lt;/h1&gt;
 
 
-
-
 ```r
 df.mt.raw &lt;-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE)
@@ -134,14 +132,7 @@ df.mt.rt.subj &lt;- df.mt.raw %&gt;%
   dplyr::group_by(Sub, Match, Identity, Valence) %&gt;%
   dplyr::summarise(RT_mean = mean(RT_ms)) %&gt;%
   dplyr::ungroup()
-```
 
-```
-## `summarise()` has grouped output by 'Sub', 'Match', 'Identity'. You can
-## override using the `.groups` argument.
-```
-
-```r
 # get the overall mean RT
 df.mt.rt.sum  &lt;- df.mt.rt.subj %&gt;% 
   dplyr::group_by(Match, Identity, Valence) %&gt;%
@@ -150,11 +141,6 @@ df.mt.rt.sum  &lt;- df.mt.rt.subj %&gt;%
                    SE_RT = SD_RT/sqrt(n()-1),
                    n = n()) %&gt;%
   dplyr::ungroup()
-```
-
-```
-## `summarise()` has grouped output by 'Match', 'Identity'. You can override using
-## the `.groups` argument.
 ```
 
 ---
@@ -173,14 +159,7 @@ df.mt.acc.subj &lt;- df.mt.raw %&gt;%
   dplyr::group_by(Sub, Match, Identity, Valence) %&gt;%
   dplyr::summarise(ACC_mean = mean(ACC)) %&gt;%
   dplyr::ungroup()
-```
 
-```
-## `summarise()` has grouped output by 'Sub', 'Match', 'Identity'. You can
-## override using the `.groups` argument.
-```
-
-```r
 # get the overall mean acc
 df.mt.acc.sum &lt;- df.mt.acc.subj %&gt;% 
   dplyr::group_by(Match, Identity, Valence) %&gt;%
@@ -189,48 +168,35 @@ df.mt.acc.sum &lt;- df.mt.acc.subj %&gt;%
                    SE_ACC = SD_ACC/sqrt(n()-1),
                    n = n()) %&gt;%
   dplyr::ungroup()
-```
 
-```
-## `summarise()` has grouped output by 'Match', 'Identity'. You can override using
-## the `.groups` argument.
+
+df.mt.acc.sum.tmp &lt;- df.mt.acc.sum %&gt;%
+  dplyr::rename(grand_mean = grand_mean_ACC,
+                SD = SD_ACC,
+                SE = SE_ACC) %&gt;%
+  dplyr::mutate(DV = "ACC")
+
+df.mt.rt.sum.tmp &lt;- df.mt.rt.sum  %&gt;%
+  dplyr::rename(grand_mean = grand_mean_RT,
+                SD = SD_RT,
+                SE = SE_RT) %&gt;%
+  dplyr::mutate(DV = "RT")
+
+df.mt.sum.tmp &lt;- rbind(df.mt.acc.sum.tmp, df.mt.rt.sum.tmp)
 ```
 
 ---
 # &lt;h1 lang="zh-CN"&gt;查看数据&lt;/h1&gt;
 
-
 ```r
 df.mt.sum &lt;- df.mt.rt.sum %&gt;%
   dplyr::left_join(., df.mt.acc.sum)
-```
-
-```
-## Joining with `by = join_by(Match, Identity, Valence, n)`
-```
-
-```r
 df.mt.sum
 ```
-
-```
-## # A tibble: 8 × 10
-##   Match   Identity Valence grand_mean_RT SD_RT SE_RT     n grand_mean_ACC SD_ACC
-##   &lt;chr&gt;   &lt;fct&gt;    &lt;fct&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;          &lt;dbl&gt;  &lt;dbl&gt;
-## 1 match   Self     Good             639.  62.3  9.50    44          0.889  0.102
-## 2 match   Self     Bad              720.  68.5 10.4     44          0.771  0.127
-## 3 match   Other    Good             681.  80.4 12.3     44          0.816  0.147
-## 4 match   Other    Bad              707.  68.4 10.4     44          0.788  0.133
-## 5 mismat… Self     Good             734.  58.6  8.93    44          0.765  0.111
-## 6 mismat… Self     Bad              748.  63.5  9.68    44          0.774  0.120
-## 7 mismat… Other    Good             738.  62.9  9.60    44          0.749  0.126
-## 8 mismat… Other    Bad              733.  59.1  9.01    44          0.818  0.103
-## # ℹ 1 more variable: SE_ACC &lt;dbl&gt;
-```
+&lt;img src="./picture/chp11/df.mt.sum.png" width="100%"&gt;
 
 ---
 ## First plot (old-fashion)
-
 
 ```r
 p1 &lt;- df.mt.sum %&gt;%
@@ -240,17 +206,16 @@ p1 &lt;- df.mt.sum %&gt;%
                       y = grand_mean_RT,
                       fill = Valence)) + 
   ggplot2::geom_bar(stat = "identity",
-                    position=position_dodge()) +
+                    position=position_dodge(),
+                    ) +
   ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
                              ymax=grand_mean_RT+SE_RT),
-                         width=.2,
+                         width=.1,
                          position = position_dodge(.9)) +
   papaja::theme_apa()
-
-p1
+ggsave(filename = "./picture/chp11/p1.png", plot = p1, height = 5, width = 10, dpi = 300)
 ```
-
-![](chapter_11_files/figure-html/first plot-1.png)&lt;!-- --&gt;
+&lt;img src="./picture/chp11/p1.png" width="60%"&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;修改图题&lt;/h1&gt; 
@@ -263,28 +228,83 @@ p2 &lt;- p1 +
       x="Identity",
       y="Reaction times (ms)")
 
-ggsave(filename = "./picture/chp11/p2.pdf", plot = p2, height = 5, width = 10, dpi = 300)
-
-p2
+ggsave(filename = "./picture/chp11/p2.png", plot = p2, height = 5, width = 10, dpi = 300)
 ```
-
-![](chapter_11_files/figure-html/title of p1-1.png)&lt;!-- --&gt;
+&lt;img src="./picture/chp11/p2.png" width="100%"&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
 
 ```r
-# 
 p3 &lt;- p2 + 
-  coord_cartesian(ylim = c(500, 800))
-
+  coord_cartesian(ylim = c(500, 800)) # +
+  # scale_y_continuous(limits = c(500,800))
 ggsave(filename = "./picture/chp11/p3.png", plot = p3, height = 5, width = 10, dpi = 300)
-p3
+```
+&lt;img src="./picture/chp11/p3.png" width="100%"&gt;
+
+
+---
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+
+```r
+df.mt.sum %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean_ACC,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean_ACC-1.96*SE_ACC,
+                             ymax=grand_mean_ACC+1.96*SE_ACC),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()+
+  labs(title="Mean ACC for different conditions",
+      x="Identity",
+      y="Accuracy")+ 
+  coord_cartesian(ylim = c(0.5, 1)) 
+ggsave(filename = "./picture/chp11/p3.1.png", plot = last_plot(), height = 5, width = 10, dpi = 300)
 ```
 
 ---
-## &lt;h1 lang="en"&gt;点加上error bars&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p3.1.png" width="100%"&gt;
 
+---
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+
+```r
+df.mt.sum.tmp %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean-1.96*SE,
+                             ymax=grand_mean+1.96*SE),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()+
+  facet_wrap(~DV, scales = "free_y")
+  # labs(title="Mean ACC for different conditions",
+  #     x="Identity",
+  #     y="Accuracy")+ 
+  # coord_cartesian(ylim = c(0.5, 1)) 
+ggsave(filename = "./picture/chp11/p3.2.png",plot = last_plot(), height = 5, width = 10, dpi = 300)
+```
+
+---
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p3.2.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;点加上error bars&lt;/h1&gt; 
 
 ```r
 p4 &lt;- df.mt.sum %&gt;%
@@ -302,37 +322,25 @@ p4 &lt;- df.mt.sum %&gt;%
                          ) +
   ggplot2::scale_y_continuous(limits = c(450, 900)) +
   papaja::theme_apa()
-
-p4
-```
-
-![](chapter_11_files/figure-html/plot 4-1.png)&lt;!-- --&gt;
-
-```r
 ggsave(filename = "./picture/chp11/p4.png", plot = p4, height = 5, width = 10, dpi = 300)
 ```
+
+---
+## &lt;h1 lang="en"&gt;点加上error bars&lt;/h1&gt; 
 &lt;img src="./picture/chp11/p4.png" width="100%"&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;加入个体的数据&lt;/h1&gt; 
 
-
 ```r
-# 叠加小提琴图
 p5 &lt;- p4 +
   ggplot2::geom_point(data = df.mt.rt.subj,
                        aes(x=Identity,
                            y=RT_mean,
                            group = Valence))
-
-p5
-```
-
-![](chapter_11_files/figure-html/p5-1.png)&lt;!-- --&gt;
-
-```r
 ggsave(filename = "./picture/chp11/p5.png", plot = p5, height = 5, width = 10, dpi = 300)
 ```
+&lt;img src="./picture/chp11/p5.png" width="100%"&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
@@ -346,7 +354,14 @@ p6 &lt;-  p4 +
                            group = Valence),
                       position = position_jitter(width = 0.1),
                       alpha = 0.5)
+ggsave(filename = "./picture/chp11/p6.png", plot = p6, height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/p6.png" width="90%"&gt;
 
+---
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
+
+```r
 p7 &lt;- df.mt.sum %&gt;%
   dplyr::filter(Match == "match") %&gt;%
   ggplot2::ggplot(., 
@@ -364,19 +379,15 @@ p7 &lt;- df.mt.sum %&gt;%
                          ) +
   ggplot2::scale_y_continuous(limits = c(450, 900)) +
   papaja::theme_apa()
-
-p7
-```
-
-![](chapter_11_files/figure-html/p7 jitter-1.png)&lt;!-- --&gt;
-
-```r
-# ggsave(filename = "./picture/chp11/p8.png", plot = p[[5]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp11/p7.png", plot = p7, height = 5, width = 10, dpi = 300)
 ```
 
 ---
 ## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p7.png" width="100%"&gt;
 
+---
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
 
 ```r
 df.mt.rt.subj.m.plot &lt;- df.mt.rt.subj %&gt;%
@@ -386,7 +397,12 @@ df.mt.rt.subj.m.plot &lt;- df.mt.rt.subj %&gt;%
                                   Identity == "Other" &amp; Valence == "Bad" ~ "2.12"),
                 conds = as.numeric(conds)) %&gt;%
   dplyr::filter(Match == "match")
+```
 
+---
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
+
+```r
 p8 &lt;- p7 + 
   ggplot2::geom_point(data = df.mt.rt.subj.m.plot,
                        aes(x=conds,
@@ -394,10 +410,10 @@ p8 &lt;- p7 +
                            group = Valence),
                       position = position_jitter(width = 0.08),
                       alpha = 0.5)
-p8
+ggsave(filename = "./picture/chp11/p8.png", plot = p8, height = 5, width = 10, dpi = 300)
 ```
+&lt;img src="./picture/chp11/p8.png" width="100%"&gt;
 
-![](chapter_11_files/figure-html/p8 jitter both-1.png)&lt;!-- --&gt;
 ---
 ## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
 
@@ -411,10 +427,12 @@ p9 &lt;- p8 +
                      size=0.8,
                      color="#000000",
                      alpha=0.1)
-
-p9 
+ggsave(filename = "./picture/chp11/p9.png", plot = p9, height = 5, width = 10, dpi = 300)
 ```
+&lt;img src="./picture/chp11/p9.png" width="90%"&gt;
 
+---
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
 
 ```r
 pd &lt;- position_dodge(0.08)
@@ -435,8 +453,221 @@ p10 &lt;- p7 +
                      size=0.8,
                      color="#000000",
                      alpha=0.05)
-p10
+ggsave(filename = "./picture/chp11/p10.png", plot = p10, height = 5, width = 10, dpi = 300)
 ```
+
+---
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
+
+&lt;img src="./picture/chp11/p10.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
+
+```r
+library(patchwork)
+p11 &lt;- p9 + p10 +
+  plot_layout(guides = 'collect')
+ggsave(filename = "./picture/chp11/p11.png", plot = p11, height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/p11.png" width="100%"&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;11.2 APA theme&lt;/span&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: theme_bw()&lt;/h1&gt; 
+
+```r
+# theme_bw() 会改变很多地方的颜色，让主题变成黑白，方便接下来的细节修改
+p[[17]] &lt;- p[[16]] +
+  ggplot2::theme_bw()  
+names(p)[17] &lt;- "APA theme: theme_bw"; p[[17]]
+ggsave(filename = "./picture/chp11/plot17.png", plot = p[[17]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot17.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: legend.position&lt;/h1&gt; 
+
+```r
+# APA默认图例局右
+p[[18]] &lt;- p[[17]] +
+  ggplot2::theme(legend.position = "right",)  # 也可以去掉图例
+names(p)[18] &lt;- "APA theme: legend.position"; p[[18]]
+ggsave(filename = "./picture/chp11/plot18.png", plot = p[[18]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot18.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_size&lt;/h1&gt; 
+
+```r
+# 除了字体大小，标题粗体居中
+p[[19]] &lt;- p[[18]] +
+  ggplot2::theme(axis.text = element_text(size = 12), # 坐标轴字体大小
+                 axis.title = element_text(size = 12), # 坐标轴标题字体大小
+                 strip.text = element_text(size = 12), # facet标题字体大小
+                 plot.title = element_text(size = 12, face = "bold", hjust = 0.5)) # 图片整体标题字体大小 title粗体，居中
+names(p)[19] &lt;- "APA theme: font_size"; p[[19]]
+ggsave(filename = "./picture/chp11/plot19.png", plot = p[[19]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot19.png" width="90%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: strip.background()&lt;/h1&gt; 
+
+```r
+# 去掉facet标题底色  
+p[[20]] &lt;- p[[19]] +
+  ggplot2::theme(strip.background = element_blank()) 
+names(p)[20] &lt;- "APA theme: facet_title_background"; p[[20]]
+ggsave(filename = "./picture/chp11/plot20.png", plot = p[[20]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot20.png" width="100%"&gt;
+
+
+---
+## &lt;h1 lang="en"&gt;APA theme: panel.grid.major&lt;/h1&gt; 
+
+```r
+# 隐藏水平网格线
+p[[21]] &lt;- p[[20]] +
+  ggplot2::theme(panel.grid.major=element_blank()) 
+names(p)[21] &lt;- "APA theme: panel.grid.major"; p[[21]]
+ggsave(filename = "./picture/chp11/plot21.png", plot = p[[21]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot21.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: panel.grid.minor&lt;/h1&gt; 
+
+```r
+# 隐藏垂直网格线
+p[[22]] &lt;- p[[21]] +
+  ggplot2::theme(panel.grid.minor=element_blank()) 
+names(p)[22] &lt;- "APA theme: panel.grid.minor"; p[[22]]
+ggsave(filename = "./picture/chp11/plot22.png", plot = p[[22]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot22.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: panel.border&lt;/h1&gt; 
+
+```r
+# 隐藏边框
+p[[23]] &lt;- p[[22]] +
+  ggplot2::theme(panel.border=element_blank()) # 也可以不去除边框，保留坐标轴
+names(p)[23] &lt;- "APA theme: panel.border"; p[[23]]
+ggsave(filename = "./picture/chp11/plot23.png", plot = p[[23]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot23.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_family&lt;/h1&gt; 
+
+```r
+# 改变图上字体family
+p[[24]] &lt;- p[[23]] +
+  ggplot2::theme(text=element_text(family='Times New Roman')) 
+names(p)[24] &lt;- "APA theme: font_family"; p[[24]]
+ggsave(filename = "./picture/chp11/plot24.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot24.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_family&lt;/h1&gt; 
+
+```r
+ # 使用windowsFonts()查看字体对应的名字是什么, 运气好，里面就有times new roman
+windowsFonts()
+ # 如果没有，可以library(extrafont)
+library(extrafont)
+ # 这个包很笨，只能添加一个文件夹内的字体，
+ # 默认添加"C:/WINDOWS/FONT/"，这里面有你电脑里所有的字体
+ # 因此建议你把需要的字体放到桌面，
+ # 然后设置导入路径font_import(path = "C:/user/desktop/")
+font_import(path = "C:/user/desktop/")
+ # 最后使用 fonttable()，查看字体是否被导入了，
+ # 记住times new roman对应的FamilyName
+fonttable()
+ # 填在上面的text=element_text(family='Times New Roman')
+```
+
+---
+## &lt;h1 lang="en"&gt;Save APA theme&lt;/h1&gt; 
+
+```r
+# 将刚刚制作的apa格式保存
+theme_apa &lt;- ggplot2::theme_bw() +
+             ggplot2::theme(#legend.position = "none",
+                            axis.text = element_text(size = 12), # 坐标轴字体大小
+                            axis.title = element_text(size = 12), # 坐标轴标题字体大小
+                            strip.text = element_text(size = 12), # facet标题字体大小
+                            plot.title = element_text(size = 12, face = "bold", hjust = 0.5), # 图片整体标题字体大小
+                            strip.background = element_blank(), # facet标题的背景
+                            panel.grid.major=element_blank(), # 水平参考线
+                            panel.grid.minor=element_blank(), # 垂直参考线
+                            panel.border=element_blank(), # 边框
+                            text=element_text(family='Times New Roman'), #字体family,       
+                            # papaja::theme_apa()会warning找不到Windows中字体，但其实如果你载入了，就可以在R中找到
+                            )
+# 你可以在载入了papaja(jtools)包之后，在画完图后加入 theme_apa()，获得一样的效果
+```
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_family&lt;/h1&gt; 
+
+```r
+# 和直接用papaja::theme_apa()制作的对比一下,坐标轴更好看了，其他几乎一样
+p[[24]] &lt;- p[[16]] +
+  papaja::theme_apa(base_family = "Times New Roman")
+names(p)[24] &lt;- "APA theme: font_family"; p[[24]]
+ggsave(filename = "./picture/chp11/plot24_apa.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot24_apa.png" width="100%"&gt;
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
