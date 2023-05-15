@@ -178,6 +178,19 @@ df.mt.acc.sum <- df.mt.acc.subj %>%
   dplyr::ungroup()
 
 
+df.mt.acc.sum.tmp <- df.mt.acc.sum %>%
+  dplyr::rename(grand_mean = grand_mean_ACC,
+                SD = SD_ACC,
+                SE = SE_ACC) %>%
+  dplyr::mutate(DV = "ACC")
+
+df.mt.rt.sum.tmp <- df.mt.rt.sum  %>%
+  dplyr::rename(grand_mean = grand_mean_RT,
+                SD = SD_RT,
+                SE = SE_RT) %>%
+  dplyr::mutate(DV = "RT")
+
+df.mt.sum.tmp <- rbind(df.mt.acc.sum.tmp, df.mt.rt.sum.tmp)
 ```
 
 ---
@@ -201,10 +214,11 @@ p1 <- df.mt.sum %>%
                       y = grand_mean_RT,
                       fill = Valence)) + 
   ggplot2::geom_bar(stat = "identity",
-                    position=position_dodge()) +
+                    position=position_dodge(),
+                    ) +
   ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
                              ymax=grand_mean_RT+SE_RT),
-                         width=.2,
+                         width=.1,
                          position = position_dodge(.9)) +
   papaja::theme_apa()
 
@@ -231,10 +245,53 @@ p2
 ```{r p3, eval=FALSE}
 # 
 p3 <- p2 + 
-  coord_cartesian(ylim = c(500, 800))
+  coord_cartesian(ylim = c(500, 800)) # +
+  # scale_y_continuous(limits = c(500,800))
 
 ggsave(filename = "./picture/chp11/p3.png", plot = p3, height = 5, width = 10, dpi = 300)
 p3
+```
+
+```{r}
+df.mt.sum %>%
+  dplyr::filter(Match == "match") %>%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean_ACC,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean_ACC-1.96*SE_ACC,
+                             ymax=grand_mean_ACC+1.96*SE_ACC),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()+
+  labs(title="Mean ACC for different conditions",
+      x="Identity",
+      y="Accuracy")+ 
+  coord_cartesian(ylim = c(0.5, 1)) 
+
+
+df.mt.sum.tmp %>%
+  dplyr::filter(Match == "match") %>%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean-1.96*SE,
+                             ymax=grand_mean+1.96*SE),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()+
+  facet_wrap(~DV, scales = "free_y")
+  # labs(title="Mean ACC for different conditions",
+  #     x="Identity",
+  #     y="Accuracy")+ 
+  # coord_cartesian(ylim = c(0.5, 1)) 
 ```
 
 ---
@@ -266,7 +323,7 @@ ggsave(filename = "./picture/chp11/p4.png", plot = p4, height = 5, width = 10, d
 ## <h1 lang="en">加入个体的数据</h1> 
 
 ```{r p5}
-# 叠加小提琴图
+
 p5 <- p4 +
   ggplot2::geom_point(data = df.mt.rt.subj,
                        aes(x=Identity,
@@ -370,3 +427,11 @@ p10 <- p7 +
 p10
 ```
 
+```{r}
+library(patchwork)
+
+p11 <- p9 + p10
+
+p11 +
+  plot_layout(guides = 'collect')
+```
