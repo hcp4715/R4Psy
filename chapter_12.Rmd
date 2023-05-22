@@ -95,7 +95,7 @@ Below we will demonstrate how to use *papaja* to generate an APA formatted PDF. 
 
 Here we will try to reproduce what has been reported in @Hu_2020. Thus, we adopted the code from: https://github.com/hcp4715/moralSelf_ddm. 
 
-```{r load data}
+```{r load data, message=FALSE, warning=FALSE, echo=FALSE}
 # empty the global env
 rm(list = ls())
 
@@ -151,7 +151,7 @@ df.mt.v <- df.match %>%
   dplyr::filter(!Sub %in% excldSub)            # exclude the invalid subjects
 
 # check the number of participants are correct
-length(unique(df.mt.v$Sub)) + length(excldSub) == length(unique(df.match$Sub))
+# length(unique(df.mt.v$Sub)) + length(excldSub) == length(unique(df.match$Sub))
 
 # ratio of invalid trials
 ratio.excld.trials <- nrow(df.mt.v[df.mt.v$RT*1000 <= 200 & df.mt.v$ACC == 1,])/nrow(df.mt.v)  
@@ -259,6 +259,7 @@ df.mt.rt.subj.m.plot <- df.mt.rt.subj %>%
                                   Identity == "Other" & Valence == "Good" ~ "1.88",
                                   Identity == "Other" & Valence == "Bad" ~ "2.12"),
                 conds = as.numeric(conds))
+
 pd <- position_dodge(0.08)
 
 p1_rt <- df.mt.rt.sum %>%
