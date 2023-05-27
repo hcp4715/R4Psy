@@ -131,7 +131,7 @@ pacman::p_load("tidyverse", "bruceR")
 # WD <-  here::here()
 df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
                        header = T, sep=",", stringsAsFactors = FALSE)
-```
+
 
 ```{r df.pg.raw DT, echo=FALSE}
 DT::datatable(head(df.pg.raw, 10),
