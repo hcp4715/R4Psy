@@ -4,7 +4,7 @@
     <title>chapter_13.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
   </head>
@@ -37,6 +37,38 @@ https://chat.openai.com/ &lt;br&gt;
 - r-family（correlation family）：如Pearson r、R²、η²、ω²、f
 - OR-family（categorical family）：如odds ratio (OR)、risk ratio (RR)
 
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+&lt;img src="./picture/chp13/power1.png" width="40%"&gt;
+- Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. Frontiers in Psychology, 4, 863.
+
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+&lt;img src="./picture/chp13/power.png" width="90%"&gt;
+- Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. Frontiers in Psychology, 4, 863.
+
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+心理学常用的统计软件包 SPSS 只提供了方差分析的偏 eta squared, 不足以满足研究者的需要求 &lt;br&gt;
+例如JASP7软件提供与 SPSS 常用功能相似的功能, 但加入了效应量与置信区间的输出&lt;br&gt;
+Lakens (2013)提供了基于 excel 的计算程序, 可以 用来计算心理学中最常用的一些实验设计条件下效应量的计算 &lt;br&gt;
+G power (Faul, Erdfelder, Buchner, &amp; Lang, 2009)同样可以用来计算效应量, 但是值得 注意的是, SPSS 中输出的偏 eta squared 与 G*power 中的计算公式不相同, 使用时需要转换 (Lakens, 2013)&lt;br&gt;
+
+- Faul, F., Erdfelder, E., Buchner, A., &amp; Lang, A.-G. (2009). Statistical power analyses using G*Power 3.1: Tests for correlation and regression analyses. Behavior Research Methods, 41(4), 1149–1160.
+- Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. Frontiers in Psychology, 4, 863.
+
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+基于估计的统计被认为是一种对虚无假设的补充, 但实际上反映了推断统计的不同取向, 最 重要的是从二分的思维方式转向量化的思维方式 (Cumming, 2012) &lt;br&gt;
+在效应量的解读中, 没有固定 的标准来判断一个效应量是大还是小。&lt;br&gt;
+虽然 Cohen (1988)建议 Cohen’s d 的 0.2, 0.5 和 0.8 以及 η2的 0.01, 0.06 和 0.14 分别代表的小、中和大的效应量, 但这个标准来解读研究是在没有其他任何背景的 情况之下不得已的选择 &lt;br&gt;
+Richard, Bond和 Stokes-Zoota (2003) 对 100多年来社会心 理学研究中的元分析进行分析, 发现社会心理学研 究中的平均效应量大约为r = 0.21, Cohen's d = 0.45。&lt;br&gt;
+总的来说, 对效应量以及其置信区间的解读需要 根据自己研究的实际情况来进行, 没有像 NHST 中那样简单的二分标准(Cumming, 2014; Kelley &amp; Preacher, 2012)。&lt;br&gt;
+
+- Cumming, G. (2012). Understanding the new statistics: Effect sizes, confidence intervals, and meta-analysis. New York: Routledge.
+- Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd ed.). New York: Routledge.
+- Richard, F. D., Bond, C. F., Jr., &amp; Stokes-Zoota, J. J. (2003). One hundred years of social psychology quantitatively described. Review of General Psychology, 7(4), 331–363.
+- Cumming, G. (2014). The new statistics: Why and how. Psychological Science, 25(1), 7–29.
 ---
 # &lt;h1 lang="zh-CN"&gt;t检验中的d&lt;/h1&gt;
 &lt;img src="./picture/chp13/d.png" width="100%"&gt;
@@ -78,15 +110,17 @@ https://chat.openai.com/ &lt;br&gt;
 ---
 # &lt;h1 lang="zh-CN"&gt;元分析&lt;/h1&gt;
 人们越来越多的在心理学中进行元分析 &lt;br&gt;
-&lt;img src="./picture/chp13/trend.png" width="70%"&gt;
-
+&lt;img src="./picture/chp13/trend.png" width="60%"&gt; &lt;br&gt;
+- Quintana, D. S. (2015). From pre-registration to publication: a non-technical primer for conducting a meta-analysis to synthesize correlational data. Frontiers in psychology, 1549.
 ---
 # &lt;h1 lang="zh-CN"&gt;元分析是HLM的特例&lt;/h1&gt;
+HLM: Hierarchical Linear Modeling &lt;br&gt;
 元分析是只有level2的HLM &lt;br&gt;
 &lt;img src="./picture/chp13/fe.png" width="100%"&gt;
 
 ---
 # &lt;h1 lang="zh-CN"&gt;元分析是HLM的特例&lt;/h1&gt;
+HLM: Hierarchical Linear Modeling &lt;br&gt;
 Level 1由算好了的效应量及其误差代替 &lt;br&gt;
 &lt;img src="./picture/chp13/re.png" width="100%"&gt;
 
@@ -95,22 +129,7 @@ Level 1由算好了的效应量及其误差代替 &lt;br&gt;
 &lt;img src="./picture/chp13/registries.png" width="100%"&gt;
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤一：文献检索与数据收集&lt;/h1&gt;
-1. 确定适当的关键字和搜索限制，
-  - 如果关键词过于狭窄，关键的文章可能被忽略。
-  - 如果关键字过于宽泛，会得到大量与分析无关的文献。
-2. 确定需要收集的效应量，一般是相关系数r
-3. 是否包括灰色文献，比如
-  - 会议摘要
-  - 论文和预印本
-&lt;img src="./picture/chp13/gs.png" width="100%"&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;元分析步骤一：文献检索与数据收集&lt;/h1&gt;
-&lt;img src="./picture/chp13/datacollection.png" width="100%"&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 选定一种分析软件 &lt;br&gt;
 比如，
 - CMA(Comprehensive Meta-Analysis) (Borenstein et al., 2005)
@@ -123,28 +142,28 @@ Level 1由算好了的效应量及其误差代替 &lt;br&gt;
 - Viechtbauer, W., and Cheung, M. W. L. (2010). Outlier and influence diagnostics for meta-analysis. Res. Synth. Method 1, 112–125. doi: 10.1002/jrsm.11
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 为了定位与检索到所有的有元分析功能的R程序包，我们进行了系统且全面的搜索。首先我们检索了warehouse R packages、the Comprehensive R Archive Network website(CRAN)和Revolution Analytics这三个网站，使用的检索词为：meta analysis、meta-analysis、systematic review。除此之外，我们还检索了Git Hub和Google Scholar，并向元分析领域的专家和开发R程序包的程序员请教。
 &lt;br&gt;
 &lt;img src="./picture/chp13/wechat2.png" width="100%"&gt;
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 程序包的特点 &lt;br&gt;
 &lt;img src="./picture/chp13/wechat3.png" width="100%"&gt;
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 R程序包创建的年份分布
 &lt;img src="./picture/chp13/wechat4.png" width="100%"&gt;
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 所有R元分析程序包的功能
 &lt;img src="./picture/chp13/wechat5.png" width="100%"&gt;
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 - 在63个程序包中有11个程序包为General Meta-analytic 程序包。此组程序包与传统元分析的大部分程序相同，只适用于一般性问题，不适用于某一特定领域的问题。
 
 - 基因和微阵列（microarray）元分析领域包含的程序包数量最多（n=16）。这些程序包都只针对特定领域，不适用于一般化的元分析，比如教育领域和社科领域。
@@ -156,7 +175,7 @@ R程序包创建的年份分布
 - 网络元分析程序包主要有三个：gemtc（van Valkenhoef &amp; Kuiper，2014）、pcnetmeta（Lin，Zhang，2015）和netmeta（Krahn,2015)。
 
 ---
-# &lt;h1 lang="zh-CN"&gt;元分析步骤二：分析软件的选择&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;元分析步骤一：分析软件的选择&lt;/h1&gt;
 - 有两个程序包专门针对采用贝叶斯方法的元分析。Bamdit（Verde &amp; Sykosch，2015）程序包能够对诊断测验的数据进行随机效应建模，计算效应值，并绘制贝叶斯ROC曲线图
 
 - 有5个程序包用来评价出版偏倚，其中4个用来评价元分析中出版偏倚的可能性。这4个程序包分别是PubBias（Thornley，2015）、SAMURAI（Noory 2015）、selectMeta（Rufibach，2015）和WeightFunctionModel（Vevea &amp; Coburn，2015）
@@ -164,6 +183,22 @@ R程序包创建的年份分布
 - 有9个程序包是对特殊数据类型或进行元分析某一特殊方面。Compute.es (Del Re,2015a)主要用来计算6种受普遍的效应量（Cohen’s d, Hedges’g, r, Fisher’s z, odds ratio, log odds ratio）以及效应量的变异、置信区间和p值。
 
 - 有两个程序包具有GUI 功能：MAVIS（Hamilton，Mizumoto, Aydin,&amp;Coburn,2015）和RcmdrPlugin。
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析步骤二：文献检索与数据收集&lt;/h1&gt;
+1. 确定适当的关键字和搜索限制，
+  - 如果关键词过于狭窄，关键的文章可能被忽略。
+  - 如果关键字过于宽泛，会得到大量与分析无关的文献。
+2. 确定需要收集的效应量，一般是相关系数r
+3. 是否包括灰色文献，比如
+  - 会议摘要
+  - 论文和预印本
+&lt;img src="./picture/chp13/websci.png" width="100%"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析步骤二：文献检索与数据收集&lt;/h1&gt;
+&lt;img src="./picture/chp13/datacollection.png" width="90%"&gt;
+- Quintana, D. S. (2015). From pre-registration to publication: a non-technical primer for conducting a meta-analysis to synthesize correlational data. Frontiers in psychology, 1549.
 
 ---
 # &lt;h1 lang="zh-CN"&gt;元分析步骤三：研究的异质性&lt;/h1&gt;
@@ -208,24 +243,6 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
 
 # 使用p_load来载入需要的包
 pacman::p_load("tidyverse", "metafor", "grDevices")
-```
-
-```
-## also installing the dependencies 'metadat', 'mathjaxr'
-```
-
-```
-## 
-## The downloaded binary packages are in
-## 	/var/folders/1_/hd9cg0112c9g8jqzmm8pjrqh0000gn/T//RtmptRWoth/downloaded_packages
-```
-
-```
-## 
-## metafor installed
-```
-
-```r
 # metafor: 做元分析的包
 # grDevices: 保存metafor生成的图片
 ```
@@ -375,6 +392,30 @@ RPsave(path = "../OUTPUT/Funnel.png")
 ```
 
 &lt;img src="./picture/chp13/fonnel.png" width="100%"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;其他可视化工具&lt;/h1&gt;
+
+```r
+# install.packages("metaviz")
+metaviz_forest &lt;- viz_forest(x = mozart[1:10, c("d", "se")], study_labels = mozart[1:10, c("study_name")],
+                             summary_label = "Summary effect", xlab = "Cohen d")
+
+RPsave(path = "../OUTPUT/metaviz_forest.png")
+```
+&lt;img src="./picture/chp13/metaviz1.png" width="80%"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;其他可视化工具&lt;/h1&gt;
+
+```r
+metaviz_funnel &lt;- viz_sunset(rma, 
+                             contours = TRUE,
+                             power_contours =  "continuous")
+
+RPsave(path = "../OUTPUT/metaviz_funnel.png")
+```
+&lt;img src="./picture/chp13/metaviz2.png" width="80%"&gt;
 
 ---
 # &lt;h1 lang="zh-CN"&gt;元分析的局限性&lt;/h1&gt;
