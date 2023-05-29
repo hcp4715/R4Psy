@@ -48,9 +48,9 @@ df.mt.raw <-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE) 
 ```
 <font size=5>
-&emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名；“()”中的输入参数。<br>
+&emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名,在“()”中输入参数。<br>
 &emsp;&emsp;比如，“header=…”：是否要使用第一行作为列名；<br>
-&emsp;&emsp;再如，“sep=…” ：指定分割符什么 <br>
+&emsp;&emsp;再如，“sep=…” ：指定什么为分割符 <br>
 
 </font>
 
@@ -67,7 +67,7 @@ df.mt.raw <-  read.csv('./data/match/match_raw.csv',
 <font size=5>
 &emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名；“()”中的输入参数。<br>
 &emsp;&emsp;比如，“header=…”：是否要使用第一行作为列名；<br>
-&emsp;&emsp;再如，“sep=…” ：指定分割符什么 <br>
+&emsp;&emsp;再如，“sep=…” ：指定什么是分割符 <br>
 <br>
 &emsp;&emsp;为什么第一个文件名没有相应的argument？。
 </font>
