@@ -381,18 +381,58 @@ df.mt.rt.subj.effect.ls1 <- df.mt.rt.subj.ls1 %>%
   dplyr::filter(Match == "match" & Valence == "Good") %>%
   dplyr::group_by(Identity) %>%
   dplyr::summarise(mean = mean(RT_mean),
-                   sd = sd(RT_mean))
+                   sd = sd(RT_mean)) %>%
+  dplyr::ungroup() %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = c(mean, sd))
+
+
+colnames(df.mt.rt.subj.effect.ls1) <- c("Self_RT_M_mean","Other_RT_M_mean",
+                                        "Self_RT_M_sd", "Other_RT_M_sd")
 
 df.mt.rt.subj.effect.ls1.wide <- df.mt.rt.subj.ls1  %>%
   dplyr::filter(Match == "match" & Valence == "Good") %>%
   tidyr::pivot_wider(names_from = "Identity", values_from = "RT_mean")
 
 corr_est.ls1 <- cor(df.mt.rt.subj.effect.ls1.wide$Self, df.mt.rt.subj.effect.ls1.wide$Other)
+
+df.mt.rt.subj.effect.ls1$Sample_size <- length(unique(df.mt.rt.subj.ls1$Sub))
+df.mt.rt.subj.effect.ls1$ri <- corr_est.ls1
+
+## effect size of group 2
+df.mt.rt.subj.effect.ls2 <- df.mt.rt.subj.ls2 %>%
+  dplyr::filter(Match == "match" & Valence == "Good") %>%
+  dplyr::group_by(Identity) %>%
+  dplyr::summarise(mean = mean(RT_mean),
+                   sd = sd(RT_mean)) %>%
+  dplyr::ungroup() %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = c(mean, sd))
+
+colnames(df.mt.rt.subj.effect.ls2) <- c("Self_RT_M_mean","Other_RT_M_mean",
+                                        "Self_RT_M_sd", "Other_RT_M_sd")
+
+df.mt.rt.subj.effect.ls2.wide <- df.mt.rt.subj.ls2  %>%
+  dplyr::filter(Match == "match" & Valence == "Good") %>%
+  tidyr::pivot_wider(names_from = "Identity", values_from = "RT_mean")
+
+corr_est.ls2 <- cor(df.mt.rt.subj.effect.ls2.wide$Self, df.mt.rt.subj.effect.ls2.wide$Other)
+df.mt.rt.subj.effect.ls2$Sample_size <- length(unique(df.mt.rt.subj.ls2$Sub))
+df.mt.rt.subj.effect.ls2$ri <- corr_est.ls2
+
+
+# created vector with 5 characters
+# columns= c("Self_RT_M_mean","Other_RT_M_mean","Self_RT_M_sd","Other_RT_M_sd","Sample_size", "ri")
+ 
+# pass this vector length to ncol parameter
+# and nrow with 1
+df.mt.meta <- rbind(df.mt.rt.subj.effect.ls1, df.mt.rt.subj.effect.ls2)
+
 ```
 
-```{r old, eval=FALSE}
+```{r create df for meta}
 # set correlation = 0.7
-df.mt.meta$ri <- 0.7 
+# df.mt.meta$ri <- 0.7 
 
 escalc <- metafor::escalc(
   measure = "SMCRH",
@@ -409,61 +449,31 @@ escalc <- metafor::escalc(
 # aggregate the effect size estimates to the study level(same participants)
 # the sampling errors within studies with a correlation of 0.6
 aggregate.escalc <- escalc %>%
-  dplyr::mutate(unique_ID = paste(Author, Year, Study, sep="_")) %>%
-  # 每个paper的每个研究为一个cluster，换句话说，计算的是self和其他所有对象的平均差异
-  metafor::aggregate.escalc(., cluster = unique_ID, rho = 0.6)
+  dplyr::mutate(unique_ID = c("study1a", "study1b"))
 ```
 
 ---
 # <h1 lang="zh-CN">得到rma</h1>
-```{r, eval=FALSE}
-# 这个rma文件，是之后所有画图，分析的对象
-# 固定效果模型
-rma<- metafor::rma(yi, vi, data = df.mt.clean, 
-                   slab=paste(Author, Year, Study, sep="_"))
+```{r a simple meta}
 # 随机效果模型
-rma<- metafor::rma(yi, vi, data = df.mt.clean, 
-                   mods = ~ Year, 
-                   slab=paste(Author, Year, Study, sep="_"))
+rma1 <- metafor::rma(yi, vi, data = aggregate.escalc)
+
 # 这里的slab是为了之后的森林图上方便显示
 ```
 
 ---
 # <h1 lang="zh-CN">森林图表格</h1>
-```{r, eval=FALSE}
-fixed.pred.rma.temp <- metafor::predict.rma(rma)
+```{r plot forest}
 
-fixed.pred.rma <- fixed.pred.rma.temp %>%
-  dplyr::mutate(fix_yi = fixed.pred.rma.temp$pred, 
-                fix_se = fixed.pred.rma.temp$se, 
-                fix_ci.lb = fixed.pred.rma.temp$ci.lb, 
-                fix_ci.ub = fixed.pred.rma.temp$ci.ub) %>%
-  mutate(across(c(fix_yi, fix_se, fix_ci.lb, fix_ci.ub), ~ round(., 2)))
-# 这一步不是必须要做。如果你想手动画森林图，
-# 可以使用这一步得到森林图上每个点的点估计值和置信区间
+metafor::forest(rma1)
+
 ```
 
-为了保存之后的图片，这里写了一个保存图片的函数，用到了grDevices
-
-```{r, eval=FALSE}
-RVsave <- function(path = "./OUTPUT/RecordPlot.png", width = 8000, height = 6000, res = 1200) {
-  # 保存刚刚出现的图片
-  p <- grDevices::recordPlot()
-  # 调整图片大小和保存位置
-  grDevices::png(path, width = width, height = height, res = res)
-  # 画出图片
-  grDevices::replayPlot(p)
-  # 保存图片
-  # invisible表示不报告你保存了什么
-  invisible(grDevices::dev.off())
-  rm(p)
-}
-```
 
 ---
 # <h1 lang="en">baujat plot</h1>
 ```{r, eval=FALSE}
-baujat(rma)
+baujat(rma1)
 ```
 <img src="./picture/chp13/baujat.png" width="90%">
 
