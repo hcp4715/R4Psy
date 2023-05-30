@@ -291,7 +291,7 @@ _c. 赋值符号 " <- " 左右的空格_<br>
 
 ---
 ## <h1 lang="en">10.3.3.1 Notes</h1> 
-```{r, eval=FALSE}
+```{r start, eval=FALSE}
   # Scientific notation
   options(scipen = 999)
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>R course</title>
+    <title>chapter_11.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
     <script src="libs/header-attrs-2.20/header-attrs.js"></script>
@@ -10,26 +10,32 @@
   </head>
   <body>
     <textarea id="source">
-class: center, middle, inverse, title-slide
-
-.title[
-# R course
-]
-.author[
-### 
-]
-
----
 
 class: center, middle
 &lt;span style="font-size: 60px;"&gt;第十一章&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 50px;"&gt;如何得到可发表的图像&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 50px;"&gt;数据可视化进阶&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;ggplot2&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 45px;"&gt;ggplot2&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2023/05/08&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2023/05/15&lt;/span&gt; &lt;br&gt;
+
+---
+# 为什么要作图？
+
+- “一图胜千言”
+
+- 直觉地传达信息
+
+- “信达雅”
+  - 信息量
+  - 逻辑性
+  - 美观（简洁、对称、和谐）
+
+---
+# 用什么做图？
+- ggplot 2
 
 ---
 class: center, middle
@@ -79,297 +85,590 @@ _&lt;h4 lang="zh-CN"&gt;Facet 也可以被认为是图层的一种，也是通�
 ---
 # &lt;h1 lang="zh-CN"&gt;载入包&lt;/h1&gt;
 
-```r
-library(tidyverse)
-```
-
-```
-## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.1     ✔ readr     2.1.4
-## ✔ forcats   1.0.0     ✔ stringr   1.5.0
-## ✔ ggplot2   3.4.1     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-## ✔ purrr     1.0.1     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
-```
 
 ```r
-library(ggplot2)
-library(ggdist) # 可以叠加在ggplot2的图层上，但是比ggplot2更漂亮
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("tidyverse", "ggplot2", "ggdist", "patchwork", "papaja")
+
+# ggdist:   plot distribution
+# patchwork: 拼接图片
+# papaja:    APA的主题
 ```
+
+---
+
+# 传统的图
+- 条形图
+- 点图 + 折线图
 
 ---
 # &lt;h1 lang="zh-CN"&gt;读取数据&lt;/h1&gt;
 
-```r
-# 创建一个空list用于存放数据集
-df &lt;- list()
-# 创建一个空list用于存放图片
-p &lt;- list()
-# 保护全球环境(global environment)， 人人有责
-# 希望大家以后写代码都把变量分类放在不同的list中
-```
-
 
 ```r
-df[[1]] &lt;-  read.csv('./data/match/match_raw.csv',
+df.mt.raw &lt;-  read.csv('./data/match/match_raw.csv',
                        header = T, sep=",", stringsAsFactors = FALSE)
-names(df)[1] &lt;- "Raw"
 ```
+---
+
 # &lt;h1 lang="zh-CN"&gt;清洗数据&lt;/h1&gt;
 
+
 ```r
-df[[2]] &lt;- df[[1]] %&gt;%
-  dplyr::group_by(Sub, Shape, Match) %&gt;%
-  dplyr::summarise(RT_mean = mean(RT)) %&gt;%
+# get the mean RT of correct trials for each participants for each condition
+df.mt.rt.subj &lt;- df.mt.raw %&gt;%
+  dplyr::filter(ACC == 1 &amp; RT &gt; 0.2) %&gt;%
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %&gt;%
+  dplyr::mutate(Valence = case_when(Valence == "moral" ~ "Good",
+                                    Valence == "immoral" ~ "Bad"),
+                RT_ms = RT * 1000) %&gt;%
+  dplyr::mutate(Valence = factor(Valence, levels = c("Good", "Bad")),
+                Identity = factor(Identity, levels = c("Self", "Other"))) %&gt;%
+  dplyr::group_by(Sub, Match, Identity, Valence) %&gt;%
+  dplyr::summarise(RT_mean = mean(RT_ms)) %&gt;%
+  dplyr::ungroup()
+
+# get the overall mean RT
+df.mt.rt.sum  &lt;- df.mt.rt.subj %&gt;% 
+  dplyr::group_by(Match, Identity, Valence) %&gt;%
+  dplyr::summarise(grand_mean_RT = mean(RT_mean),
+                   SD_RT = sd(RT_mean),
+                   SE_RT = SD_RT/sqrt(n()-1),
+                   n = n()) %&gt;%
   dplyr::ungroup()
 ```
 
-```
-## `summarise()` has grouped output by 'Sub', 'Shape'. You can override using the
-## `.groups` argument.
-```
+---
+# &lt;h1 lang="zh-CN"&gt;清洗数据&lt;/h1&gt;
 
 ```r
-names(df)[2] &lt;- "Clean"
+# get the accuracy for each participants for each condition
+df.mt.acc.subj &lt;- df.mt.raw %&gt;%
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %&gt;%
+  dplyr::mutate(Valence = case_when(Valence == "moral" ~ "Good",
+                                    Valence == "immoral" ~ "Bad"),
+                ) %&gt;%
+  dplyr::mutate(Valence = factor(Valence, levels = c("Good", "Bad")),
+                Identity = factor(Identity, levels = c("Self", "Other"))) %&gt;%
+  dplyr::group_by(Sub, Match, Identity, Valence) %&gt;%
+  dplyr::summarise(ACC_mean = mean(ACC)) %&gt;%
+  dplyr::ungroup()
+
+# get the overall mean acc
+df.mt.acc.sum &lt;- df.mt.acc.subj %&gt;% 
+  dplyr::group_by(Match, Identity, Valence) %&gt;%
+  dplyr::summarise(grand_mean_ACC = mean(ACC_mean),
+                   SD_ACC = sd(ACC_mean),
+                   SE_ACC = SD_ACC/sqrt(n()-1),
+                   n = n()) %&gt;%
+  dplyr::ungroup()
+
+
+df.mt.acc.sum.tmp &lt;- df.mt.acc.sum %&gt;%
+  dplyr::rename(grand_mean = grand_mean_ACC,
+                SD = SD_ACC,
+                SE = SE_ACC) %&gt;%
+  dplyr::mutate(DV = "ACC")
+
+df.mt.rt.sum.tmp &lt;- df.mt.rt.sum  %&gt;%
+  dplyr::rename(grand_mean = grand_mean_RT,
+                SD = SD_RT,
+                SE = SE_RT) %&gt;%
+  dplyr::mutate(DV = "RT")
+
+df.mt.sum.tmp &lt;- rbind(df.mt.acc.sum.tmp, df.mt.rt.sum.tmp)
 ```
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::geom_boxplot&lt;/h1&gt; 
+# &lt;h1 lang="zh-CN"&gt;查看数据&lt;/h1&gt;
 
 ```r
-# 最简单的箱线图
-# 看看不同Shape情况下 平均反应时的分布情况
-p[[1]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = Shape)) +
-  ggplot2::geom_boxplot(color = "grey", alpha = 0.5) 
-names(p)[1] &lt;- "Box Plot"; p[[1]]
-ggsave(filename = "./picture/chp11/plot1.png", plot = p[[1]], height = 5, width = 10, dpi = 300)
+df.mt.sum &lt;- df.mt.rt.sum %&gt;%
+  dplyr::left_join(., df.mt.acc.sum)
+df.mt.sum
 ```
-&lt;img src="./picture/chp11/plot1.png" width="100%"&gt;
+&lt;img src="./picture/chp11/df.mt.sum.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::labs&lt;/h1&gt; 
+## First plot (old-fashion)
 
 ```r
-# 增加横纵坐标标题
-p[[2]] &lt;- p[[1]] +
-  ggplot2::labs(x = "Moral &amp; Identity", y = "Mean of Reaction Time", title = "Boxplot of RT_mean by Shape") 
-names(p)[2] &lt;- "Plot Labels"; p[[2]]
-ggsave(filename = "./picture/chp11/plot2.png", plot = p[[2]], height = 5, width = 10, dpi = 300)
+p1 &lt;- df.mt.sum %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean_RT,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
+                             ymax=grand_mean_RT+SE_RT),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()
+ggsave(filename = "./picture/chp11/p1.png", plot = p1, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot2.png" width="100%"&gt;
+&lt;img src="./picture/chp11/p1.png" width="60%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::geom_point&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;修改图题&lt;/h1&gt; 
+
 
 ```r
-# 叠加点图
-p[[3]] &lt;- p[[2]] +
-  ggplot2::geom_point(aes(colour = Shape), position = position_jitter(width = 0.2), size = 3, alpha = 0.5) 
-names(p)[3] &lt;- "Point Plot"; p[[3]]
-ggsave(filename = "./picture/chp11/plot3.png", plot = p[[3]], height = 5, width = 10, dpi = 300)
+# 修改标题和坐标的题目
+p2 &lt;- p1 +
+  labs(title="Mean RT for different conditions",
+      x="Identity",
+      y="Reaction times (ms)")
+
+ggsave(filename = "./picture/chp11/p2.png", plot = p2, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot3.png" width="100%"&gt;
+&lt;img src="./picture/chp11/p2.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::geom_violin&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
 
 ```r
-# 叠加小提琴图
-p[[4]] &lt;- p[[3]] +
-  ggplot2::geom_violin(aes(colour = Shape), color = "grey", width = 0.2, alpha = 0.5) 
-names(p)[4] &lt;- "Violin Plot"; p[[4]]
-ggsave(filename = "./picture/chp11/plot4.png", plot = p[[4]], height = 5, width = 10, dpi = 300)
+p3 &lt;- p2 + 
+  coord_cartesian(ylim = c(500, 800)) # +
+  # scale_y_continuous(limits = c(500,800))
+ggsave(filename = "./picture/chp11/p3.png", plot = p3, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot4.png" width="100%"&gt;
+&lt;img src="./picture/chp11/p3.png" width="100%"&gt;
+
 
 ---
-## &lt;h1 lang="en"&gt;argument(position = position_nudge)&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+
+```r
+df.mt.sum %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean_ACC,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean_ACC-1.96*SE_ACC,
+                             ymax=grand_mean_ACC+1.96*SE_ACC),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()+
+  labs(title="Mean ACC for different conditions",
+      x="Identity",
+      y="Accuracy")+ 
+  coord_cartesian(ylim = c(0.5, 1)) 
+ggsave(filename = "./picture/chp11/p3.1.png", plot = last_plot(), height = 5, width = 10, dpi = 300)
+```
+
+---
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p3.1.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+
+```r
+df.mt.sum.tmp %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean,
+                      fill = Valence)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position=position_dodge(),
+                    ) +
+  ggplot2::geom_errorbar(aes(ymin=grand_mean-1.96*SE,
+                             ymax=grand_mean+1.96*SE),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  papaja::theme_apa()+
+  facet_wrap(~DV, scales = "free_y")
+  # labs(title="Mean ACC for different conditions",
+  #     x="Identity",
+  #     y="Accuracy")+ 
+  # coord_cartesian(ylim = c(0.5, 1)) 
+ggsave(filename = "./picture/chp11/p3.2.png",plot = last_plot(), height = 5, width = 10, dpi = 300)
+```
+
+---
+## &lt;h1 lang="en"&gt;定义y轴的range&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p3.2.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;点加上error bars&lt;/h1&gt; 
+
+```r
+p4 &lt;- df.mt.sum %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean_RT,
+                      group = Valence,
+                      color = Valence)) +
+  ggplot2::geom_line() +
+  ggplot2::geom_point(size = 5) + 
+  ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
+                             ymax=grand_mean_RT+SE_RT),
+                         width=.1,
+                         ) +
+  ggplot2::scale_y_continuous(limits = c(450, 900)) +
+  papaja::theme_apa()
+ggsave(filename = "./picture/chp11/p4.png", plot = p4, height = 5, width = 10, dpi = 300)
+```
+
+---
+## &lt;h1 lang="en"&gt;点加上error bars&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p4.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;加入个体的数据&lt;/h1&gt; 
+
+```r
+p5 &lt;- p4 +
+  ggplot2::geom_point(data = df.mt.rt.subj,
+                       aes(x=Identity,
+                           y=RT_mean,
+                           group = Valence))
+ggsave(filename = "./picture/chp11/p5.png", plot = p5, height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/p5.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
 
 ```r
 # 太拥挤了，三种图应该错开一定的距离, 以及调整每个图形的宽度
-p[[5]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = Shape)) +
-  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.2), color = "grey", alpha = 0.5) + # 箱线图左移0.2个单位，宽度0.1
-  ggplot2::geom_point(aes(colour = Shape), position = position_jitter(width = 0.1), size = 3, alpha = 0.5) + # 点图处于中间，但是调整宽度
-  ggplot2::geom_violin(aes(colour = Shape), width = 0.1, position = position_nudge(x = 0.2), color = "grey", alpha = 0.5) + # 小提琴图右移0.2各单位，宽度0.1
-  ggplot2::labs(x = "Moral &amp; Identity", y = "Mean of Reaction Time", title = "Boxplot of RT_mean by Shape")
-names(p)[5] &lt;- "Plot Position"; p[[5]]
-ggsave(filename = "./picture/chp11/plot5.png", plot = p[[5]], height = 5, width = 10, dpi = 300)
+p6 &lt;-  p4 +
+  ggplot2::geom_point(data = df.mt.rt.subj,
+                       aes(x=Identity,
+                           y=RT_mean,
+                           group = Valence),
+                      position = position_jitter(width = 0.1),
+                      alpha = 0.5)
+ggsave(filename = "./picture/chp11/p6.png", plot = p6, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot5.png" width="95%"&gt;
+&lt;img src="./picture/chp11/p6.png" width="90%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggdist::stat_halfeye&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
 
 ```r
-# 叠加云图 raincloud plot
-p[[6]] &lt;- p[[5]] +
-  ggdist::stat_halfeye(adjust = 0.2,justification = -0.35, alpha = 0.5, width = 0.5,   # adjust 拟合的锐度(平滑度), justification位置(与ggplot方向相反), alpha 透明度
-                       .width = 0, point_colour = NA) # 如果没有 .width = 0, point_colour = NA, halfeye也会画出一些黑点
-names(p)[6] &lt;- "Cloud Plot"; p[[6]]
-ggsave(filename = "./picture/chp11/plot6.png", plot = p[[6]], height = 5, width = 10, dpi = 300)
+p7 &lt;- df.mt.sum %&gt;%
+  dplyr::filter(Match == "match") %&gt;%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_mean_RT,
+                      group = Valence,
+                      color = Valence)) +
+  ggplot2::geom_line(position = position_dodge(0.5)) +
+  ggplot2::geom_point(size = 5,
+                      position = position_dodge(0.5)) + 
+  ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
+                             ymax=grand_mean_RT+SE_RT),
+                         width=.1,
+                         position = position_dodge(0.5),
+                         ) +
+  ggplot2::scale_y_continuous(limits = c(450, 900)) +
+  papaja::theme_apa()
+ggsave(filename = "./picture/chp11/p7.png", plot = p7, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot6.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;Delete a layer&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
+&lt;img src="./picture/chp11/p7.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
 
 ```r
-# violin图被halfeye遮挡了，可以删掉它
-p[[7]] &lt;- p[[6]] # 把p[[6]]传递给p[[7]]
-p[[7]]$layers[3] &lt;- NULL # 然后把第三个图层--violin赋值为空
-# 这样就删除了violin这个图层
-names(p)[7] &lt;- "Delete Layers"; p[[7]]
-ggsave(filename = "./picture/chp11/plot7.png", plot = p[[7]], height = 5, width = 10, dpi = 300)
+df.mt.rt.subj.m.plot &lt;- df.mt.rt.subj %&gt;%
+  dplyr::mutate(conds = case_when(Identity == "Self" &amp; Valence == "Good" ~ "0.88",
+                                  Identity == "Self" &amp; Valence == "Bad" ~ "1.12",
+                                  Identity == "Other" &amp; Valence == "Good" ~ "1.88",
+                                  Identity == "Other" &amp; Valence == "Bad" ~ "2.12"),
+                conds = as.numeric(conds)) %&gt;%
+  dplyr::filter(Match == "match")
 ```
-&lt;img src="./picture/chp11/plot7.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggdist::stat_dots&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;jitter points' position&lt;/h1&gt; 
 
 ```r
-# ggdist的点图比ggplot2的更好看
-p[[8]] &lt;- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = Shape,)) +
-  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + # 箱线图左移0.2个单位
-  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
-  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) + 
-  ggplot2::labs(x = "Moral &amp; Identity", y = "Mean of Reaction Time", title = "RainCloud Plot of RT_mean by Moral &amp; Identity")
-names(p)[8] &lt;- "RainCloud Plot"; p[[8]]
-ggsave(filename = "./picture/chp11/plot8.png", plot = p[[8]], height = 5, width = 10, dpi = 300)
+p8 &lt;- p7 + 
+  ggplot2::geom_point(data = df.mt.rt.subj.m.plot,
+                       aes(x=conds,
+                           y=RT_mean,
+                           group = Valence),
+                      position = position_jitter(width = 0.08),
+                      alpha = 0.5)
+ggsave(filename = "./picture/chp11/p8.png", plot = p8, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot8.png" width="95%"&gt;
+&lt;img src="./picture/chp11/p8.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::coor_flip&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
 
 ```r
-# 旋转图片，现在终于明白为什么叫raincloud了
-p[[9]] &lt;- p[[8]] +
-  ggplot2::coord_flip()
-names(p)[9] &lt;- "Plot Flip"; p[[9]]
-ggsave(filename = "./picture/chp11/plot9.png", plot = p[[9]], height = 5, width = 10, dpi = 300)
+p9 &lt;- p8 + 
+  ggplot2::geom_line(data = df.mt.rt.subj.m.plot,
+                     aes(x=conds,
+                         y=RT_mean,
+                         group=Sub),
+                     linetype = 1,
+                     size=0.8,
+                     color="#000000",
+                     alpha=0.1)
+ggsave(filename = "./picture/chp11/p9.png", plot = p9, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot9.png" width="100%"&gt;
+&lt;img src="./picture/chp11/p9.png" width="90%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::theme(legend.position)&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
 
 ```r
-# 在这张图里，图例和横坐标表达的信息重复了，可以隐藏图例
-p[[10]] &lt;- p[[9]] +
-  ggplot2::theme(legend.position = "none")
-names(p)[10] &lt;- "Legend Hidden"; p[[10]]
-ggsave(filename = "./picture/chp11/plot10.png", plot = p[[10]], height = 5, width = 10, dpi = 300)
+pd &lt;- position_dodge(0.08)
+p10 &lt;- p7 + 
+  ggplot2::geom_point(data = df.mt.rt.subj.m.plot,
+                       aes(x=conds,
+                           y=RT_mean,
+                           group=as.factor(Sub)),
+                      position = pd,
+                      color="#000000",
+                      alpha = 0.05) +
+  ggplot2::geom_line(data = df.mt.rt.subj.m.plot,
+                     aes(x=conds,
+                         y=RT_mean,
+                         group=as.factor(Sub)),
+                     position = pd,
+                     linetype = 1,
+                     size=0.8,
+                     color="#000000",
+                     alpha=0.05)
+ggsave(filename = "./picture/chp11/p10.png", plot = p10, height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot10.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;Palette&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
+
+&lt;img src="./picture/chp11/p10.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;显示个体趋势&lt;/h1&gt; 
 
 ```r
-popsicle &lt;- c("#F3533A", "#FA9F42", "#8AD879", "#5ACFC9")
-sunset &lt;- c("#C848B9", "#F962A7", "#FD836D", "#FFBA69")
-glassdoor &lt;- c("#3D9A8B", "#2EB19F", "#63C2D2", "#B7EDFF")
-palette &lt;- list(popsicle = popsicle, sunset = sunset, glassdoor = glassdoor)
-rm(popsicle, sunset, glassdoor)
+library(patchwork)
+p11 &lt;- p9 + p10 +
+  plot_layout(guides = 'collect')
+ggsave(filename = "./picture/chp11/p11.png", plot = p11, height = 5, width = 10, dpi = 300)
 ```
-&lt;div style="display:flex; align-items:center; justify-content:center;"&gt;
-  &lt;img src="./picture/chp11/palette_popsicle.png" style="width:50%; height: 50%; margin-top: -10px;"&gt;
-&lt;/div&gt;
-&lt;br&gt;
-&lt;div style="display:flex; align-items:center; justify-content:center; "&gt;
-&lt;img src="./picture/chp11/palette_sunset.png" style="width:50%; height: 50%; margin-top: -20px;"&gt;
-&lt;img src="./picture/chp11/palette_glassdoor.png" style="width:50%; height: 50%; margin-top: -20px;"&gt;
-&lt;/div&gt;
+&lt;img src="./picture/chp11/p11.png" width="100%"&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---
-## &lt;h1 lang="en"&gt;ggplot2::scale_fill_manual&lt;/h1&gt; 
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;11.2 APA theme&lt;/span&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: theme_bw()&lt;/h1&gt; 
 
 ```r
-# 更改图片的填充颜色
-p[[11]] &lt;- p[[10]] +
-  ggplot2::scale_fill_manual(values = palette$popsicle)  # 用什么颜色，体现了你的审美！
-names(p)[11] &lt;- "Fill Color"; p[[11]]
-ggsave(filename = "./picture/chp11/plot11.png", plot = p[[11]], height = 5, width = 10, dpi = 300)
+# theme_bw() 会改变很多地方的颜色，让主题变成黑白，方便接下来的细节修改
+p[[17]] &lt;- p[[16]] +
+  ggplot2::theme_bw()  
+names(p)[17] &lt;- "APA theme: theme_bw"; p[[17]]
+ggsave(filename = "./picture/chp11/plot17.png", plot = p[[17]], height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot11.png" width="100%"&gt;
+&lt;img src="./picture/chp11/plot17.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::theme(element_text)&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;APA theme: legend.position&lt;/h1&gt; 
 
 ```r
-# 坐标轴颜色
-p[[12]] &lt;- p[[11]] +
-  ggplot2::theme(axis.text.y = element_text(color = palette$popsicle))
-names(p)[12] &lt;- "Axis Text Color"; p[[12]]
-ggsave(filename = "./picture/chp11/plot12.png", plot = p[[12]], height = 5, width = 10, dpi = 300)
+# APA默认图例局右
+p[[18]] &lt;- p[[17]] +
+  ggplot2::theme(legend.position = "right",)  # 也可以去掉图例
+names(p)[18] &lt;- "APA theme: legend.position"; p[[18]]
+ggsave(filename = "./picture/chp11/plot18.png", plot = p[[18]], height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot12.png" width="100%"&gt;
+&lt;img src="./picture/chp11/plot18.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::theme(element_text)&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;APA theme: font_size&lt;/h1&gt; 
 
 ```r
-# 图上文字的大小
-p[[13]] &lt;- p[[12]] +
-  ggplot2::theme(axis.text = element_text(size = 12),
-                 axis.title = element_text(size = 14),
-                 plot.title = element_text(size = 16),)
-names(p)[13] &lt;- "Axis Text Size"; p[[13]]
-ggsave(filename = "./picture/chp11/plot13.png", plot = p[[13]], height = 5, width = 10, dpi = 300)
+# 除了字体大小，标题粗体居中
+p[[19]] &lt;- p[[18]] +
+  ggplot2::theme(axis.text = element_text(size = 12), # 坐标轴字体大小
+                 axis.title = element_text(size = 12), # 坐标轴标题字体大小
+                 strip.text = element_text(size = 12), # facet标题字体大小
+                 plot.title = element_text(size = 12, face = "bold", hjust = 0.5)) # 图片整体标题字体大小 title粗体，居中
+names(p)[19] &lt;- "APA theme: font_size"; p[[19]]
+ggsave(filename = "./picture/chp11/plot19.png", plot = p[[19]], height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot13.png" width="100%"&gt;
+&lt;img src="./picture/chp11/plot19.png" width="90%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::facet_wrap&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;APA theme: strip.background()&lt;/h1&gt; 
 
 ```r
-# 按照Match拆分为两个Facet
-p[[14]] &lt;- p[[13]] +
-  ggplot2::facet_wrap(~Match)
-names(p)[14] &lt;- "Facet"; p[[14]]
-ggsave(filename = "./picture/chp11/plot14.png", plot = p[[14]], height = 5, width = 10, dpi = 300)
+# 去掉facet标题底色  
+p[[20]] &lt;- p[[19]] +
+  ggplot2::theme(strip.background = element_blank()) 
+names(p)[20] &lt;- "APA theme: facet_title_background"; p[[20]]
+ggsave(filename = "./picture/chp11/plot20.png", plot = p[[20]], height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot14.png" width="100%"&gt;
+&lt;img src="./picture/chp11/plot20.png" width="100%"&gt;
+
 
 ---
-## &lt;h1 lang="en"&gt;ggplot2::theme(element_text)&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;APA theme: panel.grid.major&lt;/h1&gt; 
 
 ```r
-# Facet文字的大小
-p[[15]] &lt;- p[[14]] +
-  ggplot2::theme(strip.text = element_text(size = 14)) 
-names(p)[15] &lt;- "Facet Text Size"; p[[15]]
-ggsave(filename = "./picture/chp11/plot15.png", plot = p[[15]], height = 5, width = 10, dpi = 300)
+# 隐藏水平网格线
+p[[21]] &lt;- p[[20]] +
+  ggplot2::theme(panel.grid.major=element_blank()) 
+names(p)[21] &lt;- "APA theme: panel.grid.major"; p[[21]]
+ggsave(filename = "./picture/chp11/plot21.png", plot = p[[21]], height = 5, width = 10, dpi = 300)
 ```
-&lt;img src="./picture/chp11/plot15.png" width="100%"&gt;
+&lt;img src="./picture/chp11/plot21.png" width="100%"&gt;
 
 ---
-## &lt;h1 lang="en"&gt;Layers and Facets Full Codes&lt;/h1&gt; 
+## &lt;h1 lang="en"&gt;APA theme: panel.grid.minor&lt;/h1&gt; 
 
 ```r
-ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = interaction(Shape, Match),)) + # fill的颜色基于Shape和Match
-  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + # 箱线图左移0.2个单位
-  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
-  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
-  ggplot2::labs(x = "Moral &amp; Identity", y = "Mean of Reaction Time", title = "RainCloud Plot of RT_mean by Moral &amp; Identity") +
-  ggplot2::coord_flip() +
-  ggplot2::theme(legend.position = "none",
-                 axis.text = element_text(size = 12),
-                 axis.title = element_text(size = 14),
-                 strip.text = element_text(size = 14),
-                 plot.title = element_text(size = 16),) +
-  ggplot2::scale_fill_manual(values = c(palette$sunset, palette$glassdoor)) + # 需要八种颜色来填充图片
-  ggplot2::facet_wrap(~Match, ncol = 1) 
+# 隐藏垂直网格线
+p[[22]] &lt;- p[[21]] +
+  ggplot2::theme(panel.grid.minor=element_blank()) 
+names(p)[22] &lt;- "APA theme: panel.grid.minor"; p[[22]]
+ggsave(filename = "./picture/chp11/plot22.png", plot = p[[22]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot22.png" width="100%"&gt;
 
-ggsave(filename = "./picture/chp11/plot.png",plot = last_plot(), height = 7, width = 10, dpi = 300)
+---
+## &lt;h1 lang="en"&gt;APA theme: panel.border&lt;/h1&gt; 
+
+```r
+# 隐藏边框
+p[[23]] &lt;- p[[22]] +
+  ggplot2::theme(panel.border=element_blank()) # 也可以不去除边框，保留坐标轴
+names(p)[23] &lt;- "APA theme: panel.border"; p[[23]]
+ggsave(filename = "./picture/chp11/plot23.png", plot = p[[23]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot23.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_family&lt;/h1&gt; 
+
+```r
+# 改变图上字体family
+p[[24]] &lt;- p[[23]] +
+  ggplot2::theme(text=element_text(family='Times New Roman')) 
+names(p)[24] &lt;- "APA theme: font_family"; p[[24]]
+ggsave(filename = "./picture/chp11/plot24.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot24.png" width="100%"&gt;
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_family&lt;/h1&gt; 
+
+```r
+ # 使用windowsFonts()查看字体对应的名字是什么, 运气好，里面就有times new roman
+windowsFonts()
+ # 如果没有，可以library(extrafont)
+library(extrafont)
+ # 这个包很笨，只能添加一个文件夹内的字体，
+ # 默认添加"C:/WINDOWS/FONT/"，这里面有你电脑里所有的字体
+ # 因此建议你把需要的字体放到桌面，
+ # 然后设置导入路径font_import(path = "C:/user/desktop/")
+font_import(path = "C:/user/desktop/")
+ # 最后使用 fonttable()，查看字体是否被导入了，
+ # 记住times new roman对应的FamilyName
+fonttable()
+ # 填在上面的text=element_text(family='Times New Roman')
 ```
 
 ---
-## &lt;h1 lang="en"&gt;Layers and Facets Final Plot&lt;/h1&gt; 
-&lt;img src="./picture/chp11/plot.png" width="100%"&gt;
+## &lt;h1 lang="en"&gt;Save APA theme&lt;/h1&gt; 
+
+```r
+# 将刚刚制作的apa格式保存
+theme_apa &lt;- ggplot2::theme_bw() +
+             ggplot2::theme(#legend.position = "none",
+                            axis.text = element_text(size = 12), # 坐标轴字体大小
+                            axis.title = element_text(size = 12), # 坐标轴标题字体大小
+                            strip.text = element_text(size = 12), # facet标题字体大小
+                            plot.title = element_text(size = 12, face = "bold", hjust = 0.5), # 图片整体标题字体大小
+                            strip.background = element_blank(), # facet标题的背景
+                            panel.grid.major=element_blank(), # 水平参考线
+                            panel.grid.minor=element_blank(), # 垂直参考线
+                            panel.border=element_blank(), # 边框
+                            text=element_text(family='Times New Roman'), #字体family,       
+                            # papaja::theme_apa()会warning找不到Windows中字体，但其实如果你载入了，就可以在R中找到
+                            )
+# 你可以在载入了papaja(jtools)包之后，在画完图后加入 theme_apa()，获得一样的效果
+```
+
+---
+## &lt;h1 lang="en"&gt;APA theme: font_family&lt;/h1&gt; 
+
+```r
+# 和直接用papaja::theme_apa()制作的对比一下,坐标轴更好看了，其他几乎一样
+p[[24]] &lt;- p[[16]] +
+  papaja::theme_apa(base_family = "Times New Roman")
+names(p)[24] &lt;- "APA theme: font_family"; p[[24]]
+ggsave(filename = "./picture/chp11/plot24_apa.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
+```
+&lt;img src="./picture/chp11/plot24_apa.png" width="100%"&gt;
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

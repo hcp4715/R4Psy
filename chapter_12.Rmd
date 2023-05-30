@@ -1,0 +1,411 @@
+---
+title             : "Lecture 12: Preparing journal artical with *papaja*"
+shorttitle        : "papaja"
+
+author: 
+  - name          : "Hu Chuan-Peng"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "#122 Ninghai Rd, Gulou District, Nanjing"
+    email         : "hcp4715@hotmail.com"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Supervision"
+  - name          : "All Students"
+    affiliation   : "1,2"
+    role:
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+
+affiliation:
+  - id            : "1"
+    institution   : "Nanjing Normal Unviersity"
+  - id            : "2"
+    institution   : "Collaborators' Affiliations"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Author Note: This is for demonstration only.
+
+abstract: |
+  Psychological science has encountered a serious replication crisis. 
+  
+  To make self-correction of the field, researchers actively reform the current practices and increase the opennes, transparency, and reproducibility of studies in the field. Using R language for data analyses is recommended by many. With increasingly emphases on computational reproduciblity, *papaja* was developed to combine data analysis and manuscript preparation.
+  
+  The current chapter aims to demonstrate how to use *papaja*. 
+  
+  We will introduce the package and key elements of the it.
+  
+  After the lecture, we expected students able to create an example APA manuscript using open data or examplary data we had provided at the beginning of the class.
+  
+  This demo and practice will further enhance the student's experience in computational reproducibility.
+  
+  By spreading the ideas of reproducbility and teaching papaja, this class will increase the computational reprodcubility.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "Reproducibility, R, Teaching, Demonstration"
+wordcount         : "X"
+
+bibliography      : 
+  - "chapter_12-r-references.bib"
+  - "chapter_12-citation.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans")
+
+r_refs("chapter_12-r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+R language has been widely used in psychological science and social science in general. However, for most students with a background of psychology, learning R is not easy. 
+
+In the past decade, an increasingly number of psychological researchers had switched from SPSS to R. The most common suggestions from those who successfully adopted R is: learning by doing. 
+
+To fully integrate R in the life-cycle of psychological research, using R for preparing journal article is necessary. 
+
+Fortunately, we now have *papaja* [@R-papaja], which enable us to prepare journal article that formatted as required by APA. 
+
+Below we will demonstrate how to use *papaja* to generate an APA formatted PDF. Note that we will use the data from perceptual matching task, which was from [@Hu_2020]. The data analysis for this dataset has been showed in previous classes.
+
+Here we will try to reproduce what has been reported in @Hu_2020. Thus, we adopted the code from: https://github.com/hcp4715/moralSelf_ddm. 
+
+```{r load data, message=FALSE, warning=FALSE, echo=FALSE}
+# empty the global env
+rm(list = ls())
+
+df.match <- read.csv('./data/match/match_raw.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE) %>%
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>%
+  dplyr::mutate(Valence = ifelse(Valence == "moral", "Good", "Bad"),
+                Valence = factor(Valence, levels = c("Good", "Bad")),
+                Identity = factor(Identity, levels = c("Self", "Other")))
+
+### Rule 1: wrong trials numbers because of procedure errors
+excldSub1 <- df.match %>%
+   dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::group_by(Sub, Match, Identity, Valence) %>%
+   dplyr::summarise(N = length(ACC)) %>%  # count the trial # for each condition of each subject
+   dplyr::ungroup() %>%
+   dplyr::filter(N != 75) %>%             # filter the rows that trial Number is not 75
+   dplyr::distinct(Sub) %>%           # find the unique subject ID
+   dplyr::pull(Sub)                   # pull the subj ID as vector
+
+
+### Rule 2:  overall accuracy < 0.5
+excldSub2 <- df.match %>%
+   dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::group_by(Sub) %>%
+   dplyr::summarise(N = length(ACC),
+                    countN = sum(ACC),
+                    ACC = sum(ACC)/length(ACC)) %>%  # count the trial # for each condition of each subject
+   dplyr::ungroup() %>%
+   dplyr::filter(ACC < .5) %>%             # filter the subjects with over all ACC < 0.5
+   dplyr::distinct(Sub) %>%             # find the unique subject ID
+   dplyr::pull(Sub)                     # pull the subj ID as vector
+
+### Rule 3:  one condition with zero ACC
+excldSub3 <- df.match %>%
+   dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::group_by(Sub, Match, Identity, Valence) %>%
+   dplyr::summarise(N = length(ACC),
+                    countN = sum(ACC),
+                    ACC = sum(ACC)/length(ACC)) %>%  # count the trial # for each condition of each subject
+   dplyr::ungroup() %>%
+   dplyr::filter(ACC == 0) %>%             # filter the subjects with over all ACC < 0.5
+   dplyr::distinct(Sub) %>%             # find the unique subject ID
+   dplyr::pull(Sub)                     # pull the subj ID as vector
+
+# all participants excluded
+excldSub   <- c(excldSub1, excldSub2, excldSub3) # 7302, 7303
+
+# select valid data for further analysis
+df.mt.v <- df.match %>%
+  dplyr::filter(ACC == 1 | ACC == 0) %>%
+  dplyr::filter(!Sub %in% excldSub)            # exclude the invalid subjects
+
+# check the number of participants are correct
+# length(unique(df.mt.v$Sub)) + length(excldSub) == length(unique(df.match$Sub))
+
+# ratio of invalid trials
+ratio.excld.trials <- nrow(df.mt.v[df.mt.v$RT*1000 <= 200 & df.mt.v$ACC == 1,])/nrow(df.mt.v)  
+
+
+## Basic information of the data ####
+df.m.basic <- df.match %>%
+   dplyr::select(Sub, Age, Sex) %>%
+   dplyr::distinct(Sub, Age, Sex) %>%
+   dplyr::summarise(subj_N = length(Sub),
+                    female_N = sum(Sex == 'female'),
+                    male_N = sum(Sex == 'male'),
+                    Age_mean = round(mean(Age),2),
+                    Age_sd   = round(sd(Age),2))
+
+df.mt.v.basic <- df.mt.v %>%
+   dplyr::select(Sub, Age, Sex) %>%
+   dplyr::distinct(Sub, Age, Sex) %>%
+   dplyr::summarise(subj_N = length(Sub),
+                    female_N = sum(Sex == 'female'),
+                    male_N = sum(Sex == 'male'),
+                    Age_mean = round(mean(Age),2),
+                    Age_sd   = round(sd(Age),2))
+```
+
+# Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+## Participants
+The sample size of the study was determined in a dynamic way [@schoenbrodt_sequential_2017]. Specifically, we kept collecting data and analyzing the strength of evidence for the critical hypothesis, including the interaction between Self-Relevance × Valence on RT data and two Bayes factor paired *t*-tests (good-self vs. bad-self, good-self vs. good-other). We stopped recruiting new participants when both paired *t*-tests reached $BF_{10} \le 0.1$ or $BF_{10} \ge 10$. Participants who were already recruited at that moment continued to complete the experiment. See https://osf.io/w6hrj/ for the change of Bayes factor during the data collection. In total, `r df.m.basic$subj_N` college students (`r df.m.basic$female_N` females, age: `r df.m.basic$Age_mean` $\pm$ `r df.m.basic$Age_sd`) were recruited. Two participants were excluded from data analysis because of procedural failures, leaving `r df.mt.v.basic$subj_N` participants (`r df.mt.v.basic$female_N` females, age: `r df.mt.v.basic$Age_mean` $\pm$ `r df.mt.v.basic$Age_sd`).
+
+## Material and Procedure
+
+The data was collected using the same settings as described in the pilot study, with several differences:
+
+  * In the shape-categorization task, the shapes were presented for 100 ms, instead of 200 ms in the pilot experiment, and feedback was Chinese character ‘Correct’ or ‘Incorrect’, instead of happy or sad symbolic faces. 
+  * There were only two different types of blocks in the categorization task in the confirmatory study because the importance judgments resulted in unbalanced trials between participants. 
+  * There were more trials per condition: 72 experimental trials for the matching task. 
+  * The questionnaires were different from the pilot study.
+
+## Data analysis
+We used `r cite_r("chapter_12-r-references.bib", pkgs = c("afex", "emmeans", "ggplot2", "dplyr", "tidyr", "patchwork", "r-base"), withhold=FALSE)` for all our analyses. The results from Frequentist hypothesis testing (i.e., ANOVA and *t*-tests) will be reported below.
+
+# Results
+
+```{r prep data}
+# prepare data for dprime
+df.mt.dp.subj <- df.mt.v %>%
+  dplyr::group_by(Sub, Identity, Valence) %>%
+  dplyr::summarise(hit = length(ACC[Match == "match" & ACC == 1]),
+                   fa = length(ACC[Match == "mismatch" & ACC == 0]),
+                   miss = length(ACC[Match == "match" & ACC == 0]),
+                   cr = length(ACC[Match == "mismatch" & ACC == 1]),
+                   Dprime = qnorm(ifelse(hit / (hit + miss) < 1,
+                                         hit / (hit + miss),
+                                         1 - 1 / (2 * (hit + miss))
+                                         )) - 
+                            qnorm(ifelse(fa / (fa + cr) > 0,
+                                           fa / (fa + cr),
+                                           1 / (2 * (fa + cr))))
+                   ) %>% 
+  dplyr::ungroup() 
+
+# get the overall mean acc
+df.mt.dp.sum <- df.mt.dp.subj %>% 
+  dplyr::group_by(Identity, Valence) %>%
+  dplyr::summarise(grand_Mean = mean(Dprime),
+                   grand_SD = sd(Dprime),
+                   grand_SE = grand_SD/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()  %>%
+  dplyr::mutate(DV = "dprime")
+
+# prepare data for RT
+df.mt.rt.subj <- df.mt.v %>%
+  dplyr::filter(ACC == 1) %>%
+  dplyr::mutate(RT_ms = RT * 1000) %>%
+  dplyr::group_by(Sub, Match, Identity, Valence) %>%
+  dplyr::summarise(RT_mean = mean(RT_ms) ,
+                   RT_sd = sd(RT_ms)) %>%
+  dplyr::ungroup()
+
+# get the overall mean RT
+df.mt.rt.sum  <- df.mt.rt.subj %>% 
+  dplyr::group_by(Match, Identity, Valence) %>%
+  dplyr::summarise(grand_Mean = mean(RT_mean),
+                   grand_SD = sd(RT_mean),
+                   grand_SE = grand_SD/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()  %>%
+  dplyr::mutate(DV = "RT")
+
+df.mt.sum <- df.mt.rt.sum %>%
+  dplyr::filter(Match == "match") %>%
+  dplyr::select(-Match) %>%
+  rbind(., df.mt.dp.sum)
+```
+
+```{r plots, echo=FALSE, warning=FALSE}
+
+df.mt.rt.subj.m.plot <- df.mt.rt.subj %>%
+  dplyr::filter(Match == "match") %>%
+  dplyr::mutate(conds = case_when(Identity == "Self" & Valence == "Good" ~ "0.88",
+                                  Identity == "Self" & Valence == "Bad" ~ "1.12",
+                                  Identity == "Other" & Valence == "Good" ~ "1.88",
+                                  Identity == "Other" & Valence == "Bad" ~ "2.12"),
+                conds = as.numeric(conds))
+
+pd <- position_dodge(0.08)
+
+p1_rt <- df.mt.rt.sum %>%
+  dplyr::filter(Match == "match") %>%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_Mean,
+                      group = Valence,
+                      color = Valence)) +
+  ggplot2::geom_line(position = position_dodge(0.5)) +
+  ggplot2::geom_point(size = 10,
+                      position = position_dodge(0.5)) + 
+  ggplot2::geom_errorbar(aes(ymin=grand_Mean - 1.96 * grand_SE,
+                             ymax=grand_Mean + 1.96 * grand_SE),
+                         width=.1,
+                         position = position_dodge(0.5),
+                         ) +
+  ggplot2::scale_y_continuous(limits = c(450, 900)) +
+  labs(y = "Mean reaction times (ms)",
+       x = element_blank())  + 
+  ggplot2::geom_point(data = df.mt.rt.subj.m.plot,
+                       aes(x=conds,
+                           y=RT_mean,
+                           group = Sub),
+                      position = pd,
+                      size = 4,
+                      color="#000000",
+                      alpha = 0.2) + 
+  ggplot2::geom_line(data = df.mt.rt.subj.m.plot,
+                     aes(x=conds,
+                         y=RT_mean,
+                         group=Sub),
+                     position = pd,
+                     linetype = 1,
+                     linewidth=0.8,
+                     color="#000000",
+                     alpha=0.1) +
+  papaja::theme_apa(base_size = 25,
+                    base_family = "Times")
+
+
+df.mt.dp.subj.m.plot <- df.mt.dp.subj %>%
+  dplyr::mutate(conds = case_when(Identity == "Self" & Valence == "Good" ~ "0.88",
+                                  Identity == "Self" & Valence == "Bad" ~ "1.12",
+                                  Identity == "Other" & Valence == "Good" ~ "1.88",
+                                  Identity == "Other" & Valence == "Bad" ~ "2.12"),
+                conds = as.numeric(conds))
+
+y_axis_title <- expression(paste("Senesitivity (", italic("d'"), ")"))
+
+
+p1_dp <- df.mt.dp.sum %>%
+  ggplot2::ggplot(., 
+                  aes(x = Identity,
+                      y = grand_Mean,
+                      group = Valence,
+                      color = Valence)) +
+  ggplot2::geom_line(position = position_dodge(0.5)) +
+  ggplot2::geom_point(size = 10,
+                      position = position_dodge(0.5)) + 
+  ggplot2::geom_errorbar(aes(ymin=grand_Mean - 1.96 * grand_SE,
+                             ymax=grand_Mean + 1.96 * grand_SE),
+                         width=.1,
+                         position = position_dodge(0.5),
+                         ) +
+  # ggplot2::scale_y_continuous(limits = c(450, 900)) +
+  labs(y = y_axis_title,
+       x = element_blank())  + 
+  ggplot2::geom_point(data = df.mt.dp.subj.m.plot,
+                       aes(x=conds,
+                           y=Dprime,
+                           group = Sub),
+                      position = pd,
+                      size = 4,
+                      color="#000000",
+                      alpha = 0.2) + 
+  ggplot2::geom_line(data = df.mt.dp.subj.m.plot,
+                     aes(x=conds,
+                         y=Dprime,
+                         group=Sub),
+                     position = pd,
+                     linetype = 1,
+                     linewidth=0.8,
+                     color="#000000",
+                     alpha=0.1) +
+  papaja::theme_apa(base_size = 25,
+                    base_family = "Times")
+# p1_dp
+```
+
+```{r plot1, fig.cap="Interaction between identity and valence for (A) sensitivity and (B) reaction times.", fig.height=9, fig.width=18, warning=FALSE}
+
+library(patchwork)
+p1_dp + p1_rt + plot_annotation(tag_levels = 'A')  + plot_layout(nrow = 1, byrow = TRUE, guides = 'collect')
+
+# p <- p_rt1 + p_dprime1 + plot_annotation(tag_levels = 'A') + plot_layout(guides = "collect") 
+
+#  ggsave('part1_plot_posterior.png', p, width = 15, height = 7.5)
+```
+
+```{r results of dprime, echo=FALSE}
+
+# ANOVA for dprime
+ANOVA_dp <- afex::aov_ez(df.mt.dp.subj, id = "Sub", 
+                           dv = "Dprime",
+                           within = c("Identity", "Valence")
+                           )
+
+# simple main effect analysis:
+simple_effect_dp <- emmeans::emmeans(ANOVA_dp, "Valence", by = "Identity")
+
+simple_effect_dp_test <- pairs(simple_effect_dp)  
+```
+
+## Sensitivity (*d'*)
+
+A two-way repeated-measure ANOVA revealed a significant interaction between Identity and Valence. *F*(`r ANOVA_dp$anova_table$"num Df"[3]`, `r ANOVA_dp$anova_table$"den Df"[3]`) = `r ANOVA_dp$anova_table$F[3]`, *p* = 0.0012. We conducted follow-up simple main effect analyses. When the shapes were self-referential, *d'* was significantly larger for moral condition (2.5 $\pm$ 0.11) than for immoral condition (1.99 $\pm$ 0.1), *t*(41) = 4.29, *p* < 0.001. However, this was no clear evidence that moral condition (2.11 $\pm$ 0.116) and immoral condition (2.27 $\pm$ 0.107) were not significantly different when the shapes are other-referential (see figure \@ref(fig:plot1)). 
+
+```{r results of RT, eval=FALSE}
+# analyses of RT
+ANOVA_rt <- afex::aov_ez(data = df.mt.rt.subj, 
+                         id = "Sub", 
+                         dv = "RT_mean",
+                         within = c("Identity", "Valence")
+                           )
+```
+
+## Reaction times
+
+[Please finish this part]
+
+
+# Discussion
+
+In this demonstration, we examplified how to use *papaja* to prepare an APA style manuscript. We highlighted the following details:
+
+* Installation and start a manuscript from the template. 
+* YAML front 
+* Mathematical notations
+* Citation
+* Insert results from code block
+* Plot
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
