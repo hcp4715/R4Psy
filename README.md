@@ -14,6 +14,16 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
+## 版本与许可(License)
+
+本仓库中的代码与文字，均由胡传鹏教授与助教团队所创建，采用CC-BY-4.0的版本许可。
+
+Shield: [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
+
+This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+
+[![CC BY 4.0](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
+
 ## 本Repo的文件夹结构(folder structure of this repo)
 
 ```         
