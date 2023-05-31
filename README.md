@@ -10,13 +10,15 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 此仓库为南京师范大学心理学研究生课程。
 
-教师：胡传鹏
+教师：胡传鹏(hcp4715 AT hotmail DOT com)
 
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
-## 版本与许可(License)
+## 版权与许可(License)
 
-本仓库中的代码与文字，均由胡传鹏教授与助教团队所创建，采用CC-BY-4.0的版本许可。
+本仓库中的代码与文字，均由胡传鹏教授与助教团队所创建，采用CC-BY-4.0的版本许可，如需要使用，请引用本仓库网址。
+
+本仓库内容对资料出处均进行详细引用，如果侵权，请随时联系。
 
 Shield: [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
 
