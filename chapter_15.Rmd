@@ -15,7 +15,7 @@ output:
 ---
 
 class: center, middle
-<span style="font-size: 60px;">第十四章</span> <br>
+<span style="font-size: 60px;">第十五章</span> <br>
 <span style="font-size: 50px;">期末作业及Docker</span> <br>
 
 <br>
@@ -197,7 +197,7 @@ Docker的出现主要就是为了解决：**在我的机器上运行时是正常
 ## Docker desktop
 docker官方推出的管理工具，能够构建和共享容器化应用程序和微服务。
 类似Github，我们在docker hub上注册账号并下载Docker desktop，方便我们获取需要的镜像并上传自己的镜像。
-![](./picture/chp14/DockerHub.png)
+![](./picture/chp15/DockerHub.png)
 https://hub.docker.com/
 
 ---
@@ -213,20 +213,20 @@ https://hub.docker.com/
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 通过Powershell(管理员模式)安装image
-![](./picture/chp14/0.png)
+![](./picture/chp15/0.png)
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 安装完成后生成容器
 可以在Docker desktop中运行，但由此运行后只能在cmd中编译，因此选择更好的方法
-![](./picture/chp14/1.png)
+![](./picture/chp15/1.png)
 
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 使用jupyter notebook插件
 安装Jupyter，并在cmd中输入如下代码，可以在浏览器中编译
-![](./picture/chp14/2.png)
+![](./picture/chp15/2.png)
 https://jupyter-notebook.readthedocs.io/en/stable/notebook.html
 
 ---
@@ -234,39 +234,39 @@ https://jupyter-notebook.readthedocs.io/en/stable/notebook.html
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 使用jupyter notebook插件
 调用成功，并复制该序列号
-![](./picture/chp14/6.png)
+![](./picture/chp15/6.png)
 
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 成功运行Container
 此时Docker中该Image处于运行状态，生成Container
-![](./picture/chp14/4.png)
+![](./picture/chp15/4.png)
 
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 在浏览器中编译
 此时可以在浏览器中使用脚本
-![](./picture/chp14/5.png)
+![](./picture/chp15/5.png)
 
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 在浏览器中编译
 将之前复制的token粘贴
-![](./picture/chp14/7.png)
+![](./picture/chp15/7.png)
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 在浏览器中编译
 使用Python3环境编译
-![](./picture/chp14/9.png)
+![](./picture/chp15/9.png)
 ---
 
 # <h1 lang="zh-CN">Docker实例</h1><br>
 ## 在浏览器中编译
 输入如下代码，运行该插件
-![](./picture/chp14/11.png)
+![](./picture/chp15/11.png)
 
 
