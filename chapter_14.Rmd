@@ -54,13 +54,12 @@ len_power <- length(effect_size) # 获取生成效应量的长度，即10
 idx <- 0 # 设置一个idx变量作为标识符，后续用于定位
 power <- numeric(len_power) # 生成与len_power长度一致的0，便于后续修改
 for (i in effect_size) { # 遍历所有的效应量
-
   p <- numeric(10000) # 生成10000个长度的列表，用于储存p值
-
   idx <- idx + 1 # 每运行一次for循环，idx就加1
-  for (j in 1:10000) { # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
-    x <- rnorm(n = 20, mean = i, sd = 1) # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
-
+  for (j in 1:10000) { 
+    # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
+    # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
+    x <- rnorm(n = 20, mean = i, sd = 1) 
     p[j] <- t.test(x)$p.value # 储存p值
   }
 # 计算p值小于0.05的个数并除10000计算power
@@ -108,13 +107,12 @@ len_alpha <- length(alpha) # 获取生成alpha向量的长度，即5
 idx <- 0 # 设置一个idx变量作为标识符，后续用于定位
 power <- numeric(len_alpha) # 生成与len_alpha长度一致的0，便于后续修改
 for (i in alpha) { # 遍历所有的效应量
-
   p <- numeric(10000) # 生成10000个长度的列表，用于储存p值
-
   idx <- idx + 1 # 每运行一次for循环，idx就加1
-  for (j in 1:10000) { # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
-    x <- rnorm(n = 20, mean = 0.5, sd = 1) # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
-
+  for (j in 1:10000) { 
+    # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
+    x <- rnorm(n = 20, mean = 0.5, sd = 1) 
+    # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
     p[j] <- t.test(x)$p.value # 储存p值
   }
  # 计算p值小于alpha的个数并除10000计算power
@@ -142,18 +140,15 @@ map_dbl(alpha, ~ pwr.t.test(
 sample_size <- seq(10, 100, 10)
 # 生成10个效应量，从0.1到1，间隔为0.1
 len_n <- length(sample_size) # 获取生成效应量的长度，即10
-
 idx <- 0 # 设置一个idx变量作为标识符，后续用于定位
 power <- numeric(len_n) # 生成与len_n长度一致的0，便于后续修改
 for (i in sample_size) { # 遍历所有的效应量
-
   p <- numeric(10000) # 生成10000个长度的列表，用于储存p值
-
   idx <- idx + 1 # 每运行一次for循环，idx就加1
   # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
   for (j in 1:10000) { 
-    x <- rnorm(n = i, mean = 0.5, sd = 1) # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
-
+    x <- rnorm(n = i, mean = 0.5, sd = 1) 
+    # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
     p[j] <- t.test(x)$p.value # 储存p值
   }
 # 计算p值小于0.05的个数并除10000计算power
@@ -221,8 +216,10 @@ for (i in 1:sim) {
   group2 <- rnorm(n2, m2, sd2)
 
   pvals[i] <- t.test(group1, group2)$p.value
-
-  cohen_ds[i] <- (mean(group1) - mean(group2)) / (sqrt(((n1 - 1) * sd(group1)^2 + (n2 - 1) * sd(group2)^2) / (n1 + n2 - 2)))
+  
+  cohen_ds[i] <- (mean(group1)-mean(group2))/
+    (sqrt(((n1-1)*sd(group1)^2 + (n2-1) * sd(group2)^2) / 
+            (n1+n2-2)))
 }
 ```
 ---
