@@ -4,7 +4,7 @@
     <title>chapter_14.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
   </head>
@@ -23,7 +23,9 @@ class: center, middle
 ---
 
 # &lt;h1 lang="zh-CN"&gt;什么是统计检验力&lt;/h1&gt;
-**统计检验力（统计功效）**: 假设检验中正确拒绝虚无假设的概率。&lt;br&gt;
+**统计检验力（统计功效, statistical power）**: 假设检验中正确拒绝虚无假设的概率。&lt;br&gt;
+&lt;br&gt;
+`\(1 - \beta = P(sig \ | \ H_1)\)`
 &lt;br&gt;
 .center[&lt;img src="./picture/chp14/beta.png" width="60%" height="50%"&gt;]
 
@@ -31,54 +33,77 @@ class: center, middle
 
 统计检验力主要由三个因素决定：&lt;br&gt;
 
-- 效应量
+- 效应量(effect size)
 - 一类错误率(Type 1 error, `\(\alpha\)`)
-- 样本量
+- 样本量(sample size)
 
 效应量、一类错误率、效应量越大，统计功检验力越高；相反则更低。
-
 
 ---
 # &lt;h1 lang="zh-CN"&gt;其他统计量与统计检验力的关系——以单样本*t*检验为例&lt;/h1&gt;
 ---
 ## &lt;h2 lang="zh-CN"&gt;效应量与统计检验力的关系——以单样本*t*检验为例&lt;/h2&gt;
 
-在本次模拟中，样本量固定为20，一类错误率固定为0.05
+在本次模拟中，样本量固定为$ n = 20$，一类错误率固定为$\alpha = 0.05$
+
 
 ```r
-effect_size &lt;- seq(0.1, 1, 0.1)
-# 生成10个效应量，从0.1到1，间隔为0.1
+rm(list = ls())
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }             # 检查是否已安装 pacman, 如果未安装，则安装包
+
+pacman::p_load("tidyverse", "faux", "pwr", "MASS", "afex") # 使用p_load来载入需要的包
+```
+
+
+
+```r
+effect_size &lt;- seq(0.1, 1, 0.1) # 生成10个效应量，从0.1到1，间隔为0.1
+
 len_power &lt;- length(effect_size) # 获取生成效应量的长度，即10
 
 idx &lt;- 0 # 设置一个idx变量作为标识符，后续用于定位
+
 power &lt;- numeric(len_power) # 生成与len_power长度一致的0，便于后续修改
-for (i in effect_size) { # 遍历所有的效应量
-  p &lt;- numeric(10000) # 生成10000个长度的列表，用于储存p值
-  idx &lt;- idx + 1 # 每运行一次for循环，idx就加1
-  for (j in 1:10000) { 
-    # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
+
+for (i in effect_size) {     # 遍历所有的效应量
+  p &lt;- numeric(5000)        # 生成5000个长度的列表，用于储存p值
+  idx &lt;- idx + 1             # 每运行一次for循环，idx就加1
+  for (j in 1:5000) { 
+    # 在遍历效应量的基础上运行5000次计算p值，用于后续计算power
     # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
     x &lt;- rnorm(n = 20, mean = i, sd = 1) 
     p[j] &lt;- t.test(x)$p.value # 储存p值
   }
-# 计算p值小于0.05的个数并除10000计算power
-  power[idx] &lt;- sum(p &lt; 0.05) / 10000 
+  
+  power[idx] &lt;- sum(p &lt; 0.05) / 5000 # 计算p值小于0.05的个数并除5000计算power
 }
+
+df_sim1 &lt;- data.frame(effect_size = effect_size, power = power)
 ```
 
 ---
 
+
 ```r
-plot(x = effect_size, y = power)
+df_sim1 %&gt;%
+  ggplot2::ggplot(aes(x = effect_size, y = power)) + 
+  ggplot2::geom_point(size = 5) +
+  ggplot2::geom_line() +
+  ggplot2::labs(title = "Fixed sample size and alpha value",
+                x = "Effect size (Cohen's d)",
+                y = "Statistical power") + 
+  papaja::theme_apa()
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/plot effect size and power-1.png)&lt;!-- --&gt;
 
 ---
-有许多R包可用于计算统计检验力，如pwr
+
+有许多R包可用于计算统计检验力，如`pwr`
+
 
 ```r
-library(pwr)
 pwr.t.test(
   n = 20, d = 0.2, sig.level = 0.05,
   type = "one.sample", alternative = "two.sided"
@@ -88,13 +113,10 @@ pwr.t.test(
 ```
 ## [1] 0.1359563
 ```
+
 ---
-可以使用map函数结合pwr来计算不同效应量下的统计检验力
 
-
-```r
-library(tidyverse)
-```
+可以使用map函数结合`pwr`来计算不同效应量下的统计检验力
 
 
 ```r
@@ -110,38 +132,52 @@ map_dbl(effect_size, ~ pwr.t.test(
 ##  [1] 0.07094116 0.13595629 0.24708909 0.39699383 0.56450442 0.72100510
 ##  [7] 0.84350588 0.92389876 0.96815164 0.98859129
 ```
+
 ---
-## &lt;h2 lang="zh-CN"&gt;一类错误率与统计检验力的关系&lt;/h2&gt;
+
+## &lt;h2 lang="zh-CN"&gt; `\(\alpha\)`与统计检验力的关系 &lt;/h2&gt;
 在本次模拟中，样本量固定为20，效应量固定为0.5
 
+
 ```r
-alpha &lt;- c(0.001, 0.01, 0.05, 0.1)
-# 生成5个alpha值
-len_alpha &lt;- length(alpha) # 获取生成alpha向量的长度，即5
+alpha &lt;- c(0.001, 0.01, 0.05, 0.1) # 生成5个alpha值
+len_alpha &lt;- length(alpha)         # 获取生成alpha向量的长度，即5
 
 idx &lt;- 0 # 设置一个idx变量作为标识符，后续用于定位
+
 power &lt;- numeric(len_alpha) # 生成与len_alpha长度一致的0，便于后续修改
-for (i in alpha) { # 遍历所有的效应量
-  p &lt;- numeric(10000) # 生成10000个长度的列表，用于储存p值
-  idx &lt;- idx + 1 # 每运行一次for循环，idx就加1
-  for (j in 1:10000) { 
-    # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
+
+for (i in alpha) {      # 遍历所有的效应量
+  p &lt;- numeric(5000)   # 生成5000个长度的列表，用于储存p值
+  idx &lt;- idx + 1        # 每运行一次for循环，idx就加1
+  for (j in 1:5000) { 
+    # 在遍历效应量的基础上运行5000次计算p值，用于后续计算power
     x &lt;- rnorm(n = 20, mean = 0.5, sd = 1) 
     # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
     p[j] &lt;- t.test(x)$p.value # 储存p值
   }
- # 计算p值小于alpha的个数并除10000计算power
-  power[idx] &lt;- sum(p &lt; i) / 10000 
+  power[idx] &lt;- sum(p &lt; i) / 5000 # 计算p值小于alpha的个数并除5000计算power
 }
+
+df_sim2 &lt;- data.frame(alpha = alpha, power = power)
 ```
 
 ---
 
+
 ```r
-plot(x = alpha, y = power)
+df_sim2 %&gt;%
+  ggplot2::ggplot(aes(x = alpha, y = power)) + 
+  ggplot2::geom_point(size = 5) +
+  ggplot2::geom_line() +
+  ggplot2::labs(title = "Fixed sample size and effect size",
+                x = "alpha",
+                y = "Statistical power") + 
+  papaja::theme_apa()
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/plot alpha and power-1.png)&lt;!-- --&gt;
+
 ---
 
 ```r
@@ -160,6 +196,7 @@ map_dbl(alpha, ~ pwr.t.test(
 ---
 ## &lt;h2 lang="zh-CN"&gt;样本量与统计检验力的关系&lt;/h2&gt;
 
+
 ```r
 sample_size &lt;- seq(10, 100, 10)
 # 生成10个效应量，从0.1到1，间隔为0.1
@@ -167,25 +204,37 @@ len_n &lt;- length(sample_size) # 获取生成效应量的长度，即10
 idx &lt;- 0 # 设置一个idx变量作为标识符，后续用于定位
 power &lt;- numeric(len_n) # 生成与len_n长度一致的0，便于后续修改
 for (i in sample_size) { # 遍历所有的效应量
-  p &lt;- numeric(10000) # 生成10000个长度的列表，用于储存p值
+  p &lt;- numeric(5000) # 生成5000个长度的列表，用于储存p值
   idx &lt;- idx + 1 # 每运行一次for循环，idx就加1
-  # 在遍历效应量的基础上运行10000次计算p值，用于后续计算power
-  for (j in 1:10000) { 
+  # 在遍历效应量的基础上运行5000次计算p值，用于后续计算power
+  for (j in 1:5000) { 
     x &lt;- rnorm(n = i, mean = 0.5, sd = 1) 
     # 生成20个服从均值为某一效应量，标准差为1的正态分布的样本
     p[j] &lt;- t.test(x)$p.value # 储存p值
   }
-# 计算p值小于0.05的个数并除10000计算power
-  power[idx] &lt;- sum(p &lt; 0.05) / 10000 
+# 计算p值小于0.05的个数并除5000计算power
+  power[idx] &lt;- sum(p &lt; 0.05) / 5000 
 }
+
+df_sim3 &lt;- data.frame(sample_size = sample_size, power = power)
 ```
+
 ---
 
+
 ```r
-plot(x = sample_size, y = power)
+df_sim3 %&gt;%
+  ggplot2::ggplot(aes(x = sample_size, y = power)) + 
+  ggplot2::geom_point(size = 5) +
+  ggplot2::geom_line() +
+  ggplot2::labs(title = "Fixed effect size and alpha",
+                x = "Sample size",
+                y = "Statistical power") + 
+  papaja::theme_apa()
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/plot sample size and power-1.png)&lt;!-- --&gt;
+
 ---
 
 
@@ -205,7 +254,8 @@ map_dbl(sample_size, ~ pwr.t.test(
 
 ---
 # &lt;h1 lang="zh-CN"&gt;G*Power中的结果是如何计算的&lt;/h1&gt;
-在使用GPower时，我们通常需要在软件中填写两组之间的差异Cohen's *d*（如*d*为0.5）。
+
+在使用GPower时，我们通常需要在软件中填写两组之间的差异Cohen's *d*（如 Cohen's *d* = 0.5）。
 
 假设我们有两组被试分别进行了某些测验，每组共10名被试，两组被试的均值分别为0.5和0，标准差为1。通过之前课程学习到的计算*d*的公式：
 
@@ -213,7 +263,9 @@ map_dbl(sample_size, ~ pwr.t.test(
 我们可以计算出*d*为：
 `$$Cohen's \  d_s = \frac{0.5 - 0}{\sqrt{\frac{(10 -1)1^2 + (10-1)1^2)}{10+10-2}}}=0.5$$`
 ---
+
 代码实现：
+
 
 ```r
 n1 &lt;- 10
@@ -228,8 +280,8 @@ print(group1)
 ```
 
 ```
-##  [1]  1.0590229 -1.7479184 -0.2513349  1.2292779  0.9516823  0.1354018
-##  [7] -0.8841107 -0.1910945  0.1157183  0.7282528
+##  [1]  2.08568685 -0.30999007  0.27446153  0.59587669  1.06690530 -0.17633938
+##  [7]  1.21959538 -0.60419180  1.45087405 -0.07754571
 ```
 
 ```r
@@ -237,11 +289,13 @@ print(group2)
 ```
 
 ```
-##  [1]  0.91428437 -1.55187107 -0.48360233  0.79214799 -0.05605257 -1.23382814
-##  [7]  1.38723228 -0.18152398 -0.15221635 -0.04451784
+##  [1] -0.049405457 -0.457898358  0.995300320  1.088889798 -0.755586746
+##  [6]  2.061677387 -0.145812397  0.249998684  0.450576670 -0.004948325
 ```
+
 ---
-t检验结果显示，未达到统计学意义上的显著性水平
+*t*检验结果显示，未达到统计学意义上的显著性水平
+
 
 ```r
 t.test(group1, group2)
@@ -252,19 +306,22 @@ t.test(group1, group2)
 ## 	Welch Two Sample t-test
 ## 
 ## data:  group1 and group2
-## t = 0.4231, df = 17.992, p-value = 0.6772
+## t = 0.54486, df = 17.958, p-value = 0.5926
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -0.695921  1.046890
+##  -0.5977474  1.0162557
 ## sample estimates:
-##   mean of x   mean of y 
-##  0.11448974 -0.06099476
+## mean of x mean of y 
+## 0.5525333 0.3432792
 ```
+
 ---
+
 为了进行统计检验力分析，我们需要模拟很多次并观察是否每次在给定效应量和一类错误率时的显著性水平。我们以传统上80%的统计检验力为标准，对比当前模拟的结果。
 
+
 ```r
-sim &lt;- 10000 # 进行10000次模拟
+sim &lt;- 5000 # 进行5000次模拟
 n1 &lt;- 10
 n2 &lt;- 10
 m1 &lt;- 0.5
@@ -285,15 +342,17 @@ for (i in 1:sim) {
             (n1+n2-2)))
 }
 ```
+
 ---
-可以看到，这里我们的统计检验力只有
+可以看到，这里我们的统计检验力只有：
+
 
 ```r
 sum(pvals &lt; 0.05) / sim
 ```
 
 ```
-## [1] 0.1813
+## [1] 0.1886
 ```
 
 ```r
@@ -301,10 +360,13 @@ mean(cohen_ds)
 ```
 
 ```
-## [1] 0.5145664
+## [1] 0.5249331
 ```
+
 ---
+
 与pwr包对比
+
 
 ```r
 pwr.t.test(n = 10, d = 0.5, sig.level = 0.05, type = "two.sample")
@@ -328,13 +390,18 @@ pwr.t.test(n = 10, d = 0.5, sig.level = 0.05, type = "two.sample")
 
 .center[&lt;img src="./picture/chp14/gpower2sample.png" width="60%"&gt;]
 ---
+
 可以看到模拟的结果与其他两个工具包/软件的结果很相似。
 
-接下来我们可以改进一下代码，在给定效应量，和一类错误水平的情况下不断增加被试数量，直到统计检验力达到80%。
 ---
 
+接下来我们可以改进一下代码，在给定效应量，和一类错误水平的情况下，被试数量到达多少时，统计检验力达到80%。
+
+**sample size planning?**
+
+
 ```r
-sim &lt;- 10000 # 模拟次数为10000
+sim &lt;- 5000 # 模拟次数为5000
 power &lt;- c() # 储存power值
 d_mean &lt;- c() # 储存效应量
 n1 &lt;- 10 # 第一组被试初识数量为10名
@@ -345,13 +412,15 @@ sd1 &lt;- 1
 sd2 &lt;- 1
 increase_num &lt;- 0 # 从0开始计算power，即从每组10人开始计算
 ```
+
 ---
 
+
 ```r
-for (i in 1:10000000) { # for循环给定一个极大的数进行遍历
-  pvals &lt;- c() # 储存后续每一次模拟的p值
-  cohen_ds &lt;- c() # 储存每一次模拟的d值
-  for (j in 1:sim) { # 开始对每一个组数量进行模拟
+for (i in 1:5000000) { # for循环给定一个极大的数进行遍历
+  pvals &lt;- c()          # 储存后续每一次模拟的p值
+  cohen_ds &lt;- c()       # 储存每一次模拟的d值
+  for (j in 1:sim) {    # 开始对每一个组数量进行模拟
     group1 &lt;- rnorm(n1, m1, sd1)
     group2 &lt;- rnorm(n2, m2, sd2)
     pvals[j] &lt;- t.test(group1, group2)$p.value
@@ -359,17 +428,18 @@ for (i in 1:10000000) { # for循环给定一个极大的数进行遍历
   }
   power[increase_num + 1] &lt;- sum(pvals &lt; 0.05) / sim # 储存power值，由于无法添加索引0的值，所以先加1
   d_mean[increase_num + 1] &lt;- mean(cohen_ds)
-  n1 &lt;- n1 + 1 # 每次计算完power后，对每组加1
+  n1 &lt;- n1 + 1  # 每次计算完power后，对每组加1
   n2 &lt;- n2 + 1
   if (power[increase_num + 1] &gt;= 0.8) {
-    break # 当power达到0.8时停止运行
+    break      # 当power达到0.8时停止运行
   }
-  increase_num &lt;- increase_num + 1 # 增加的被试加1
+  increase_num &lt;- increase_num + 1                  # 增加的被试加1
 }
 ```
 
 ---
 统计检验力随着样本量增加的变化
+
 
 ```r
 plot(10:(increase_num + 10), power, 
@@ -378,9 +448,12 @@ plot(10:(increase_num + 10), power,
 abline(h = 0.8, col = "red")
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
 ---
-效应量随着样本量增加的变化
+
+效应量随着样本量增加的变化(?)
+
 
 ```r
 plot(10:(increase_num + 10), d_mean, 
@@ -389,28 +462,34 @@ plot(10:(increase_num + 10), d_mean,
 abline(h = 0.5, col = "red")
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
 
 ---
+
 模拟达到80%统计检验力所需要的样本数量为每组：
+
 
 ```r
 print(10 + increase_num)
 ```
 
 ```
-## [1] 65
+## [1] 63
 ```
+
 与G*Power对比：
 .center[&lt;img src="./picture/chp14/gpowersamplesize.png" width="50%"&gt;]
+
 ---
-## &lt;h2 lang="zh-CN"&gt;生成前后测数据——配对样本t检验&lt;/h2&gt;
+
+## &lt;h2 lang="zh-CN"&gt;生成前后测数据——配对样本*t*检验&lt;/h2&gt;
 
 前后测数据通常之间存在一定程度的相关
 
-为了生成前后测数据，我们可以通过MASS包中的mvrnorm生成。
+为了生成前后测数据，我们可以通过`MASS`包中的`mvrnorm()`函数生成。
 
 首先我们设定被试数量为100，前测的均值为0，后测均值为1，标准差均为1，两次测量结果的相关为0.3。
+
 
 ```r
 n &lt;- 100
@@ -420,17 +499,15 @@ test1_sd &lt;- 1
 test2_sd &lt;- 1
 rho &lt;- 0.3
 ```
+
 ---
 然后，我们根据公式生成一个方差协方差矩阵
 .center[&lt;img src="./picture/chp14/cov.png" width="50%"&gt;]
 
 - https://en.wikipedia.org/wiki/Multivariate_normal_distribution
+
 ---
 代码实现：
-
-```r
-library(MASS)
-```
 
 
 ```r
@@ -446,14 +523,15 @@ head(df)
 ```
 
 ```
-##           X1          X2
-## 1  2.0303344  2.56358675
-## 2  1.8379083  1.56068080
-## 3  1.1004731  0.31221232
-## 4 -0.4765767  0.83333306
-## 5 -1.0260445  0.69087470
-## 6  0.2198507 -0.06621632
+##           X1         X2
+## 1  0.5343640 3.35213375
+## 2  0.3436207 0.44373099
+## 3  0.2947831 0.44299061
+## 4  1.2514679 0.68543551
+## 5 -1.9914871 0.01601588
+## 6  1.2019885 2.35744657
 ```
+
 ---
 我们可以简单检查一下模拟结果:
 
@@ -463,7 +541,7 @@ cor(df$X1, df$X2)
 ```
 
 ```
-## [1] 0.2133904
+## [1] 0.3541874
 ```
 
 ```r
@@ -471,7 +549,7 @@ mean(df$X1)
 ```
 
 ```
-## [1] 0.09474784
+## [1] -0.08473641
 ```
 
 ```r
@@ -479,8 +557,9 @@ mean(df$X2)
 ```
 
 ```
-## [1] 0.9629462
+## [1] 1.1175
 ```
+
 ---
 最后，我们可以根据计算cohen'd的公式确定一下配对数据的效应量，然后进行统计检验力分析，这里与G*Power一致采用：
 
@@ -490,7 +569,7 @@ mean(df$X2)
 
 ```r
 library(MASS)
-sim &lt;- 1000 # 模拟次数为10000
+sim &lt;- 1000 # 模拟次数为5000
 
 power &lt;- c() # 储存power值
 d_mean &lt;- c()
@@ -503,12 +582,12 @@ sd2 &lt;- 2
 rho &lt;- 0.3
 increase_num &lt;- 0 # 从0开始计算power，即从每组10人开始计算
 ```
+
 ---
 
 
-
 ```r
-for (i in 1:1000000) { # for循环给定一个极大的数进行遍历
+for (i in 1:500000) { # for循环给定一个极大的数进行遍历
   pvals &lt;- c() # 储存后续每一次模拟的p值
   ds &lt;- c()
   cors &lt;- c()
@@ -534,7 +613,9 @@ for (i in 1:1000000) { # for循环给定一个极大的数进行遍历
   increase_num &lt;- increase_num + 1 # 增加的被试加1
 }
 ```
+
 ---
+
 
 ```r
 plot(10:(increase_num + 10), power, 
@@ -543,8 +624,10 @@ plot(10:(increase_num + 10), power,
 abline(h = 0.8, col = "red")
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;
+
 ---
+
 
 ```r
 plot(x = 10:(increase_num + 10), 
@@ -553,26 +636,30 @@ plot(x = 10:(increase_num + 10),
      xlab = "Number of subjects")
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
-
+![](chapter_14_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
 
 ---
+
 总共需要样本量为：
+
 
 ```r
 print(10 + increase_num)
 ```
 
 ```
-## [1] 116
+## [1] 118
 ```
+
 ---
+
 与G*Power对比：
 - 首先先生成一个拥有相同参数的很大样本量的数据，用于计算总体水平的Cohen's dz，并将该值输入到G*Power中
 
+
 ```r
 set.seed(124)
-n &lt;- 1000000 # 第一组被试初识数量为10名
+n &lt;- 500000 # 第一组被试初识数量为10名
 m1 &lt;- 10
 m2 &lt;- 10.5
 sd1 &lt;- 1
@@ -593,80 +680,70 @@ print(dz)
 ```
 
 ```
-## [1] -0.2581662
+## [1] -0.2578324
 ```
+
 ---
+
 .center[&lt;img src="./picture/chp14/paired.png" width="50%"&gt;]
 
 ---
-# &lt;h1 lang="zh-CN"&gt;如何计划分析方法：以ANOVA为例&lt;/h1&gt;
----
-## &lt;h2 lang="zh-CN"&gt;生成假数据&lt;/h2&gt;
-在规划样本量时通常使用G*Power进行先验统计检验力分析 (a-priori power analysis)。使用使用工具进行先验统计检验力分析非常方便，但是灵活性不高。在进行更复杂的检验时，我们可以使用前面使用过模拟的方式进行。
 
-假设我们要进行一个2*2被试内设计的实验，根据前人的研究我们设定groupA和groupB的四个水平的均值分别为A1B1=100, A1B2=80, A2B1=200, A2B2=250。
+# &lt;h1 lang="zh-CN"&gt;如何计划分析方法：以ANOVA为例&lt;/h1&gt;
+
+---
+
+## &lt;h2 lang="zh-CN"&gt;生成假数据&lt;/h2&gt;
+在规划样本量时通常使用G\*Power进行先验统计检验力分析 (*a-priori* power analysis)。使用使用工具进行先验统计检验力分析非常方便，但是灵活性不高。在进行更复杂的检验时，我们可以使用前面使用过模拟的方式进行。
+
+假设我们要进行一个2\*2被试内设计的实验，根据前人的研究我们设定groupA和groupB的四个水平的均值分别为A1B1 = 100, A1B2 = 80, A2B1 = 200, A2B2 = 250。
 
 并且，我们主要关注和检验groupA和groupB的交互作用
 ---
+
 ### &lt;h3 lang="zh-CN"&gt;代码实现&lt;/h3&gt;
-使用faux包生成2*2被试内的模拟数据
+使用`faux`包生成2*2被试内的模拟数据
 
-```r
-library(faux)
-```
-
-```
-## 
-## ************
-## Welcome to faux. For support and examples visit:
-## https://debruine.github.io/faux/
-## - Get and set global package options with: faux_options()
-## ************
-```
-
-```
-## 
-## Attaching package: 'faux'
-```
-
-```
-## The following object is masked from 'package:purrr':
-## 
-##     %||%
-```
 ---
 
 
 ```r
 df_aov &lt;- sim_design(
   n = 50, # 生成50名被试
-  # 生成被试内因子的列表
-  within = list(groupA = c("A1", "A2"), groupB = c("B1", "B2")),
-  # 设置变量的均值
-  mu = c(100, 80, 200, 250),
-  # 设置变量的标准差
-  sd = c(A1 = 20, A2 = 10, B1 = 50, B2 = 90),
-  # 长数据形式
-  long = TRUE,
-  # 因变量命名为score
-  dv = "score",
-  plot = FALSE # 不显示图
+  within = list(groupA = c("A1", "A2"), groupB = c("B1", "B2")), # 生成被试内因子的列表
+  
+  mu = c(100, 80, 200, 250), # 设置变量的均值
+  
+  sd = c(A1 = 20, A2 = 10, B1 = 50, B2 = 90), # 设置变量的标准差
+  
+  long = TRUE,  # 输出长数据形式
+  
+  dv = "score", # 因变量命名为score
+  plot = TRUE   # 显示图
 )
+```
+
+![](chapter_14_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+
+```r
 head(df_aov)
 ```
 
 ```
 ##    id groupA groupB     score
-## 1 S01     A1     B1 106.99927
-## 2 S02     A1     B1  89.09536
-## 3 S03     A1     B1 115.80481
-## 4 S04     A1     B1  86.48224
-## 5 S05     A1     B1 102.84198
-## 6 S06     A1     B1  85.46199
+## 1 S01     A1     B1 148.03321
+## 2 S02     A1     B1 103.66462
+## 3 S03     A1     B1 124.13556
+## 4 S04     A1     B1 113.45001
+## 5 S05     A1     B1  57.60605
+## 6 S06     A1     B1  71.01715
 ```
+
 ---
+
 ### &lt;h3 lang="zh-CN"&gt;检查数据&lt;/h3&gt;
 我们检查一下模拟生成的数据
+
 
 ```r
 df_aov %&gt;%
@@ -687,65 +764,17 @@ df_aov %&gt;%
 ## # Groups:   groupA [2]
 ##   groupA groupB     m    sd
 ##   &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1 A1     B1      95.2  18.8
-## 2 A1     B2      77.7  10.3
-## 3 A2     B1     196.   53.7
-## 4 A2     B2     234.   80.5
+## 1 A1     B1      99.1 21.9 
+## 2 A1     B2      80.8  9.46
+## 3 A2     B1     202.  44.4 
+## 4 A2     B2     246.  75.6
 ```
+
 ---
 ### &lt;h3 lang="zh-CN"&gt;计算交互项p值&lt;/h3&gt;
 
-使用afex包对数据进行重复测量方差分析，并输出交互项的p值
+使用`afex`包对数据进行重复测量方差分析，并输出交互项的*p*值
 
-```r
-library(afex)
-```
-
-```
-## Loading required package: lme4
-```
-
-```
-## Loading required package: Matrix
-```
-
-```
-## 
-## Attaching package: 'Matrix'
-```
-
-```
-## The following objects are masked from 'package:tidyr':
-## 
-##     expand, pack, unpack
-```
-
-```
-## ************
-## Welcome to afex. For support visit: http://afex.singmann.science/
-```
-
-```
-## - Functions for ANOVAs: aov_car(), aov_ez(), and aov_4()
-## - Methods for calculating p-values with mixed(): 'S', 'KR', 'LRT', and 'PB'
-## - 'afex_aov' and 'mixed' objects can be passed to emmeans() for follow-up tests
-## - NEWS: emmeans() for ANOVA models now uses model = 'multivariate' as default.
-## - Get and set global package options with: afex_options()
-## - Set orthogonal sum-to-zero contrasts globally: set_sum_contrasts()
-## - For example analyses see: browseVignettes("afex")
-## ************
-```
-
-```
-## 
-## Attaching package: 'afex'
-```
-
-```
-## The following object is masked from 'package:lme4':
-## 
-##     lmer
-```
 
 ```r
 aov &lt;- aov_ez(id = "id", dv = "score", within = c("groupA", "groupB"), data = df_aov)
@@ -757,9 +786,9 @@ aov
 ## 
 ## Response: score
 ##          Effect    df     MSE          F  ges p.value
-## 1        groupA 1, 49 2524.32 328.19 *** .633   &lt;.001
-## 2        groupB 1, 49 2503.40       2.04 .010    .160
-## 3 groupA:groupB 1, 49 2557.21  14.98 *** .074   &lt;.001
+## 1        groupA 1, 49 2016.88 446.18 *** .690   &lt;.001
+## 2        groupB 1, 49 2078.12     3.76 + .019    .058
+## 3 groupA:groupB 1, 49 2259.62  21.02 *** .105   &lt;.001
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -769,34 +798,38 @@ aov[["anova_table"]][["Pr(&gt;F)"]][3]
 ```
 
 ```
-## [1] 0.0003212509
+## [1] 3.155556e-05
 ```
+
 
 ```r
 aov[["anova_table"]][["Pr(&gt;F)"]][3]
 ```
 
 ```
-## [1] 0.0003212509
+## [1] 3.155556e-05
 ```
+
 ---
 ## &lt;h2 lang="zh-CN"&gt;基于模拟的统计检验力分析&lt;/h2&gt;
 进行统计检验力分析
 
 
 ```r
-sim &lt;- 1000 # 模拟次数为1000
+sim &lt;- 1000        # 模拟次数为1000
 
-power &lt;- c() # 储存power值
-n &lt;- 5 # 第一组被试初识数量为10名
-increase_num &lt;- 0 # 从0开始计算power，即从每组10人开始计算
+power &lt;- c()       # 储存power值
+n &lt;- 5             # 第一组被试初识数量为10名
+increase_num &lt;- 0  # 从0开始计算power，即从每组10人开始计算
 ```
+
 ---
 
+
 ```r
-for (i in 1:10000000) { # for循环给定一个极大的数进行遍历
-  pvals &lt;- c() # 储存后续每一次模拟的p值
-  for (j in 1:sim) { # 开始对每一个组数量进行模拟
+for (i in 1:5000000) { # for循环给定一个极大的数进行遍历
+  pvals &lt;- c()          # 储存后续每一次模拟的p值
+  for (j in 1:sim) {    # 开始对每一个组数量进行模拟
     df_aov &lt;- sim_design(
       n = n, 
       within = list(groupA = c("A1", "A2"), groupB = c("B1", "B2")),
@@ -812,12 +845,14 @@ for (i in 1:10000000) { # for循环给定一个极大的数进行遍历
   power[increase_num + 1] &lt;- sum(pvals &lt; 0.05) / sim 
   n &lt;- n + 1 # 每次计算完power后，对每组加1
   if (power[increase_num + 1] &gt;= 0.8) {
-    break # 当power达到0.8时停止运行
+    break   # 当power达到0.8时停止运行
   }
   increase_num &lt;- increase_num + 1 # 增加的被试加1
 }
 ```
+
 ---
+
 
 ```r
 plot(5:(increase_num + 5), power, 
@@ -826,17 +861,20 @@ plot(5:(increase_num + 5), power,
 abline(h = 0.8, col = "red")
 ```
 
-![](chapter_14_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+![](chapter_14_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
+
 ---
 我们一共需要的样本量为：
+
 
 ```r
 print(5 + increase_num)
 ```
 
 ```
-## [1] 21
+## [1] 20
 ```
+
 ---
 # &lt;h1 lang="zh-CN"&gt;统计检验力分析小结&lt;/h1&gt;
 
