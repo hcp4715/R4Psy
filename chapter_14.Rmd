@@ -56,7 +56,6 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
 pacman::p_load("tidyverse", "faux", "pwr", "MASS", "afex") # 使用p_load来载入需要的包
 ```
 
-
 ```{r illustrate effect size and power}
 
 effect_size <- seq(0.1, 1, 0.1) # 生成10个效应量，从0.1到1，间隔为0.1
@@ -226,11 +225,12 @@ map_dbl(sample_size, ~ pwr.t.test(
 ---
 # <h1 lang="zh-CN">G*Power中的结果是如何计算的</h1>
 
-在使用GPower时，我们通常需要在软件中填写两组之间的差异Cohen's *d*（如 Cohen's *d* = 0.5）。
+在使用G\*Power时，我们通常需要在软件中填写两组之间的差异Cohen's *d*（如 Cohen's *d* = 0.5）。
 
 假设我们有两组被试分别进行了某些测验，每组共10名被试，两组被试的均值分别为0.5和0，标准差为1。通过之前课程学习到的计算*d*的公式：
 
 $$Cohen's \  d_s = \frac{X_1 - X_2}{\sqrt{SD_{pool}}} = \frac{X_1 - X_2}{\sqrt{\frac{(n_1 -1)SD_1^2 + (n_2-1)SD_2^2)}{n_1+n2-2}}}$$
+
 我们可以计算出*d*为：
 $$Cohen's \  d_s = \frac{0.5 - 0}{\sqrt{\frac{(10 -1)1^2 + (10-1)1^2)}{10+10-2}}}=0.5$$
 ---
