@@ -10,9 +10,21 @@ Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 此仓库为南京师范大学心理学研究生课程。
 
-教师：胡传鹏
+教师：胡传鹏(hcp4715 AT hotmail DOT com)
 
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
+
+## 版权与许可(License)
+
+本仓库中的代码与文字，均由胡传鹏教授与助教团队所创建，采用CC-BY-4.0的版本许可，如需要使用，请引用本仓库网址。
+
+本仓库内容对资料出处均进行详细引用，如果侵权，请随时联系。
+
+Shield: [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
+
+This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+
+[![CC BY 4.0](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
 
 ## 本Repo的文件夹结构(folder structure of this repo)
 
@@ -143,13 +155,13 @@ root_dir
 
 #### 第十四章：计划样本量：Power analysis （3学时）
 
-14.1 计划样本量：Power analysis （模拟）
+14.1 什么是Power
 
-14.2 计划分析方法：假数据与分析代码（模拟）
+14.2 G\*Power中的曲线如何得来？以*t*-test为例 （模拟）
 
-14.3 并行处理
+14.3 如何计划分析方法：以ANOVA为例（模拟）
 
-#### 第十五章：如何让导师/合作者完全重复我的分析？（3 学时）
+#### 第十五章：如何让导师/合作者完全重复我的分析？（3 学时，学期结束，无法讲到了）
 
 15.1 软件版本记录
 

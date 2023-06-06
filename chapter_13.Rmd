@@ -25,7 +25,7 @@ class: center, middle
 ---
 
 # <h1 lang="zh-CN">什么是效应量</h1>
-**效应量**: 研究者感兴趣的任何效应的量(Cumming, 2012, Psych Sci)。<br>
+**效应量**: 研究者感兴趣的任何效应的量(Cumming, 2012, *Psych Sci*)。<br>
 <br>
 
 标准化的效应量可以分为三大家族：<br>
@@ -68,7 +68,7 @@ G\*power (Faul, et al., 2009) 可用于计算效应量, 但与SPSS输出的偏et
 <br>
 ## 点估计与区间估计
 <br>
-基于估计的统计被认为是一种对虚无假设的补充, 但实际上反映了推断统计的不同取向, 最 重要的是从二分的思维方式转向量化的思维方式 (Cumming, 2012) <br>
+**基于估计的统计**被认为是一种对虚无假设的补充, 但实际上反映了推断统计的不同取向, 最重要的是从二分的思维方式转向量化的思维方式 (Cumming, 2012) <br>
 
 在效应量的解读中, 没有固定的标准来判断一个效应量是大还是小。<br>
 
@@ -122,19 +122,16 @@ $$Cohen's \  d_{rm} = \frac{M_{diff}}{\sqrt{SD_1^2 + SD_2^2 -2 \times r \times S
 $$Cohen's \  d_{av} = \sqrt{ \frac {M_{diff}} {(SD_1 + SD_2)/2}} $$
 ---
 # <h1 lang="zh-CN">计算Cohen's *d* </h1>
-
+<br>
+载入数据
 ```{r setup}
 rm(list = ls())
-
-# 检查是否已安装 pacman
 if (!requireNamespace("pacman", quietly = TRUE)) {
-  install.packages("pacman") }   # 如果未安装，则安装包
+  install.packages("pacman") }   # # 检查是否已安装 pacman, 如果未安装，则安装包
 
-# 使用p_load来载入需要的包
-pacman::p_load("tidyverse", "easystats")
+pacman::p_load("tidyverse", "easystats") # 使用p_load来载入需要的包
 
-# load data:
-df.mt.raw <-  read.csv('./data/match/match_raw.csv',
+df.mt.raw <-  read.csv('./data/match/match_raw.csv', # load data:
                        header = T, sep=",", stringsAsFactors = FALSE)
 ```
 
@@ -163,7 +160,7 @@ head(df.mt.rt.subj, 5)
 ---
 # <h1 lang="zh-CN">计算Cohen's *d* </h1>
 <br>
-## 感兴趣的效应量: Match条件下好我与好人的平均反应时间差异
+## 感兴趣的效应量: `Match`条件下`好我`与`好人`的平均反应时间差异
 <br>
 
 ## 计算所需要的统计量：
@@ -203,7 +200,7 @@ Cohen's *d* = `r round(Cohens_d_manu, 3)`
 # <h1 lang="zh-CN">计算Cohen's *d* </h1>
 <br>
 
-## Calculate using existing package:
+## Calculate using an existing package:
 
 ```{r using effectsize}
 SelfOther_diff <- t.test(df.mt.rt.subj.effect.wide$Self, df.mt.rt.subj.effect.wide$Other, paired = TRUE)
@@ -216,13 +213,13 @@ effectsize::effectsize(SelfOther_diff, paired = TRUE)
 ---
 # <h1 lang="zh-CN">元分析(meta-analysis)</h1>
 <br>
-### 一个研究的效应是一次采样而做出的估计
+## 一个研究的效应是一次采样而做出的估计
  <br>
-### 理论上，对多次采样的估计量进行综合，可以得到更加准确地估计
+## 理论上，对多次采样的估计量进行综合，可以得到更加准确地估计
  <br>
-### 元分析是对效应量进行综合的统计方法 <br>
+## 元分析是对效应量进行综合的统计方法 <br>
 
-### 元分析需要： <br>
+## 元分析需要： <br>
  - 效应量，例如相关系数*r*
  - 效应量的估计误差，其计算需要样本量*n*。
  - 样本量越大，取样误差越小，得到的效应量置信区间（95% CI）也就越精确。
@@ -231,135 +228,58 @@ effectsize::effectsize(SelfOther_diff, paired = TRUE)
 # <h1 lang="zh-CN">元分析</h1>
 传统的元分析模型通过效应值大小的变异的倒数对效应值进行加权(例如，标准误平方)来估计平均效应值。<br> 
 
-固定效应模型： 会扩大样本量的影响，小变异的研究比那些有着大变异的研究对平均效应量的影响更大
-随机效应模型： 该模型除了通过效应值大小的变异的倒数进行加权外，还考虑到研究之间的差异
+固定效应模型： 不考虑研究间变异，其结果在理论上不能推广到包括在模型中的研究。
+随机效应模型： 考虑研究间变异，其结果在理论上可以推广到包括在模型中的研究。
 
-<img src="./picture/chp13/wechat1.png" width="100%">
+<img src="./picture/chp13/weightingForm.png" width="100%">
 
 ---
 # <h1 lang="zh-CN">元分析</h1>
 元分析作为一种文章类型 <br>
 <img src="./picture/chp13/trend.png" width="60%"> <br>
-- Quintana, D. S. (2015). From pre-registration to publication: a non-technical primer for conducting a meta-analysis to synthesize correlational data. Frontiers in psychology, 1549.
+- Quintana, D. S. (2015). From pre-registration to publication: a non-technical primer for conducting a meta-analysis to synthesize correlational data. *Frontiers in psychology*, 1549.
 ---
-# <h1 lang="zh-CN">元分析是HLM的特例</h1>
-HLM: Hierarchical Linear Modeling <br>
+# <h1 lang="zh-CN">元分析是层级模型的特例</h1>
+
+H(L)M: Hierarchical (Linear) Modeling (Linear mixed model, multi-level model) <br>
+
 元分析是只有level2的HLM <br>
+
 <img src="./picture/chp13/fe.png" width="100%">
 
 ---
-# <h1 lang="zh-CN">元分析是HLM的特例</h1>
+# <h1 lang="zh-CN">元分析是层级模型的特例</h1>
+
 HLM: Hierarchical Linear Modeling <br>
+
 Level 1: 效应量及其误差代替 <br>
+
 <img src="./picture/chp13/re.png" width="100%">
 
 ---
-# <h1 lang="zh-CN">元分析也是提倡预注册的</h1>
-<img src="./picture/chp13/registries.png" width="100%">
+# <h1 lang="zh-CN">元分析作为一种研究类型</h1>
+
+- 问题驱动（即元分析用于回答什么问题）；
+- 流程相对清楚，有“套路”可循；
+- 可以回答重要的问题；
+- 细节繁琐，耗时耗力，可重复性和规范性值得注意(刘宇等, 2021, doi: 10.1360/SSV-2021-0009)；
+- 口碑可能不佳 (Ioannidis, 2016, doi: 10.1111/1468-0009.12210)；
+- 国内一些领域的重要评选中不纳入考虑；
 
 ---
-# <h1 lang="zh-CN">元分析步骤一</h1>
-R语言中的元分析工具 <br>
-- metafor (Viechtbauer, 2010) 
+# <h1 lang="zh-CN">元分析与R</h1>
+
+- 生态丰富
+- 工具完善: http://cran.nexr.com/web/views/MetaAnalysis.html
+- 见 Polanin, Hennessy, & Tanner-Smith. (2017)的综述 (doi: 10.3102/1076998616674)
+- 心理学研究中最常用包: metafor, meta
+- SEM与元分析结合：[metaSEM](https://cran.r-project.org/web/packages/metaSEM/index.html)
+- 公开的电子书：https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/
+---
+# <h1 lang="zh-CN">元分析：核心过程演示</h1>
 <br>
-<br>
 
-- Viechtbauer, W., and Cheung, M. W. L. (2010). Outlier and influence diagnostics for meta-analysis. Res. Synth. Method 1, 112–125. doi: 10.1002/jrsm.11
-
----
-# <h1 lang="zh-CN">元分析步骤一：分析软件的选择</h1>
-为了定位与检索到所有的有元分析功能的R程序包，我们进行了系统且全面的搜索。首先我们检索了warehouse R packages、the Comprehensive R Archive Network website(CRAN)和Revolution Analytics这三个网站，使用的检索词为：meta analysis、meta-analysis、systematic review。除此之外，我们还检索了Git Hub和Google Scholar，并向元分析领域的专家和开发R程序包的程序员请教。
-<br>
-<img src="./picture/chp13/wechat2.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤一：分析软件的选择</h1>
-程序包的特点 <br>
-<img src="./picture/chp13/wechat3.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤一：分析软件的选择</h1>
-R程序包创建的年份分布
-<img src="./picture/chp13/wechat4.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤一：分析软件的选择</h1>
-所有R元分析程序包的功能
-<img src="./picture/chp13/wechat5.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤一：分析软件的选择</h1>
-- 在63个程序包中有11个程序包为General Meta-analytic 程序包。此组程序包与传统元分析的大部分程序相同，只适用于一般性问题，不适用于某一特定领域的问题。
-
-- 基因和微阵列（microarray）元分析领域包含的程序包数量最多（n=16）。这些程序包都只针对特定领域，不适用于一般化的元分析，比如教育领域和社科领域。
-
-- Multivariate Meta-Analytic Packages程序包主要是多变量元分析类型，对应用型和高级研究者可能会有帮助。该类型的程序包(n=10)共享允许使用多个协变量或结果的多变量统计过程。
-
-- 虽然其他几个程序包的作者有具体说明可以使用他们的程序包来完成诊断性测验的精度元分析（例如metafor、mvmeta），但有5个专门为诊断元分析而设计的程序包，其中3个程序包只能完成一般的诊断元分析，另外两个程序包可以解决专门的数据问题
-
-- 网络元分析程序包主要有三个：gemtc（van Valkenhoef & Kuiper，2014）、pcnetmeta（Lin，Zhang，2015）和netmeta（Krahn,2015)。
-
----
-# <h1 lang="zh-CN">元分析步骤一：分析软件的选择</h1>
-- 有两个程序包专门针对采用贝叶斯方法的元分析。Bamdit（Verde & Sykosch，2015）程序包能够对诊断测验的数据进行随机效应建模，计算效应值，并绘制贝叶斯ROC曲线图
-
-- 有5个程序包用来评价出版偏倚，其中4个用来评价元分析中出版偏倚的可能性。这4个程序包分别是PubBias（Thornley，2015）、SAMURAI（Noory 2015）、selectMeta（Rufibach，2015）和WeightFunctionModel（Vevea & Coburn，2015）
-
-- 有9个程序包是对特殊数据类型或进行元分析某一特殊方面。Compute.es (Del Re,2015a)主要用来计算6种受普遍的效应量（Cohen’s d, Hedges’g, r, Fisher’s z, odds ratio, log odds ratio）以及效应量的变异、置信区间和p值。
-
-- 有两个程序包具有GUI 功能：MAVIS（Hamilton，Mizumoto, Aydin,&Coburn,2015）和RcmdrPlugin。
-
----
-# <h1 lang="zh-CN">元分析步骤二：文献检索与数据收集</h1>
-1. 确定适当的关键字和搜索限制，
-  - 如果关键词过于狭窄，关键的文章可能被忽略。
-  - 如果关键字过于宽泛，会得到大量与分析无关的文献。
-2. 确定需要收集的效应量，一般是相关系数r
-3. 是否包括灰色文献，比如
-  - 会议摘要
-  - 论文和预印本
-<img src="./picture/chp13/websci.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤二：文献检索与数据收集</h1>
-<img src="./picture/chp13/datacollection.png" width="90%">
-- Quintana, D. S. (2015). From pre-registration to publication: a non-technical primer for conducting a meta-analysis to synthesize correlational data. Frontiers in psychology, 1549.
-
----
-# <h1 lang="zh-CN">元分析步骤三：研究的异质性</h1>
-探究总体异质性中有多少可归因于研究间的变异
-<img src="./picture/chp13/yzx.png" width="80%">
-
----
-# <h1 lang="zh-CN">元分析步骤四：森林图</h1>
-森林图可视化了纳入的研究的效应量和置信区间，以及计算出的总效应量(固定效应或随机效应)
-<img src="./picture/chp13/forest.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤五：发表偏倚</h1>
-具有较大影响大小的研究更有可能发表并随后被纳入荟萃分析。<br>
-漏斗图是一种可视化工具，用于检查荟萃分析中潜在的发表偏倚
-<br>
-<br>
-<img src="./picture/chp13/fonnel.png" width="100%">
-
----
-# <h1 lang="zh-CN">元分析步骤六：调节分析</h1>
-可以进行调节分析以确定异质性的来源 <br>
-以及这对研究之间观察到的效应量变异性的贡献程度
-
----
-# <h1 lang="zh-CN">元分析步骤七：看不懂</h1>
-Accounting for Multiple Effect Sizes from Individual Studies
-
----
-# <h1 lang="zh-CN">元分析步骤八：数据的解释和报告</h1>
-<img src="./picture/chp13/flow.png" width="70%">
-- Moher, D., Liberati, A., Tetzlaff, J., Altman, D. G., and Prisma Group. (2009). Preferred reporting items for systematic reviews and meta-analyses: the PRISMA statement. PLoS Med. 6:e1000097. doi: 10.1371/journal.pmed.1000097
-
----
-# <h1 lang="zh-CN">元分析：简单地演示</h1>
-<br>
+*注意：本演示代码可以进一步优化*
 
 ## 将44人数据分成两部分
 ```{r random sample participants}
@@ -375,7 +295,16 @@ df.mt.rt.subj.ls1 <- df.mt.rt.subj %>%
 
 df.mt.rt.subj.ls2 <- df.mt.rt.subj %>%
   dplyr::filter(!(Sub %in% subj_ls1))
+```
+---
 
+# <h1 lang="zh-CN">元分析：核心过程演示</h1>
+<br>
+
+*注意：本演示代码可以进一步优化*
+
+## 整理第一组的数据
+```{r prep data for group 1}
 ## effect size of group 1
 df.mt.rt.subj.effect.ls1 <- df.mt.rt.subj.ls1 %>%
   dplyr::filter(Match == "match" & Valence == "Good") %>%
@@ -398,7 +327,17 @@ corr_est.ls1 <- cor(df.mt.rt.subj.effect.ls1.wide$Self, df.mt.rt.subj.effect.ls1
 
 df.mt.rt.subj.effect.ls1$Sample_size <- length(unique(df.mt.rt.subj.ls1$Sub))
 df.mt.rt.subj.effect.ls1$ri <- corr_est.ls1
+```
 
+---
+
+# <h1 lang="zh-CN">元分析：核心过程演示</h1>
+<br>
+
+*注意：本演示代码可以进一步优化*
+
+## 整理第二组的数据
+```{r prep data for group 2}
 ## effect size of group 2
 df.mt.rt.subj.effect.ls2 <- df.mt.rt.subj.ls2 %>%
   dplyr::filter(Match == "match" & Valence == "Good") %>%
@@ -419,22 +358,19 @@ df.mt.rt.subj.effect.ls2.wide <- df.mt.rt.subj.ls2  %>%
 corr_est.ls2 <- cor(df.mt.rt.subj.effect.ls2.wide$Self, df.mt.rt.subj.effect.ls2.wide$Other)
 df.mt.rt.subj.effect.ls2$Sample_size <- length(unique(df.mt.rt.subj.ls2$Sub))
 df.mt.rt.subj.effect.ls2$ri <- corr_est.ls2
+```
 
+---
 
-# created vector with 5 characters
-# columns= c("Self_RT_M_mean","Other_RT_M_mean","Self_RT_M_sd","Other_RT_M_sd","Sample_size", "ri")
- 
-# pass this vector length to ncol parameter
+# <h1 lang="zh-CN">元分析：核心过程演示</h1>
+<br>
+
+## 合并数据，计算效应量和效应量的误差
+```{r create df for meta}
 # and nrow with 1
 df.mt.meta <- rbind(df.mt.rt.subj.effect.ls1, df.mt.rt.subj.effect.ls2)
 
-```
-
-```{r create df for meta}
-# set correlation = 0.7
-# df.mt.meta$ri <- 0.7 
-
-escalc <- metafor::escalc(
+df.es <- metafor::escalc(
   measure = "SMCRH",
   #standardized mean change using raw score standardization with heteroscedastic population variances at the two measurement occasions (Bonett, 2008)
   m1i = Self_RT_M_mean,
@@ -444,120 +380,34 @@ escalc <- metafor::escalc(
   ni = Sample_size,
   ri = ri,
   data = df.mt.meta
-  )
-
-# aggregate the effect size estimates to the study level(same participants)
-# the sampling errors within studies with a correlation of 0.6
-aggregate.escalc <- escalc %>%
+  )  %>%
   dplyr::mutate(unique_ID = c("study1a", "study1b"))
 ```
 
 ---
-# <h1 lang="zh-CN">得到rma</h1>
+# <h1 lang="zh-CN">使用随机效应模型进行效应量综合</h1>
+
+
 ```{r a simple meta}
 # 随机效果模型
-rma1 <- metafor::rma(yi, vi, data = aggregate.escalc)
+rma1 <- metafor::rma(yi, vi, data = df.es)
 
-# 这里的slab是为了之后的森林图上方便显示
 ```
 
 ---
 # <h1 lang="zh-CN">森林图表格</h1>
+
 ```{r plot forest}
 
 metafor::forest(rma1)
 
 ```
 
-
 ---
-# <h1 lang="en">baujat plot</h1>
-```{r, eval=FALSE}
-baujat(rma1)
-```
-<img src="./picture/chp13/baujat.png" width="90%">
+# <h1 lang="zh-CN">元分析小结</h1>
 
----
-# <h1 lang="en">influence plot</h1>
-```{r, eval=FALSE}
-inf <-influence(rma)
-print(inf)
-plot(inf)
-```
-<img src="./picture/chp13/influence.png" width="80%">
-
----
-# <h1 lang="zh-CN">森林图</h1>
-```{r, eval=FALSE}
-# Forest Plot
-forest <- metafor::forest(rma)
-# 由于这里生成的森林图无法直接用ggsave保存，所以写了一个保存图片的函数
-RPsave(path = "../OUTPUT/Forest.png")
-```
-
-<img src="./picture/chp13/forest.png" width="90%">
-
----
-# <h1 lang="zh-CN">敏感度分析</h1>
-```{r , eval=FALSE}
-leaveout <-  metafor::leave1out(rma)
-# 你也可以手动移除你想移除的研究，看看对整个元分析的效应有什么影响
-write.csv(leaveout, "../OUTPUT/One_Study_Removed.csv")
-```
-<img src="./picture/chp13/leaveout.png" width="90%">
-
----
-# <h1 lang="zh-CN">漏斗图</h1>
-```{r, eval=FALSE}
-# Funnel  Plot
-funnel <- metafor::funnel(rma)
-
-RPsave(path = "../OUTPUT/Funnel.png")
-```
-
-<img src="./picture/chp13/fonnel.png" width="100%">
-
----
-# <h1 lang="zh-CN">其他可视化工具</h1>
-```{r, eval=FALSE}
-# install.packages("metaviz")
-metaviz_forest <- viz_forest(x = mozart[1:10, c("d", "se")], study_labels = mozart[1:10, c("study_name")],
-                             summary_label = "Summary effect", xlab = "Cohen d")
-
-RPsave(path = "../OUTPUT/metaviz_forest.png")
-```
-<img src="./picture/chp13/metaviz1.png" width="80%">
-
----
-# <h1 lang="zh-CN">其他可视化工具</h1>
-```{r, eval=FALSE}
-metaviz_funnel <- viz_sunset(rma, 
-                             contours = TRUE,
-                             power_contours =  "continuous")
-
-RPsave(path = "../OUTPUT/metaviz_funnel.png")
-```
-<img src="./picture/chp13/metaviz2.png" width="80%">
-
----
-# <h1 lang="zh-CN">元分析的局限性</h1>
-- 当前研究的局限之一是我们只对进行元分析的统计软件进行综述，而没有对可能用于进行系统评价和提取元分析数据的软件进行综述。
-- 元分析是一个系统搜索文献的结果，这一过程包含了大量的数据管理。R程序包在数据管理过程中是一个有用的工具，但目前我们还没有任何R程序包可以彻底解决这个问题。
-- 在理想情况下，程序包对管理系统评价和元分析的每一个步骤都有很大的作用，所以该领域在发展发展中是一个值得关注的。
-- 此外，鉴于开源项目的本质，在我们完成搜索、收集和编码程序包之后，可以创建更多的程序包，丰富程序包的功能。
-
----
-# <h1 lang="zh-CN">元分析的展望</h1>
-1. 建议程序包的作者可以考虑创建GUI，或者为他们的程序包提供至少一个演示操作，现在已经有一些程序包为用户提供了非常好的示例（如 metafor, metaARRAY, metaMA,和 metaSEM）
-2. R程序包仍然缺少元分析的统计功效估计的功能。具有这个功能的程序包还很少，而且，目前还没有对调节变量进行统计功效分析的程序包
-3. 建议作者完善元分析程序包制图功能的易操作性，因为目来说使用者细化图形是非常困难的
-4. 程序包的作者应该尽力向初级使用者报告程序包的关键信息，即用户是否能够计算固定效应模型或随机效应模型
-
----
-# <h1 lang="zh-CN">参考资料</h1>
-https://zhuanlan.zhihu.com/p/47849067 <br>
-https://zhuanlan.zhihu.com/p/60528092 <br>
-https://doi.org/10.3389/fpsyg.2015.01549 <br>
-<br>
-https://chat.openai.com/ <br>
+- 本质上是一种效应量综述的**统计方法**
+- 不同领域的看法/地位不一定，心理学相对规范性不足（与医学相比）
+- 用途广泛，不仅是进行大规模的元分析进行发表论文
+- mini-meta-analysis or single-paper meta-analysis在实证研究中非常有用
 ---
