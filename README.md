@@ -8,11 +8,12 @@ Instructor: Prof. Hu Chuan-Peng
 
 Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
-此仓库为南京师范大学心理学研究生课程。
+此仓库为南京师范大学心理学研究生课程，2023年春季学期的授课内容转为文字稿，见https://github.com/hcp4715/R4PsyBook。
 
 教师：胡传鹏(hcp4715 AT hotmail DOT com)
 
 助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
+
 
 ## 版权与许可(License)
 
@@ -166,115 +167,3 @@ root_dir
 15.1 软件版本记录
 
 15.2 容器技术与docker的使用
-
-### In English
-
-Chapter 1: Why Learn R (3 lessons)
-
-1.1 The use of R in psychological sciences and social sciences
-
-1.2 Sample demonstration of the use of R language
-
-1.3 Course schedule
-
-1.4 How to learn this course well
-
-Chapter 2: How to start using R: (3 lessons)
-
-2.1 Introduction to the data analysis problem to be solved?
-
-2.1 How to install?
-
-2.2 How to facilitate the use of? Introduction to the installation and interface of RStudio
-
-Chapter 3: How to Import Data (3 lessons)
-
-3.1 Path and working directory
-
-3.2 Reading data
-
-3.3 Understanding Data in R (Objects in the R Language)
-
-Chapter 4: How to Clean Up Data I: R Programming Basics (3 lessons)
-
-4.1 Manipulation of R objects
-
-4.2 Logical operations
-
-4.3 Functions
-
-Chapter 5: How to Clean Up Data II: Data Preprocessing (3 lessons)
-
-5.1 Data Preprocessing Preparation
-
-5.2 Basic operations of data preprocessing
-
-5.3 Advanced operations of data preprocessing
-
-Chapter 6: How to Explore Data: Fundamentals of Descriptive Statistics and Data Visualization (3 lessons)
-
-6.1 Descriptive Statistics
-
-6.2 Basic use of ggplot2
-
-6.3 Element control of ggplot2
-
-Chapter 7: How to perform basic data analysis: t-test and anova (3 lessons)
-
-7.1 Syntax implementation
-
-7.2 Flow of analysis
-
-Chapter 8: How to Perform Basic Data Analysis: Correlation and Regression (3 lessons)
-
-8.1 Syntax Implementation
-
-8.2 The flow of analysis
-
-Chapter 9: How to Perform Basic Data Analysis: Mediation Analysis (3 lessons)
-
-9.1 Syntax Implementation
-
-9.2 Flow of analysis
-
-Chapter 10: Are the Results Robust? The effect of using Multiverse comparison method selection on the results (3 lessons)
-
-10.1. Implementation of Multiverse Analysis Methods
-
-10.2 Code integration and normalization
-
-Chapter 11: How to Get Publishable Images: Advanced Data Visualization (3 lessons)
-
-11.1 Layers and Panel Controls for ggplot2
-
-11.2 Combining ggplot2 with other tools
-
-Chapter 12: From Analysis to Manuscript (3 lessons)
-
-12.1 Rmarkdown
-
-12.2 Basic introduction to Latex syntax
-
-12.3 Introduction to the papaja toolkit
-
-Chapter 13: Collaborative Version Control: Git? (3 lessons)
-
-13.1 Version Control and git
-
-13.2 Multi-Person Collaboration and git
-
-Chapter 14: How Can We Help Plan Our Next Study?
-
-14.1 Calculating effect sizes: Meta-analysis
-
-14.2 Planning sample size: Power analysis (simulation)
-
-14.3 Planning analysis methods: Dummy data and analysis codes (simulation)
-
-14.4 Parallel processing
-
-Chapter 15: How do I get my mentor/collaborator to exactly replicate my analysis? (3 lessons)
-
-15.1 Software Version Logging
-
-15.2 Container technology and the use of docker
