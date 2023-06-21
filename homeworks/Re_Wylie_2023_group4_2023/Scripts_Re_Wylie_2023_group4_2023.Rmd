@@ -1,0 +1,521 @@
+---
+title             : "A Repetition of Doesn’t everybody jaywalk? On codified rules that are seldom followed and selectively punished"
+shorttitle        : "Group 4"
+author: 
+  - name          : "Yang Liu"
+    affiliation   : "1"
+    studentid     : "222302020"
+
+  - name          : "Tingting Wu"
+    affiliation   : "1"
+    studentid     : "222302019"
+
+  - name          : "Rong Wang"
+    affiliation   : "1"
+    studentid     : "222302021"
+---
+
+一、EXP4A
+#注释：被试内实验设计，研究目的是对比只违反幽灵规则和违反社会规则的同时违反幽灵规则之间的差异。
+#PR = Phantom Rule Violation
+#SN = Social Norm Violation 
+#Race: 4 = white, 5 = latin, 6 = black, 7 = asian, 8 = other #
+#Gender: 1 = male, 2 = female #
+#Dichotomous Variable: 1  = Yes, punish; 0 = No, dont punish
+#scenariosDO = Condition (either PR alone or PR+SN) 自变量为情景类型，是分类变量，共有两个水平（只违反幽灵规则，违反社会规则和幽灵规则）
+#每个被试会看到6个面孔和相应的描述文字（这些描述分别对应不同的水平），3个面孔是只违反幽灵规则的，3个是违反社会规则和幽灵规则的。
+#Conditions:
+# jay 1 = PR + SN
+# jay 2 = PR alone
+# music 1 = PR + SN
+# music 2 = PR alone
+# marij 1 = PR + SN
+# marij 2 = PR alone
+# movie 1 = PR + SN
+# movie 2 = PR alone
+# brights 1 = PR + SN
+# brights 2 = PR alone
+# loitering 1 = PR + SN
+# loitering 2 = PR alone
+#1、加载包+导入数据
+```{r}
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load( "tidyverse","psych", "lme4","lmerTest", "emmeans", "corrplot", "effects",  "performance", "effectsize","ggplot2","patchwork","Rmisc")
+# 载入数据:
+PD4a.Long<-  read.csv('./data/Phantom_Rules_Exp4aLong.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+
+#2、计算人口统计学信息
+```{r}
+# 重新编码
+rePD4a.Long<-PD4a.Long %>%
+     dplyr::mutate(Gender =ifelse(Gender == 1, "Male",
+                ifelse(Gender == 2, "Female", NA)),
+                Gender=factor(Gender),
+                Ethnicity.race=ifelse(Ethnicity.race == 4, "White",
+                               ifelse(Ethnicity.race == 5, "Latin/Hispanic",                                                                          ifelse(Ethnicity.race == 6, "Black", 
+                               ifelse(Ethnicity.race == 7, "Asian", 
+                               ifelse(Ethnicity.race == 8, "Other", NA))))), #重新编码种族相关信息，定义标签
+                EthnicityBin=ifelse(Ethnicity.race == "White", 1, 2),#按照是否是白种人分组
+                scenariosDO=factor(scenariosDO)) #条件是分类变量，进行factor处理
+
+
+rePD4a.Longsub.race<-rePD4a.Long %>% dplyr::count(Ethnicity.race, Subj)#统计被试的种族信息，每个被试的情况以单独一行呈现
+rePD4a.Longsub.Gender<-rePD4a.Long %>% dplyr::count(Gender, Subj)#统计被试的性别信息，每个被试的情况以单独一行呈现
+Gendernum<-plyr::count(rePD4a.Longsub.Gender$Gender) #男性和女性各自的总人数
+racenum<-plyr::count(rePD4a.Longsub.race$Ethnicity.race)#每种种族各自的总人数
+meanAGE<-mean(rePD4a.Long$Age, na.rm = T)#被试的平均年龄
+sdAGE<-sd(rePD4a.Long$Age, na.rm = T)#年龄的标准差
+```
+#3、计算相关系数、新变量、信度
+```{r}
+#所有惩罚判断相关的评分数据
+pandbRatings <- rePD4a.Long[,c('punishPolice', 'punishMoney', 'blamePerson')] 
+psych::alpha(pandbRatings)#0.85
+#所有道德判断相关的评分数据
+moralRatings <- rePD4a.Long[,c('moralPerson', 'moralAction')]
+psych::alpha(moralRatings)#0.78
+#计算新变量到数据集，惩罚与责备的均值
+rePD4a.Long<-rePD4a.Long %>%
+     dplyr::mutate(pandb=rowMeans(rePD4a.Long[,c('punishPolice', 'punishMoney', 'blamePerson')]))
+#计算各变量的相关系数
+judgmentRatings2 <- rePD4a.Long[,c('punishPolice', 'punishMoney', 'blamePerson','moralPerson', 'moralAction')] 
+judcorMat2 <- lowerCor(judgmentRatings2)#相关矩阵
+corrplot(judcorMat2, method="color", type = 'lower',tl.col="black",
+         addCoef.col = "black", tl.srt = 45)#相关图
+```
+
+#4、主要分析1：检验违反规则的类型对惩罚与责任评分的影响
+```{r}
+#用合成的惩罚与责备评分均值作为因变量,违反规则的类型作为自变量（固定因子），以被试、故事类型作为随机因子，构建模型。使用默认的treatment coding，R会自动将PRalone作为基线，做出另一个水平（PR+SN）与这个基线相比的值。
+modE2.00<-lmer(pandb ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj), data = rePD4a.Long) #畸形拟合
+modE2.01 <- lmer(pandb ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj), data = rePD4a.Long)#畸形拟合
+modE2.02 <- lmer(pandb ~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj), data = rePD4a.Long)#畸形拟合
+modE2.1 <- lmer(pandb ~ scenariosDO + (1|sceneType) + (1|Subj), data = rePD4a.Long)
+modE2.03 <- lmer(pandb ~ scenariosDO + (1+scenariosDO|Subj), data = rePD4a.Long)#不拟合
+modE2.04 <- lmer(pandb ~ scenariosDO + (1+scenariosDO|sceneType), data = rePD4a.Long)#畸形拟合
+modE2.05 <- lmer(pandb ~ scenariosDO + (1|sceneType), data = rePD4a.Long)
+modE2.2 <- lmer(pandb ~ scenariosDO + (1|Subj),data = rePD4a.Long)
+compare_performance(modE2.1,modE2.05,modE2.2, rank = TRUE) #根据模型比较的结果可知，modE2.05 的ICC没有达到预注册的 ICC 临界值0.10，所以去除。且通过模型比较发现modE2.1最好。因此分析modE2.1
+summary(modE2.1)
+confint(modE2.1)#求95%CI
+#根据fixed effect的结果可知，被试认为违反社会规则也违反幽灵规则的条件下比只违反幽灵规则更需要被惩罚, β=0.5825, SE=0.0887, t(1117)=6.554, p < .001, 95%CI=[0.4082,0.7567]。
+```
+
+#5、主要分析2：情景类型对道德行为评分的影响-评分越高说明道德越坏
+```{r}
+#1、道德行为评分
+modE2.3 <- lmer(moralAction ~ scenariosDO + (1|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.31 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)#畸形拟合
+modE2.32 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.33 <- lmer(moralAction ~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)#畸形拟合
+modE2.34 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType),  data = rePD4a.Long)#畸形拟合
+modE2.35 <- lmer(moralAction ~ scenariosDO +  (1+scenariosDO|Subj),  data = rePD4a.Long)#不拟合
+modE2.36 <- lmer(moralAction ~ scenariosDO +  (1|Subj),  data = rePD4a.Long)
+modE2.37 <- lmer(moralAction ~ scenariosDO +  (1|sceneType),  data = rePD4a.Long)
+compare_performance(modE2.3,modE2.32,modE2.36, modE2.37,rank = TRUE)#通过模型比较可以得出最优模型
+summary(modE2.3)
+confint(modE2.3)
+#根据fixed effect的结果可知，当在违反社会规范后实施幽灵规则时，与单独违反幽灵规则时相比，违反幽灵规则本身被视为更强的道德错误, β=0.3974, SE=0.08669, t(1115)=4.584, p < .001, 95%CI=[0.2271,0.5673]。
+
+#2、道德品质评分
+modE2.4 <- lmer(moralPerson  ~ scenariosDO + (1|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.41 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)
+modE2.42 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.43 <- lmer(moralPerson~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)
+modE2.44 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType),  data = rePD4a.Long)
+modE2.45 <- lmer(moralPerson~ scenariosDO +  (1+scenariosDO|Subj),  data = rePD4a.Long)
+modE2.46 <- lmer(moralPerson ~ scenariosDO +  (1|Subj),  data = rePD4a.Long)
+modE2.47 <- lmer(moralPerson~ scenariosDO +  (1|sceneType),  data = rePD4a.Long)
+compare_performance(modE2.4,modE2.41,modE2.42,modE2.43,modE2.44,modE2.45,modE2.46, modE2.47,rank = TRUE)#通过模型比较可以得出最优模型
+summary(modE2.42)#随机效应中sceneType的scenariosDOprAndSn相关性绝对值大于0.9，共线性太强需要删除
+summary(modE2.41)#随机效应中sceneType的scenariosDOprAndSn相关性绝对值大于0.9，共线性太强需要删除
+summary(modE2.43)
+confint(modE2.43)
+#根据fixed effect的结果可知，违反幽灵规则的人与违反社会规范的人被视为比只违反幽灵规则的人更道德败坏, β=1.031, SE=0.0887, t(198)=11.63, p < .001, 95%CI=[0.857,1.205]。
+```
+#6、绘图
+```{r}
+level_names <- c("Phantom Rule Violation", "Phantom Rule + Social Norm Violation")#构建图形横坐标名称
+level_colors <- c("#fff1ac","#bbded6") #构建图形颜色库
+rePD4a.Long <- na.omit(rePD4a.Long) #去除空值
+
+#绘制惩罚评分图
+punishPlot3 <- ggplot(data=rePD4a.Long, aes(x=scenariosDO, y=pandb, fill=scenariosDO)) + #调用数据以及定义横纵坐标，按条件填充颜色 
+ stat_summary(aes(group = scenariosDO), geom = "bar",  fun = mean, width = 0.5) + #使用条形图，设置宽度
+  geom_point(aes(x = scenariosDO), shape = 21, position = position_jitter(width = 0.1), alpha = .15)+ #绘制散点图，点的形状，抖动，透明度
+  stat_summary(fun.data = mean_se,  
+               geom = "errorbar", #绘制误差棒
+               position = position_dodge(.9),
+               width=.25, alpha=.95) +#设置位置以及相关属性
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                                   panel.grid.minor = element_blank(),
+                                   legend.position = "none",
+                                   text = element_text(size=14),
+                                   axis.title.x = element_text(color="black", size=14),
+                                   axis.title.y = element_text(color="black", size=14)) +#设置主题相关属性，坐标的字体大小和颜色
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) + #设置纵坐标
+  scale_x_discrete(labels = level_names) + #定义横坐标名称
+  scale_fill_manual(values = level_colors) + #定义填充颜色
+  xlab("Scenario Type") + ylab("Punishability of Phantom Rule Violation") + #坐标名称
+  annotate(geom = "text", x = 1.5, y = 5.5, label = "***")#设置显著性标志
+punishPlot3 
+# 同理绘制道德评分图
+moralPlot3 <- ggplot(data=PD4a.Long, aes(x=scenariosDO, y=moralAction, fill=scenariosDO))  + 
+  stat_summary(aes(group = scenariosDO), geom = "bar", fun = mean,  width = 0.5) + 
+  geom_point(aes(x = scenariosDO), shape = 21, position=position_jitter(width = 0.1), alpha = .15)+ 
+  stat_summary(fun.data = mean_se,  
+               geom = "errorbar", 
+               position = position_dodge(.9),
+               width=.25, alpha=.95) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "none",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_fill_manual(values = level_colors) + 
+  xlab("Scenario Type") + ylab("Moral Wrongness of Phantom Rule Violation") +
+  annotate(geom = "text", x = 1.5, y = 5.5, label = "***")
+moralPlot3 
+
+```
+
+#二、实验4B
+#注释：研究情景类型（违反某种规则，违反社会规则+某种规则）和规则类型（幽灵规则和法律规则）-两个被试内因素
+#SN = social norm
+#PR = phantom rule
+#Rule Type: 1 = "Rule + SN" (recoded in script to 1) vs. 2 = "Rule Alone" (recoded to -1)
+#Condition: 1 = "Phantom Rule " (recoded to 1) vs. 2 = "Legal Rule" (recoded to -1)
+#惩罚问题：违法行为是否应受处罚（1-7分数增加表示从无到有）。某人违法时，法律系统有多公正（1-7，分数增加表示越来越公正）。这种违法行为会受多大指责（1-7分数增加表示越来越多）。对应该受到指责评分（1-7反对->同意）.折合为一个指标
+#道德问题：4A中的+违法是坏品德的表现（1-7反对->同意），折合为一个指标
+#合法性判断问题：比如违反幽灵规则/法律规则的合法性（1-7越来越多）；即使人们认为规则是错误的，也要遵守（1-7反对->同意），折合为一个指标。
+#挫败感问题：如果你因为违反幽灵规则/法律规则被处罚，你会多沮丧（1-7，分数增加表示越来越沮丧）；你会觉得有多不公平（1-7，分数增加表示越来越不公平）；你会有什么感觉（1-7，分数增加表示越来越在意），折合成一个指标
+# 1、加载包+导入数据
+```{r}
+# 使用p_load来载入需要的包
+pacman::p_load( "tidyverse","psych", "lme4","lmerTest", "emmeans", "corrplot", "effects",  "performance", "effectsize","ggplot2","patchwork","Rmisc")
+
+# 导入数据:
+PD4b.Long<-  read.csv('./data/Phantom_Rules_Exp4bLong.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+# 2、计算人口统计学信息
+```{r}
+#对数据重新编码赋值
+rePD4b.Long<-PD4b.Long %>%
+  dplyr::mutate(Gender =ifelse(Gender == 1, "Male",
+                               ifelse(Gender == 2, "Female", NA)),
+                Gender=factor(Gender),
+                Ethnicity.race=ifelse(Ethnicity.race == 4, "White",
+                                      ifelse(Ethnicity.race == 5, "Latin/Hispanic",                                                             
+                                      ifelse(Ethnicity.race == 6, "Black", 
+                                      ifelse(Ethnicity.race == 7, "Asian", 
+                                      ifelse(Ethnicity.race == 8, "Other", NA))))), #重新编码种族相关信息，定义标签
+                EthnicityBin=ifelse(Ethnicity.race == "White", 1, 2),#按照是否是白种人分组
+                Condition=factor(Condition),
+                Type=factor(Type),
+                sceneType=factor(sceneType)) #对分类变量进行factor处理
+
+rePD4b.Longsub.race2<-rePD4b.Long %>% dplyr::count(Ethnicity.race, Subj)#统计被试的种族信息，每个被试的情况以单独一行呈现
+rePD4b.Longsub.Gender2<-rePD4b.Long %>% dplyr::count(Gender, Subj)#统计被试的性别信息，每个被试的情况以单独一行呈现
+Gendernum2<-plyr::count(rePD4b.Longsub.Gender2$Gender) #男性和女性各自的总人数
+racenum2<-plyr::count(rePD4b.Longsub.race2$Ethnicity.race)#每种种族各自的总人数
+meanAGE2<-mean(rePD4b.Long$Age, na.rm = T) #平均年龄：33.4886
+sdAGE2<-sd(rePD4b.Long$Age, na.rm = T) #年龄标准差12.19006
+
+#对分类变量做因子处理
+rePD4b.Long$Condition <- as.factor(rePD4b.Long$Condition)
+rePD4b.Long$Type <- as.factor(rePD4b.Long$Type)
+rePD4b.Long[,c(36)] <- 8-rePD4b.Long[,c(36)] #对legitexit列反向计分
+
+```
+# 3、整合多个题目为统一指标并计算Cronbach's α 
+```{r}
+pandbRatings <- rePD4b.Long[,c('Punish_police', 'PunishAction', 'BlameAct', 'Deserve')]
+psych::alpha(pandbRatings)# Cronbach's α =0.93
+moralRatings <- rePD4b.Long[,c('MoralAction', 'MoralPerson', 'Character')]
+psych::alpha(moralRatings) # Cronbach's α =0.92
+legitRatings <- rePD4b.Long[,c('Legit1', 'Legit2', 'LegitExist', 'Legit3', 'Disobey')]
+psych::alpha(legitRatings)# Cronbach's α =0.88
+futureRatings <- rePD4b.Long[,c('Future1', 'Future2')]
+feelRatings <- rePD4b.Long[,c('feel1', 'feel2', 'feel3')] 
+psych::alpha(feelRatings)# Cronbach's α =0.86
+
+#以上结果表明多个问题组合为一个指标有较高的内部一致性，再将这些变量赋值到数据集中
+rePD4b.Long$pandb <- as.numeric(rowMeans(PD4b.Long[,c('Punish_police', 'PunishAction', 'BlameAct', 'Deserve')]))
+rePD4b.Long$legitRatings <- as.numeric(rowMeans(PD4b.Long[,c('Legit1', 'Legit2', 'LegitExist', 'Legit3', 'Disobey')]))
+rePD4b.Long$feelRatings <- as.numeric(rowMeans(PD4b.Long[,c('feel1', 'feel2', 'feel3')]))
+rePD4b.Long$moralRatings <- as.numeric(rowMeans(PD4b.Long[,c('MoralAction', 'MoralPerson', 'Character')]))
+
+#计算各变量的相关系数
+judgmentRatings3 <- rePD4b.Long[,c('Punish_police', 'PunishAction', 'BlameAct', 'Deserve','MoralAction', 'MoralPerson', 'Character','Legit1', 'Legit2', 'LegitExist', 'Legit3', 'Disobey','Future1', 'Future2','feel1', 'feel2', 'feel3')] 
+judcorMat3 <- lowerCor(judgmentRatings3)#相关矩阵
+corrplot(judcorMat3, method="color", type = 'lower',tl.col="black",
+         addCoef.col = "black", tl.srt = 45)#相关图
+```
+# 4、主要分析1：情景类型和规则类型对惩罚评分的影响
+```{r}
+modE5.11 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#不拟合
+modE5.12 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.13 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.14 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.15<- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.16<- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.17 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.18 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#不拟合
+modE5.19 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.110 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#不拟合
+modE5.111 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.126 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.112 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#不拟合
+modE5.113 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#不拟合
+modE5.114<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.115<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.116<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.117 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.118<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#不拟合
+modE5.119<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.120<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.121 <- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#不拟合
+modE5.122<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.123 <- lmer(pandb ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.124 <- lmer(pandb ~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.127 <- lmer(pandb ~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.125 <- lmer(pandb ~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+compare_performance(modE5.115,modE5.116,modE5.117,modE5.120,modE5.122,modE5.125,modE5.127, rank = TRUE) #根据模型比较的结果可知，modE5.115最好。
+summary(modE5.115)#查看固定效应和随机效应
+anova(modE5.115)#查看主效应以及交互作用
+#结果表明，违反法律导致的惩罚评分比违反幽灵规则高，b = 2.52157，SE = 0.17818，t(7) = 14.152，p < .001。情景类型无显著影响，F=3.7555，p = .05355。没有显著的相互作用,F=2.8929, p=0.08915。
+```
+# 5、主要分析2：情景类型和规则类型对道德判断的影响
+```{r}
+modE5.21 <- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.22 <- lmer(moralRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.23 <- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.24 <- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.25<- lmer(moralRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.26<- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.27 <- lmer(moralRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.28 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.29 <- lmer(moralRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.210 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.211 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.226 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.212 <- lmer(moralRatings ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.213 <- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.214<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.215<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.216<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.217 <- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.218<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.219<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#不拟合
+modE5.220<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.221 <- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.222<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.223 <- lmer(moralRatings ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.224 <- lmer(moralRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.227 <- lmer(moralRatings~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.225 <- lmer(moralRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+compare_performance(modE5.25,modE5.28,modE5.29,modE5.210,modE5.211,modE5.213,modE5.214,modE5.215,modE5.216,modE5.217, modE5.225,modE5.227,rank = TRUE)
+summary(modE5.28)
+anova(modE5.28)
+p5.28 <- pairs(emmeans(modE5.28, ~ Condition*Type))
+p5.28 
+#condition=1-违反幽灵规则，condition=2-违反法律规则。type=1违反两种规则，type=2违反一种规则。违反法律导致的道德错误比违反幽灵规则高，b = 2.2115，SE = 0.1661，t(7) = 13.316，p < .001。两种情景类型条件之间有显著差异，F=8.4009，p = .03155。结果显示了显著的交互作用，F=15.59922，p < .001 .简单效应分析发现，当只违反一种规则时，被试认为只违反幽灵规则比只违反法律规则的人在道德上有更少错误，b = -2.2115，SE = 0.166，t(7)= -13.299，p <.001。违反两种规则时，被试也认为违反幽灵规则比违反法律规则的人在道德上有更少错误，b = -2.6705，SE = 0.163，t(7) = -16.376，p <.001。只有违法行为与同时违反社会规范和违法行为在统计学上也没有显著差异，p = .9283。
+```
+
+# 6、主要分析3：合法性判断的差异
+```{r}
+modE5.31 <- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.32 <- lmer(legitRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.33 <- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.34 <- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.35<- lmer(legitRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.36<- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.37 <- lmer(legitRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.38 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.39 <- lmer(legitRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.310 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.311 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.326 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.312 <- lmer(legitRatings ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#不拟合
+modE5.313 <- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.314<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.315<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.316<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.317 <- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.318<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.319<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.320<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.321 <- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.322<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.323 <- lmer(legitRatings ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.324 <- lmer(legitRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.325 <- lmer(legitRatings~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.327 <- lmer(legitRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+compare_performance(modE5.314,modE5.316,modE5.317,modE5.324, modE5.325, modE5.327,rank = TRUE)
+summary(modE5.314)
+anova(modE5.314)
+#condition=1-违反幽灵规则，condition=2-违反法律规则。type=1违反两种规则，type=2违反一种规则。违反法律导致的评分比违反幽灵规则高，b = 1.71529，SE = 0.12988，t(8) = 13.207，p < .001。两种情景类型条件之间没有显著差异，F=0.0468，p = .8288。无显著的交互作用，F=1.8705，p = .1716. 
+```
+#7、主要分析4：感受
+```{r}
+modE5.41 <- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.42 <- lmer(feelRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.43 <- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.44 <- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.45<- lmer(feelRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.46<- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.47 <- lmer(feelRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.48 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#不拟合
+modE5.49 <- lmer(feelRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.410 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.411 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.426 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.412 <- lmer(feelRatings ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.413 <- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.414<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.415<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.416<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.417 <- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.418<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.419<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.420<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.421 <- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.422<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.423 <- lmer(feelRatings ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.424 <- lmer(feelRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.425 <- lmer(feelRatings ~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.427 <- lmer(feelRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+compare_performance(modE5.413,modE5.414,modE5.415,modE5.416, modE5.417,modE5.419,modE5.421,modE5.424,modE5.425,modE5.427, rank = TRUE)
+summary(modE5.414)
+anova(modE5.414)
+p5.414<- pairs(emmeans(modE5.414, ~ Condition*Type))
+p5.414
+#condition=1-违反幽灵规则，condition=2-违反法律规则。type=1违反两种规则，type=2违反一种规则。分数高越沮丧。与违反法律规则相比，被试认为违反幽灵规则受更令人沮丧，b = -1.68670，SE = 0.16297，t (10) = -10.350，p < .001。情景类型有显著的影响（与原结果不同），F=5.0427，p=0.02487.交互作用显著，F=5.6022，p=0.01806.简单效应检验结果发现，只违反一种规则时，只违反幽灵规则受惩罚比只违反法律规则时，被试评分更高，表明这种惩罚更令人沮丧，b = 1.99318，SE = 0.1599 ，t(10) = 12.464 ，p <.001；只违反幽灵规则比违反社会规则和幽灵规则时评分高，惩罚更令人沮丧，b = -0.29907，SE = 0.0924 ，t (1539) = -3.237 ，p = 0.0068。
+```
+
+# 8、画图
+```{r}
+level_names <- c("Rule Alone", "Rule + Social Norm Violation") #定义横坐标名
+level_colors <- c("#95e1d3", "#f38181")#定义颜色
+PD4b.LongV3 <- filter(rePD4b.Long, Condition == 1 | Condition == 2) #筛选数据，去除不符合条件的item
+PD4b.LongV3 <-PD4b.LongV3 %>% 
+  dplyr::mutate(Condition =ifelse(Condition == 1, "Phantom Rule",
+                ifelse(Condition == 2, "Prototypical Legal Violations", NA)),
+                Condition=factor(Condition)) #重新编码条件这个变量的各个水平名称
+
+# 惩罚评分图
+  #先计算平均值、标准差、标准误差和置信区间（默认值为 95%）
+dataSum <- Rmisc::summarySE(data = PD4b.LongV3,
+                           measurevar = "pandb",#要计算的变量的列名称
+                           groupvars = c("Type", "Condition"),#包含分组变量的列名称
+                           na.rm = T)#正态分布
+
+punishPlot5 <- ggplot(PD4b.LongV3, aes(x = Type, y = pandb, fill = Condition, group = Condition, color = Condition)) +#导入数据并定义横纵坐标以及分组
+  geom_bar(data = dataSum, stat = "identity", aes(x = Type, y = pandb, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +#用计算出来的数据集制作条形图，设置透明度和距离，填色
+  geom_errorbar(data = dataSum, aes(ymin = pandb - ci, ymax = pandb + ci),
+                width = .3, position = position_dodge(.9), color = "black") +#用计算出的数据集绘制误差棒，宽度，距离和颜色
+  geom_point(aes(group = Condition), position =  position_jitterdodge(jitter.width = 0.4, jitter.height=0.2,dodge.width=0.9), alpha = .4) +#绘制数据分布的散点图，设置点的分布信息
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),#去除网格线
+                     legend.position = "top",#设置图例在顶部
+                     text = element_text(size=14),#设置文本的字号
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +#设置横纵坐标的字号
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +#设置Y轴范围
+  scale_x_discrete(labels = level_names) + #给X轴重命名
+  scale_color_manual(values = level_colors) +#设置线条填充颜色
+  scale_fill_manual(values = level_colors) + #设置内部填充颜色
+  xlab("Motivation and Rule Type") + ylab("Punishability of Violation")#设置横纵坐标
+punishPlot5 
+
+# 道德评分图-与上图同理
+dataSum2 <- Rmisc::summarySE(data = PD4b.LongV3,
+                             measurevar = "moralRatings",
+                             groupvars = c("Type", "Condition"),
+                             na.rm = T)
+
+moralPlot5 <- ggplot(PD4b.LongV3, aes(x = Type, y = moralRatings, fill = Condition, group = Condition, color = Condition)) +
+  geom_bar(data = dataSum2, stat = "identity", aes(x = Type, y = moralRatings, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +
+  geom_errorbar(data = dataSum2, aes(ymin = moralRatings - ci, ymax = moralRatings + ci),
+                width = .3, position = position_dodge(.9), color = "black") +
+  geom_point(aes(group = Condition), position = position_jitterdodge(jitter.width = 0.4, jitter.height=0.2, 
+                                dodge.width=0.9), alpha = .4) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "top",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_color_manual(values = level_colors) +
+  scale_fill_manual(values = level_colors) + 
+  xlab("Motivation and Rule Type") + ylab("Moral Judgments")
+moralPlot5
+
+# 合法性评分图
+dataSum3 <- Rmisc::summarySE(data = PD4b.LongV3,
+                              measurevar = "legitRatings",
+                              groupvars = c("Type", "Condition"),
+                              na.rm = T)
+
+legitPlot5 <- ggplot(PD4b.LongV3, aes(x = Type, y = legitRatings, fill = Condition, group = Condition, color = Condition)) +
+  geom_bar(data = dataSum3, stat = "identity", aes(x = Type, y = legitRatings, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +
+  geom_errorbar(data = dataSum3, aes(ymin = legitRatings - ci, ymax = legitRatings + ci),
+                width = .3, position = position_dodge(.9), color = "black") +
+  geom_point(aes(group = Condition), position = position_jitterdodge(jitter.width = 0.4, jitter.height=0.2, 
+                                dodge.width=0.9), alpha = .4) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "top",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_color_manual(values = level_colors) +
+  scale_fill_manual(values = level_colors) + 
+  xlab("Motivation and Rule Type") + ylab("Legitimacy Rating")
+legitPlot5 
+
+#感受评分图
+dataSum4 <- Rmisc::summarySE(data = PD4b.LongV3,
+                             measurevar = "feelRatings",
+                             groupvars = c("Type", "Condition"),
+                             na.rm = T)
+
+feelPlot5 <- ggplot(PD4b.LongV3, aes(x = Type, y = feelRatings, color = Condition)) +
+  geom_bar(data = dataSum4, stat = "identity", aes(x = Type, y = feelRatings, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +
+  geom_errorbar(data = dataSum4, aes(group = Condition, ymin = feelRatings - ci, ymax = feelRatings + ci),
+                width = .3, position = position_dodge(.9), color = "black") +
+  geom_point(aes(group = Condition), position = position_jitterdodge(jitter.width = 0.5, jitter.height=0.4, 
+                                dodge.width=0.9), alpha = .4) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "top",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                                   axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_color_manual(values = level_colors) +
+  scale_fill_manual(values = level_colors) + 
+  xlab("Motivation and Rule Type") + ylab("Feelings")
+feelPlot5
+
+```
+

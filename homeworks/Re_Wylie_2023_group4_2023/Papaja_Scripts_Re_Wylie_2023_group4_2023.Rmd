@@ -1,0 +1,1234 @@
+---
+title             : "A Repetition of Doesn’t everybody jaywalk? On codified rules that are seldom followed and selectively punished"
+shorttitle        : "Group 4"
+author: 
+  - name          : "Rong Wang"
+    affiliation   : "1"
+    studentid     : "222302021"
+  - name          : "Yang Liu"
+    affiliation   : "1"
+    studentid         : "222302020"
+  - name          : "Tingting Wu"
+    affiliation   : "1"
+    studentid     : "222302019"
+
+affiliation:
+  - id            : "1"
+    institution   : "Nanjing Normal University"
+
+bibliography      : "r-references.bib"
+floatsintext      : yes
+linenumbers       : no
+draft             : no
+mask              : no
+figurelist        : yes
+tablelist         : yes
+footnotelist      : no
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+r_refs("r-references.bib")
+options(warn = -1)
+if(!requireNamespace("tinytex", quietly = TRUE)) install.packages("tinytex")
+#tinytex::install_tinytex()
+# 检查是否已安装 pacman
+library(corrplot)
+library(psych)
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+# 使用p_load来载入需要的包
+pacman::p_load( "tidyverse","psych", "lme4","lmerTest", "emmeans", "corrplot", "effects",  "performance", "effectsize","ggplot2","patchwork","apaTables","dplyr")
+# 载入数据:
+PD4a.Long<-  read.csv('./data/Phantom_Rules_Exp4aLong.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+
+<!--
+```{r analysis-preferences}
+# Seed for random number generation
+# ？？？？？？什么种子数是什么？？？？
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+-->
+
+
+# Instruction
+
+## Hypothesis
+
+Rules are meant to apply equally to all within their jurisdiction.
+However, some rules are frequently broken without consequence for most.
+These rules are only occasionally enforced, often at the discretion of a
+third-party observer. Authors propose that these rules---whose
+violations are frequent, and enforcement is rare---constitute a unique
+subclass of explicitly codified rules, which they call 'phantom rules'
+(e.g., proscribing jaywalking). Their apparent punishability is
+ambiguous and particularly susceptible to third-party motives. Across
+six experiments, ($N$ = 1440) they validated the existence of phantom
+rules and found evidence for their motivated enforcement. First, people
+played a modified Dictator Game with a novel frequently broken and
+rarely enforced rule (i.e., a phantom rule). People enforced this rule
+more often when the "dictator" was selfish (vs. fair) even though the
+rule only proscribed fractional offers (not selfishness). Then authors
+turned to third person judgments of the U.S. legal system. They found
+these violations are recognizable to participants as both illegal and
+commonplace (Experiment 2), differentiable from violations of
+prototypical laws (Experiments 3) and enforced in a motivated way
+(Experiments 4a and 4b). Phantom rule violations (but not prototypical
+legal violations) are seen as more justifiably punished when the rule
+violator has also violated a social norm (vs. rule violation
+alone)---unless the motivation to punish has been satiated (Experiment
+5). Phantom rules are frequently broken, codified rules. Consequently,
+their apparent punishability is ambiguous, and their enforcement is
+particularly susceptible to third party motives.
+
+The hypothesis of experiment 4a: Experiment 4a examined whether an
+activated motivation to punish would lead to an increase in the
+legitimacy and justifiability of punishment for the phantom rule itself,
+the author expected social norm violations to activate punishment
+motivations.Experiment 4a examined the interplay between phantom rule
+violations alone and those committed in conjunction with a social norm
+violation.
+
+The hypothesis of experiment 4b:To test whether the effect in Experiment
+4a is special to phantom rules (vs other similar legal violations),
+authors next compared the motivated enforcement of phantom rule
+violations committed alone compared to those committed in tandem with a
+social norm violation to that same combination for prototypical legal
+violations. In other words, the authors sought to establish discriminant
+validity.
+
+## Data
+
+The participants of 4a were collected from 207 participants using
+Prolific (118 females, 82 males, 4 other, 75.4% White, 17.9% People of
+Color, 6.7% Other or did not report,
+$M_{age} = 33.07$,$SD_{age} = 11.28$).
+
+The participants of 4b were collected from 310 participants using
+Prolific (170 females, 133 males, 7 other, 62% White, 34% People of
+Color, 4% Other or did not report,$M_{age} = 33.5$,$SD_{age} = 12.2$).
+
+## Methods
+
+Methods of 4a:A within-subjects factor (Rule Type) with two levels
+(phantom rule violation alone vs. social norm violation and phantom rule
+violation) was used to investigate whether previous social norm
+violations heightened judgments of the legitimacy of punishment and
+blameworthiness for phantom rule violations. Participants read a total
+of six vignettes (6 total blocks) that were paired with a face and
+common name, one at a time. They first saw a randomly presented block
+with a vignette and an image, then answered questions about punishment,
+blame, and morality.The authors used linear mixed-effects models that
+specify random intercepts for participants and stimuli.
+
+Methods of 4b:Two within-subjects factors Scenario Type (phantom rule
+violation alone vs. social norm violation and phantom rule violation)
+and Rule Type (phantom rule vs. prototypical legal violation) were used
+to investigate whether previous social norm violation heightened
+judgments of the legitimacy of enforcement and blameworthiness for
+phantom rule violations and not prototypical legal violations. The
+procedure was the same as that used in Experiment 4a.
+
+## Results of Experiment 4a
+
+Using linear mixed-effects models that specify random intercepts for
+participants and stimuli. In contrast to Experiment 3, only a few models
+did not meet the pre-registered ICC cut-off of 0.10 and for those
+models,the authoresnote the deviation and drop the stimulus random
+effect.
+
+Using the collapsed variable for punishment and blamethe authorestested
+for differences between phantom rule violations alone compared to social
+norm and phantom rule violations together. Critically and as predicted,
+phantom rule violations paired with social norm violations were rated as
+more justifiable to punish compared to phantom rule violations alone,
+$\beta$ = 0.29, $SE$ = 0.05, $t$(1128) = 6.27, $p$ \< .001, $r$ = 0.18,
+95% $CI$ [0.20, 0.38]
+
+The authoresthen investigated whether the condition influenced choices
+in the binary judgment of whether the police should initiate an
+interaction (i.e., punish) the person or not initiate an interaction. To
+assess a binary outcome in a mixed effect model,the authoresutilized the
+"glmer" function from the "lmer" package. Results suggested that people
+more often selected the "Punish" option (as compared to the "No punish")
+for phantom rule and social norm violations together compared to phantom
+rule violations alone, $\beta$ = 0.32, $SE$ = 0.06, z = 5.17, $p$ <
+.001, $r$ = 0.09, 95% $CI$ [0.20, 0.45], $OR$ = 1.38. Notably, when a
+phantom rule and social norm are violated in tandem, participants think
+the police should initiate an interaction more often, but when the
+phantom rule is violated alone, participants are more likely to think
+the police should not intervene.
+
+The authoresnext examined whether the phantom rule violation alone
+compared to social norm and phantom rule violations together influenced
+judgments of the morality of the particular phantom rule violation and
+of the person. Results revealed that when a phantom rule was committed
+following a social norm violation, the phantom rule violation itself was
+seen as more morally wrong compared to when a phantom rule violation was
+committed alone, $\beta$ = 0.20, $SE$ = 0.04, $t$ (1115) = 4.58, $p$ \<
+.001, $r$ = 0.14, 95% $CI$ [0.11, 0.28]. This was also true for the
+moral character variable: Violators of phantom rules paired with social
+norm violations were seen as more morally bad than violators of phantom
+rules alone, $\beta$ = 0.52, $SE$ = 0.04, $t$(1129) = 12.40, $p$ \<
+.001, $r$ = 0.35, 95% $CI$ [0.11, 0.28].
+
+## Results of Experiment 4b
+
+The authoresfirst examined whether Scenario Type (Rule violation alone
+vs.Rule and a social norm violation) and Rule Type (Phantom rule
+vs.Prototypical rule), and their interaction term influenced the
+collapsed punishment and blame judgment index.1Results suggested that
+phantom rule violations lead to less punishment and blame than
+prototypical legal violations, $\beta$ = -2.75, $SE$ = 0.09, $t$ (1773)
+= -31.34, $p$ \< .001, $r$ = 0.60, 95%$CI$ [-2.92, -2.58]. No
+significant effect emerged for the Scenario Type, $p$ = .818, 95% $CI$
+[-0.20, 0.15]. Contrary to predictions, there was no significant
+interaction effect, $\beta$ = 0.24, $SE$ = 0.13, $t$ (1774) = 1.82, $p$
+= .061, $r$ = 0.04, 95% $CI$ [-0.01, 0.49].
+
+Following analyses in Experiment 4a,the authoresalso tested whether
+Scenario Type and Rule Type influence the dichotomous punishment
+judgment. As predicted, phantom rule violations alone were less likely
+to lead to selection of the punishment option (vs. the "No punish") than
+prototypical legal violations, $\beta$ = -3.26, $SE$ = 0.22, z = -14.51,
+$p$ \< .001, $r$ = -0.67, 95% $CI$ [-3.71, -2.83], $OR$ = 0.04, and
+rules coupled with a social norm violation were more likely to lead to
+selection of the punishment than alone, $\beta$ = 0.53, $SE$ = 0.25, z =
+2.13, $p$ = .033, $r$ = 0.14, 95% $CI$ [0.05, 1.02], $OR$ = 1.69. There
+was no significant interaction, $p$ = .75, 95% $CI$ [-0.68, 0.48]
+
+Next,the authoresexamined whether Scenario Type and Rule Type affected
+the collapsed moral judgment index. As predicted, phantom rule
+violations themselves were rated as less morally wrong than prototypical
+legal violations, $\beta$ = -2.67, $SE$ = 0.08, $t$(1735) = -32.83, $p$
+\< .001, $r$ = 0.62, 95% $CI$ [-2.83, -2.52]. There was no significant
+difference between the two Scenario Type conditions, $p$ = .35, 95% $CI$
+[-0.09, 0.24].
+
+Critically, results revealed a significant interaction, $\beta$ = 0.45,
+$SE$ = 0.12, $t$(1736) = 3.83, $p$ \< .001, $r$ = 0.09, 95% $CI$ [0.22,
+0.69], such that phantom rule violations committed alone were seen as
+less morally wrong than those committed with a social norm violation,
+$\beta$ = -0.53, $SE$ = 0.09, $t$(1750) = -6.26, $p$ \< .0001 There was
+again no statistically significant difference between prototypical legal
+violations committed alone and those committed alongside a social norm
+violation, $p$ = .79. Violations of phantom rules are specifically
+subject to motivated rule enforcement.
+
+## Procedure
+
+Repeat ideas: According to the introduction of each part of the paper
+experiment, mainly focus on the data part of the paper, from the
+calculation of the subject's demography Analyze to other parts. The
+parts are following: 1. data cleaning, 2. demographics, 3. items
+collapsed into variable (calcualte Cronbach's $\alpha$) for each
+dependent variable, 4. calculate the correlation of dependent variables,
+5. main analyses for Experienment 4a and 4b.
+
+All models were linear mixed models fitted in R using the lme4 package.
+For linear mixed models, p-values were obtained via Satterthwaite's
+method using the lmerTest package. Random effects structures were
+determined by beginning with the maximal structure and removing slopes
+and intercepts until the model converged. The maximal random effects
+structures were determined uniquely for each model and included random
+intercepts by sceneType and by Subject along with random slopes by each
+within-subject variable.
+
+Please pay attention, considering the original paper does not start from
+the full model, only presents the zero model,we used more models than
+papers. Models with boundary (singular) fit and with strong collinearity
+of random effects were removed, and compared other models to select the
+appriate model for following analysis.
+
+Based selected model, for experiment 4a, we examined the effect of the
+type of rule violation on punishment and liability scores, and the
+influence of situation type on moral behavior rating. For experiment 4b,
+based on specific selected models, we examined differences between
+phantom rule and prototypical legal violations for punishability, moral
+wrongness, frustraction and legitimacy of enforcement judgments.
+
+Moreover, we used tables and graphs to express the results graphically.
+The authoresused `r cite_r("r-references.bib")` for all our analyses.
+
+## Results of Experienment 4a
+
+<!--4a Participants Demographic information -->
+
+```{r,echo = FALSE}
+#对数据重新编码赋值
+rePD4a.Long<-PD4a.Long %>%
+     dplyr::mutate(Gender =ifelse(Gender == 1, "Male",
+                ifelse(Gender == 2, "Female", NA)),
+               Gender=factor(Gender),
+               Ethnicity.race=ifelse(Ethnicity.race == 4, "White",
+                            ifelse(Ethnicity.race == 5, "Latin/Hispanic",                                                                  ifelse(Ethnicity.race == 6, "Black", 
+                            ifelse(Ethnicity.race == 7, "Asian", 
+                            ifelse(Ethnicity.race == 8, "Other", NA))))), #重新编码种族相关信息，定义标签
+               EthnicityBin=ifelse(Ethnicity.race == "White", 1, 2),#按照是否是白种人分组
+               scenariosDO=factor(scenariosDO)) #条件是分类变量，进行factor处理
+
+
+rePD4a.Longsub.race<-rePD4a.Long %>% dplyr::count(Ethnicity.race, Subj)#统计被试的种族信息，每个被试的情况以单独一行呈现
+rePD4a.Longsub.Gender<-rePD4a.Long %>% dplyr::count(Gender, Subj)#统计被试的性别信息，每个被试的情况以单独一行呈现
+
+Gendernum<-plyr::count(rePD4a.Longsub.Gender$Gender) #男性和女性各自的总人数
+racenum<-plyr::count(rePD4a.Longsub.race$Ethnicity.race)
+  #每种种族各自的总人数
+color <- sum(racenum[1:3,2])
+other_null <- sum(racenum[4,2],racenum[6,2])
+meanAGE<-mean(rePD4a.Long$Age, na.rm = T)#被试的平均年龄
+sdAGE<-sd(rePD4a.Long$Age, na.rm = T)#年龄的标准差
+
+```
+
+Data were collected from 207 participants using Prolific
+(`r Gendernum[1,2]` females, `r printnum(Gendernum[2,2])` males,
+`r printnum(Gendernum[3,2])` other, `r printnum(racenum[5,2])` White,
+`r printnum(color)` People of color, `r other_null` Other or did not
+report, $M_{age}$ = `r printnum(meanAGE)` years, $SD_{age}$ =
+`r round(sdAGE,2)`).
+
+<!--#3、计算相关系数、新变量、信度-->
+<!--
+```{r,echo = FALSE, message = FALSE}
+#psych::alpha: Internal consistency measures of reliability.This function reports two estimates: Cronbach's coefficient \alphaα .
+#所有惩罚判断相关的评分数据
+
+pandbRatings <- rePD4a.Long[,c('punishPolice', 'punishMoney', 'blamePerson')]
+a<-psych::alpha(pandbRatings)#0.85
+
+#所有道德判断相关的评分数据
+moralRatings <- rePD4a.Long[,c('moralPerson', 'moralAction')]
+b<-psych::alpha(moralRatings)#0.78
+#计算新变量到数据集，惩罚与责备的均值
+rePD4a.Long<-rePD4a.Long %>%
+     dplyr::mutate(pandb=rowMeans(rePD4a.Long[,c('punishPolice', 'punishMoney', 'blamePerson')]))
+#计算各变量的相关系数
+judgmentRatings2 <- PD4a.Long[,c('punishPolice', 'punishMoney', 'blamePerson','moralPerson', 'moralAction')]
+
+judcorMat2 <- lowerCor(judgmentRatings2)
+judcorMat3<-round(judcorMat2,3)
+cor_p <- corr.p(judcorMat2,n = nrow(judgmentRatings2),alpha = .05)
+#相关矩阵
+
+```
+-->
+
+
+The primary goal of experiment 4a was to assess differences between the
+punishability of phantom rule violations when they are committed in
+isolation or in conjunction with a more morally consequential (i.e.,
+social norm) violation. Firstly, Two punishment items were assessed, and
+based on internal reliability, a single punishment judgment variable was
+created by collasping across the two items(Cronbach's $\alpha$ =
+`r round(psych::alpha(pandbRatings)$total$std.alpha,2)`). Second, a
+single Moral judgment variable was created by collasping across the two
+items(Cronbach's $\alpha$ =
+`r round(psych::alpha(moralRatings)$total$std.alpha,2)`). Correlations
+between the dependent variables are included in the Figure 1 and Table
+1.
+
+```{r, echo = FALSE,fig.cap="Correlation matrix for dependent variables."}
+corrplot(judcorMat2, method="color", type = 'lower',tl.col="black",
+         addCoef.col = "black", tl.srt = 45,insig = "label_sig")#相关图
+
+```
+
+```{r, echo = FALSE,message=FALSE}
+cor_p$p <- ifelse(cor_p$p<0.001,'<0.001',cor_p$p)
+judcorMat2[upper.tri(cor_p$p)]<-cor_p$p[upper.tri(cor_p$p)]
+judcorMat2[lower.tri(judcorMat2)]<- judcorMat3[lower.tri(judcorMat3)]
+
+library(papaja)
+library(tidyverse)
+
+judcorMat2%>%
+  apa_table(
+    caption = 'Corrlation matrix for dependent variables',
+    digits = 3,
+    note = "The lower is correlations among variables, and the upper is the p-value."
+)
+```
+
+<!--主要分析1：检验违反规则的类型对惩罚与责任评分的影响-->
+
+```{r echo = FALSE, message = FALSE}
+#用合成的惩罚与责备评分均值作为因变量,违反规则的类型作为自变量（固定因子），以被试、故事类型作为随机因子，构建模型。使用默认的treatment coding，R会自动将PRalone作为基线，做出另一个水平（PR+SN）与这个基线相比的值。
+
+modE2.05 <- lmer(pandb ~ scenariosDO + (1|sceneType), data = rePD4a.Long)
+modE2.1 <- lmer(pandb ~ scenariosDO + (1|sceneType) + (1|Subj), data = rePD4a.Long)
+modE2.2 <- lmer(pandb ~ scenariosDO + (1|Subj),data = rePD4a.Long)
+
+
+modE2.00<-lmer(pandb ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj), data = rePD4a.Long) #畸形拟合
+modE2.02 <- lmer(pandb ~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj), data = rePD4a.Long)#畸形拟合
+modE2.01 <- lmer(pandb ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj), data = rePD4a.Long)#畸形拟合
+modE2.03 <- lmer(pandb ~ scenariosDO + (1+scenariosDO|Subj), data = rePD4a.Long)#畸形拟合
+modE2.04 <- lmer(pandb ~ scenariosDO + (1+scenariosDO|sceneType), data = rePD4a.Long)#畸形拟合
+#>???????
+
+comparedmodel1<- compare_performance(modE2.1,modE2.05,modE2.2, rank = TRUE) #根据模型比较的结果可知，modE2.05 的ICC没有达到预注册的 ICC 临界值0.10，所以去除。且通过模型比较发现modE2.1最好。因此分析modE2.1
+model1<-summary(modE2.1)
+p1 <- ifelse(model1$coefficients[2,5]<0.001,'<0.001',model1$coefficients[2,5])
+confint1<-confint(modE2.1)#求95%CI
+p2.1 <- pairs(emmeans(modE2.1, ~ scenariosDO))#简单效应分析
+#根据fixed effect的结果可知，被试认为违反社会规则也违反幽灵规则的条件下比只违反幽灵规则更需要被惩罚, β=0.5825, SE=0.0887, t(1117)=6.554, p < .001,  95%CI=[0.4082,0.7567]。
+wr1<-anova(modE2.1)#通过这一步可以检验主效应是否显著-显著?????
+options(digits = 3)
+```
+
+First, the punishment and blame. Using the collapsed variable for
+punishment and blame we tested for differences between phantom rule
+violations alone compared to social norm and phantom rule violations
+together. Please pay attention, considering the original paper does not
+start from the full model, only presents the zero model.We using more
+models than papers, especially, constructed with the collapsed mean of
+punishment and blame score as the dependent variable, the type of rule
+violation as the independent variable (fixed factor), and the type of
+subjects and stories as the random factor. And the comparison results of
+models please see table 2. And we chose the model contained the type of
+subjects and stories as the random factors (i.e., modE2.1).
+
+Similar with the results of this article, phantom rule violations paired
+with social norm violations were rated as more justifiable to punish
+compared to phantom rule violations alone, $\beta$ =
+`r model1$coefficients[2,1]`, $SE$ = `r  model1$coefficients[2,2]`,
+$t$(`r model1$coefficients[2,3]`)= `r  model1$coefficients[2,4]`, $p$ =
+`r p1`, 95%$CI$ = [`r confint1[5,]`](see Figure 2).
+
+<!--And then, We then investigated whether the condition influenced choices in the binary judgment of whether the police should initiate an interaction (i.e., punish) the person or not initiate an interaction. 
+
+Results suggested that people more often selected the “Punish” option (as compared to the “No punish”) for phantom rule and social norm violations together compared to phantom rule violations alone, b = 0.32, SE = 0.06, z = 5.17, p < .001, r = 0.09, 95% CI [0.20, 0.45], OR = 1.38. Notably, when a phantom rule and social norm are violated in tandem, participants think the police should initiate an interaction more often, but when the phantom rule is violated alone, participants are more likely to think the police should not intervene.-->
+
+```{r,table 2,echo = FALSE, message = FALSE}
+comparedmodel1%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see Appendix A"
+)
+```
+
+<!--主要分析2：情景类型对道德行为评分的影响-评分越高说明道德越坏-->
+
+```{r echo = FALSE, message = FALSE}
+#1、道德行为评分
+modE2.3 <- lmer(moralAction ~ scenariosDO + (1|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.36 <- lmer(moralAction ~ scenariosDO +  (1|Subj),  data = rePD4a.Long)
+modE2.37 <- lmer(moralAction ~ scenariosDO +  (1|sceneType),  data = rePD4a.Long)
+
+modE2.32 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj),  data = rePD4a.Long)
+#??????
+
+modE2.31 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)#畸形拟合
+modE2.33 <- lmer(moralAction ~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)#畸形拟合
+modE2.34 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType),  data = rePD4a.Long)#畸形拟合
+modE2.35 <- lmer(moralAction ~ scenariosDO +  (1+scenariosDO|Subj),  data = rePD4a.Long)#畸形拟合
+
+
+comparedmodel2<-compare_performance(modE2.3,
+                                    #modE2.32,
+                                    modE2.36,
+                                    modE2.37,rank = TRUE)#通过模型比较可以得出最优模型
+model2<-summary(modE2.3)
+confint2<-confint(modE2.3)
+p2.3 <- pairs(emmeans(modE2.3, ~ scenariosDO))
+p2 <- ifelse(model2$coefficients[2,5]<0.001,'<0.001',model2$coefficients[2,5])
+#根据fixed effect的结果可知，当在违反社会规范后实施幽灵规则时，与单独违反幽灵规则时相比，违反幽灵规则本身被视为更强的道德错误, β=0.3974, SE=0.08669, t(1115)=4.584, p < .001, 95%CI=[0.2271,0.5673]。
+
+#2、道德品质评分
+modE2.4 <- lmer(moralPerson  ~ scenariosDO + (1|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.46 <- lmer(moralPerson ~ scenariosDO +  (1|Subj),  data = rePD4a.Long)
+modE2.47 <- lmer(moralPerson~ scenariosDO +  (1|sceneType),  data = rePD4a.Long)
+
+modE2.41 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)
+modE2.42 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj),  data = rePD4a.Long)
+modE2.43 <- lmer(moralPerson~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long)
+modE2.44 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType),  data = rePD4a.Long)
+modE2.45 <- lmer(moralPerson~ scenariosDO +  (1+scenariosDO|Subj),  data = rePD4a.Long)
+
+comparedmodel3<-compare_performance(modE2.4,modE2.41,modE2.42,modE2.43,modE2.44,modE2.45,modE2.46, modE2.47,rank = TRUE)
+
+#通过模型比较可以得出最优模型
+modelcor1<-summary(modE2.42)#随机效应中sceneType的scenariosDOprAndSn相关性绝对值大于0.9，共线性太强需要删除
+modelcor2<-summary(modE2.41)#随机效应中sceneType的scenariosDOprAndSn相关性绝对值大于0.9，共线性太强需要删除
+model3<-summary(modE2.43)#这个自由度好奇怪，所以删了？-需要确认
+
+confint3<-confint(modE2.43)
+p2.43 <- pairs(emmeans(modE2.43, ~ scenariosDO))
+p3 <- ifelse(model3$coefficients[2,5]<0.001,'<0.001',model3$coefficients[2,5])
+#根据fixed effect的结果可知，违反幽灵规则的人与违反社会规范的人被视为比只违反幽灵规则的人更道德败坏, β=1.031, SE=0.0887, t(198)=11.63, p < .001, 95%CI=[0.857,1.205]。
+```
+
+We next examined whether the phantom rule violation alone compared to
+social norm and phantom rule violations together influenced judgments of
+the morality of the particular phantom rule violation and of the
+person.Models with boundary (singular) fit were removed, the comparison
+results of other models please see table 3. And we chose the model
+contained the type of subjects and stories as the random factors (i.e.,
+modE2.3). Results revealed that when a phantom rule was committed
+following a social norm violation, the phantom rule violation itself was
+seen as more morally wrong compared to when a phantom rule violation was
+committed alone, $\beta$ = `r model2$coefficients[2,1]`, $SE$ =
+`r  model2$coefficients[2,2]`, $t$(`r model2$coefficients[2,3]`)=
+`r  model2$coefficients[2,4]`, $p$ = `r p2`, 95%$CI$ =
+[`r confint2[5,]`].
+
+This was also true for the moral character variable,models with boundary
+(singular) fit were removed, the comparison results of models please see
+table 4. Considering The collinearity of random effects is too strong in
+modE2.42 and modE2.41 ($r$ =
+`r attributes(modelcor1[["varcor"]][["sceneType"]])[["correlation"]][1,2]`,
+$r$ =
+`r attributes(modelcor2[["varcor"]][["sceneType"]])[["correlation"]][1,2]`),
+we chose the model contained the type of stories and subjects as the
+random factors, and scenariosDO as by-subject slopes (i.e., modE2.43).
+Violators of phantom rules paired with social norm violations were seen
+as more morally bad than violators of phantom rules alone, $\beta$ =
+`r model3$coefficients[2,1]`, $SE$ = `r  model3$coefficients[2,2]`,
+$t$(`r model3$coefficients[2,3]`)= `r  model3$coefficients[2,4]`, $p$ =
+`r p3`, 95%$CI$ = [`r confint3[5,]`](see figure 3).
+
+```{r echo = FALSE, message = FALSE}
+comparedmodel2%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see Appendix B"
+)
+
+comparedmodel3%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see Appendix C"
+
+)
+```
+
+```{r , echo = FALSE,fig.cap="Punishment differences for phantom rule and social norm violations compared to phantom rule violations alone."}
+level_names <- c("Phantom Rule Violation", "Phantom Rule + Social Norm Violation")#构建图形横坐标名称
+level_colors <- c("#fff1ac","#bbded6") #构建图形颜色库
+rePD4a.Long <- na.omit(rePD4a.Long) #去除空值
+
+#绘制惩罚评分图
+ggplot(data=rePD4a.Long, aes(x=scenariosDO, y=pandb, fill=scenariosDO)) + #调用数据以及定义横纵坐标，按条件填充颜色 
+ stat_summary(aes(group = scenariosDO), geom = "bar",  fun = mean, width = 0.5) + #使用条形图，设置宽度
+  geom_point(aes(x = scenariosDO), shape = 21, position = position_jitter(width = 0.1), alpha = .15)+ #绘制散点图，点的形状，抖动，透明度
+  stat_summary(fun.data = mean_se,  
+               geom = "errorbar", #绘制误差棒
+               position = position_dodge(.9),
+               width=.25, alpha=.95) +#设置位置以及相关属性
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                                   panel.grid.minor = element_blank(),
+                                   legend.position = "none",
+                                   text = element_text(size=14),
+                                   axis.title.x = element_text(color="black", size=14),
+                                   axis.title.y = element_text(color="black", size=14)) +#设置主题相关属性，坐标的字体大小和颜色
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) + #设置纵坐标
+  scale_x_discrete(labels = level_names) + #定义横坐标名称
+  scale_fill_manual(values = level_colors) + #定义填充颜色
+  xlab("Scenario Type") + ylab("Punishability of Phantom Rule Violation") + #坐标名称
+  annotate(geom = "text", x = 1.5, y = 5.5, label = "***")#设置显著性标志
+```
+
+```{r , echo = FALSE,fig.cap="Moral differences for phantom rule and social norm violations compared to phantom rule violations alone."}
+# 同理绘制道德评分图
+ggplot(data=PD4a.Long, aes(x=scenariosDO, y=moralAction, fill=scenariosDO))  + 
+  stat_summary(aes(group = scenariosDO), geom = "bar", fun = mean,  width = 0.5) + 
+  geom_point(aes(x = scenariosDO), shape = 21, position=position_jitter(width = 0.1), alpha = .15)+ 
+  stat_summary(fun.data = mean_se,  
+               geom = "errorbar", 
+               position = position_dodge(.9),
+                width=.25, alpha=.95) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "none",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_fill_manual(values = level_colors) + 
+  xlab("Scenario Type") + ylab("Moral Wrongness of Phantom Rule Violation") +
+  annotate(geom = "text", x = 1.5, y = 5.5, label = "***")
+```
+
+## Results of Experienment 4b
+
+```{r,echo = FALSE, message = FALSE}
+
+# 导入数据:
+PD4b.Long<-  read.csv('./data/Phantom_Rules_Exp4bLong.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+
+```{r Demographic information,echo = FALSE, message = FALSE}
+#对数据重新编码赋值
+rePD4b.Long<-PD4b.Long %>%
+  dplyr::mutate(Gender =ifelse(Gender == 1, "Male",
+                               ifelse(Gender == 2, "Female", NA)),
+                Gender=factor(Gender),
+                Ethnicity.race=ifelse(Ethnicity.race == 4, "White",
+                                      ifelse(Ethnicity.race == 5, "Latin/Hispanic",                                                                                               ifelse(Ethnicity.race == 6, "Black", 
+                                      ifelse(Ethnicity.race == 7, "Asian", 
+                                      ifelse(Ethnicity.race == 8, "Other", NA))))), #重新编码种族相关信息，定义标签
+                EthnicityBin=ifelse(Ethnicity.race == "White", 1, 2),#按照是否是白种人分组
+                Condition=factor(Condition),
+                Type=factor(Type),
+                sceneType=factor(sceneType)) #对分类变量进行factor处理
+
+rePD4b.Longsub.race2<-rePD4b.Long %>% dplyr::count(Ethnicity.race, Subj)#统计被试的种族信息，每个被试的情况以单独一行呈现
+rePD4b.Longsub.Gender2<-rePD4b.Long %>% dplyr::count(Gender, Subj)#统计被试的性别信息，每个被试的情况以单独一行呈现
+Gendernum2<-plyr::count(rePD4b.Longsub.Gender2$Gender) #男性和女性各自的总人数
+racenum2<-plyr::count(rePD4b.Longsub.race2$Ethnicity.race)#每种种族各自的总人数
+meanAGE2<-mean(rePD4b.Long$Age, na.rm = T) #平均年龄：33.4886
+sdAGE2<-sd(rePD4b.Long$Age, na.rm = T) #年龄标准差12.19006
+color2 <- sum(racenum2[1:3,2])
+other_null2 <- sum(racenum2[4,2],racenum2[6,2])
+#对分类变量做因子处理
+rePD4b.Long$Condition <- as.factor(rePD4b.Long$Condition)
+rePD4b.Long$Type <- as.factor(rePD4b.Long$Type)
+rePD4b.Long[,c(36)] <- 8-rePD4b.Long[,c(36)] #对legitexit列反向计分 ？？需要确认
+
+```
+
+Data were collected from 310 participants using Prolific
+(`r Gendernum2[1,2]` females, `r printnum(Gendernum2[2,2])` males,
+`r printnum(Gendernum2[3,2])` other, `r printnum(racenum2[5,2])` White,
+`r printnum(color2)` People of color, `r other_null2` Other or did not
+report, $M_{age}$ = `r printnum(meanAGE2)` years, $SD_{age}$ =
+`r round(sdAGE2,2)`).
+
+```{r Cronbach alpha, echo = FALSE, message = FALSE}
+pandbRatings2 <- rePD4b.Long[,c('Punish_police', 'PunishAction', 'BlameAct', 'Deserve')]
+z<-psych::alpha(pandbRatings2)# Cronbach's α =0.93
+moralRatings2 <- rePD4b.Long[,c('MoralAction', 'MoralPerson', 'Character')]
+x<-psych::alpha(moralRatings2) # Cronbach's α =0.92
+legitRatings2 <- rePD4b.Long[,c('Legit1', 'Legit2', 'LegitExist', 'Legit3', 'Disobey')]
+c<-psych::alpha(legitRatings2)# Cronbach's α =0.88
+futureRatings2 <- rePD4b.Long[,c('Future1', 'Future2')]
+feelRatings2 <- rePD4b.Long[,c('feel1', 'feel2', 'feel3')] 
+v<-psych::alpha(feelRatings2)# Cronbach's α =0.86
+
+#以上结果表明多个问题组合为一个指标有较高的内部一致性，再将这些变量赋值到数据集中
+rePD4b.Long$pandb <- as.numeric(rowMeans(PD4b.Long[,c('Punish_police', 'PunishAction', 'BlameAct', 'Deserve')]))
+rePD4b.Long$legitRatings <- as.numeric(rowMeans(PD4b.Long[,c('Legit1', 'Legit2', 'LegitExist', 'Legit3', 'Disobey')]))
+rePD4b.Long$feelRatings <- as.numeric(rowMeans(PD4b.Long[,c('feel1', 'feel2', 'feel3')]))
+rePD4b.Long$moralRatings <- as.numeric(rowMeans(PD4b.Long[,c('MoralAction', 'MoralPerson', 'Character')]))
+```
+
+Two within-subjects factors Scenario Type (phantom rule violation alone
+vs. social norm violation and phantom rule violation) and Rule Type
+(phantom rule vs. prototypical legal violation) were used to investigate
+whether previous social norm violation heightened judgments of
+legitimacy of enforcement and blameworthiness for phantom rule
+violations and not prototypical legal violations. Firstly, We used
+similar punishment items from Experiment 4a. Four punishment items were
+assessed, and based on internal reliability, a single punishment
+judgment variable was created by collasping across the four
+items(Cronbach's $\alpha$ =
+`r round(psych::alpha(pandbRatings2)$total$std.alpha,2)`). Second, a
+single Moral judgment variable was created by collasping across the
+three items(Cronbach's $\alpha$ =
+`r round(psych::alpha(moralRatings2)$total$std.alpha,2)`). Furthermore,
+there are five items used to assess judgments about the legitimacy and
+fairness of phantom rules (Cronbach's $\alpha$ =
+`r round(psych::alpha(legitRatings2)$total$std.alpha,2)`). Lastly, three
+items to assess the affective quality of phantom rule violation
+enforcement.These items had high internal reliability and were collapsed
+into a single frustration index (Cronbach's $\alpha$ =
+`r round(psych::alpha(feelRatings2)$total$std.alpha,2)`).
+
+<!--# 4、主要分析1：情景类型和规则类型对惩罚评分的影响-->
+
+```{r echo = FALSE, message = FALSE}
+modE5.11 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.12 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.13 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.14 <- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.15<- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.16<- lmer(pandb ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.17 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.18 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.19 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.110 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.111 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.126 <- lmer(pandb ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.112 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.113 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.114<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.115<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.116<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.117 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.118<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.119<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.120<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.121 <- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.122<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.123 <- lmer(pandb ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.124 <- lmer(pandb ~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.127 <- lmer(pandb ~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.125 <- lmer(pandb ~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+comparedmodel4<-compare_performance(modE5.115,modE5.116,modE5.117,modE5.120,modE5.122,modE5.125,modE5.127, rank = TRUE) #根据模型比较的结果可知，modE5.115最好。
+model4<-summary(modE5.115)#查看固定效应和随机效应
+
+p4 <- ifelse(model4$coefficients[2,5]<0.001,'<0.001',model4$coefficients[2,5])
+confint4<-confint(modE5.115)
+
+wr4<-anova(modE5.115)#查看主效应以及交互作用
+options(warn = -1)
+#结果表明，违反法律导致的惩罚评分比违反幽灵规则高，b = 2.52157，SE = 0.17818，t()= 14.152，p < .001。情景类型无显著影响，F=3.7555，p = .05355。没有显著的相互作用,F=2.8929, p=0.08915。
+```
+
+First we examined whether Scenario Type (Rule violation alone vs.Rule
+and a social norm violation) and Rule Type (Phantom rule vs.Prototypical
+rule), and their interaction term influenced the collapsed punishment
+and blame judgment index. And the comparison results of models please
+see table 5. Based on selected modE5.115 (random-effects terms included
+intercepts for all random effects, Type as by-subject slopes, and
+Condition as by-sceneType intercepts), results suggested that phantom
+rule violations lead to less punishment and blame than prototypical
+legal violations(see Figure 4),$\beta$ = `r model4$coefficients[2,1]`,
+$SE$ = `r  model4$coefficients[2,2]`, $t$(`r model4$coefficients[2,3]`)=
+`r  model4$coefficients[2,4]`, $p$ = `r p4`, 95%$CI$ =
+[`r confint4[5,]`]. No significant effect emerged for the Scenario
+Type,$F$ =`r wr4[2,5]`, $p$ = `r wr4[2,6]`.<!-- 95% CI [-0.20, 0.15].-->
+Contrary to predictions(similar with origin article), there was no
+significant interaction effect,$F$ =`r wr4[3,5]`, $p$ = `r wr4[3,6]`.
+
+<!--# 5、主要分析2：情景类型和规则类型对道德判断的影响-->
+
+```{r echo = FALSE, message = FALSE}
+modE5.21 <- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.22 <- lmer(moralRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.23 <- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.24 <- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.25<- lmer(moralRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.26<- lmer(moralRatings ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.27 <- lmer(moralRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.28 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.29 <- lmer(moralRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.210 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.211 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.226 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.212 <- lmer(moralRatings ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.213 <- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.214<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.215<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.216<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.217 <- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.218<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.219<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.220<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.221 <- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.222<- lmer(moralRatings~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.223 <- lmer(moralRatings ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.224 <- lmer(moralRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.227 <- lmer(moralRatings~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.225 <- lmer(moralRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+comparedmodel5<-compare_performance(modE5.25,modE5.28,modE5.29,modE5.210,modE5.211,modE5.213,modE5.214,modE5.215,modE5.216,modE5.217, modE5.225,modE5.227,rank = TRUE)
+model5<-summary(modE5.28)
+wr5<-anova(modE5.28)
+p5.28 <- pairs(emmeans(modE5.28, ~ Condition*Type))
+p5.28 <-as.data.frame(p5.28)
+p5 <- ifelse(model5$coefficients[2,5]<0.001,'<0.001',model5$coefficients[2,5])
+options(warn = -1)
+#condition=1-违反幽灵规则，condition=2-违反法律规则。type=1违反两种规则，type=2违反一种规则。违反法律导致的道德错误比违反幽灵规则高，b = 2.2115，SE = 0.1661，t = 13.316，p < .001。两种情景类型条件之间有显著差异，F=8.4009，p = .03155。结果显示了显著的交互作用，F=15.59922，p < .001 .简单效应分析发现，当只违反一种规则时，被试认为只违反幽灵规则比只违反法律规则的人在道德上有更少错误，b = -2.2115，SE = 0.166，t  = -13.299，p <.001。违反两种规则时，被试也认为违反幽灵规则比违反法律规则的人在道德上有更少错误，b = -2.6705，SE = 0.163，t  = -16.376，p <.001。只有违法行为与同时违反社会规范和违法行为在统计学上也没有显著差异，p = .9283。
+```
+
+Following analyses in Experiment 4a, we also tested whether Scenario
+Type and Rule Type influence the dichotomous punishment judgment.And the
+comparison results of models please see table 6. Based on selected
+modE5.28 (random-effects terms included intercepts and Type and
+Condition as slopes for all random effects), as predicted, phantom rule
+violations alone were less likely to lead to selection of the punishment
+option (vs. the "No punish") than prototypical legal violations(see
+Figure 5), $\beta$ = `r model5$coefficients[2,1]`, $SE$ =
+`r  model5$coefficients[2,2]`, $t$(`r model5$coefficients[2,3]`)=
+`r  model5$coefficients[2,4]`, $p$ = `r p5`, and rules coupled with a
+social norm violation were more likely to lead to selection of the
+punishment than alone, $F$ =`r wr5[2,5]`, $p$ = `r wr5[2,6]`. There was
+significant interaction,$F$ =`r wr5[3,5]`, $p$ =
+`r wr5[3,6]`(differenciate with origin results). Moreover, Simple effect
+analysis discoved that, when only one kind of rule was broken, subjects
+rated the violation of only the phant om rule as less morally wrong than
+the violation of only the legal rule, $\beta$ = `r p5.28[1,2]`,$SE$ =
+`r p5.28[1,3]`, $t$(`r p5.28[1,4]`)= `r  p5.28[1,5]`, $p$ =
+`r p5.28[1,6]`. When both rules were violated, participants also rated
+the violator of the ghost rule as less morally wrong than the violator
+of the legal rule,$\beta$ = `r p5.28[6,2]`,$SE$ = `r  p5.28[6,3]`,
+$t$(`r p5.28[6,4]`)= `r  p5.28[6,5]`, $p$ = `r p5.28[6,6]`. Only
+transgressions were not statistically significant from both violations
+of social norms and transgressions, $p$ = `r p5.28[5,6]`.
+
+<!--# 6、主要分析3：合法性判断的差异-->
+
+```{r echo = FALSE, message = FALSE}
+modE5.31 <- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.32 <- lmer(legitRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.33 <- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.34 <- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.35<- lmer(legitRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.36<- lmer(legitRatings ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.37 <- lmer(legitRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.38 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.39 <- lmer(legitRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.310 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.311 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.326 <- lmer(legitRatings ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.312 <- lmer(legitRatings ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.313 <- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.314<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.315<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.316<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.317 <- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.318<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.319<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.320<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.321 <- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.322<- lmer(legitRatings~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.323 <- lmer(legitRatings ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.324 <- lmer(legitRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.325 <- lmer(legitRatings~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.327 <- lmer(legitRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+comparedmodel6<-compare_performance(modE5.314,modE5.316,modE5.317,modE5.324, modE5.325, modE5.327,rank = TRUE)
+model6<-summary(modE5.314)
+wr6<-anova(modE5.314)
+p6 <- ifelse(model6$coefficients[2,5]<0.001,'<0.001',model6$coefficients[2,5])
+options(warn = -1)
+#condition=1-违反幽灵规则，condition=2-违反法律规则。type=1违反两种规则，type=2违反一种规则。违反法律导致的评分比违反幽灵规则高，b = 1.71529，SE = 0.12988，t = 13.207，p < .001。两种情景类型条件之间没有显著差异，F=0.0468，p = .8288。无显著的交互作用，F=1.8705，p = .1716. 
+```
+
+Next, we examined whether Scenario Type and Rule Type affected the
+collapsed moral judgment index. See table 7 for model comparison,
+modE5.314 was selected (random-effects terms included intercepts and
+Condition as slopes for all random effects). As predicted, phantom rule
+violations themselves were rated as less morally wrong than prototypical
+legal violations(see Figure 6),$\beta$ = `r model6$coefficients[2,1]`,
+$SE$ = `r  model6$coefficients[2,2]`, $t$(`r model6$coefficients[2,3]`)=
+`r  model6$coefficients[2,4]`, $p$ = `r p6`. There was no significant
+difference between the two Scenario Type conditions, $F$ =`r wr6[2,5]`,
+$p$ = `r wr6[2,6]`.
+
+Critically, results revealed also no significant interaction
+(differentiate with origin results),$F$ =`r wr6[3,5]`, $p$ =
+`r wr6[3,6]`.
+
+<!--#7、主要分析4：感受-->
+
+```{r echo = FALSE, message = FALSE}
+modE5.41 <- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.42 <- lmer(feelRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.43 <- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.44 <- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.45<- lmer(feelRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.46<- lmer(feelRatings ~ Condition*Type + (1+Condition*Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.47 <- lmer(feelRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.48 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.49 <- lmer(feelRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)#畸形拟合
+modE5.410 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.411 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.426 <- lmer(feelRatings ~ Condition*Type + (1+Condition+Type|sceneType), data = rePD4b.Long)#畸形拟合
+modE5.412 <- lmer(feelRatings ~ Condition*Type + (1+Condition|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.413 <- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.414<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.415<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long)
+modE5.416<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.417 <- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long)
+modE5.418<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition*Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.419<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long)
+modE5.420<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long)#畸形拟合
+modE5.421 <- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long)
+modE5.422<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long)#畸形拟合
+modE5.423 <- lmer(feelRatings ~ Condition*Type + (1+Type|sceneType) , data = rePD4b.Long)#畸形拟合
+modE5.424 <- lmer(feelRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long)
+modE5.425 <- lmer(feelRatings ~ Condition*Type + (1|sceneType) , data = rePD4b.Long)
+modE5.427 <- lmer(feelRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long)
+comparedmodel7<-compare_performance(modE5.413,modE5.414,modE5.415,modE5.416, modE5.417,modE5.419,modE5.421,modE5.424,modE5.425,modE5.427, rank = TRUE)
+model7<-summary(modE5.414)
+wr7<-anova(modE5.414)
+p5.414<- pairs(emmeans(modE5.414, ~ Condition*Type))
+p5.414 <- as.data.frame(p5.414)
+p7 <- ifelse(model7$coefficients[2,5]<0.001,'<0.001',model7$coefficients[2,5])
+
+options(warn = -1)
+#condition=1-违反幽灵规则，condition=2-违反法律规则。type=1违反两种规则，type=2违反一种规则。分数高越沮丧。与违反法律规则相比，被试认为违反幽灵规则受更令人沮丧，b = -1.68670，SE = 0.16297，t  = -10.350，p < .001。情景类型有显著的影响（与原结果不同），F=5.0427，p=0.02487.交互作用显著，F=5.6022，p=0.01806.简单效应检验结果发现，只违反一种规则时，只违反幽灵规则受惩罚比只违反法律规则时，被试评分更高，表明这种惩罚更令人沮丧，b = 1.99318，SE = 0.1599 ，t = 12.464 ，p <.001；只违反幽灵规则比违反社会规则和幽灵规则时评分高，惩罚更令人沮丧，b = -0.29907，SE = 0.0924 ，t = -3.237 ，p = 0.0068。
+```
+
+Finally, we also asked participants about how frustrated they would feel
+if they got caught for violating one of these rules. We used the same
+method of constructing and choosing the model as before. ModE5.414 was
+chosen as the best model. The model's random-effects terms included
+intercepts and Condition as slopes for all random effects. Full model
+specifications, including final random effects structures, are reported
+in table 8. As predicted, participants rated phantom rule violations as
+more frustrating to get caught for compared to prototypical legal
+violations(see Figure 7),$\beta$ = `r model7$coefficients[2,1]`, $SE$ =
+`r  model7$coefficients[2,2]`, $t$(`r model7$coefficients[2,3]`)=
+`r  model7$coefficients[2,4]`, $p$ = `r p7`. While, there is also
+significant effect emerged for Scenario Type (differentiate with origin
+results),$F$ =`r wr7[2,5]`, $p$ = `r wr7[2,6]`. A significant
+interaction emerged, $F$ =`r wr7[3,5]`, $p$ = `r wr7[3,6]`. The results
+of the simple effect test found that when only one rule was violated,
+the punishment for violating only the ghost rule was higher than that
+for violating only the legal rule, indicating that the punishment was
+more frustrating, $\beta$ = `r p5.414[6,2]`,$SE$ = `r  p5.414[6,3]`,
+$t$(`r p5.414[6,4]`)= `r  p5.414[6,5]`, $p$ = `r p5.414[6,6]`.Only
+breaking the ghost rules is rated higher and the punishment more
+frustrating than breaking the social and ghost rules, $\beta$ =
+`r p5.414[2,2]`,$SE$ = `r  p5.414[2,3]`, $t$(`r p5.414[2,4]`)=
+`r  p5.414[2,5]`, $p$ = `r p5.414[2,6]`.
+
+```{r echo = FALSE, message = FALSE}
+comparedmodel4%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see  Appendix D"
+)
+
+comparedmodel5%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see Appendix E
+"
+)
+
+comparedmodel6%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see Appendix F")
+
+comparedmodel7%>%
+  dplyr::select(Name,ICC,RMSE,Sigma,Performance_Score)%>%
+  apa_table(
+    caption = 'Model Comparison',
+    digits = 3,
+    note = "see Appendix G
+")
+```
+
+<!--# 8、画图-->
+
+```{r echo = FALSE,fig.cap="Differences between phantom rule and prototypical legal violations for punishability of enforcement judgments."}
+level_names <- c("Rule Alone", "Rule + Social Norm Violation") #定义横坐标名
+level_colors <- c("#95e1d3", "#f38181")#定义颜色
+PD4b.LongV3 <- filter(rePD4b.Long, Condition == 1 | Condition == 2) #筛选数据，去除不符合条件的item
+PD4b.LongV3 <-PD4b.LongV3 %>% 
+  dplyr::mutate(Condition =ifelse(Condition == 1, "Phantom Rule",
+                ifelse(Condition == 2, "Prototypical Legal Violations", NA)),
+                Condition=factor(Condition)) #重新编码条件这个变量的各个水平名称
+
+# 惩罚评分图
+  #先计算平均值、标准差、标准误差和置信区间（默认值为 95%）
+dataSum <- Rmisc::summarySE(data = PD4b.LongV3,
+                           measurevar = "pandb",#要计算的变量的列名称
+                           groupvars = c("Type", "Condition"),#包含分组变量的列名称
+                           na.rm = T)#正态分布
+
+ggplot(PD4b.LongV3, aes(x = Type, y = pandb, fill = Condition, group = Condition, color = Condition)) +#导入数据并定义横纵坐标以及分组
+  geom_bar(data = dataSum, stat = "identity", aes(x = Type, y = pandb, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +#用计算出来的数据集制作条形图，设置透明度和距离，填色
+  geom_errorbar(data = dataSum, aes(ymin = pandb - ci, ymax = pandb + ci),
+                width = .3, position = position_dodge(.9), color = "black") +#用计算出的数据集绘制误差棒，宽度，距离和颜色
+  geom_point(aes(group = Condition), position =  position_jitterdodge(jitter.width = 0.4, jitter.height=0.2,dodge.width=0.9), alpha = .4) +#绘制数据分布的散点图，设置点的分布信息
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),#去除网格线
+                     legend.position = "top",#设置图例在顶部
+                     text = element_text(size=14),#设置文本的字号
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +#
+  scale_y_continuous(expand = c(0, 0)) +
+  #设置横纵坐标的字号 
+  expand_limits(y = 7) +#设置Y轴范围
+  scale_x_discrete(labels = level_names) + #给X轴重命名
+  scale_color_manual(values = level_colors) +#设置线条填充颜色
+  scale_fill_manual(values = level_colors) + #设置内部填充颜色
+  xlab("Motivation and Rule Type") + ylab("Punishability of Violation")#+#设置横纵坐标
+#punishPlot5
+```
+
+```{r echo = FALSE,fig.cap="Differences between phantom rule and prototypical legal violations for moral wrongness of enforcement judgments."}
+# 道德评分图-与上图同理
+level_names <- c("Rule Alone", "Rule + Social Norm Violation") #定义横坐标名
+level_colors <- c("#95e1d3", "#f38181")#定义颜色
+PD4b.LongV3 <- filter(rePD4b.Long, Condition == 1 | Condition == 2) #筛选数据，去除不符合条件的item
+PD4b.LongV3 <-PD4b.LongV3 %>% 
+  dplyr::mutate(Condition =ifelse(Condition == 1, "Phantom Rule",
+                ifelse(Condition == 2, "Prototypical Legal Violations", NA)),
+                Condition=factor(Condition)) #重新编码条件这个变量的各个水平名称
+dataSum2 <- Rmisc::summarySE(data = PD4b.LongV3,
+                             measurevar = "moralRatings",
+                             groupvars = c("Type", "Condition"),
+                             na.rm = T)
+
+ggplot(PD4b.LongV3, aes(x = Type, y = moralRatings, fill = Condition, group = Condition, color = Condition)) +
+  geom_bar(data = dataSum2, stat = "identity", aes(x = Type, y = moralRatings, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +
+  geom_errorbar(data = dataSum2, aes(ymin = moralRatings - ci, ymax = moralRatings + ci),
+                width = .3, position = position_dodge(.9), color = "black") +
+  geom_point(aes(group = Condition), position = position_jitterdodge(jitter.width = 0.4, jitter.height=0.2, 
+                                dodge.width=0.9), alpha = .4) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "top",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_color_manual(values = level_colors) +
+  scale_fill_manual(values = level_colors) + 
+  xlab("Motivation and Rule Type") + ylab("Moral Judgments")
+#moralPlot5
+```
+
+```{r echo = FALSE,fig.cap="Differences between phantom rule and prototypical legal violations for legitimacy of enforcement judgments."}
+# 合法性评分图
+level_names <- c("Rule Alone", "Rule + Social Norm Violation") #定义横坐标名
+level_colors <- c("#95e1d3", "#f38181")#定义颜色
+PD4b.LongV3 <- filter(rePD4b.Long, Condition == 1 | Condition == 2) #筛选数据，去除不符合条件的item
+PD4b.LongV3 <-PD4b.LongV3 %>% 
+  dplyr::mutate(Condition =ifelse(Condition == 1, "Phantom Rule",
+                ifelse(Condition == 2, "Prototypical Legal Violations", NA)),
+                Condition=factor(Condition)) #重新编码条件这个变量的各个水平名称
+dataSum3 <- Rmisc::summarySE(data = PD4b.LongV3,
+                              measurevar = "legitRatings",
+                              groupvars = c("Type", "Condition"),
+                              na.rm = T)
+
+ggplot(PD4b.LongV3, aes(x = Type, y = legitRatings, fill = Condition, group = Condition, color = Condition)) +
+  geom_bar(data = dataSum3, stat = "identity", aes(x = Type, y = legitRatings, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +
+  geom_errorbar(data = dataSum3, aes(ymin = legitRatings - ci, ymax = legitRatings + ci),
+                width = .3, position = position_dodge(.9), color = "black") +
+  geom_point(aes(group = Condition), position = position_jitterdodge(jitter.width = 0.4, jitter.height=0.2, 
+                                dodge.width=0.9), alpha = .4) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "top",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                     axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_color_manual(values = level_colors) +
+  scale_fill_manual(values = level_colors) + 
+  xlab("Motivation and Rule Type") + ylab("Legitimacy Rating")
+#legitPlot5 
+
+#p3<-punishPlot5+moralPlot5+legitPlot5
+#p3
+```
+
+```{r echo = FALSE,fig.cap="Differences between phantom rule and prototypical legal violations for frustration of enforcement judgments."}
+#感受评分图
+level_names <- c("Rule Alone", "Rule + Social Norm Violation") #定义横坐标名
+level_colors <- c("#95e1d3", "#f38181")#定义颜色
+PD4b.LongV3 <- filter(rePD4b.Long, Condition == 1 | Condition == 2) #筛选数据，去除不符合条件的item
+PD4b.LongV3 <-PD4b.LongV3 %>% 
+  dplyr::mutate(Condition =ifelse(Condition == 1, "Phantom Rule",
+                ifelse(Condition == 2, "Prototypical Legal Violations", NA)),
+                Condition=factor(Condition)) #重新编码条件这个变量的各个水平名称
+dataSum4 <- Rmisc::summarySE(data = PD4b.LongV3,
+                             measurevar = "feelRatings",
+                             groupvars = c("Type", "Condition"),
+                             na.rm = T)
+
+ggplot(PD4b.LongV3, aes(x = Type, y = feelRatings, color = Condition)) +
+  geom_bar(data = dataSum4, stat = "identity", aes(x = Type, y = feelRatings, fill = Condition),
+           alpha = .7, position = position_dodge(.9)) +
+  geom_errorbar(data = dataSum4, aes(group = Condition, ymin = feelRatings - ci, ymax = feelRatings + ci),
+                width = .3, position = position_dodge(.9), color = "black") +
+  geom_point(aes(group = Condition), position = position_jitterdodge(jitter.width = 0.5, jitter.height=0.4, 
+                                dodge.width=0.9), alpha = .4) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     legend.position = "top",
+                     text = element_text(size=14),
+                     axis.title.x = element_text(color="black", size=14),
+                                   axis.title.y = element_text(color="black", size=14)) +
+  scale_y_continuous(expand = c(0, 0)) + expand_limits(y = 7) +
+  scale_x_discrete(labels = level_names) + 
+  scale_color_manual(values = level_colors) +
+  scale_fill_manual(values = level_colors) + 
+  xlab("Motivation and Rule Type") + ylab("Feelings")
+#feelPlot5
+#p4<-p3+feelPlot5
+#p4
+```
+
+\newpage
+
+# Discussion
+
+Most of the results were successful, and success here means that
+although the data were not identical, the overall trend and the general
+range of the data were consistent. For example, for the results of
+experiment 4a, similar with the results of this article, phantom rule
+violations paired with social norm violations were rated as more
+justifiable to punish compared to phantom rule violations alone, $\beta$
+= `r model1$coefficients[2,1]`, $SE$ = `r  model1$coefficients[2,2]`,
+$t$(`r model1$coefficients[2,3]`)= `r  model1$coefficients[2,4]`, $p$ =
+`r p1`, 95%$CI$ = [`r confint1[5,]`](see%20Figure%202). The origin
+results of article are following:Critically and as predicted,
+phantom rule violations paired with social norm violations were rated as
+more justifiable to punish compared to phantom rule violations alone,
+$\beta$ = 0.29,$SE$ = 0.05, $t$(1128) = 6.27, $p$ < .001, 95%
+$CI$[0.20, 0.38].
+
+From our perspectives, these small differences may be caused by following
+reasons: Firstly, considering the original paper does not start from the
+full model, only presents the zero model,we used more models than
+papers. Secondly, the differences of the contract methods. The origin
+article mainly made them through creating sum to zero contrasts, rather
+than the default method (i.e., treatment coding), which we used. In
+simple terms, the former reports the real beta needs \*2, while the
+latter outputs the real Beta.
+
+There are also some strange results we can't unnderstant. For example,
+the results of experiment 4b, based on selected modE5.115, results
+suggested that phantom rule violations lead to less punishment and blame
+than prototypical legal violations(see Figure 4),$\beta$ =
+`r model4$coefficients[2,1]`, $SE$ = `r  model4$coefficients[2,2]`,
+$t$(`r model4$coefficients[2,3]`)= `r  model4$coefficients[2,4]`, $p$ =
+`r p4`, 95%$CI$ = [`r confint4[5,]`]. There is a strange degree of
+freedom for $t$, which is `r model4$coefficients[2,3]`. And the original
+version is 1773.
+
+Additionally, when we used the papaja to generate the dpf version with
+APA format, there are something unconvinient, for example, the warning
+of codes can't be ignored. After tring the method papaja provided (i.e.,
+echo = FALSE, message = FALSE), and the method R provided (i.e.,
+options(warn = -1)), this problem still didn't be resovled.
+
+In general, it is convenient to use R for data analysis and export pdf
+files in APA format directly with papaja. 
+
+\newpage
+
+# Division of Labor
+
+```{r Division of Labor}
+audit_table <- structure(
+  list(
+    Assinment = c (
+      "Code",
+      "Document",
+      "Report"
+    ),
+    `Rong Wang` = c("20%: library packages,data cleaning,descriaption analysis","60%: Results of Experienment 4a and 4b, Discussion, Division of Labor","20%"),
+    `Yang Liu` = c("60%: Generalised Linear Mixed Models,Model comparison","20%: Procedure","20%"),
+    `Tingting Wu` = c("20%: Figure","20%: Instruction","60%")
+  ),
+  class = "data.frame",
+  row.names = c(NA,3L)
+)
+
+apa_table(
+  audit_table,
+  caption = "Division of Labor",
+  align = c("m{2cm}", rep("m{4cm}", 5)),
+  landscape = TRUE
+)
+```
+
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
+
+\newpage
+
+# Appendix
+
+## Appendix A
+
+modE2.05 <- lmer(pandb ~ scenariosDO + (1|sceneType), data = rePD4a.Long); 
+modE2.1 <- lmer(pandb ~ scenariosDO + (1|sceneType) + (1|Subj), data = rePD4a.Long); 
+modE2.2 <- lmer(pandb ~ scenariosDO + (1|Subj),data = rePD4a.Long); 
+modE2.05 did not meet the pre-registered ICC cut-off of 0.10.
+
+## Appendix B
+
+modE2.3 <- lmer(moralAction ~ scenariosDO + (1|sceneType) + (1|Subj),  data = rePD4a.Long); 
+modE2.32 <- lmer(moralAction ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj),  data = rePD4a.Long); 
+modE2.36 <- lmer(moralAction ~ scenariosDO +  (1|Subj),  data = rePD4a.Long); 
+modE2.37 <- lmer(moralAction ~ scenariosDO +  (1|sceneType),  data = rePD4a.Long);  
+
+## Appendix C
+
+modE2.4 <- lmer(moralPerson  ~ scenariosDO + (1|sceneType) + (1|Subj),  data = rePD4a.Long); 
+modE2.41 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long); 
+modE2.42 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType) + (1|Subj),  data = rePD4a.Long); 
+modE2.43 <- lmer(moralPerson~ scenariosDO + (1|sceneType) + (1+scenariosDO|Subj),  data = rePD4a.Long); 
+modE2.44 <- lmer(moralPerson ~ scenariosDO + (1+scenariosDO|sceneType),  data = rePD4a.Long); 
+modE2.45 <- lmer(moralPerson~ scenariosDO +  (1+scenariosDO|Subj),  data = rePD4a.Long); 
+modE2.46 <- lmer(moralPerson ~ scenariosDO +  (1|Subj),  data = rePD4a.Long); 
+modE2.47 <- lmer(moralPerson~ scenariosDO +  (1|sceneType),  data = rePD4a.Long); 
+The collinearity of random effects is too strong in modE2.42 and modE2.41
+
+## Appendix D
+ 
+modE5.115<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long); 
+modE5.116<- lmer(pandb ~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.117 <- lmer(pandb ~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long); 
+modE5.120<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long); 
+modE5.122<- lmer(pandb ~ Condition*Type + (1+Type|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.127 <- lmer(pandb ~ Condition*Type + (1|sceneType) , data = rePD4b.Long); 
+modE5.125 <- lmer(pandb ~ Condition*Type + (1|Subj) , data = rePD4b.Long); 
+
+## Appendix E
+ 
+modE5.25<- lmer(moralRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.28 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long); 
+modE5.29 <- lmer(moralRatings~ Condition*Type + (1+Condition+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long); 
+modE5.210 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1+Type|Subj), data = rePD4b.Long); 
+modE5.211 <- lmer(moralRatings ~ Condition*Type + (1+Condition+Type|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.213 <- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long); 
+modE5.214<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long); 
+modE5.215<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long); 
+modE5.216<- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.217 <- lmer(moralRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long); 
+modE5.227 <- lmer(moralRatings~ Condition*Type + (1|sceneType) , data = rePD4b.Long); 
+modE5.225 <- lmer(moralRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long); 
+
+## Appendix F
+
+modE5.314<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long); 
+modE5.316<- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.317 <- lmer(legitRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long); 
+modE5.324 <- lmer(legitRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.325 <- lmer(legitRatings~ Condition*Type + (1|sceneType) , data = rePD4b.Long); 
+modE5.327 <- lmer(legitRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long); 
+
+## Appendix G
+
+modE5.45<- lmer(feelRatings~ Condition*Type + (1+Condition*Type|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.413 <- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long); 
+modE5.414<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Condition|Subj), data = rePD4b.Long); 
+modE5.415<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1+Type|Subj), data = rePD4b.Long); 
+modE5.416<- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.417 <- lmer(feelRatings~ Condition*Type + (1+Condition|sceneType), data = rePD4b.Long); 
+modE5.419<- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition+Type|Subj), data = rePD4b.Long); 
+modE5.421 <- lmer(feelRatings~ Condition*Type + (1+Type|sceneType) + (1+Condition|Subj), data = rePD4b.Long); 
+modE5.424 <- lmer(feelRatings~ Condition*Type + (1|sceneType) + (1|Subj), data = rePD4b.Long); 
+modE5.425 <- lmer(feelRatings ~ Condition*Type + (1|sceneType) , data = rePD4b.Long); 
+modE5.427 <- lmer(feelRatings~ Condition*Type + (1|Subj) , data = rePD4b.Long); 
