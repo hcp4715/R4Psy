@@ -1,0 +1,490 @@
+---
+title: "实验代码"
+output: html_document
+date: "2023-06-29"
+---
+
+#读取数据
+```{r setup, include = FALSE}
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("readxl", "car", "lme4", "emmeans", "effects", "tidyverse", "ggplot2", "ggdist", "pwr","tidybayes","bibtex","papaja","knitr","pandoc")
+
+r_refs("my_bibliography.bib")
+
+TR <- read_excel("data/R_trust_2faces_for_mm.xlsx")
+T2 <- read_excel("data/Data_JOTandJOTD_mm.xlsx")
+T3 <- read_excel("data/Data_JOTD_Study3.xlsx")
+T23<- read_excel("data/Data_JOTandJOTD_mm.xlsx")
+p <- list()
+```
+
+```{r analysis-preferences}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Study 1
+```{r}
+pacman::p_load("readxl","car","lme4","emmeans","effects","reshape2","plyr","pwr","psy","tidyr","effectsize","tidyverse","ggplot2","ggdist","RColorBrewer","ggridges","dplyr")
+```
+
+##Data preprocessing
+```{r data}
+
+TR <- read_excel("data/R_trust_2faces_for_mm.xlsx")
+str(TR)
+head(TR,5)
+
+
+df_sum <- TR %>%
+  dplyr::mutate(cond = case_when(cond == "1" ~ "Self",
+                                  cond == "2" ~ "Other-Slow",
+                                  cond == "3" ~ "Other-Fast")) %>%
+
+  dplyr::group_by(cond) %>%
+  dplyr::ungroup()
+```
+
+##Calculation of sample size_single factor within subjects
+```{r}
+pwr.anova.test(k = 3, n = NULL, f = 0.40, sig.level = 0.05,power = 0.85)
+```
+
+##Descriptive_analysis_plot
+```{r}
+p[[11]] <- ggplot2::ggplot(df_sum, aes(x = cond, y = trust, fill = cond,)) +
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + 
+  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
+  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) + 
+  ggplot2::labs(x = "", y = "Trust", title =  "RainCloud Plot of Cond & Trust")
+
+p[[22]] <- p[[11]] +
+  ggplot2::theme_bw() + 
+  ggplot2::theme(legend.position = "none",
+                 axis.text = element_text(size = 12),
+                 axis.title = element_text(size = 14),
+                 strip.text = element_text(size = 14),
+                 plot.title = element_text(size = 14),
+                 strip.background = element_blank(), 
+                 panel.grid.major=element_blank(), 
+                 panel.grid.minor=element_blank(), 
+                 panel.border=element_blank(), 
+                 text=element_text(family='Times New Roman'), 
+                 ) 
+names(p)[22] <- "APA theme"; p[[22]]+theme(text=element_text(size=16,  family="serif"))
+ggsave(filename = "./picture/chp11/plot1.png", plot = p[[22]], height = 6, width = 8, dpi = 300)
+
+```
+
+##Model Comparison
+```{r Analysis}
+#将part、cond、pic和choice四列数据类型分别转换为因子型数据
+TR$part<-factor(TR$part)
+TR$cond<-factor(TR$cond)
+TR$pic<-factor(TR$pic)
+TR$choice<-factor(TR$choice)
+
+#标准化trial列的数据，使其均值为0，标准差为1
+TR$trial<-scale(TR$trial,center=TRUE,scale= TRUE)
+
+#模型比较
+m1=glmer(choice~ (1|pic),data=TR,family='binomial')
+##使用lme4包的glmer()函数进行模型拟合，choice作为因变量，pic作为随机效应，表示每个被试重复测试的数据在不同的图片上进行了多次数据采集。binomial表示因变量choice是二项分布。
+m2=glmer(choice~ (1|pic)+(1|part),data=TR,family='binomial')
+##将choice作为因变量，pic和part均作为随机效应，表示每个被试重复测试的数据在不同的图片和不同的受试者之间进行了多次数据采集。
+anova(m1,m2)
+
+#logistic回归分析
+m2=glmer(choice~cond+ (1|pic), data=TR,family='binomial')
+##进行有条件的logistic回归分析，将cond变量作为独立变量，以choice作为因变量，pic作为随机效应，执行了不带交互项的回归分析。
+m3=glmer(choice~cond+trust+(1|pic), data=TR,family='binomial')
+##将cond和trust变量作为独立变量，以choice作为因变量，pic作为随机效应，执行了带交互项的回归分析。
+m4=glmer(choice~cond+cond:trust+(1|pic), data=TR,family='binomial')
+##将cond和trust变量作为独立变量，以choice作为因变量，pic作为随机效应，执行了带交互项且包含条件项的回归分析。
+anova(m1,m2,m3,m4)
+##在m1、m2、m3、m4四个模型之间进行比较。
+plot(allEffects(m2))
+##使用effects包的allEffects()函数，进行单变量条件效应的绘图（即只考虑 cond 做出的影响）。
+
+#线性混合模型检验
+emm_options(pbkrtest.limit = 6100)
+##设置参数pbkrtest.limit的值为6100
+emmeans(m2, list(pairwise ~ cond), adjust = "none")
+##对于混合效应模型m2，进行emmeans算法计算，即表示求出每种cond情况下choice的期望数值(estimate)、标准误(SE)、置信区间(CI)以及截距项和cond的系数估计值。pairwise~cond表示要求计算cond各水平之间的差异。adjust="none"表示不应用p-value方法对均值进行显著性调整（即只是展示每组/每个条件下的比较结果，不进行多重比较校验）。
+```
+
+##Result
+People less often chose faces synchronized with their own heart as more trustworthy (M = 28.26, SD = 3.66, 95% confidence interval [CI] = [27.00, 29.51]) than faces synchronized with other-slow (M = 30.66, SD = 3.72, 95% CI = [29.38, 31.93]), t(34) = −2.40, p = .022, Cohen’s d = 0.40, and other-fast (M = 31.08, SD = 4.39, 95% CI = [29.58, 32.60]), t(34) = −2.33, p = .026, Cohen’s d = 0.39.
+
+No difference between other-fast and other-slow trials was observed, t(34) = −0.35, p = .73, Cohen’s d = 0.059. 
+Using multilevel mixed log-linear regression analysis to control for the possible picture-specific effects and to understand whether the effect of rhythm varied according to the “objective” level of trustworthiness of each face pair. 
+
+#Study 2
+```{r }
+library(readxl)
+library(car)
+library(lme4)
+library(emmeans)
+library(effects)
+
+library(tidyverse)
+library(ggplot2)
+library(ggdist)
+library(tidybayes)
+
+pacman::p_load("tidyverse", "faux", "pwr", "MASS", "afex")
+```
+
+##open data
+```{r}
+
+TR <- read_excel("data/R_trust_2faces_for_mm.xlsx")
+T2 <- read_excel("data/Data_JOTandJOTD_mm.xlsx")
+T3 <- read_excel("data/Data_JOT_Study2.xlsx")
+p <- list()
+
+T2$part<-factor(T2$part)
+T2$heart<-factor(T2$heart)
+T2$pic<-factor(T2$pic)
+T2$study=factor(T2$study)
+
+TR$trial<-scale(TR$trial,center=TRUE,scale= TRUE)
+```
+
+##Data preprocessing
+```{r}
+
+T2 <- read_excel("data/Data_JOTandJOTD_mm.xlsx")
+T2.1 <- T2 %>%
+  dplyr::select(`part`, 
+                `trial`, 
+                `heart`, 
+                `trust`, 
+                `rating`,
+                `pic`,
+                `study`,
+                ) %>% 
+  dplyr::filter(study == 2)%>% 
+  dplyr::mutate(heart = case_when(heart == "1" ~ "Self Heart",
+                                  heart == "2" ~ "Other-Slow",
+                                  heart == "3" ~ "Other-Fast")) %>%
+  dplyr::group_by(heart,rating) %>%
+    dplyr::ungroup()
+head(T2.1, 5)
+```
+
+##Calculation of sample size_single factor within subjects
+```{r}
+pwr.anova.test(k = 3, n = NULL, f = 0.32, sig.level = 0.05,power = 0.95)
+```
+
+##Image color
+```{r Color Palette}
+popsicle <- c("#F3533A", "#FA9F42", "#8AD879", "#5ACFC9")
+sunset <- c("#C848B9", "#F962A7", "#FD836D", "#FFBA69")
+glassdoor <- c("#3D9A8B", "#2EB19F", "#63C2D2", "#B7EDFF")
+palette <- list(popsicle = popsicle, sunset = sunset, glassdoor = glassdoor)
+rm(popsicle, sunset, glassdoor)
+```
+
+##Descriptive Statistics Chart
+```{r}
+p[[1]] <- ggplot2::ggplot(T2.1, aes(x = heart, y = rating, fill = heart)) +
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + 
+  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
+  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) + 
+  ggplot2::labs(x = "", y = "Rating", title =  "RainCloud Plot of Heart & Rating")
+names(p)[1] <- "RainCloud Plot"; p[[1]]+theme(text=element_text(size=16,  family="serif"))
+ggsave(filename = "./picture/chp11/plot1.png", plot = p[[1]], height = 5, width = 10, dpi = 300)
+
+p[[2]] <- p[[1]] +
+  ggplot2::coord_flip()
+names(p)[2] <- "Plot Flip"; p[[2]]+theme(text=element_text(size=16,  family="serif"))
+ggsave(filename = "./picture/chp11/plot2.png", plot = p[[2]], height = 5, width = 10, dpi = 300)
+
+p[[3]] <- p[[2]] +
+  ggplot2::scale_fill_manual(values = palette$popsicle)  
+names(p)[3] <- "Fill Color"; p[[3]]+theme(text=element_text(size=16,  family="serif"))
+ggsave(filename = "./picture/chp11/plot3.png", plot = p[[3]], height = 5, width = 10, dpi = 300)
+
+p[[4]] <- p[[3]] +
+  ggplot2::theme_bw() + 
+  ggplot2::theme(legend.position = "none",
+                 axis.text = element_text(size = 12),
+                 axis.title = element_text(size = 14),
+                 strip.text = element_text(size = 14),
+                 plot.title = element_text(size = 14),
+                 strip.background = element_blank(), 
+                 panel.grid.major=element_blank(), 
+                 panel.grid.minor=element_blank(), 
+                 panel.border=element_blank(), 
+                 text=element_text(family='Times New Roman'), 
+                 ) 
+names(p)[4] <- "APA theme"; p[[4]]+theme(text=element_text(size=16,  family="serif"))
+ggsave(filename = "./picture/chp11/plot4.png", plot = p[[4]], height = 6, width = 8, dpi = 300)
+```
+
+##Analysis of variance and regression analysis
+```{r pacakge, message=FALSE}
+ options(repos = c(CRAN = "https://cloud.r-project.org"))
+ packages <- c("performance")
+not_installed <- packages[!(packages %in% installed.packages()[,"Package"])]
+if (length(not_installed) > 0) {
+  install.packages(not_installed)
+}
+rm(packages,not_installed)
+
+library(tidyverse)
+install.packages("bruceR")
+library(bruceR)
+```
+
+```{r plot.lm}
+
+ggplot(T2.1, aes(x = trust, y = rating, fill = heart)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  scale_color_discrete(name = "heart",
+                       labels = c("Self Heart","Other-Slow","Other-Fast")) +
+  theme_minimal()
+```
+
+```{r}
+
+#模型比较
+s0=lmer(rating~ (1|pic), data=T2.1)
+##使用lme4包的glmer()函数进行模型拟合，rating作为因变量，pic作为随机效应，表示每个被试重复测试的数据在不同的图片上进行了多次数据采集。使用了T2.1数据集进行分析。
+s1=lmer(rating~ (1|part)+(1|pic), data=T2.1)
+##使用lme4包的glmer()函数进行模型拟合，rating作为因变量，part和pic作为随机效应，表示每个被试重复测试的数据在不同的图片上进行了多次数据采集其中，(1|part)表示part是随机截距，(1|pic)表示pic也是随机截距。使用了T2.1数据集进行分析。
+s2=lmer(rating~ heart+ (1|part)+(1|pic), data=T2.1)
+##使用lme4包的glmer()函数进行模型拟合，rating作为因变量，heart作为自变量，part和pic作为随机效应，执行了不带交互项的回归分析。其中，(1|part)表示part是随机截距，(1|pic)表示pic也是随机截距。使用了T2.1数据集进行分析。
+s3=lmer(rating~ heart+trust+ (1|part)+(1|pic), data=T2.1)
+##使用lme4包的glmer()函数进行模型拟合，rating作为因变量，heart和trust作为自变量，part和pic作为随机效应，执行了不带交互项的回归分析。其中，(1|part)表示part是随机截距，(1|pic)表示pic也是随机截距。使用了T2.1数据集进行分析。
+s4=lmer(rating~ heart*trust+ (1|part)+(1|pic), data=T2.1)
+#使用lme4包的glmer()函数进行模型拟合，rating作为因变量，heart和trust作为自变量，将自变量heart、trust和它们的交互项的一个多层次线性回归。part和pic作为随机效应，执行了不带交互项的回归分析。其中，(1|part)表示part是随机截距，(1|pic)表示pic也是随机截距。使用了T2.1数据集进行分析。
+anova(s0,s1,s2,s3,s4)
+plot(allEffects(s3))
+#最后比较5个模型，发现S3的回归效果最好，使用effects包的allEffects()函数，进行单变量条件效应的绘图（即rating作为因变量，heart和trust作为自变量，part和pic作为随机效应）。
+```
+
+
+```{r}
+# d3拟合线性混合效应模型
+s3 <- lmer(rating~ heart+trust+ (1|part)+(1|pic), data=T2.1)
+# 进行方差分析
+anova_result <- anova(s3)
+
+# 输出方差分析结果
+print(anova_result)
+
+# 提取方差分析结果的SS（平方和）和MS（均方）
+SS_total <- sum(anova_result$"Sum Sq")
+SS_effect <- anova_result$"Sum Sq"[2]  # 根据具体情况选择相应的效应项
+df_effect <- anova_result$"Df"[2]
+MS_effect <- SS_effect / df_effect
+
+# 计算效应量
+eta_squared <- SS_effect / SS_total
+partial_eta_squared <- eta_squared / (1 + eta_squared)
+
+# 输出效应量
+print(eta_squared)
+print(partial_eta_squared)
+```
+
+##Result
+lower trustworthiness ratings for faces in the systole-self  compared with those in the other-slow, and other-fast . No difference in the ratings given to faces in the other-slow and other-fast conditions. 
+
+linear mixed model regression analysis : only the main effect of rhythm, and not its interaction with trustworthiness, levels, was found to be significant.
+
+#Study 3
+```{r load data}
+T23<- read_excel("data/Data_JOTandJOTD_mm.xlsx")
+df.study3 <- T23 %>%
+   dplyr::select(part,trial,
+                 heart,
+                 trust,
+                 rating,
+                 study
+                 )%>%
+  dplyr::filter(study == 3) %>%
+
+ dplyr::mutate(heart = case_when(heart == "1" ~ "Self Heart",
+                                  heart == "2" ~ "Other-Slow",
+                                  heart == "3" ~ "Other-Fast")) %>%
+
+  dplyr::group_by(heart,rating) %>%
+    dplyr::ungroup()
+    
+
+T2$part<-factor(T2$part)
+T2$heart<-factor(T2$heart)
+T2$pic<-factor(T2$pic)
+T2$study=factor(T2$study)
+
+```
+
+##Descriptive Analysis
+```{r ggplot}
+p[[1]] <- ggplot2::ggplot(df.study3, aes(x = heart, y = rating, fill =heart,)) +
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + 
+  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
+  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) + 
+  ggplot2::labs(x = "", y = "Rating", title = "RainCloud Plot of Rating by Heart")
+names(p)[1] <- "RainCloud Plot"; p[[1]]
+ggsave(filename = "./picture/chp11/plot8.png", plot = p[[1]], height = 5, width = 10, dpi = 300)
+
+
+p[[2]] <- p[[1]] +
+  ggplot2::theme_bw() + 
+  ggplot2::theme(legend.position = "none",
+                 axis.text = element_text(size = 12),
+                 axis.title = element_text(size = 14),
+                 strip.text = element_text(size = 14),
+                 plot.title = element_text(size = 14),
+                 strip.background = element_blank(), 
+                 panel.grid.major=element_blank(), 
+                 panel.grid.minor=element_blank(), 
+                 panel.border=element_blank(), 
+                 text=element_text(family='Times New Roman'), 
+                
+                 ) 
+names(p)[2] <- "APA theme"; p[[2]]+theme(text=element_text(size=16,  family="serif"))
+ggsave(filename = "./picture/chp11/plot17.png", plot = p[[2]], height = 6, width = 8, dpi = 300)
+```
+
+# Results
+Diastole study data
+```{r}
+#从数据框T2中选择study列等于3的行，并将结果赋值给TD
+TD=T2[which(T2$study==3),]  
+
+#对数据框TD中的trial变量进行标准化处理，并将处理结果赋值给TD$trial
+TD$trial<-scale(TD$trial,center=TRUE,scale= TRUE)
+
+##模型比较
+#使用lmer函数建立一个线性混合效应模型（Linear Mixed Effects Model）;rating~(1|pic)：指定了模型的公式，即rating作为响应变量，pic作为随机效应变量;(1|pic)表示在pic变量水平上引入一个随机截距项，表示每个pic水平上存在一个随机效应;data=TD：指定了模型的数据来源，即数据框TD。将这个模型建立后，可以通过调用d0来访问模型的结果，包括固定效应估计、随机效应估计、模型拟合优度等等。
+d0=lmer(rating~(1|pic), data=TD)
+#建立了一个线性混合效应模型，用于分析rating变量与part和pic两个因子之间的关系。模型中的rating~ (1|part)+(1|pic)表示rating变量作为响应变量，同时考虑了part和pic作为随机效应变量。(1|part)表示在part变量水平上引入一个随机截距项，表示每个part水平上存在一个随机效应；(1|pic)表示在pic变量水平上引入一个随机截距项，表示每个pic水平上存在一个随机效应。数据来源为TD数据框。通过建立这个模型，可以分析rating变量与part和pic之间的关系，并可以获取模型的结果，如固定效应估计、随机效应估计、模型拟合优度等。
+d1=lmer(rating~ (1|part)+(1|pic), data=TD)
+#建立了一个线性混合效应模型，用于分析rating变量与heart、part和pic三个因子之间的关系。其中，heart是作为固定效应变量，part和pic是作为随机效应变量。模型的优化算法使用了"bobyqa"，并设置了最大迭代次数为2e5。
+d2=lmer(rating~ heart+ (1|part)+(1|pic), data=TD,control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+#anova(d0, d1, d2)是一个用于比较三个线性混合效应模型（d0, d1, d2）之间的拟合优度的函数。
+anova(d0,d1,d2)
+#建立线性混合效应模型，rating是因变量，trust是固定效应变量，part和pic是随机效应变量
+d2=lmer(rating~ trust+ (1|part)+(1|pic), data=TD)
+#建立线性混合效应模型，rating是因变量，heart和trust是固定效应变量，heart:trust是交互作用项，part和pic是随机效应变量
+d3=lmer(rating~ heart:trust+trust+ (1|part)+(1|pic), data=TD)
+
+#执行anova(d0, d1, d2, d3)将比较四个线性混合效应模型（d0, d1, d2, d3）之间的拟合优度
+anova(d0,d1,d2,d3)
+#该图形显示了模型d2中所有固定效应的边际效应
+plot(allEffects(d2)) # just for quick visualization not the plots in the manuscript
+```
+
+
+```{r}
+# d2拟合线性混合效应模型
+d22<-lmer(rating~ trust+ (1|part)+(1|pic), data=TD)
+# 进行方差分析
+anova_result <- anova(d22)
+
+# 输出方差分析结果
+print(anova_result)
+
+# 提取方差分析结果的SS（平方和）和MS（均方）
+SS_total <- sum(anova_result$"Sum Sq")
+SS_effect <- anova_result$"Sum Sq"[]  # 根据具体情况选择相应的效应项
+df_effect <- anova_result$"Df"[]
+MS_effect <- SS_effect / df_effect
+
+# 计算效应量
+eta_squared <- SS_effect / SS_total
+partial_eta_squared <- eta_squared / (1 + eta_squared)
+
+# 输出效应量
+print(eta_squared)
+print(partial_eta_squared)
+
+
+# d3拟合线性混合效应模型
+d33 <- lmer(rating~ heart:trust+trust+ (1|part)+(1|pic), data=TD)
+# 进行方差分析
+anova_result <- anova(d33)
+
+# 输出方差分析结果
+print(anova_result)
+
+# 提取方差分析结果的SS（平方和）和MS（均方）
+SS_total <- sum(anova_result$"Sum Sq")
+SS_effect <- anova_result$"Sum Sq"[2]  # 根据具体情况选择相应的效应项
+df_effect <- anova_result$"Df"[2]
+MS_effect <- SS_effect / df_effect
+
+# 计算效应量
+eta_squared <- SS_effect / SS_total
+partial_eta_squared <- eta_squared / (1 + eta_squared)
+
+# 输出效应量
+print(eta_squared)
+print(partial_eta_squared)
+```
+
+both studies
+```{r}
+#对数据框T2中的trial变量进行标准化处理，并将处理结果赋值给T2$trial
+T2$trial<-scale(T2$trial,center=TRUE,scale= TRUE)
+
+##模型比较
+#使用lmer函数建立一个线性混合效应模型（Linear Mixed Effects Model）;rating~(1|pic)：指定了模型的公式，即rating作为响应变量，pic作为随机效应变量;(1|pic)表示在pic变量水平上引入一个随机截距项，表示每个pic水平上存在一个随机效应;data=T2：指定了模型的数据来源，即数据框T2。将这个模型建立后，可以通过调用d0来访问模型的结果，包括固定效应估计、随机效应估计、模型拟合优度等等。
+t0=lmer(rating~ (1|pic), data=T2)
+#建立了一个线性混合效应模型，用于分析rating变量与part和pic两个因子之间的关系。模型中的rating~ (1|part)+(1|pic)表示rating变量作为响应变量，同时考虑了part和pic作为随机效应变量。(1|part)表示在part变量水平上引入一个随机截距项，表示每个part水平上存在一个随机效应；(1|pic)表示在pic变量水平上引入一个随机截距项，表示每个pic水平上存在一个随机效应。数据来源为TD数据框。通过建立这个模型，可以分析rating变量与part和pic之间的关系，并可以获取模型的结果，如固定效应估计、随机效应估计、模型拟合优度等。
+t1=lmer(rating~ (1|part) +(1|pic), data=T2)
+#建立了一个线性混合效应模型，用于分析rating变量与trust、part和pic三个因子之间的关系。其中，trust是作为固定效应变量，part和pic是作为随机效应变量。
+t2=lmer(rating~ trust+ (1|part)+(1|pic), data=T2)
+#建立了一个线性混合效应模型，用于分析rating变量与trust、heart、part和pic三个因子之间的关系。其中，trust、heart是作为固定效应变量，part和pic是作为随机效应变量。
+t3=lmer(rating~ trust+heart+ (1|part)+(1|pic), data=T2)
+#anova(t0,t1,t2,t3)是一个用于比较四个线性混合效应模型（t0,t1,t2,t3）之间的拟合优度的函数。
+anova(t0,t1,t2,t3)
+#建立了一个线性混合效应模型，用于分析rating变量与trust、study和pic、part四个因子之间的关系。其中，trust、study是作为固定效应变量，part和pic是作为随机效应变量。模型的优化算法使用了"bobyqa"，并设置了最大迭代次数为2e5。
+t3=lmer(rating~ trust+study+ (1|part)+(1|pic), data=T2,control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#anova(t2,t3)是一个用于比较两个个线性混合效应模型（t2,t3）之间的拟合优度的函数。
+anova(t2,t3)
+#建立了一个线性混合效应模型，用于分析rating变量与trust、study、heart、part和pic五个因子之间的关系。其中，trust、study、heart是作为固定效应变量，part和pic是作为随机效应变量。
+t3=lmer(rating~ trust+study+ heart+ (1|part)+(1|pic), data=T2)
+#建立了一个线性混合效应模型，用于分析rating变量与trust、study、heart、part和pic五个因子之间的关系。其中，trust、study、heart是作为固定效应变量，study*heart是交互作用项，part和pic是作为随机效应变量。
+t4=lmer(rating~ trust+study*heart+(1|part)+(1|pic), data=T2)
+#anova(t2,t3,t4)是一个用于比较三个线性混合效应模型（t2,t3,t4）之间的拟合优度的函数。
+anova(t2,t3,t4)
+#该图形显示了模型t4中所有固定效应的边际效应
+plot(allEffects(t4)) # just for quick visualization not the plots in the manuscript
+
+```
+
+```{r}
+# t44拟合线性混合效应模型
+t4<-lmer(rating~trust+study:heart+(1|part)+(1|pic), data=T2)
+# 进行方差分析
+anova4_result <- anova(t4)
+
+# 输出方差分析结果
+print(anova4_result)
+
+# 提取方差分析结果的SS（平方和）和MS（均方）
+SS_total <- sum(anova4_result$"Sum Sq")
+SS_effect <- anova4_result$"Sum Sq"[2]  # 根据具体情况选择相应的效应项
+df_effect <- anova4_result$"Num DF"[2]
+MS_effect <- SS_effect / df_effect
+
+# 计算效应量
+eta_squared <- SS_effect / SS_total
+partial_eta_squared <- eta_squared / (1 + eta_squared)
+
+# 输出效应量
+print(eta_squared)
+print(partial_eta_squared)
+```
