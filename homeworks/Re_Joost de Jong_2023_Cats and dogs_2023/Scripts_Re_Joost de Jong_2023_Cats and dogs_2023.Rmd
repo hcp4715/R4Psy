@@ -1,0 +1,134 @@
+---
+title: "Adaptive Speed of Encoding: Experiment 1"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r echo = T, results = 'hide', message=FALSE} 
+# 根据作者提供的function的文件来安装，若有报错提示还有未安装的包，就继续安装直到能跑完为止
+
+install.packages("circular")
+install.packages("CircStats")
+install.packages("nlstools")
+install.packages("nls.multstart")
+install.packages("patchwork")
+library(circular)
+library(CircStats)
+library(nlstools)
+library(nls.multstart)
+library(patchwork)
+source('functions_adwm.R')
+```
+
+## Read in data
+```{r}
+exp1_dt_raw <- read_dt('./exp1_data') #读取数据
+exp1_dt_raw <- exp1_dt_raw[presentation_time !=20]
+#删除“exp1_dt_raw”数据框中所有“presentation_time”列中值为20的行
+```
+
+## Density plot
+```{r} 
+# 生成密度图
+dplot <- ggplot(exp1_dt_raw, 
+                aes(x=error_angle, 
+                    group=as.factor(presentation_time),
+                    color=as.factor(presentation_time))) +
+  geom_density(size=1.5) +
+  scale_colour_grey(start = 0.75, end = 0., 
+                    name='Presentation\ntime (ms)') +
+  scale_x_continuous(name='Error Angle (rad)', 
+                     limits=c(-pi, pi),
+                     breaks=c(-pi, 0, pi),
+                     labels=c(expression(-pi), 0, expression(pi)))+
+#修改x轴标签为“Error Angle (rad)”；设置x轴的显示范围为-π到π；设置x轴标签刻度为-π，0和π；使用LaTeX表达式的方式设置x轴标签刻度。
+  theme(legend.position = c(0.6, 0.7)) +
+  theme_cowplot()#调整主题风格
+
+dplot #将生成的图保存到文件中，分别设置了dpi、宽度和高度
+#ggsave('exp1_dplot.png', dplot, dpi=600, width=4, height=3)
+```
+
+## Effect of Block
+```{r}
+#exp1_summary_boot_dt <- bootstrap_adwm(exp1_dt_raw, 
+#                                       c('block_type'), 
+#                                       n_iter = 100)
+#save(exp1_summary_boot_dt, file="exp1_summary_boot_dt.RData")
+
+load("./exp1_summary_boot_dt.RData") #加载数据文件
+```
+
+### Encoding curves
+```{r}
+color_indices <- c(4, 1)#定义了一个名为color_indices的变量，其中包含了两个数字4和1，它们将用作后面绘图时的颜色索引
+plot_colours <- brewer.pal(max(color_indices), 'RdBu')[color_indices]
+#创建具有特定颜色数量和名称的调色板
+
+exp1_encoding_plot <- plot_encoding_rc(exp1_summary_boot_dt$summary_dt, 
+                 c('block_type'), 
+                 color_indices=c(4, 1), exp1_summary_boot_dt$pars_dt)#生成编码曲线图
+
+exp1_encoding_plot <- exp1_encoding_plot +
+  scale_colour_manual(values=plot_colours, 
+                      labels = c('Long', 
+                                 'Short'),
+                      name='Blocked presentation time')#对绘图进行了颜色调整
+
+exp1_encoding_plot #输出生成的图表
+#ggsave('exp3a_encoding_curves.png', dpi=500, width=5, height=3)
+```
+
+### Parameter plots
+```{r}
+exp1_summary_boot_dt$pars_dt$block_type <- 
+  factor(exp1_summary_boot_dt$pars_dt$block_type, 
+         levels=c("'short'", "'long'")) #字符串值转换为因子形式的变量
+exp1_parplot <- plot_parameter_summary(exp1_summary_boot_dt$pars_dt, 
+                       c('block_type'),
+                       color_indices=c(1, 4)) #生成参数概要图表
+
+x_axis <- ggdraw() +
+  draw_label(expression(paste('Blocked presentation time')))#创建一个绘图对象（空白画布）
+
+exp1_parplot <- exp1_parplot &
+  scale_x_discrete(labels = c('Short', 'Long'))#为x轴定义标签
+
+exp1_parplot <- exp1_parplot / x_axis +
+  plot_layout(widths = c(1, 2), height=c(1, 0.1)) #调整绘图的宽度、高度和位置
+
+exp1_parplot #输出生成的图表
+#ggsave('exp3a_parplot.png', dpi=500, width=6, height=3)
+```
+
+```{r}
+# create full plot with both encoding curve and par. estimates
+exp1_fullplot <- exp1_encoding_plot / exp1_parplot #将已经生成的曲线图和参数概要图联合在一起
+ggsave('exp1_fullplot.png', width=5, height=6, dpi=500)
+#将合成后的图表保存到指定文件名
+ggsave('exp1_fullplot.tiff', 
+       plot = exp1_fullplot,
+       width=5, height=6, dpi=500)#将合成后的图表存储为TIFF格式
+
+```
+
+### Get stats
+```{r}
+# Encoding speed
+exp1_summary_boot_dt$stats_dt[, median(coefficient_rate)]#输出编码曲线速度参数的中位数
+exp1_summary_boot_dt$stats_dt[, median(t_value_rate)]#输出编码曲线速度参数的t值中位数
+exp1_summary_boot_dt$stats_dt[, median(p_value_rate)]#输出编码曲线速度参数的p值中位数
+exp1_summary_boot_dt$stats_dt[, median(BF10_rate)]#输出了贝叶斯因子BF10的中位数
+exp1_summary_boot_dt$stats_dt[, median(dBIC_rate)]#输出了dBIC（对数Bayes信息准则）中位数
+```
+
+```{r}
+# Capacity 
+exp1_summary_boot_dt$stats_dt[, median(coefficient_capacity)]
+exp1_summary_boot_dt$stats_dt[, median(t_value_capacity)]
+exp1_summary_boot_dt$stats_dt[, median(p_value_capacity)]
+exp1_summary_boot_dt$stats_dt[, median(BF10_capacity)]
+exp1_summary_boot_dt$stats_dt[, median(dBIC_capacity)]
+#这一段代码用于输出实验1中编码速度参数和容量参数的统计信息。具体而言，对于每个参数，该代码会输出以下五个值：中位数的点估计；中位数的t检验值；中位数的p值；BF10的中位数；dBIC的中位数。这些值可以帮助研究人员评估参数的显著性，并决定是否需要进一步研究和验证
+```
