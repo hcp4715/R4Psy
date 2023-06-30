@@ -1,0 +1,97 @@
+﻿Participant,Months,Gender,Condition,Order,Task,Outcome,Looking,TaskOrder
+P03,11.0657534,M,D,2,Efficient-Agent,Expected,15.88433938,1
+P09,11.328767,M,B,2,Efficient-Agent,Expected,4.75900163,2
+P11,11.854794,F ,C,1,Efficient-Agent,Expected,3.405062485,1
+P12,11.723287,M,A,1,Efficient-Agent,Expected,3.829268591,2
+P14,11.328767,M,C,1,Efficient-Agent,Expected,5.606151682,1
+P16,11.361643,F ,C,1,Efficient-Agent,Expected,3.057079126,1
+P18,11.09863,F ,A,1,Efficient-Agent,Expected,15.73374841,2
+P19,11,M,D,2,Efficient-Agent,Expected,9.912610345,1
+P20,10.723287,F ,C,1,Efficient-Agent,Expected,10.3340998,1
+P21,11.59178,M,B,2,Efficient-Agent,Expected,15.37078278,2
+P22,11.427397,M,D,2,Efficient-Agent,Expected,2.454682473,1
+P23,10.526027,M,C,1,Efficient-Agent,Expected,9.657632461,1
+P24,11.49315,F ,A,1,Efficient-Agent,Expected,11.88742275,2
+P25,11.164383,M,D,2,Efficient-Agent,Expected,16.3199723,1
+P26,11.230137,M,D,2,Efficient-Agent,Expected,6.520968614,1
+P27,11.09863,F ,B,2,Efficient-Agent,Expected,3.929564909,2
+P28,10.657534,F ,B,2,Efficient-Agent,Expected,2.768858527,2
+P29,10.427397,F ,A,1,Efficient-Agent,Expected,2.010861845,2
+P30,10.624657,M,B,2,Efficient-Agent,Expected,2.477235115,2
+P35,11.49315,M,A,1,Efficient-Agent,Expected,7.953457532,2
+P37,10.756164,F ,A,1,Efficient-Agent,Expected,2.813465929,2
+P38,11.0657534,M,B,2,Efficient-Agent,Expected,11.66481024,2
+P39,10.69041,F ,C,2,Efficient-Agent,Expected,4.721636067,1
+P40,10.821917,M,D,2,Efficient-Agent,Expected,18.07323105,1
+P03,11.0657534,M,D,1,Efficient-Agent,Unexpected,22.78473221,1
+P09,11.328767,M,B,1,Efficient-Agent,Unexpected,9.964808557,2
+P11,11.854794,F ,C,2,Efficient-Agent,Unexpected,9.992407935,1
+P12,11.723287,M,A,2,Efficient-Agent,Unexpected,11.19010803,2
+P14,11.328767,M,C,2,Efficient-Agent,Unexpected,6.705919847,1
+P16,11.361643,F ,C,2,Efficient-Agent,Unexpected,11.40385301,1
+P18,11.09863,F ,A,2,Efficient-Agent,Unexpected,25.89728797,2
+P19,11,M,D,1,Efficient-Agent,Unexpected,19.26404283,1
+P20,10.723287,F ,C,2,Efficient-Agent,Unexpected,15.83405833,1
+P21,11.59178,M,B,1,Efficient-Agent,Unexpected,3.989219917,2
+P22,11.427397,M,D,1,Efficient-Agent,Unexpected,14.24682799,1
+P23,10.526027,M,C,2,Efficient-Agent,Unexpected,11.71712923,1
+P24,11.49315,F ,A,2,Efficient-Agent,Unexpected,2.323352168,2
+P25,11.164383,M,D,1,Efficient-Agent,Unexpected,6.504539687,1
+P26,11.230137,M,D,1,Efficient-Agent,Unexpected,9.271229535,1
+P27,11.09863,F ,B,1,Efficient-Agent,Unexpected,4.402247286,2
+P28,10.657534,F ,B,1,Efficient-Agent,Unexpected,3.9402149,2
+P29,10.427397,F ,A,2,Efficient-Agent,Unexpected,23.09310322,2
+P30,10.624657,M,B,1,Efficient-Agent,Unexpected,2.730395639,2
+P35,11.49315,M,A,2,Efficient-Agent,Unexpected,7.831264792,2
+P37,10.756164,F ,A,2,Efficient-Agent,Unexpected,10.89149453,2
+P38,11.0657534,M,B,1,Efficient-Agent,Unexpected,37.1251814,2
+P39,10.69041,F ,C,2,Efficient-Agent,Unexpected,11.60465828,1
+P40,10.821917,M,D,2,Efficient-Agent,Unexpected,16.5732604,1
+P03,11.0657534,M,D,1,Goal-Directed,Expected,3.62367683,2
+P06,11.460273,F ,A,2,Goal-Directed,Expected,4.092512066,1
+P09,11.328767,M,B,1,Goal-Directed,Expected,14.873134,1
+P11,11.854794,F ,C,2,Goal-Directed,Expected,2.472291661,2
+P12,11.723287,M,A,2,Goal-Directed,Expected,5.716782394,1
+P13,11.328767,F ,B,1,Goal-Directed,Expected,2.74439628,1
+P14,11.328767,M,C,2,Goal-Directed,Expected,5.779138881,2
+P16,11.361643,F ,C,2,Goal-Directed,Expected,4.439525225,2
+P18,11.09863,F ,A,2,Goal-Directed,Expected,8.41790507,1
+P19,11,M,D,1,Goal-Directed,Expected,3.271601942,2
+P20,10.723287,F ,C,2,Goal-Directed,Expected,1.750828523,2
+P21,11.59178,M,B,1,Goal-Directed,Expected,6.733646914,1
+P22,11.427397,M,D,1,Goal-Directed,Expected,4.142620562,2
+P23,10.526027,M,C,2,Goal-Directed,Expected,5.099636368,2
+P24,11.49315,F ,A,2,Goal-Directed,Expected,3.074137524,1
+P25,11.164383,M,D,1,Goal-Directed,Expected,3.412741571,2
+P26,11.230137,M,D,1,Goal-Directed,Expected,5.788950018,2
+P27,11.09863,F ,B,1,Goal-Directed,Expected,2.682554121,1
+P28,10.657534,F ,B,1,Goal-Directed,Expected,4.322510049,1
+P29,10.427397,F ,A,2,Goal-Directed,Expected,10.49650434,1
+P37,10.756164,F ,A,2,Goal-Directed,Expected,1.755265344,1
+P38,11.0657534,M,B,1,Goal-Directed,Expected,10.98969814,1
+P39,10.69041,F ,C,1,Goal-Directed,Expected,1.851984787,2
+P40,10.821917,M,D,1,Goal-Directed,Expected,8.697840465,2
+P03,11.0657534,M,D,2,Goal-Directed,Unexpected,15.50335228,2
+P06,11.460273,F ,A,1,Goal-Directed,Unexpected,29.07891695,1
+P09,11.328767,M,B,2,Goal-Directed,Unexpected,17.07615705,1
+P11,11.854794,F ,C,1,Goal-Directed,Unexpected,9.226916593,2
+P12,11.723287,M,A,1,Goal-Directed,Unexpected,2.398486327,1
+P13,11.328767,F ,B,2,Goal-Directed,Unexpected,5.057746444,1
+P14,11.328767,M,C,1,Goal-Directed,Unexpected,4.816965632,2
+P16,11.361643,F ,C,1,Goal-Directed,Unexpected,8.508738369,2
+P18,11.09863,F ,A,1,Goal-Directed,Unexpected,17.34241368,1
+P19,11,M,D,2,Goal-Directed,Unexpected,2.305154255,2
+P20,10.723287,F ,C,1,Goal-Directed,Unexpected,4.521685995,2
+P21,11.59178,M,B,2,Goal-Directed,Unexpected,4.846505957,1
+P22,11.427397,M,D,2,Goal-Directed,Unexpected,2.01913801,2
+P23,10.526027,M,C,1,Goal-Directed,Unexpected,6.934845558,2
+P24,11.49315,F ,A,1,Goal-Directed,Unexpected,12.36647908,1
+P25,11.164383,M,D,2,Goal-Directed,Unexpected,1.001807008,2
+P26,11.230137,M,D,2,Goal-Directed,Unexpected,7.009946912,2
+P27,11.09863,F ,B,2,Goal-Directed,Unexpected,2.987906671,1
+P28,10.657534,F ,B,2,Goal-Directed,Unexpected,2.739373893,1
+P29,10.427397,F ,A,1,Goal-Directed,Unexpected,7.157997966,1
+P37,10.756164,F ,A,1,Goal-Directed,Unexpected,9.767573451,1
+P38,11.0657534,M,B,2,Goal-Directed,Unexpected,6.455255815,1
+P39,10.69041,F ,C,1,Goal-Directed,Unexpected,19.87304575,2
+P40,10.821917,M,D,1,Goal-Directed,Unexpected,5.065326598,2
