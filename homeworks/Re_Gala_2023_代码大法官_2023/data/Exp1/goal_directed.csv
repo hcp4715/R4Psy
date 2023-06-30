@@ -1,0 +1,49 @@
+﻿Participant,Months,Gender,Condition,Order,Object_Preferred,Outcome,Looking,TaskOrder
+P03,11.0657534,M,D,1,green,New Location,3.62367683,2
+P06,11.460273,F ,A,2,green,New Location,4.092512066,1
+P09,11.328767,M,B,1,green,New Location,14.873134,1
+P11,11.854794,F ,C,2,green,New Location,2.472291661,2
+P12,11.723287,M,A,2,green,New Location,5.716782394,1
+P13,11.328767,F ,B,1,green,New Location,2.74439628,1
+P14,11.328767,M,C,2,green,New Location,5.779138881,2
+P16,11.361643,F ,C,2,green,New Location,4.439525225,2
+P18,11.09863,F ,A,2,blue,New Location,8.41790507,1
+P19,11,M,D,1,blue,New Location,3.271601942,2
+P20,10.723287,F ,C,2,blue,New Location,1.750828523,2
+P21,11.59178,M,B,1,blue,New Location,6.733646914,1
+P22,11.427397,M,D,1,blue,New Location,4.142620562,2
+P23,10.526027,M,C,2,blue,New Location,5.099636368,2
+P24,11.49315,F ,A,2,blue,New Location,3.074137524,1
+P25,11.164383,M,D,1,blue,New Location,3.412741571,2
+P26,11.230137,M,D,1,blue,New Location,5.788950018,2
+P27,11.09863,F ,B,1,green,New Location,2.682554121,1
+P28,10.657534,F ,B,1,green,New Location,4.322510049,1
+P29,10.427397,F ,A,2,blue,New Location,10.49650434,1
+P37,10.756164,F ,A,2,blue,New Location,1.755265344,1
+P38,11.0657534,M,B,1,blue,New Location,10.98969814,1
+P39,10.69041,F ,C,1,green,New Location,1.851984787,2
+P40,10.821917,M,D,1,green,New Location,8.697840465,2
+P03,11.0657534,M,D,2,green,New Object,15.50335228,2
+P06,11.460273,F ,A,1,green,New Object,29.07891695,1
+P09,11.328767,M,B,2,green,New Object,17.07615705,1
+P11,11.854794,F ,C,1,green,New Object,9.226916593,2
+P12,11.723287,M,A,1,green,New Object,2.398486327,1
+P13,11.328767,F ,B,2,green,New Object,5.057746444,1
+P14,11.328767,M,C,1,green,New Object,4.816965632,2
+P16,11.361643,F ,C,1,green,New Object,8.508738369,2
+P18,11.09863,F ,A,1,blue,New Object,17.34241368,1
+P19,11,M,D,2,blue,New Object,2.305154255,2
+P20,10.723287,F ,C,1,blue,New Object,4.521685995,2
+P21,11.59178,M,B,2,blue,New Object,4.846505957,1
+P22,11.427397,M,D,2,blue,New Object,2.01913801,2
+P23,10.526027,M,C,1,blue,New Object,6.934845558,2
+P24,11.49315,F ,A,1,blue,New Object,12.36647908,1
+P25,11.164383,M,D,2,blue,New Object,1.001807008,2
+P26,11.230137,M,D,2,blue,New Object,7.009946912,2
+P27,11.09863,F ,B,2,green,New Object,2.987906671,1
+P28,10.657534,F ,B,2,green,New Object,2.739373893,1
+P29,10.427397,F ,A,1,blue,New Object,7.157997966,1
+P37,10.756164,F ,A,1,blue,New Object,9.767573451,1
+P38,11.0657534,M,B,2,blue,New Object,6.455255815,1
+P39,10.69041,F ,C,1,green,New Object,19.87304575,2
+P40,10.821917,M,D,1,green,New Object,5.065326598,2
