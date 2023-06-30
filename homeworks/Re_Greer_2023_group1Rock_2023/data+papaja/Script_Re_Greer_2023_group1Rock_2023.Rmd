@@ -1,0 +1,2024 @@
+---
+title             : "Reproduction of *Tracing the emergence of the memorability benefit*"
+shorttitle        : "papaja"
+
+author: 
+  - name          : "He Yutong"
+    affiliation   : "1"
+    corresponding : yes 
+    address       : "#122 Ninghai Rd, Gulou District, Nanjing"
+    email         : "sjgzhyt@qq.com"
+    role:         
+      - "Writing - Original Draft Preparation"
+      - "Writing - Introduction & Result & Editing"
+  - name          : "Lin Ye"
+    affiliation   : "1"
+    role:
+      - "Writing - Original Draft Preparation"
+      - "Writing - Introduction & Result"
+  - name          : "Liu Yikang"
+    affiliation   : "1"
+    role:
+      - "Writing - Result & Discussion"
+  - name          : "Cai Yajing"
+    affiliation   : "1"
+    role:
+      - "Writing - Introduction & Discussion"
+  - name          : "Li Xianzhi"
+    affiliation   : "1"
+    role:
+      - "Writing - Method & Discussion"
+
+affiliation:
+  - id            : "1"
+    institution   : "Nanjing Normal Unviersity"
+
+authornote: |
+
+abstract: |
+  We reproduced a study and explored how a memorability benefit emerges as visual information is encoded into Very Long-Term Memory through Visual Working Memory. 
+  
+  The researchers proposed three hypotheses: efficiency (memorable stimuli require fewer cognitive resources to encode into long-term memory), competitiveness (memorable stimuli are more successful in obtaining cognitive resources), and stickiness (memorable stimuli are less likely to be forgotten after passing through the encoding bottleneck). They conducted two experiments, manipulating stimulus memorability, set size, and competition among stimuli during working memory tasks. 
+  
+  Basically identical to the original results, our results supported the efficiency and competitiveness hypotheses in working memory tasks, but only the efficiency advantage translated into improved performance in long-term memory. Furthermore, memorable stimuli were found to be less likely to be forgotten, supporting the stickiness hypothesis. Overall, the study shows that the memorability benefit emerges across multiple cognitive processes.
+  
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "Reproducibility, R, Memorability benefi, VLTM, VWM"
+wordcount         : "X"
+
+bibliography      : 
+  - "S0028393220300798.bib"
+  - "chapter_12-r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : 
+  papaja::apa6_pdf:
+    latex_engine: xelatex
+---
+
+```{r setup, include = FALSE}
+# check the installation of pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") } 
+
+# use p_load to download packages
+pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "bayestestR", "bruceR", "introdataviz", "here")
+
+r_refs("chapter_12-r-references.bib")
+
+set_here()# set working directory
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+In this paper we will try to reproduce the results of *Tracing the emergence of the memorability benefit*(https://doi.org/10.1016/j.cognition.2023.105489). Thus, we adopted the code from: https://osf.io/jgqh7/. 
+
+# Introduction
+
+Humans have a remarkable ability to store large numbers of images in visual long-term memory(VLTM), but not all visual information can be remembered equally well.
+
+The variability in VLTM encoding success has been traditionally studied from a subject-centric perspective, focusing on individual differences in memory encoding processes.
+
+However, this approach overlooks stimulus-intrinsic factors that consistently influence memory encoding success across individuals. Recent research has shown that certain stimuli are more likely to be remembered by different individuals, regardless of their individual differences in memory encoding processes[@isola_what_2014].This indicates the presence of stimulus-intrinsic properties that make an image more memorable or forgettable.
+
+While memorability has been studied across various stimuli, no previous research has examined when the distinction between memorable and forgettable stimuli occurs during the encoding stage of VLTM. 
+
+The process of visual information being encoded into VLTM is influenced by the capacity-limited visual working memory (VWM) system. Specifically, high VWM capacity predicts better subsequent VLTM performance for stimuli encoded during the VWM task.
+
+The relationship between VWM and VLTM suggests two possible mechanisms for the emergence of the memorability benefit: efficiency and competitiveness. Memorable stimuli may be more efficiently represented in VWM, requiring fewer cognitive resources(the former), or they may have a competitive advantage in obtaining the necessary cognitive resources(the latter). 
+
+Additionally, the memorability benefit may continue to develop even after visual information passes through the VWM bottleneck, with memorable stimuli being less prone to forgetting and better retained in VLTM.
+
+Thus, the researchers aim to investigate how the memorability benefit emerges by examining how much visual information passes through visual working memory (VWM) and “sticks” in visual long-term memory (VLTM).
+
+# Methods
+## Participants
+In Experiment 1(faces), 156 psychology students from the University of Toronto Mississauga (mean age = 19.61 years, SD = 3.645, 105 females) were recruited.
+In Experiment 2(objects), the authors used Prolific to recruit 156 young adults (mean age = 24.35 years; SD = 3.521; 92 females) who resided in the U.S. or Canada at the time of the experiment.
+
+## Stimuli and Procedure
+![](stim.jpg){fig-align="center"}
+The researchers conducted two experiments to examine how memorability benefits emerge by manipulating the stimulus memorability, set size, and degree of competition among stimuli as participants encoded them in the context of a working memory task. Subsequently, their memory for the encoded stimuli was tested in a VLTM task. 
+Specifically, in Experiment 1, they first selected the top 468 memorable face images and the top 468 forgettable face images from [@bainbridge_intrinsic_2013](see Fig. 1).
+In Experiment 2, they first selected the top 234 memorable object images and the top 234 forgettable object images from [@saito_judgments_2023](see Fig. 1).
+![](vwm_task.jpg) 
+![](VLTM_task.jpg)
+
+## Apparatus 
+The experiments were programmed and run using Inquisit 6 (Inquisit 6, 2020). Since the experiments were conducted online, the computers and monitors participants used were variable. Thus, the size of the stimuli was adjusted according to the monitor size of the participants' computers. More precisely, each stimulus was presented within an imaginary square whose side was 12% the size of the shorter side of their computer monitors.
+
+## Data analysis
+To confirm that VWM performance predicted VLTM performance, researchers conducted a series of correlational analyses between VWM and VLTM performance. To quantify memory performance using the same metric for both VWM and VLTM recognition tasks, they used the area under the receiver operating characteristic curves (AUC). The receiver operating characteristic curve is drawn by plotting the cumulative hit rate (the proportion of “old” responses when the stimulus is old) on the y-axis against the cumulative false alarm rate (the proportion of “old” responses when the stimulus is new) on the x-axis from the highest confidence old response (Definitely Old) to the lowest confidence old response (or the highest confidence new response (Definitely New)). The AUC will equal 1 when participants recognized all the encoded information with highest confidence (Definitely Old) and rejected all the new information with highest confidence (Definitely New). On the other hand, when participants cannot discriminate old from new information at all, the AUC will be equal to 0.5. 
+
+To investigate the efficiency and competitiveness hypotheses, they conducted a series of repeated measures ANOVAs examining the differential impacts of Array Type and Memorability on AUC for both VWM and VLTM.
+
+To compute the proportion with which the amount of information in VWM is retained in VLTM, they defined the memory “stickiness” as (AUC for VLTM task – 0.5) / (AUC for VWM recognition task – 0.5). 
+
+To investigate the stickiness hypothesis in the context of storage efficiency, they conducted a series of repeated measures ANOVAs examining the differential impacts of Array Type and Memorability on memory stickiness.
+
+## Results
+
+In the VWM task, performance was better for memorable stimuli compared to forgettable stimuli, supporting the efficiency hypothesis. 
+In addition, the researchers found that when in direct competition, memorable stimuli were also better at attracting limited VWM resources than forgettable stimuli, supporting the competitiveness hypothesis. However, only the efficiency advantage translated to a performance benefit in VLTM. 
+Lastly, they found that memorable stimuli were less likely to be forgotten after they passed through the encoding bottleneck imposed by VWM, supporting the “stickiness” hypothesis. 
+Thus, their results demonstrate that the memorability benefit develops across multiple cognitive processes.
+
+```{r }
+# empty the global env
+rm(list = ls())
+
+################################ VWM_face ######################################
+data_face <- read.csv("data_VWM_ALL_face.csv") #object data
+variables <- c("subject", "current_condition", "oldnew", "oldnew_resp") #choose variables of interest
+
+#trim data
+response_frequencies <- na.omit(data_face[variables]) %>%  #gets rid of the variables we don't need
+  filter(current_condition < 8000, current_condition != 0) %>% #gets rid of practice trials
+  mutate(oldnew = recode(oldnew, "0" = "old", "5" = "new")) %>% #makes it easier to read
+  mutate(set_size = case_when(current_condition == 1300 ~ "SS3_Mem",
+                              current_condition == 1305 ~ "SS3_Mem",
+                              current_condition == 2030 ~ "SS3_Forg",
+                              current_condition == 2035 ~ "SS3_Forg",
+                              current_condition == 3600 ~ "SS6_Mem",
+                              current_condition == 3605 ~ "SS6_Mem",
+                              current_condition == 4060 ~ "SS6_Forg",
+                              current_condition == 4065 ~ "SS6_Forg",
+                              current_condition == 5330 ~ "Mixed_Mem",
+                              current_condition == 5335 ~ "Mixed_Mem",
+                              current_condition == 6330 ~ "Mixed_Forg",
+                              current_condition == 6335 ~ "Mixed_Forg")) %>%
+  group_by(subject) %>% #analyse everything based on subject number
+  count(set_size, oldnew, oldnew_resp, sort = TRUE, name = "frequency") %>%
+  arrange(subject, set_size, oldnew_resp, oldnew) %>% #the order I want my stuff in
+  mutate(frequency_response = frequency/24)   #moving from frequency to proportion, there are 24 of each condition
+
+response_frequencies_wide <- response_frequencies[,c(1,2,3,4,6)] %>% #just the columns i need
+  pivot_wider(names_from = "oldnew_resp", values_from = "frequency_response") %>%
+  mutate_all(~replace(., is.na(.), 0)) # in case a participant never used a certain response, don't use n/a use 0
+
+response_frequencies_wide <- response_frequencies[, c(1,2,3,4,6)] %>% #just the columns i need
+  pivot_wider(names_from = "oldnew_resp", values_from = "frequency_response") %>%
+  mutate_all(~replace(., is.na(.), 0)) # in case a participant never used a certain response, don't use n/a use 0
+
+cumulative_response <- response_frequencies_wide %>%
+  rename(con1 = "1", con2 = "2", con3 = "3", con4 = "4", con5 = "5", con6 = "6") %>% #easier to work with
+  mutate(con1cume = con1) %>% #now we just add from left to right
+  mutate(con2cume = con1cume + con2) %>%
+  mutate(con3cume = con2cume + con3) %>%
+  mutate(con4cume = con3cume + con4) %>%
+  mutate(con5cume = con4cume + con5) %>%
+  mutate(con6cume = con5cume + con6)
+
+#AUC
+table_cumulative_response <- cumulative_response[c(1:3, 10:15)] %>% #getting rid of unnecessary colums
+  arrange(subject, set_size, oldnew)
+
+wide_cume <- table_cumulative_response %>%
+  pivot_wider(names_from = "oldnew", 
+              values_from = c(con1cume, con2cume, con3cume, con4cume, con5cume, con6cume))
+#arranging this so that every single row has the necessary X and Y values
+
+newcols <- grep("new", names(wide_cume), value = T) #what columns are the "new" ones?
+oldcols <- grep("old", names(wide_cume), value = T) #what columns are the "old" ones?
+#we need these to specify what column an x or a y value is in
+
+wide_cume$AUC = 0
+#make an empty column
+
+for(n in 1:nrow(wide_cume)){
+  wide_cume[n,]$AUC = auc(x = as.numeric(wide_cume[n, newcols]), 
+                          y = as.numeric(wide_cume[n, oldcols]), 
+                          method = "trapezoid")}
+#for every row, do the AUC formula for the specified x values ("new") and y values ("old")
+#then put the output of that formula in the AUC column
+
+AUC_table <- wide_cume[c(1:2, 15)] %>%
+  pivot_wider(names_from = "set_size", values_from = "AUC")
+#easier to read version
+
+write.csv(AUC_table, file = "./VWM_face.csv", row.names = FALSE)
+#save data
+
+################################ VWM_object ####################################
+data_object <- read.csv("data_VWM_ALL_object.csv") #object data
+variables <- c("subject", "current_condition", "oldnew", "oldnew_resp") #choose variables of interest
+
+#trim data
+response_frequencies <- na.omit(data_object[variables]) %>%  #gets rid of the variables we don't need
+  filter(current_condition < 8000) %>% #gets rid of practice trials
+  filter(current_condition != 0) %>% #this is recording participant gender/age/etc
+  mutate(oldnew = recode(oldnew, "0" = "old", "5" = "new")) %>% #makes it easier to read
+  mutate(set_size = case_when(current_condition == 1300 ~ "SS3_Mem",
+                              current_condition == 1305 ~ "SS3_Mem",
+                              current_condition == 2030 ~ "SS3_Forg",
+                              current_condition == 2035 ~ "SS3_Forg",
+                              current_condition == 3600 ~ "SS6_Mem",
+                              current_condition == 3605 ~ "SS6_Mem",
+                              current_condition == 4060 ~ "SS6_Forg",
+                              current_condition == 4065 ~ "SS6_Forg",
+                              current_condition == 5330 ~ "Mixed_Mem",
+                              current_condition == 5335 ~ "Mixed_Mem",
+                              current_condition == 6330 ~ "Mixed_Forg",
+                              current_condition == 6335 ~ "Mixed_Forg")
+         ) %>%
+  group_by(subject) %>% #analyse everything based on subject number
+  count(set_size, oldnew, oldnew_resp, sort = TRUE, name = "frequency") %>%
+  arrange(subject, set_size, oldnew_resp,oldnew) %>% #the order I want my stuff in
+  mutate(frequency_response = frequency/12)   #moving from frequency to proportion, there are 12 of each condition
+
+response_frequencies_wide <- response_frequencies[,c(1,2,3,4,6)] %>% #just the columns i need
+  pivot_wider(names_from = "oldnew_resp", values_from = "frequency_response") %>%
+  mutate_all(~replace(., is.na(.), 0)) # in case a participant never used a certain response, don't use n/a use 0
+
+cumulative_response <- response_frequencies_wide %>%
+  rename(con1 = "1", con2 = "2", con3 = "3", con4 = "4", con5 = "5", con6 = "6") %>% #easier to work with
+  mutate(con1cume = con1) %>% #now we just add from left to right
+  mutate(con2cume = con1cume + con2) %>%
+  mutate(con3cume = con2cume + con3) %>%
+  mutate(con4cume = con3cume + con4) %>%
+  mutate(con5cume = con4cume + con5) %>%
+  mutate(con6cume = con5cume + con6)
+
+#AUC
+table_cumulative_response <- cumulative_response[c(1:3,10:15)] %>% #getting rid of unnecessary colums
+  arrange(subject, set_size, oldnew)
+
+wide_cume <- table_cumulative_response %>%
+  pivot_wider(names_from = "oldnew", 
+              values_from = c(con1cume, con2cume, con3cume, con4cume, con5cume, con6cume))
+#arranging this so that every single row has the necessary X and Y values
+
+newcols <- grep("new", names(wide_cume), value = T) #what columns are the "new" ones?
+oldcols <- grep("old", names(wide_cume), value = T) #what columns are the "old" ones?
+#we need these to specify what column an x or a y value is in
+
+wide_cume$AUC = 0
+#make an empty column
+
+for(n in 1:nrow(wide_cume)){
+  wide_cume[n,]$AUC = auc(x = as.numeric(wide_cume[n, newcols]), 
+                          y = as.numeric(wide_cume[n, oldcols]), 
+                          method = "trapezoid")}
+#for every row, do the AUC formula for the specified x values ("new") and y values ("old")
+#then put the output of that formula in the AUC column
+
+AUC_table <- wide_cume[c(1:2, 15)] %>%
+  pivot_wider(names_from="set_size", values_from="AUC")
+#easier to read version
+
+write.csv(AUC_table, file = "./VWM_object.csv", row.names = FALSE)
+#save data
+
+################################ LTM_face ######################################
+data_face <- read.csv("data_LTM_ALL_face.csv") #object data
+variables <- c("subject", "current_condition", "oldnew", "oldnew_resp") #choose variables of interest
+
+#trim data
+response_frequencies <- na.omit(data_face[variables])  %>%
+  filter(current_condition < 80, current_condition != 0) %>%
+  mutate(set_size=case_when(current_condition == 10 ~ "SS3_Mem",
+                            current_condition == 15 ~ "new_Mem",
+                            current_condition == 20 ~ "SS3_Forg",
+                            current_condition == 25 ~ "new_Forg",
+                            current_condition == 30 ~ "SS6_Mem",
+                            current_condition == 35 ~ "new_Mem",
+                            current_condition == 40 ~ "SS6_Forg",
+                            current_condition == 45 ~ "new_Forg",
+                            current_condition == 50 ~ "Mixed_Mem",
+                            current_condition == 55 ~ "new_Mem",
+                            current_condition == 60 ~ "Mixed_Forg",
+                            current_condition == 65 ~ "new_Forg")) %>%
+  mutate(oldnew = recode(oldnew, "0" = "old", "5" = "new")) %>%
+  group_by(subject) %>%
+  count(set_size, oldnew_resp, oldnew, sort = TRUE, name = "frequency") %>%
+  arrange(subject, set_size, oldnew_resp, oldnew) %>%
+  mutate(frequency_response = case_when(
+          set_size == "new_Forg" ~ (frequency/72),
+          set_size == "new_Mem" ~ (frequency/72),
+          set_size == "SS3_Mem" ~ (frequency/24),
+          set_size == "SS3_Forg" ~ (frequency/24),
+          set_size == "SS6_Mem" ~ (frequency/24),
+          set_size == "SS6_Forg" ~ (frequency/24),
+          set_size == "Mixed_Mem" ~ (frequency/24),
+          set_size == "Mixed_Forg" ~ (frequency/24))) %>%
+  group_by(subject)
+
+summary(response_frequencies$subject)
+
+frequency_table <- response_frequencies[, c(1,2,3,4,6)] %>%
+  pivot_wider(names_from = "oldnew_resp", values_from = "frequency_response") %>%
+  mutate_all(~replace(., is.na(.), 0)) %>%
+  group_by(subject)
+
+cumulative_response <- frequency_table %>%
+  rename(con1 = "1", con2 = "2", con3 = "3", con4 = "4", con5 = "5", con6 = "6") %>%
+  mutate(con1cume = con1) %>%
+  mutate(con2cume = con1cume + con2) %>%
+  mutate(con3cume = con2cume + con3) %>%
+  mutate(con4cume = con3cume + con4) %>%
+  mutate(con5cume = con4cume + con5) %>%
+  mutate(con6cume = con5cume + con6) %>%
+  group_by(subject)
+
+#AUC
+table_cumulative_response <- cumulative_response[c(1:3,10:15)] %>%
+  arrange(subject, oldnew)
+
+wide_cume <- table_cumulative_response %>%
+  separate(set_size, c("size", "mem_forg"), sep = "_")
+
+new <- wide_cume[wide_cume$size == "new",] %>%
+  rename(con1cume_new = con1cume, con2cume_new = con2cume,
+         con3cume_new = con3cume, con4cume_new = con4cume,
+         con5cume_new = con5cume, con6cume_new = con6cume)
+
+everything <- merge(wide_cume, new, by = c("subject", "mem_forg")) %>%
+  filter(size.x != "new") 
+
+final_step <- everything[c(1:3,5:10,13:18)]
+
+final_step <- final_step %>%
+  rename(con1cume_old = con1cume, con2cume_old = con2cume, 
+         con3cume_old = con3cume, con4cume_old = con4cume, 
+         con5cume_old = con5cume, con6cume_old = con6cume)
+
+newcols <- grep("new", names(final_step), value = T)
+oldcols <- grep("old", names(final_step), value = T)
+
+final_step$AUC = 0
+
+for(n in 1:nrow(final_step)){
+  final_step[n,]$AUC = auc(x = as.numeric(final_step[n, newcols]), 
+                           y = as.numeric(final_step[n, oldcols]), 
+                           method = "trapezoid")}
+
+temp <- final_step[c(1,3,2,16)] %>%
+  unite("setsize", 2:3, remove = FALSE)
+
+AUC_table <- temp[c(1,2,5)] %>%
+  pivot_wider(names_from = "setsize", values_from = "AUC")
+
+write.csv(AUC_table, file = "./LTM_face.csv", row.names = FALSE)
+
+################################ LTM_object ####################################
+data_object <- read.csv("data_all_LTM_object.csv") #object data
+variables <- c("subject", "current_condition", "oldnew", "oldnew_resp") #choose variables of interest
+
+#trim data
+response_frequencies <- na.omit(data_object[variables])  %>%
+  filter(current_condition < 80) %>%
+  filter(current_condition != 0) %>% #this is because there's now a 0 in current_condition due to the seed values
+  mutate(set_size=case_when(current_condition == 10 ~ "SS3_Mem",
+                            current_condition == 15 ~ "new_Mem",
+                            current_condition == 20 ~ "SS3_Forg",
+                            current_condition == 25 ~ "new_Forg",
+                            current_condition == 30 ~ "SS6_Mem",
+                            current_condition == 35 ~ "new_Mem",
+                            current_condition == 40 ~ "SS6_Forg",
+                            current_condition == 45 ~ "new_Forg",
+                            current_condition == 50 ~ "Mixed_Mem",
+                            current_condition == 55 ~ "new_Mem",
+                            current_condition == 60 ~ "Mixed_Forg",
+                            current_condition == 65 ~ "new_Forg")) %>%
+  mutate(oldnew = recode(oldnew, "0" = "old", "5" = "new")) %>%
+  group_by(subject) %>%
+  count(set_size, oldnew_resp, oldnew, sort = TRUE, name = "frequency") %>%
+  arrange(subject, set_size, oldnew_resp, oldnew) %>%
+  mutate(frequency_response = case_when(
+            set_size == "new_Forg"~(frequency/36),
+            set_size == "new_Mem"~(frequency/36),
+            set_size == "SS3_Mem"~(frequency/12),
+            set_size == "SS3_Forg"~(frequency/12),
+            set_size == "SS6_Mem"~(frequency/12),
+            set_size == "SS6_Forg"~(frequency/12),
+            set_size == "Mixed_Mem"~(frequency/12),
+            set_size == "Mixed_Forg"~(frequency/12))) %>%
+  group_by(subject)
+
+frequency_table <- response_frequencies[, c(1,2,3,4,6)] %>%
+  pivot_wider(names_from = "oldnew_resp", values_from = "frequency_response") %>%
+  mutate_all(~replace(., is.na(.), 0)) %>%
+  group_by(subject)
+
+cumulative_response <- frequency_table %>%
+  rename(con1 = "1", con2 = "2", con3 = "3", con4 = "4", con5 = "5", con6 = "6") %>%
+  mutate(con1cume = con1) %>%
+  mutate(con2cume = con1cume + con2) %>%
+  mutate(con3cume = con2cume + con3) %>%
+  mutate(con4cume = con3cume + con4) %>%
+  mutate(con5cume = con4cume + con5) %>%
+  mutate(con6cume = con5cume + con6) %>%
+  group_by(subject)
+
+#AUC
+table_cumulative_response <- cumulative_response[c(1:3, 10:15)] %>%
+  arrange(subject, oldnew)
+
+wide_cume <- table_cumulative_response %>%
+  separate(set_size, c("size", "mem_forg"), sep = "_") 
+
+new <- wide_cume[wide_cume$size == "new",] %>%
+  rename(con1cume_new = con1cume, con2cume_new = con2cume,
+         con3cume_new = con3cume, con4cume_new = con4cume,
+         con5cume_new = con5cume, con6cume_new = con6cume)
+
+everything <- merge(wide_cume, new, by = c("subject", "mem_forg")) %>%
+  filter(size.x != "new") 
+
+final_step <- everything[c(1:3,5:10,13:18)]
+
+final_step <- final_step %>%
+  rename(con1cume_old = con1cume, con2cume_old = con2cume, 
+         con3cume_old = con3cume, con4cume_old = con4cume, 
+         con5cume_old = con5cume, con6cume_old = con6cume)
+
+newcols <- grep("new", names(final_step), value = T)
+oldcols <- grep("old", names(final_step), value = T)
+
+final_step$AUC = 0
+for(n in 1:nrow(final_step)){
+  final_step[n,]$AUC = auc(x = as.numeric(final_step[n, newcols]), 
+                           y = as.numeric(final_step[n, oldcols]), 
+                           method = "trapezoid")}
+
+temp <- final_step[c(1,3,2,16)] %>%
+  unite("setsize", 2:3, remove = FALSE)
+
+AUC_table <- temp[c(1,2,5)] %>%
+  pivot_wider(names_from = "setsize", values_from = "AUC")
+
+write.csv(AUC_table, file = "./LTM_object.csv", row.names = FALSE)
+```
+
+# Reproduction Procedure
+Firstly, we trim the raw data and save them separately for further analysis.
+Secondly, we conduct correlation and regression analysis to verify the prediction relationship between VWM performance and VLTM performance.
+Thirdly, we conduct 2 (ArrayType: Pure 3 and Pure 6) × 2(Memorability: Memorable and Forgettable) repeated measures ANOVA on AUC to test the efficiency hypothesis. Similarly, we conduct 2 (ArrayType: Pure 6 and Mixed 6) × 2(Memorability: Memorable and Forgettable) repeated measures ANOVA on AUC to test the competitive hypothesis.
+Fourthly, 2 (ArrayType: Pure 3 and Pure 6) × 2(Memorability: Memorable and Forgettable) rm ANOVA on stickiness and 2 (ArrayType: Mixed 6 and Pure 6) × 2(Memorability: Memorable and Forgettable) rm ANOVA on stickiness are conducted to test the stickiness hypothesis.
+Importantly, given that the demographic information is not included in the raw data, the descriptive statistics results are not presented.
+We used `r cite_r("chapter_12-r-references.bib", pkgs = c("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "bayestestR", "bruceR"), withhold=FALSE)` for all our analyses. The results will be reported below.
+
+# Reproduction Results
+
+## VWM performance predicts VLTM performance 
+```{r }
+data_LTM_face<-read.csv("data_LTM_ALL_face.csv")%>%
+  select("subject", 
+         "current_condition", 
+         "oldnew", 
+         "oldnew_resp")%>%
+        na.omit() %>%
+  filter(current_condition<80, current_condition!=0) %>%
+  mutate(set_size=case_when(current_condition==10~"SS3_Mem",
+                            current_condition==15~"new_Mem",
+                            current_condition==20~"SS3_Forg",
+                            current_condition==25~"new_Forg",
+                            current_condition==30~"SS6_Mem",
+                            current_condition==35~"new_Mem",
+                            current_condition==40~"SS6_Forg",
+                            current_condition==45~"new_Forg",
+                            current_condition==50~"Mixed_Mem",
+                            current_condition==55~"new_Mem",
+                            current_condition==60~"Mixed_Forg",
+                            current_condition==65~"new_Forg"),
+         oldnew=recode(oldnew, "0"="old", "5"="new"),
+         task = "LTM_face")%>% 
+  separate(task, c("task", "stim"), sep="_")%>% 
+  separate(set_size, c("size", "mem_forg"), sep="_")%>%
+  select(-current_condition)
+data_LTM_object<-read.csv("data_all_LTM_object.csv")%>%
+  select("subject", 
+         "current_condition", 
+         "oldnew", 
+         "oldnew_resp")%>%
+        na.omit()%>%
+  filter(current_condition<80 &
+         current_condition != 0  ) %>%
+  mutate(set_size=case_when(current_condition==10~"SS3_Mem",
+                            current_condition==15~"new_Mem",
+                            current_condition==20~"SS3_Forg",
+                            current_condition==25~"new_Forg",
+                            current_condition==30~"SS6_Mem",
+                            current_condition==35~"new_Mem",
+                            current_condition==40~"SS6_Forg",
+                            current_condition==45~"new_Forg",
+                            current_condition==50~"Mixed_Mem",
+                            current_condition==55~"new_Mem",
+                            current_condition==60~"Mixed_Forg",
+                            current_condition==65~"new_Forg"),
+         oldnew=recode(oldnew, "0"="old", "5"="new"),
+         task = "LTM_object")%>% 
+  separate(task, c("task", "stim"), sep="_")%>% 
+  separate(set_size, c("size", "mem_forg"), sep="_")%>%
+  select(-current_condition)
+data_VWM_face<-read.csv("data_VWM_ALL_face.csv")%>%
+  select("subject", 
+         "current_condition", 
+         "oldnew", 
+         "oldnew_resp")%>%
+        na.omit()%>%
+  filter(current_condition<8000, current_condition!=0) %>% #gets rid of practice trials     
+  mutate(oldnew=recode(oldnew, "0"="old", "5"="new"),
+         set_size = case_when(current_condition==1300~"SS3_Mem",
+                              current_condition==1305~"SS3_Mem",
+                              current_condition==2030~"SS3_Forg",
+                              current_condition==2035~"SS3_Forg",
+                              current_condition==3600~"SS6_Mem",
+                              current_condition==3605~"SS6_Mem",
+                              current_condition==4060~"SS6_Forg",
+                              current_condition==4065~"SS6_Forg",
+                              current_condition==5330~"Mixed_Mem",
+                              current_condition==5335~"Mixed_Mem",
+                              current_condition==6330~"Mixed_Forg",
+                              current_condition==6335~"Mixed_Forg"),
+         task = "VWM_face")%>% 
+  separate(task, c("task", "stim"), sep="_")%>% 
+  separate(set_size, c("size", "mem_forg"), sep="_")%>%
+  select(-current_condition)
+data_VWM_object<-read.csv("data_VWM_ALL_object.csv")%>%
+  select("subject", 
+         "current_condition", 
+         "oldnew", 
+         "oldnew_resp")%>%
+        na.omit() %>%  
+  filter(current_condition<8000) %>% 
+  filter(current_condition != 0) %>% 
+  mutate(oldnew=recode(oldnew, "0"="old", "5"="new"),
+         set_size = case_when(current_condition==1300~"SS3_Mem",
+                              current_condition==1305~"SS3_Mem",
+                              current_condition==2030~"SS3_Forg",
+                              current_condition==2035~"SS3_Forg",
+                              current_condition==3600~"SS6_Mem",
+                              current_condition==3605~"SS6_Mem",
+                              current_condition==4060~"SS6_Forg",
+                              current_condition==4065~"SS6_Forg",
+                              current_condition==5330~"Mixed_Mem",
+                              current_condition==5335~"Mixed_Mem",
+                              current_condition==6330~"Mixed_Forg",
+                              current_condition==6335~"Mixed_Forg"),
+         task = "VWM_object")%>% 
+  separate(task, 
+           c("task", "stim"), 
+           sep="_")%>% 
+  separate(set_size, c("size", "mem_forg"), sep="_")%>%
+  select(-current_condition)
+
+# merge dfs
+data<-rbind(data_LTM_face, 
+            data_LTM_object, 
+            data_VWM_face, 
+            data_VWM_object)
+# remove merged variables
+rm(data_LTM_face, 
+   data_LTM_object, 
+   data_VWM_face, 
+   data_VWM_object)
+```
+
+```{r face and object: frequency}
+frequency  <- data %>%
+  group_by(task,
+           stim,
+           subject) %>%
+  count(mem_forg,
+        oldnew_resp, 
+        oldnew, 
+        sort=TRUE, 
+        name="frequency") %>%
+  arrange(task,
+          stim,
+          subject, 
+          mem_forg,
+          oldnew_resp,
+          oldnew)%>%
+  ungroup()
+ # mutate(frequency_response=frequency/24)   #moving from frequency to proportion, there are 24 of each condition
+
+```
+
+```{r face and object: frequency proportion}
+response_frequencies_wide<-frequency %>% 
+  pivot_wider(names_from="oldnew_resp", 
+              values_from="frequency") %>%
+  mutate_all(~replace(., is.na(.), 0))%>% 
+  arrange(task,
+          stim,
+          subject,
+          mem_forg, 
+          oldnew)%>% 
+  rename(con1="1",
+         con2="2",
+         con3="3",
+         con4="4",
+         con5="5",
+         con6="6")%>%
+  mutate(across(starts_with("con"), 
+                as.numeric))%>%
+  mutate(sum = rowSums(select(., starts_with("con"))))%>%
+  mutate_at(vars(starts_with("con")), ~ . / sum)%>%
+  select(-sum)%>%
+  mutate(con1cume=con1) %>%
+  mutate(con2cume=con1cume+con2) %>%
+  mutate(con3cume=con2cume+con3) %>%
+  mutate(con4cume=con3cume+con4) %>%
+  mutate(con5cume=con4cume+con5) %>%
+  mutate(con6cume=con5cume+con6) 
+```
+
+```{r face and object: frequency auc}
+frequencies_old<-response_frequencies_wide %>%
+  select(-con1,
+         -con2,
+         -con3,
+         -con4,
+         -con5,
+         -con6)%>%
+  filter(oldnew=="old")%>%
+  rename(con1cume_old=con1cume, 
+         con2cume_old=con2cume,
+         con3cume_old=con3cume, 
+         con4cume_old=con4cume,
+         con5cume_old=con5cume, 
+         con6cume_old=con6cume)
+frequencies_new<-response_frequencies_wide %>%
+  select(-con1,
+         -con2,
+         -con3,
+         -con4,
+         -con5,
+         -con6)%>%
+  filter(oldnew=="new")%>%
+  rename(con1cume_new=con1cume, 
+         con2cume_new=con2cume,
+         con3cume_new=con3cume, 
+         con4cume_new=con4cume,
+         con5cume_new=con5cume, 
+         con6cume_new=con6cume)
+frequency_auc<-merge(frequencies_old, 
+            frequencies_new,
+            by = c("task",
+                   "stim",
+                  "subject", 
+                 # "size",
+                  "mem_forg"))
+frequency_auc$AUC=0
+
+for(n in 1:nrow(frequency_auc)){
+  frequency_auc[n,]$AUC=auc(x=as.numeric(frequency_auc[n, grep("_new", names(frequency_auc), value=T)]), 
+                        y=as.numeric(frequency_auc[n, grep("_old", names(frequency_auc), value=T)]),
+                        method="trapezoid")}
+```
+
+```{r plot}
+auc_forg_face_ltm <- frequency_auc %>%
+  filter(mem_forg=="Forg"&task=="LTM"&stim=="face")%>%
+  select(task,
+         subject,
+         AUC)
+auc_mem_face_ltm <- frequency_auc %>%
+  filter(mem_forg=="Mem"&task=="LTM"&stim=="face")%>%
+  select(task,
+         subject,
+         AUC)
+auc_forg_object_ltm <- frequency_auc %>%
+  filter(mem_forg=="Forg"&task=="LTM"&stim=="object")%>%
+  select(task,
+         subject,
+         AUC)
+auc_mem_object_ltm <- frequency_auc %>%
+  filter(mem_forg=="Mem"&task=="LTM"&stim=="object")%>%
+  select(task,
+         subject,
+         AUC) 
+auc_forg_face_vwm <- frequency_auc %>%
+  filter(mem_forg=="Forg"&task=="VWM"&stim=="face")%>%
+  select(task,
+         subject,
+         AUC)
+auc_mem_face_vwm <- frequency_auc %>%
+  filter(mem_forg=="Mem"&task=="VWM"&stim=="face")%>%
+  select(task,
+         subject,
+         AUC)
+auc_forg_object_vwm <- frequency_auc %>%
+  filter(mem_forg=="Forg"&task=="VWM"&stim=="object")%>%
+  select(task,
+         subject,
+         AUC)
+auc_mem_object_vwm <- frequency_auc %>%
+  filter(mem_forg=="Mem"&task=="VWM"&stim=="object")%>%
+  select(task,
+         subject,
+         AUC) 
+auc_all <- data.frame(
+  auc_forg_face_ltm=auc_forg_face_ltm$AUC,
+  auc_mem_face_ltm=auc_mem_face_ltm$AUC,
+  auc_forg_object_ltm=auc_forg_object_ltm$AUC,
+  auc_mem_object_ltm=auc_mem_object_ltm$AUC,
+  auc_forg_face_vwm=auc_forg_face_vwm$AUC,
+  auc_mem_face_vwm=auc_mem_face_vwm$AUC,
+  auc_forg_object_vwm=auc_forg_object_vwm$AUC,
+  auc_mem_object_vwm=auc_mem_object_vwm$AUC
+)
+
+Corr(auc_all[,c('auc_forg_face_vwm','auc_forg_face_ltm')])
+
+ggplot(auc_all,aes(x = auc_forg_face_vwm,
+                   y = auc_forg_face_ltm))+
+  geom_point(color = "blue")+
+  geom_smooth(method='lm', 
+              se=F,
+              color='black')+
+  theme_classic()+
+  xlab('')+
+  ylab('')
+```
+
+```{r}
+Corr(auc_all[,c('auc_mem_face_vwm','auc_mem_face_ltm')])
+```
+```{r}
+ggplot(auc_all,aes(x = auc_mem_face_vwm,
+                   y = auc_mem_face_ltm))+
+  geom_point(color = "orange")+
+  geom_smooth(method='lm', 
+              se=F,
+              color='black')+
+  theme_classic()+
+  xlab('')+
+  ylab('')
+```
+```{r}
+Corr(auc_all[,c('auc_forg_object_vwm','auc_forg_object_ltm')])
+```
+```{r}
+ggplot(auc_all,aes(x = auc_forg_object_vwm,
+                   y = auc_forg_object_ltm))+
+  geom_point(color = "blue")+
+  geom_smooth(method='lm', 
+              se=F,
+              color='black')+
+  theme_classic()+
+  xlab('')+
+  ylab('')
+```
+```{r}
+Corr(auc_all[,c('auc_mem_object_vwm','auc_mem_object_ltm')])
+```
+```{r}
+ggplot(auc_all,aes(x = auc_mem_object_vwm,
+                   y = auc_mem_object_ltm))+
+  geom_point(color = "orange")+
+  geom_smooth(method='lm', 
+              se=F,
+              color='black')+
+  theme_classic()+
+  xlab('')+
+  ylab('')
+```
+
+```{r}
+auc_all_all <- auc_all %>%
+  mutate(auc_all_face_vwm = (auc_forg_face_vwm+auc_mem_face_vwm)/2,
+         auc_all_face_ltm = (auc_forg_face_ltm+auc_mem_face_ltm)/2,
+         auc_all_object_vwm = (auc_forg_object_vwm+auc_mem_object_vwm)/2,
+         auc_all_object_ltm = (auc_forg_object_ltm+auc_mem_object_ltm)/2,
+         )
+              
+```
+
+```{r}
+Corr(auc_all_all[,c('auc_all_face_vwm','auc_all_face_ltm')])
+
+```
+
+```{r}
+ggplot(auc_all_all,aes(x = auc_all_object_vwm,
+                   y = auc_all_object_ltm))+
+  geom_point(color = "gray")+
+  geom_smooth(method='lm', 
+              se=F,
+              color='black')+
+  theme_classic()+
+  xlab('')+
+  ylab('')
+```
+
+```{r}
+Corr(auc_all_all[,c('auc_all_object_vwm','auc_all_object_ltm')])
+```
+
+```{r}
+ggplot(auc_all_all,aes(x = auc_all_object_vwm,
+                   y = auc_all_object_ltm))+
+  geom_point(color = "gray")+
+  geom_smooth(method='lm', 
+              se=F,
+              color='black')+
+  theme_classic()+
+  xlab('')+
+  ylab('')
+```
+
+## Testing the efficiency hypothesis: memorable stimuli are more efficiently represented in VWM than forgettable stimuli
+```{r ANOVA for efficiency hypothesis}
+
+################################ VWM_face ######################################
+
+AUC_table1 <- read.csv('./VWM_face.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova1 <- AUC_table1 %>%
+  dplyr::select(c(SS3_Forg,SS3_Mem,SS6_Forg,SS6_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_SS3&B_Forg' = 'SS3_Forg',
+                'A_SS3&B_Mem' = 'SS3_Mem')
+
+result.anova1 <- capture.output({
+  ANOVA1 <- bruceR::MANOVA(data = for_anova1,
+                                  dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+})
+
+
+#--------------------------# Planned comparison #------------------------------#
+
+result.sim1 <- capture.output({
+sim_eff1 <- ANOVA1 %>%
+  bruceR::EMMEANS("A_", by="B_")
+})
+result.sim1
+
+############################### VWM_object #####################################
+
+AUC_table2 <- read.csv('./VWM_object.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova2 <- AUC_table2 %>%
+  dplyr::select(c(SS3_Forg,SS3_Mem,SS6_Forg,SS6_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_SS3&B_Forg' = 'SS3_Forg',
+                'A_SS3&B_Mem' = 'SS3_Mem')
+
+result.anova2 <- capture.output({
+  ANOVA2 <- bruceR::MANOVA(data = for_anova2,
+                                  dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+})
+
+
+# no need to conduct planned comparison
+
+
+################################ LTM_face ######################################
+
+AUC_table3 <- read.csv('./LTM_face.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova3 <- AUC_table3 %>%
+  dplyr::select(c(SS3_Forg,SS3_Mem,SS6_Forg,SS6_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_SS3&B_Forg' = 'SS3_Forg',
+                'A_SS3&B_Mem' = 'SS3_Mem')
+
+
+result.anova3 <- capture.output({
+  ANOVA3 <- bruceR::MANOVA(data = for_anova3,
+                                  dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+                                })
+
+result.anova3
+
+
+result.sim2 <- capture.output({
+sim_eff2 <- ANOVA3 %>%
+  bruceR::EMMEANS("A_", by="B_")
+})
+
+result.sim2
+
+############################### LTM_object #####################################
+
+AUC_table4 <- read.csv('./LTM_object.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova4 <- AUC_table4 %>%
+  dplyr::select(c(SS3_Forg,SS3_Mem,SS6_Forg,SS6_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_SS3&B_Forg' = 'SS3_Forg',
+                'A_SS3&B_Mem' = 'SS3_Mem')
+
+result.anova4 <- capture.output({
+  ANOVA4 <- bruceR::MANOVA(data = for_anova4,
+                                  dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+                                })
+
+result.anova4
+# no need to conduct planned comparison
+```
+
+```{r plot for efficiency hypothesis}
+################################ VWM_face ######################################
+AUC_long1 <- for_anova1 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                SS3Forg = 'A_SS3&B_Forg', SS3Mem = 'A_SS3&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'SS3Forg', 'SS3Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|SS3)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(experiment = "Experiment 1",
+                task = "VWM")
+
+# calculate M & SD
+AUC_long1$n <- 0
+AUC_sum1 <- AUC_long1 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(AUC_table1$subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 1",
+                task = "VWM") %>% 
+  dplyr::ungroup()
+
+############################### VWM_object #####################################
+
+AUC_long2 <- for_anova2 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                SS3Forg = 'A_SS3&B_Forg', SS3Mem = 'A_SS3&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'SS3Forg', 'SS3Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|SS3)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(experiment = "Experiment 2",
+                task = "VWM")
+
+# calculate M & SD
+AUC_long2$n <- 0
+AUC_sum2 <- AUC_long2 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(AUC_table2$subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 2",
+                task = "VWM") %>% 
+  dplyr::ungroup()
+
+
+################################ LTM_face ######################################
+
+AUC_long3 <- for_anova3 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                SS3Forg = 'A_SS3&B_Forg', SS3Mem = 'A_SS3&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'SS3Forg', 'SS3Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|SS3)(Mem|Forg)", remove = FALSE) %>% 
+  dplyr::mutate(experiment = "Experiment 1",
+                task = "VLTM") 
+    
+# calculate M & SD
+AUC_long3$n <- 0
+AUC_sum3 <- AUC_long3 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(AUC_table3$subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 1",
+                task = "VLTM") %>% 
+  dplyr::ungroup()
+
+############################### LTM_object #####################################
+
+AUC_long4 <- for_anova4 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                SS3Forg = 'A_SS3&B_Forg', SS3Mem = 'A_SS3&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'SS3Forg', 'SS3Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|SS3)(Mem|Forg)", remove = FALSE) %>% 
+  dplyr::mutate(experiment = "Experiment 2",
+                task = "VLTM") 
+    
+# calculate M & SD
+AUC_long4$n <- 0
+AUC_sum4 <- AUC_long4 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(AUC_table4$subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 2",
+                task = "VLTM") %>% 
+  dplyr::ungroup()
+
+painting.data <- rbind(AUC_sum1,AUC_sum2,AUC_sum3,AUC_sum4)
+
+p1 <- painting.data %>%
+  ggplot2::ggplot(., 
+                  aes(x = ArrayType,
+                      y = Value_mean,
+                      fill = Memorability)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position = position_dodge(0.5),
+                               width = 0.4) +
+  ggplot2::geom_errorbar(aes(ymin = Value_mean - SE_Value,
+                             ymax = Value_mean + SE_Value),
+                         position = position_dodge(0.5), 
+                         width = 0.1) +
+  facet_grid(task~experiment, 
+             scales = "free")+
+  papaja::theme_apa() +
+  coord_cartesian(ylim = c(0.4, 1.0)) +
+  labs(x = "ArrayType")
+
+
+p1
+
+# save plot
+#ggsave(filename = "./p1.png", plot = p1, height = 5, width = 10, dpi = 300)
+
+```
+
+We use simple barplot for comparing with the paper result, but it is too simple to be informative, so we create another split violin plot.
+```{r Split violin plots for efficiency hypo}
+
+svp.data <- rbind(AUC_long1, AUC_long2, AUC_long3, AUC_long4)
+# change to readable names
+svp.data <- svp.data %>% 
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"))
+
+p_svp <- ggplot(svp.data, aes(x = ArrayType,
+                              y = Value,
+                              fill = Memorability)) +
+  introdataviz::geom_split_violin(alpha = .4) +
+  geom_boxplot(width = .3, alpha = .5, show.legend = FALSE) +
+  stat_summary(fun.data = "mean_se", geom = "pointrange", show.legend = F, 
+               position = position_dodge(.3)) +
+  labs(x = NULL,
+       y = "AUC") +
+  scale_y_continuous(limits = c(-0.4, 1.0)) +
+  facet_grid(task ~ experiment, 
+             scales = "free") + # combine 4 plots
+#  facet_grid(cols = vars(experiment)) +
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        axis.line = element_line(color = "black"),
+        strip.text = element_text(face = "bold",
+                                 size = 15),
+        axis.text = element_text(face = "bold",
+                                 size = 15),
+        axis.title = element_text(face = "bold",
+                                  size = 20),
+        legend.title = element_text(face = "bold",
+                                    size = 18),
+        legend.text = element_text(face = "bold",
+                                   size = 15))
+
+p_svp 
+
+# save plot
+#ggsave(filename = "./efficiency.png", plot = p_svp, height = 5, width = 10, dpi = 300)
+```
+
+## Testing the competitiveness hypothesis: memorable stimuli attract more VWM resources than forgettable stimuli
+```{r ANOVA for competitive hypothesis}
+################################ VWM_face ######################################
+
+AUC_table1 <- read.csv('./VWM_face.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova1 <- AUC_table1 %>%
+  dplyr::select(-c(SS3_Forg, SS3_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_Mixed&B_Forg' = 'Mixed_Forg',
+                'A_Mixed&B_Mem' = 'Mixed_Mem')
+
+result.anova1 <- capture.output({
+  ANOVA1 <- bruceR::MANOVA(data = for_anova1,
+                                  dvs="A_Mixed&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+})
+
+result.anova1
+
+#--------------------------# Planned comparison #------------------------------#
+
+result.sim1 <- capture.output({
+sim_eff1 <- ANOVA1 %>%
+  bruceR::EMMEANS("A_", by="B_")
+})
+
+result.sim1
+############################### VWM_object #####################################
+
+AUC_table2 <- read.csv('./VWM_object.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova2 <- AUC_table2 %>%
+  dplyr::select(-c(SS3_Forg, SS3_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_Mixed&B_Forg' = 'Mixed_Forg',
+                'A_Mixed&B_Mem' = 'Mixed_Mem')
+
+result.anova2 <- capture.output({
+  ANOVA2 <- bruceR::MANOVA(data = for_anova2,
+                                  dvs="A_Mixed&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+})
+
+result.anova2
+
+#--------------------------# Planned comparison #------------------------------#
+
+result.sim2 <- capture.output({
+sim_eff2 <- ANOVA2 %>%
+  bruceR::EMMEANS("A_", by="B_")
+})
+result.sim2
+
+################################ LTM_face ######################################
+
+AUC_table3 <- read.csv('./LTM_face.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova3 <- AUC_table3 %>%
+  dplyr::select(-c(SS3_Forg, SS3_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_Mixed&B_Forg' = 'Mixed_Forg',
+                'A_Mixed&B_Mem' = 'Mixed_Mem')
+
+result.anova3 <- capture.output({
+  ANOVA3 <- bruceR::MANOVA(data = for_anova3,
+                                  dvs="A_Mixed&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+                                })
+
+result.anova3
+# no need to conduct planned comparison
+
+
+############################### LTM_object #####################################
+
+AUC_table4 <- read.csv('./LTM_object.csv', header = TRUE)
+
+#-------------------------------# ANOVA #--------------------------------------#
+
+for_anova4 <- AUC_table4 %>%
+  dplyr::select(-c(SS3_Forg, SS3_Mem)) %>%
+  dplyr::rename('A_SS6&B_Forg' = 'SS6_Forg', #change variable names for easy analysis
+                'A_SS6&B_Mem' = 'SS6_Mem',
+                'A_Mixed&B_Forg' = 'Mixed_Forg',
+                'A_Mixed&B_Mem' = 'Mixed_Mem')
+
+result.anova4 <- capture.output({
+  ANOVA4 <- bruceR::MANOVA(data = for_anova4,
+                                  dvs="A_Mixed&B_Forg:A_SS6&B_Mem",
+                                  dvs.pattern="A_(.+)B_(.+)",
+                                  within=c("A_","B_"))
+                                })
+
+result.anova4
+# no need to conduct planned comparison
+```
+
+
+```{r plot for competitive hypothesis}
+################################ VWM_face ######################################
+
+# change wide to long
+AUC_long1 <- for_anova1 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                MixedForg = 'A_Mixed&B_Forg', MixedMem = 'A_Mixed&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'MixedForg', 'MixedMem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|Mixed)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(experiment = "experiment 1",
+                task = "VWM")
+
+# calculate M & SD
+AUC_long1$n <- 0
+AUC_sum1 <- AUC_long1 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n(),
+                   experiment = "experiment 1",
+                   task = "VWM") %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "Mixed" ~ "Mixed 6",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable")) %>% 
+  dplyr::ungroup()
+
+############################### VWM_object #####################################
+
+# change wide to long
+AUC_long2 <- for_anova2 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                MixedForg = 'A_Mixed&B_Forg', MixedMem = 'A_Mixed&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'MixedForg', 'MixedMem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|Mixed)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(experiment = "experiment 2",
+                task = "VWM")
+
+# calculate M & SD
+AUC_long2$n <- 0
+AUC_sum2 <- AUC_long2 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n(),
+                   experiment = "experiment 2",
+                   task = "VWM") %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "Mixed" ~ "Mixed 6",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable")) %>% 
+  dplyr::ungroup()
+
+################################ LTM_face ######################################
+
+# change wide to long
+AUC_long3 <- for_anova3 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                MixedForg = 'A_Mixed&B_Forg', MixedMem = 'A_Mixed&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'MixedForg', 'MixedMem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|Mixed)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(experiment = "experiment 1",
+                task = "VLTM")
+
+# calculate M & SD
+AUC_long3$n <- 0
+AUC_sum3 <- AUC_long3 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n(),
+                   experiment = "experiment 1",
+                   task = "VLTM") %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "Mixed" ~ "Mixed 6",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable")) %>% 
+  dplyr::ungroup()
+
+############################### LTM_object #####################################
+
+# change wide to long
+AUC_long4 <- for_anova4 %>% 
+  dplyr::rename(SS6Forg = 'A_SS6&B_Forg', SS6Mem = 'A_SS6&B_Mem', 
+                MixedForg = 'A_Mixed&B_Forg', MixedMem = 'A_Mixed&B_Mem') %>%
+  tidyr::pivot_longer(cols = c('SS6Forg', 'SS6Mem', 'MixedForg', 'MixedMem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS6|Mixed)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(experiment = "experiment 2",
+                task = "VLTM")
+
+# calculate M & SD
+AUC_long4$n <- 0
+AUC_sum4 <- AUC_long4 %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n(),
+                   experiment = "experiment 2",
+                   task = "VLTM") %>%
+# change to readable names
+  dplyr::mutate(ArrayType = case_when(ArrayType == "Mixed" ~ "Mixed 6",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable")) %>% 
+  dplyr::ungroup()
+
+painting.data <- rbind(AUC_sum1, AUC_sum2, AUC_sum3, AUC_sum4)
+
+# to resemble the original plot
+painting.data$ArrayType <- reorder(painting.data$ArrayType, painting.data$Value_mean)
+painting.data$Memorability <- reorder(painting.data$Memorability, desc(painting.data$Value_mean))
+painting.data$task <- reorder(painting.data$task, desc(painting.data$Value_mean))
+
+# draw plot
+p <- painting.data %>%
+  ggplot2::ggplot(., 
+                  aes(x = ArrayType,
+                      y = Value_mean,
+                      fill = Memorability)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position = position_dodge(0.5),
+                               width = 0.4) +
+  ggplot2::geom_errorbar(aes(ymin = Value_mean - SE_Value,
+                             ymax = Value_mean + SE_Value),
+                         position = position_dodge(0.5), 
+                         width = 0.1) +
+  facet_grid(task ~ experiment, 
+             scales = "free") + # combine 4 plots
+  papaja::theme_apa() +
+  coord_cartesian(ylim = c(0.4, 1.0)) +
+  labs(y = "AUC") 
+
+p
+# save plot
+#ggsave(filename = "./p.png", plot = p, height = 5, width = 10, dpi = 300)
+```
+Our results are identical to the original results.
+
+In both Experiment 1 and Experiment 2, memorable stimuli had higher Area Under the Curve (AUC) values compared to forgettable stimuli in both the Visual Working Memory (VWM) and Very Long-Term Memory (VLTM) tasks. 
+
+Notably, there was a significant interaction between memorability and array type in VWM. When memorable stimuli were encoded with forgettable stimuli, the VWM performance for memorable stimuli was higher compared to when all stimuli were memorable. This finding supports the competitiveness hypothesis. 
+
+However, this competitive advantage did not transfer to VLTM, as there was no main effect of array type or interaction between array type and memorability in VLTM.
+
+```{r Split violin plots for competitive hypo}
+
+svp.data <- rbind(AUC_long1, AUC_long2, AUC_long3, AUC_long4)
+# change to readable names
+svp.data <- svp.data %>% 
+  dplyr::mutate(ArrayType = case_when(ArrayType == "Mixed" ~ "Mixed 6",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = case_when(experiment == "experiment 1" ~ "Experiment 1",
+                                       experiment == "experiment 2" ~ "Experiment 2"))
+
+p_svp <- ggplot(svp.data, aes(x = ArrayType,
+                              y = Value,
+                              fill = Memorability)) +
+  introdataviz::geom_split_violin(alpha = .4) +
+  geom_boxplot(width = .3, alpha = .5, show.legend = FALSE) +
+  stat_summary(fun.data = "mean_se", geom = "pointrange", show.legend = F, 
+               position = position_dodge(.3)) +
+  labs(x = NULL,
+       y = "AUC") +
+  scale_y_continuous(limits = c(-0.4, 1.0)) +
+  facet_grid(task ~ experiment, 
+             scales = "free") + # combine 4 plots
+#  facet_grid(cols = vars(experiment)) +
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        axis.line = element_line(color = "black"),
+        strip.text = element_text(face = "bold",
+                                 size = 20),
+        axis.text = element_text(face = "bold",
+                                 size = 15),
+        axis.title = element_text(face = "bold",
+                                  size = 18),
+        legend.title = element_text(face = "bold",
+                                    size = 18),
+        legend.text = element_text(face = "bold",
+                                   size = 15))
+
+p_svp 
+
+# save plot
+#ggsave(filename = "./competitive.png", plot = p_svp, height = 5, width = 10, dpi = 300)
+```
+
+## Testing the stickiness hypothesis: memorable stimuli are stickier than forgettable stimuli
+```{r read AUC file for analysis}
+rm(list=ls())
+AUC_VWMobj <- read.csv('./VWM_object.csv', header = TRUE,sep = ",")
+AUC_VWMface <- read.csv('./VWM_face.csv', header = TRUE,sep = ",")
+AUC_LTMobj <- read.csv('./LTM_object.csv', header = TRUE,sep = ",")
+AUC_LTMface <- read.csv('./LTM_face.csv', header = TRUE,sep = ",")
+```
+
+```{r paste columns for calculating stickiness}
+
+colnames(AUC_VWMface)[2:length(colnames(AUC_VWMface))] <- 
+  paste(colnames(AUC_VWMface)[2:length(colnames(AUC_VWMface))], 
+        "_VWM",
+        sep = "")
+
+colnames(AUC_LTMface)[2:length(colnames(AUC_LTMface))] <- 
+  paste(colnames(AUC_LTMface)[2:length(colnames(AUC_LTMface))], 
+        "_LTM",
+        sep = "")
+
+colnames(AUC_VWMobj)[2:length(colnames(AUC_VWMobj))] <- 
+  paste(colnames(AUC_VWMobj)[2:length(colnames(AUC_VWMobj))], 
+        "_VWM",
+        sep = "")
+
+colnames(AUC_LTMobj)[2:length(colnames(AUC_LTMobj))] <- 
+  paste(colnames(AUC_LTMobj)[2:length(colnames(AUC_LTMobj))], 
+        "_LTM",
+        sep = "")
+
+```
+
+```{r calculating stickiness}
+
+stick_obj <- merge(AUC_VWMobj, AUC_LTMobj, by = "subject")
+
+stick_face <- merge(AUC_VWMface, AUC_LTMface, by = "subject")
+
+stick_obj <- stick_obj %>%
+  dplyr::mutate(.,
+                Mixed_Forg_stick = (Mixed_Forg_LTM - 0.5) / (Mixed_Forg_VWM - 0.5),
+                Mixed_Mem_stick = (Mixed_Mem_LTM - 0.5) / (Mixed_Mem_VWM - 0.5),
+                SS3_Forg_stick = (SS3_Forg_LTM - 0.5) / (SS3_Forg_VWM - 0.5),
+                SS3_Mem_stick = (SS3_Mem_LTM - 0.5) / (SS3_Mem_VWM - 0.5),
+                SS6_Forg_stick = (SS6_Forg_LTM - 0.5) / (SS6_Forg_VWM - 0.5),
+                SS6_Mem_stick = (SS6_Mem_LTM - 0.5) / (SS6_Mem_VWM - 0.5)) %>%
+  dplyr::select(.,
+                c("subject",ends_with("_stick")))
+
+stick_face <- stick_face %>%
+  dplyr::mutate(.,
+                Mixed_Forg_stick = (Mixed_Forg_LTM - 0.5) / (Mixed_Forg_VWM - 0.5),
+                Mixed_Mem_stick = (Mixed_Mem_LTM - 0.5) / (Mixed_Mem_VWM - 0.5),
+                SS3_Forg_stick = (SS3_Forg_LTM - 0.5) / (SS3_Forg_VWM - 0.5),
+                SS3_Mem_stick = (SS3_Mem_LTM - 0.5) / (SS3_Mem_VWM - 0.5),
+                SS6_Forg_stick = (SS6_Forg_LTM - 0.5) / (SS6_Forg_VWM - 0.5),
+                SS6_Mem_stick = (SS6_Mem_LTM - 0.5) / (SS6_Mem_VWM - 0.5))%>%
+  dplyr::select(.,
+                c("subject",ends_with("_stick"))) 
+
+```
+
+```{r recode value}
+# to exactly replicate the result, first we should do some recoding, for stickiness(aka the column "Value" in "stick_face", "stick_obj" dataframe), recode value<0 to 0, recode value>1 to 1. 
+
+stick_obj_recode <- stick_obj %>%
+  dplyr::mutate(across(2:ncol(.), ~ifelse(. < 0, 0, .))) %>%
+  dplyr::mutate(across(2:ncol(.), ~ifelse(. >1 , 1, .)))
+
+
+stick_face_recode <- stick_face %>%
+  dplyr::mutate(across(2:ncol(.), ~ifelse(. < 0, 0, .))) %>%
+  dplyr::mutate(across(2:ncol(.), ~ifelse(. >1 , 1, .)))
+
+```
+
+since the author didn't explicitly mention the recoding job in paper, to ensure the recoding definitely exists, here we show the anova result of experiment1 -- 2 (ArrayType: Pure 3 and Pure 6) × 2 (Memorability: Memorable and Forgettable) repeated measures ANOVA on stickiness, for convenience, this is the only replication result. next we will use the original data(without recoding) to do data analysis.
+```{r rmANOVA for exp1 replicating paper result }
+# recode anova
+anova_stick_rc_exp1 <- stick_face_recode %>%
+  dplyr::select(.,-(starts_with("Mixed"))) %>%
+  dplyr::rename('A_SS3&B_Forg' = 'SS3_Forg_stick', #change variable names for easy analysis
+                'A_SS3&B_Mem' = 'SS3_Mem_stick',
+                'A_SS6&B_Forg' = 'SS6_Forg_stick',
+                'A_SS6&B_Mem' = 'SS6_Mem_stick')
+
+result.anova_stick_rc_exp1 <- 
+  bruceR::MANOVA(data=anova_stick_rc_exp1,
+                 dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                 dvs.pattern="A_(.+)B_(.+)",
+                 within=c("A_","B_"))
+
+```
+
+```{r rmANOVA for exp1 testing stickiness hypothesis}
+
+anova_stick_exp1 <- stick_face %>%
+  dplyr::select(.,-(starts_with("Mixed"))) %>%
+  dplyr::rename('A_SS3&B_Forg' = 'SS3_Forg_stick',
+                'A_SS3&B_Mem' = 'SS3_Mem_stick',
+                'A_SS6&B_Forg' = 'SS6_Forg_stick',
+                'A_SS6&B_Mem' = 'SS6_Mem_stick')
+
+result.anova_stick_exp1 <- 
+  bruceR::MANOVA(data=anova_stick_exp1,
+                 dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                 dvs.pattern="A_(.+)B_(.+)",
+                 within=c("A_","B_"))
+
+```
+
+```{r rmANOVA for exp2 testing stickiness hypothesis}
+anova_stick_exp2 <- stick_obj %>%
+  dplyr::select(.,-(starts_with("Mixed"))) %>%
+  dplyr::rename('A_SS3&B_Forg' = 'SS3_Forg_stick', #change variable names for easy analysis
+                'A_SS3&B_Mem' = 'SS3_Mem_stick',
+                'A_SS6&B_Forg' = 'SS6_Forg_stick',
+                'A_SS6&B_Mem' = 'SS6_Mem_stick')
+
+result.anova_stick_exp2 <- 
+  bruceR::MANOVA(data=anova_stick_exp2,
+                 dvs="A_SS3&B_Forg:A_SS6&B_Mem",
+                 dvs.pattern="A_(.+)B_(.+)",
+                 within=c("A_","B_"))
+
+```
+
+```{r rmANOVA for exp1 testing competitive hypothesis}
+anova_stick_comp1 <- stick_obj %>%
+  dplyr::select(., -(starts_with("SS3"))) %>%
+  dplyr::rename('A_Mixed&B_Forg' = 'Mixed_Forg_stick', #change variable names for easy analysis
+                'A_Mixed&B_Mem' = 'Mixed_Mem_stick',
+                'A_SS6&B_Forg' = 'SS6_Forg_stick',
+                'A_SS6&B_Mem' = 'SS6_Mem_stick')
+
+result.anova_stick_comp1 <- 
+  bruceR::MANOVA(data=anova_stick_comp1,
+                 dvs="A_Mixed&B_Forg:A_SS6&B_Mem",
+                 dvs.pattern="A_(.+)B_(.+)",
+                 within=c("A_","B_"))
+```
+
+```{r rmANOVA for exp2 testing competitive hypothesis}
+anova_stick_comp2 <- stick_face %>%
+  dplyr::select(., -(starts_with("SS3"))) %>%
+  dplyr::rename('A_Mixed&B_Forg' = 'Mixed_Forg_stick', #change variable names for easy analysis
+                'A_Mixed&B_Mem' = 'Mixed_Mem_stick',
+                'A_SS6&B_Forg' = 'SS6_Forg_stick',
+                'A_SS6&B_Mem' = 'SS6_Mem_stick')
+
+result.anova_stick_comp2 <- 
+  bruceR::MANOVA(data=anova_stick_comp2,
+                 dvs="A_Mixed&B_Forg:A_SS6&B_Mem",
+                 dvs.pattern="A_(.+)B_(.+)",
+                 within=c("A_","B_"))
+```
+
+```{r summarize table for exp1 and stickiness hypothesis(pure3 vs pure6) }
+
+stick_face_effi <- stick_face %>%
+  dplyr::select("subject","SS3_Forg_stick","SS3_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(SS3Forg = 'SS3_Forg_stick', SS3Mem = 'SS3_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('SS3Forg', 'SS3Mem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS3|SS6)(Mem|Forg)", remove = FALSE) 
+
+stick_face_effi$n <- 0
+
+stick_face_effi <- stick_face_effi %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                Experiment = "Experiment 1",
+                task = "face",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable"))) %>%
+  dplyr::ungroup()
+
+```
+
+```{r summarize table for exp2 and stickiness hypothesis(pure3 vs pure6)}
+
+stick_obj_effi <- stick_obj %>%
+  dplyr::select("subject","SS3_Forg_stick","SS3_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(SS3Forg = 'SS3_Forg_stick', SS3Mem = 'SS3_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('SS3Forg', 'SS3Mem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS3|SS6)(Mem|Forg)", remove = FALSE) 
+
+
+stick_obj_effi$n <- 0
+
+stick_obj_effi <- stick_obj_effi %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                Experiment = "Experiment 2",
+                task = "obj",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable"))) %>%
+  dplyr::ungroup()
+
+```
+
+```{r summarize table for exp1 and competitive hypothesis(mixed6 vs pure6) }
+stick_face_comp <- stick_face %>%
+  dplyr::select("subject","Mixed_Forg_stick","Mixed_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(MixedForg = 'Mixed_Forg_stick', MixedMem = 'Mixed_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('MixedForg', 'MixedMem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(Mixed|SS6)(Mem|Forg)", remove = FALSE) 
+
+stick_face_comp$n <- 0
+
+stick_face_comp <- stick_face_comp %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS6" ~ "Pure 6",
+                                      ArrayType == "Mixed" ~ "Mixed 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                Experiment = "Experiment 1",
+                task = "face",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable"))) %>%
+  dplyr::ungroup()
+
+```
+
+```{r summarize table for exp2 and competitive hypothesis(mixed6 vs pure6)}
+stick_obj_comp <- stick_obj %>%
+  dplyr::select("subject","Mixed_Forg_stick","Mixed_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(MixedForg = 'Mixed_Forg_stick', MixedMem = 'Mixed_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('MixedForg', 'MixedMem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(Mixed|SS6)(Mem|Forg)", remove = FALSE) 
+
+stick_obj_comp$n <- 0
+
+stick_obj_comp <- stick_obj_comp %>% 
+  dplyr::group_by(ArrayType, Memorability) %>%
+  dplyr::summarise(n = length(subject),
+                   Value_mean = mean(Value),
+                   SD_Value = sd(Value),
+                   SE_Value = SD_Value/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS6" ~ "Pure 6",
+                                      ArrayType == "Mixed" ~ "Mixed 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                Experiment = "Experiment 2",
+                task = "obj",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable"))) %>%
+  dplyr::ungroup()
+
+```
+
+```{r combine summary tables}
+
+painting_effi <- rbind(stick_face_effi, stick_obj_effi)
+
+painting_comp <- rbind(stick_face_comp, stick_obj_comp)
+
+```
+
+```{r top plot for stickiness hypothesis}
+p_effi <- painting_effi %>%
+  ggplot2::ggplot(., 
+                  aes(x = ArrayType,
+                      y = Value_mean,
+                      fill = Memorability)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position = position_dodge(0.5),
+                               width = 0.4) +
+  ggplot2::geom_errorbar(aes(ymin = Value_mean - SE_Value,
+                             ymax = Value_mean + SE_Value),
+                         position = position_dodge(0.5), 
+                         width = 0.1) +
+  facet_grid(cols = vars(Experiment), 
+             scales = "free_y") + 
+  coord_cartesian(ylim = c(0, 0.8)) +
+  labs(x = NULL,
+       y = "Stickiness
+       (Memory Retention)") +
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_text(face = "bold",
+                                  size = 20),
+        axis.line = element_line(color = "black"),
+        axis.text = element_text(face = "bold",
+                                 size = 12),
+        axis.title = element_text(face = "bold",
+                                  size = 12),
+        legend.title = element_text(face = "bold",
+                                    size = 20),
+        legend.text = element_text(face = "bold",
+                                   size = 18)
+        )
+
+
+```
+
+```{r bottom plot for competitive hypothesis}
+p_comp <- painting_comp %>%
+  ggplot2::ggplot(., 
+                  aes(x = ArrayType,
+                      y = Value_mean,
+                      fill = Memorability)) + 
+  ggplot2::geom_bar(stat = "identity",
+                    position = position_dodge(0.5),
+                               width = 0.4) +
+  ggplot2::geom_errorbar(aes(ymin = Value_mean - SE_Value,
+                             ymax = Value_mean + SE_Value),
+                         position = position_dodge(0.5), 
+                         width = 0.1) +
+  facet_grid(cols = vars(Experiment), 
+             scales = "free") + # combine 4 plots
+  coord_cartesian(ylim = c(0, 0.8)) +
+  labs(y = "Stickiness
+       (Memory Retention)")+
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_blank(),
+        axis.line = element_line(color = "black"),
+        axis.text = element_text(face = "bold",
+                                 size = 12),
+        axis.title = element_text(face = "bold",
+                                  size = 12),
+        legend.title = element_text(face = "bold",
+                                    size = 20),
+        legend.text = element_text(face = "bold",
+                                   size = 18))
+
+
+```
+
+```{r paste top and bottom}
+
+p_barplot<- p_effi / p_comp + 
+  plot_layout(guides = "collect")
+
+p_barplot
+
+#ggsave(filename = "./p_barplot.png", plot = p_barplot, width = 12, height = 8, dpi = 300)
+
+```
+
+```{r split violin plot for stickiness hypo}
+stick_obj_effi_svp <- stick_obj %>%
+  dplyr::select("subject","SS3_Forg_stick","SS3_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(SS3Forg = 'SS3_Forg_stick', SS3Mem = 'SS3_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('SS3Forg', 'SS3Mem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS3|SS6)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 2",
+                task = "obj",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable")))
+
+stick_face_effi_svp <- stick_face %>%
+  dplyr::select("subject","SS3_Forg_stick","SS3_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(SS3Forg = 'SS3_Forg_stick', SS3Mem = 'SS3_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('SS3Forg', 'SS3Mem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(SS3|SS6)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS3" ~ "Pure 3",
+                                      ArrayType == "SS6" ~ "Pure 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 1",
+                task = "face",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable")))
+
+painting_effi_svp <- rbind(stick_obj_effi_svp, stick_face_effi_svp)
+
+```
+
+
+```{r}
+p_effi_svp <- ggplot(painting_effi_svp, aes(x = ArrayType,
+                                 y = Value,
+                                 fill = Memorability)) +
+  introdataviz::geom_split_violin(alpha = .4) +
+  geom_boxplot(width = .3, alpha = .5, show.legend = FALSE) +
+  stat_summary(fun.data = "mean_se", geom = "pointrange", show.legend = F, 
+               position = position_dodge(.3)) +
+  labs(x = NULL,
+       y = "Stickiness
+       (Memory Retention)") +
+  scale_y_continuous(limits = c(-2.5, 2.5)) +
+  facet_grid(cols = vars(experiment)) +
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        axis.line = element_line(color = "black"),
+        strip.text = element_text(face = "bold",
+                                 size = 20),
+        axis.text = element_text(face = "bold",
+                                 size = 12),
+        axis.title = element_text(face = "bold",
+                                  size = 12),
+        legend.title = element_text(face = "bold",
+                                    size = 18),
+        legend.text = element_text(face = "bold",
+                                   size = 15))
+
+
+
+
+```
+
+```{r}
+
+stick_face_comp_svp <- stick_face %>%
+  dplyr::select("subject","Mixed_Forg_stick","Mixed_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(MixedForg = 'Mixed_Forg_stick', MixedMem = 'Mixed_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('MixedForg', 'MixedMem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(Mixed|SS6)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS6" ~ "Pure 6",
+                                      ArrayType == "Mixed" ~ "Mixed 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 1",
+                task = "face",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable"))) %>%
+  dplyr::ungroup()
+
+stick_obj_comp_svp <- stick_obj %>%
+  dplyr::select("subject","Mixed_Forg_stick","Mixed_Mem_stick","SS6_Forg_stick","SS6_Mem_stick" ) %>%
+  dplyr::rename(MixedForg = 'Mixed_Forg_stick', MixedMem = 'Mixed_Mem_stick', 
+                SS6Forg = 'SS6_Forg_stick', SS6Mem = 'SS6_Mem_stick') %>%
+  tidyr::pivot_longer(cols = c('MixedForg', 'MixedMem', 'SS6Forg', 'SS6Mem'),
+                      names_to = "Group",
+                      values_to = "Value") %>% 
+  tidyr::extract(Group, into = c("ArrayType", "Memorability"),
+                        regex = "(Mixed|SS6)(Mem|Forg)", remove = FALSE) %>%
+  dplyr::mutate(ArrayType = case_when(ArrayType == "SS6" ~ "Pure 6",
+                                      ArrayType == "Mixed" ~ "Mixed 6"),
+                Memorability = case_when(Memorability == "Mem" ~ "Memorable",
+                                         Memorability == "Forg" ~ "Forgettable"),
+                experiment = "Experiment 2",
+                task = "obj",
+                Memorability = factor(Memorability, levels = c("Memorable","Forgettable"))) %>%
+  dplyr::ungroup()
+
+painting_comp_svp <- rbind(stick_obj_comp_svp, stick_face_comp_svp)
+
+```
+
+```{r}
+p_comp_svp <- ggplot(painting_comp_svp, aes(x = ArrayType,
+                                 y = Value,
+                                 fill = Memorability)) +
+  introdataviz::geom_split_violin(alpha = .4, trim = FALSE) +
+  geom_boxplot(width = .3, alpha = .5, show.legend = FALSE) +
+  stat_summary(fun.data = "mean_se", geom = "pointrange", show.legend = F, 
+               position = position_dodge(.3)) +
+  scale_x_discrete(name = "ArrayType") +
+  scale_y_continuous(limits = c(-2.5, 2.5)) +
+  labs(y = "Stickiness
+       (Memory Retention)") +
+  facet_grid(cols = vars(experiment)) +
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_blank(),
+        axis.line = element_line(color = "black"),
+        axis.text = element_text(face = "bold",
+                                 size = 12),
+        axis.title = element_text(face = "bold",
+                                  size = 12),
+        legend.title = element_text(face = "bold",
+                                    size = 18),
+        legend.text = element_text(face = "bold",
+                                   size = 15))
+
+
+```
+
+```{r}
+
+p_svpplot<- p_effi_svp / p_comp_svp + 
+  plot_layout(guides = "collect")
+
+p_svpplot
+
+#ggsave(filename = "./p_svpplot.png", plot = p_svpplot, height = 10, width = 10, dpi = 300)
+
+```
+
+
+# Discussion
+
+## Efficiency benefit 
+For the efficiency benefit of memorable stimuli, memorable stimuli benefit from existing long-term memory representations.Existing long-term memory representations can assist working memory performance by reducing the need for active maintenance of stimuli in visual working memory.
+
+Also, the hypothesis does not fully explain the findings because both memorable and forgettable stimuli were presented equally in the experiments.Memorable and forgettable. Future studies should explore cognitive mechanisms that allow efficient representations of novel but memorable stimuli.
+
+
+## Competitive benefit
+we speculate that differences in attentional allocation during encoding might play a role in this competitive advantage. memorable stimuli are more likely to attract attention, leading to the observed competitive advantage in VWM.
+
+However, it remains unclear what specifically attracts attention to memorable stimuli. A recent study by [@bainbridge_resiliency_2020]suggests that perceptual saliency is unlikely to be the sole factor, as memorable stimuli do not capture attention in a stimulus-driven manner. Therefore, attentional allocation differences between memorable and forgettable stimuli are likely to occur post-perceptually.
+
+Importantly, while the competitive benefit was observed in VWM, it did not translate into VLTM. Therefore, although memorable stimuli may attract more attention, attentional allocation alone does not fully explain their memorability.
+
+## Stickiness
+The study's findings indicate that memorable stimuli are more "stickier" or better retained in visual working memory (VWM) compared to forgettable stimuli. However, the underlying mechanisms that produce the memorability benefit within VWM and the stickiness benefit might be dissociable. Recent research suggests that despite differences in VWM capacity, the rate at which information remains in very long-term memory (VLTM) is comparable between young adults and school-aged children, indicating dissociable mechanisms[@forsberg_childrens_2022]. Moreover, the rate of encoding into VWM can be independent of the rate of forgetting.
+
+Future research should investigate whether the mechanisms leading to memorability and stickiness benefits are distinct and how memorable stimuli resist interference or better consolidate in VWM, potentially through robust decay resistance or a combination of both factors. Additional studies are needed to shed light on the developmental aspects of the stickiness of memorable and forgettable stimuli.
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
