@@ -1,0 +1,849 @@
+---
+title             : "**Reaction time profiles of adults’ action prediction reveal two mindreading systems**"
+shorttitle        : "Group 9"
+author: 
+  - name          : "Deng shanwen"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Ninghai Rd, Gulou District, Nanjing"
+    email         : "swdeng0325@163.com"
+    role: 
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+      - "coding for the rt&err part in Exp1"
+      - "presentation"  
+      
+  - name          : "Wang xu"
+    affiliation   : "1"
+    role:
+      - "Writing - Original Draft Preparation"
+      - "coding draft for the reaction time part in Exp 1"
+      - "Writing - Review & Editing"
+      - "Integration"  
+      
+  - name          : "Qiu yingzi"
+    affiliation   : "1"
+    role:
+      - "Writing - Original Draft Preparation"
+      - "coding for visualizing Exp 1&2"
+      - "Writing - Review & Editing"  
+      
+  - name          : "Chen yan"
+    affiliation   : "1"
+    role:
+      - "Writing - Original Draft Preparation"
+      - "coding for the rt part in Exp 2"
+      - "Writing - Review & Editing"  
+      
+  - name          : "Hou liwen"
+    affiliation   : "1"
+    role:
+      - "Writing - Original Draft Preparation"
+      - "coding for the err part in Exp 2"
+      - "Writing - Review & Editing"  
+      
+affiliation:
+  - id            : "1"
+    institution   : "School of Psychology, Nanjing Normal Unviersity"
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+  Enter author note here.
+abstract: |
+  Edwards & Low (2017) demonstrated, using a new behavioral paradigm, that an efficient but inflexible mindreading system can facilitate appropriate reaction times in a standard unexpected transfer task, but not in a task involving an identity component, by requiring adults to quickly select whether an actor would reach for an object based on the actor's false belief about the object's location. This provides new evidence for the two system theory of mindreading. We reproduced the researchers' finding using R to analyze the original data which they provided, and found that the results were consistent with they reported.
+  
+  
+  <!-- https://tinyurl.com/ybremelq -->
+keywords         : "Mindreading, Action prediction, Two systems theory, Development Adults, Replication of the data analysis"
+bibliography      : 
+  - "9th_Group_r_ref.bib"
+  - "9th_Group-citation.bib"
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+# 1 Introduction
+
+```{r setup, include = FALSE}
+
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex",'cowplot', "emmeans",'readxl','effectsize',"kableExtra",'ggsignif','ggpubr','purrr')
+
+r_refs("9th_Group_r_ref.bib")
+
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed,
+                      warning = FALSE, message = FALSE)
+
+```
+
+```{r load data&prep data}
+
+#读取实验1数据并重命名列名
+raw_exp1 <- read_excel('./data/mmc.xlsx',sheet = 'Sheet 3. EXP 1 Individual')%>%select(1:17)
+
+
+colnames(raw_exp1) <- c('Sub',"rt_id_adp", "rt_id_aup", "rt_id_adn","rt_id_aun",
+                        "rt_loc_adp", "rt_loc_aup", "rt_loc_adn","rt_loc_aun",
+                        "err_id_adp", "err_id_aup", "err_id_adn","err_id_aun",
+                        "err_loc_adp", "err_loc_aup", "err_loc_adn","err_loc_aun")
+
+#读取实验2数据并重命名列名
+raw_exp2 <- read_excel('./data/mmc.xlsx',sheet = 'Sheet 4. EXP 2 Individual ')%>%
+            select(1:17)
+
+colnames(raw_exp2) <- c('Sub',"rt_id_adp", "rt_id_aup", "rt_id_adn","rt_id_aun",
+                        "rt_loc_adp", "rt_loc_aup", "rt_loc_adn","rt_loc_aun",
+                        "err_id_adp", "err_id_aup", "err_id_adn","err_id_aun",
+                        "err_loc_adp", "err_loc_aup", "err_loc_adn","err_loc_aun")
+
+```
+Decades of research on standard false-belief tasks requiring direct verbal reasoning, indicate that *theory-of-mind* emerges in humans from about 4 years of age. However, there have been inconsistent results in developmental and adult theory-of-mind research,thus developing two different theory accounts to reconcile this contradictory: **the early mindreading account** and **2-systems account**.The early mindreading account claim that infants have an abstract (possibly innate) psychological reasoning system while 2-systems account hold that human adults have an efficient as well as a flexible mindreading system.*System 1* guides indirect responses in fast-moving situations and *System 2* supports direct verbal predictions and abstract mental state reasoning.
+
+Basically, this study aims to provide new and converging behavioural data from an adult sample to tease apart the 2-System account from the early mindreading account.
+The researchers tested two hypotheses based on the 2-Systems account.*Hypothesis 1* was that, in the Location task, participants would be fastest to respond when the actor falsely believed that a desired (blue) object was in the box (the AD+ condition). We refer to this as the **‘Location Hypothesis’**.By contrast, *Hypothesis 2* was that participants in an Identity task would be fastest to respond when the actor falsely believed that an undesired (red) object was in the box (the AU+ condition).Henceforth, this will be referred to as the **‘Identity Hypothesis’**. 
+
+In experiment1, researchers recruited **40 right-handed adults (19 females)** as participants. The experiment began with a video to familiarize the subjects with their "preferences" (Preference for blue objects, aversion to red objects, or vice versa), and then collected their responses to Task (Location, Identity) and False-Belief Condition (AD+, AU+, AD-, AU-) in the formal experiment. All conditions were investigated in a **2 × 4 repeated measures ANOVA**. The finding of reaction times in the identity task supports the 2-system approach, and the reaction times in the AU+ condition provide further evidence for 2-system processing. 
+
+In experiment 2, researchers recruited **20 students(16 females)**as participants.The design and procedure were identical to that of Experiment 1, except that participants were told to focus on the position of the object. For 2 (Task: Location, Identity) × 2(False-Belief Condition: AD+, AU+) Repeated Measures ANOVA, Experiment 1’s dissociation of behaviour between two different tasks was preserved in Experiment 2. 
+
+**The results elevate growing evidence that adult humans have not one, but two mindreading systems for dealing with mental states that underlie action.**That is, System 1 tracks the registration of the actor and System 2 gives the actor beliefs about the location of unwanted objects.
+
+
+# 2 Methods
+
+Note that Since we are re-analyzing the data from the article, we did not conduct any experiments ourselves.we used the data from standard unexpected transfer task, which was from Edwards & Low's experiment[@edwards_reaction_2017].We report how we reproduce this study in the following part.
+
+## 2.1 Data preprocessing
+
+After loading the data, we renamed the variables at the first step.We changed the column names into a form which can be clearer and easier for further processing.
+
+We then used the "pivot_longer"function to change the wide data into long data.Such a data form will be more suitable for our statistical analysis.
+
+We ruled out the trials with wrong response(err==0) and excluded the outliers from the analysis of response times on the basis of being 3 standard deviations away from the mean response time.
+
+As the RT data and ERR data don't satisfy the tests for normality,We performed a logarithmic transformation of this data before proceeding with further statistical analysis.
+
+## 2.2 Statistical analysis
+Consistent with the study, We conduct four ANOVA in Experiment 1 and Experiment 2 respectively.
+
+We firstly tested our critical predictions in a 2 (Task: Location, Identity)×2 (False-Belief Condition: AD+, AU+) ANOVA.Then all conditions were investigated in a 2×4 repeated measures ANOVA with Task (Location, Identity) and False-Belief Condition
+(AD+, AU+, AD-, AU-) as within-subjects factors.After that,we test the Location Hypothesis and Identity Hypothesis with a repeated measures ANOVA respectively.
+
+## 2.3 Visualization
+
+We drew totally six graphs to illustrate the results.Four bar graphs were drawn to show the RT results and ERR results respectively of Exp1 & Exp2.Two interaction plots were drawn to demonstrate the reaction time interaction between Location Tasks and Identity Task of Exp1 & Exp2.
+
+# 3 Results
+
+## 3.1 Experiment 1
+
+### 3.1.1 Descriptive Analysis
+Transformed means for response times (Table A) and error proportions(Table B) of experiment 1 are presented in Supplementary.
+
+```{r preprocessing exp1}
+
+# RT preprocessing
+RT_data<-raw_exp1%>%
+tidyr::pivot_longer(.,
+                    cols = !Sub, 
+                    names_to = c(".value","Task", "Condition"), 
+                    names_sep = "_")%>%
+        filter(err==1)%>%
+  group_by(Sub,Task,Condition)%>%
+  mutate(mean_rt=mean(rt),sd_rt=sd(rt))%>%
+  mutate(Z_score = (rt - mean_rt)/ sd_rt)%>%
+  filter(Z_score >= -3 & Z_score <= 3)%>%
+  ungroup()%>%
+  group_by(Task,Condition)%>%
+  mutate(mean=mean(mean_rt),sd=sd(mean_rt))%>%
+  rowwise%>%
+  mutate(Z_score = (rt - mean)/ sd)%>%
+  filter(Z_score >= -3 & Z_score <= 3)%>%
+  ungroup()%>%
+  group_by(Sub,Task,Condition)%>%
+  mutate(mean2=mean(rt),sd2=sd(rt))%>%
+  select(1:5,11:12)%>%
+  rename(M=mean2,SD=sd2)%>%
+  mutate(rt_log = log10(M))%>%
+  select(1:3,8)
+RT_data_exp1<-unique(RT_data)
+
+
+#2.ACC
+ERR_data<-raw_exp1%>%
+  tidyr::pivot_longer(.,
+                      cols = !Sub, 
+                      names_to = c(".value","Task", "Condition"), 
+                      names_sep = "_")%>%
+  drop_na() %>%
+  group_by(Sub,Task,Condition)%>%
+  mutate(M=1-mean(err))%>%
+  mutate(err_log = log10(M+1))%>%
+  ungroup()%>%
+  select(1:3,7)
+ERR_data_exp1<-unique(ERR_data)
+
+```
+
+### 3.1.2 Response times
+
+```{r results of exp1,echo=FALSE}
+##### ANOVA ####################################################################
+#1.RT
+#1.1 crital predictions
+exp1_RT_data_1 <-RT_data_exp1 %>%  
+  dplyr::filter((Condition  != 'adn')&(Condition  != 'aun'))
+
+
+RT_ANOVA_1 <- exp1_RT_data_1 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'rt_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+#summary(RT_ANOVA_1)
+effect_size_1 = effectsize::effectsize(RT_ANOVA_1)
+
+```
+
+Our critical predictions were tested in a 2 (Task: Location, Identity)× 2 (False-Belief Condition: AD+, AU+) ANOVA. In these trials the agent falsely believed that an object was in the box. A significant Task \* False-Belief Condition interaction, F(`r RT_ANOVA_1$anova_table$num[3]`,`r RT_ANOVA_1$anova_table$den[3]`) = `r RT_ANOVA_1$anova_table$F[3]`, p \< 0.001, $\eta p^2$ = `r effect_size_1$Eta2[3]`, confirmed a selective response time facilitation effect (see Fig. 7a). Participants were faster to respond when they expected the agent to reach for the desired (blue) single-aspect object in the Location task, but in the Identity condition they were faster to respond when the agent falsely believed that the undesired (red) object was in the box.
+
+```{r rt,echo=FALSE}
+#1.2 all conditions
+exp1_RT_data_2 <-RT_data_exp1
+
+RT_ANOVA_2 <- exp1_RT_data_2 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'rt_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+#summary(RT_ANOVA_2)
+effect_size_2 = effectsize::effectsize(RT_ANOVA_2)
+  
+#1.3 Location task
+RT_ANOVA_loc <- exp1_RT_data_2 %>%
+  dplyr::filter(Task  == 'loc') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'rt_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+#summary(RT_ANOVA_loc)
+effect_size_3 = effectsize::effectsize(RT_ANOVA_loc)
+m1<-emmeans(RT_ANOVA_loc,~Condition)
+# pairs(m1)
+
+#1.4 Identity task
+RT_ANOVA_id <- exp1_RT_data_2 %>%
+  dplyr::filter(Task  == 'id') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'rt_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+#summary(RT_ANOVA_id)
+effect_size_4 = effectsize::effectsize(RT_ANOVA_id)
+m2<-emmeans(RT_ANOVA_id,~Condition)
+# pairs(m2)
+
+```
+
+All conditions were investigated in a 2 × 4 repeated measures ANOVA with Task (Location, Identity) and False-Belief Condition (AD+, AU+, AD-,AU-) as within-subjects factors. There was no main effect of Task, but there was a main effect of False-Belief Condition, F(`r RT_ANOVA_2$anova_table$num[2]`,`r RT_ANOVA_2$anova_table$den[2]`) = `r RT_ANOVA_2$anova_table$F[2]`, p \< 0.001, $\eta p^2$ = `r effect_size_2$Eta2[2]`, and an interaction between Task and False-Belief Condition, F(`r RT_ANOVA_2$anova_table$num[3]`,`r RT_ANOVA_2$anova_table$den[3]`) = `r RT_ANOVA_2$anova_table$F[3]`, p \< 0.001, $\eta p^2$ = `r effect_size_2$Eta2[3]`. To investigate the interaction further we separated the data by Task.
+
+Location task: As predicted in the Location Hypothesis, participants performed fastest in the scenario where the actor falsely believed the desired object was in the box. A repeated measures ANOVA revealed a main effect of False-Belief Condition, F(`r RT_ANOVA_loc$anova_table$num[1]`,`r RT_ANOVA_loc$anova_table$den[1]`) = `r RT_ANOVA_loc$anova_table$F[1]`, p \< 0.001, $\eta p^2$ = `r effect_size_3$Eta2[1]`. Following Bonferronicorrected pairwise comparisons it was determined that the mean response time for the AD+ condition was faster than that of the AU+ condition, t(39) = 5.391, p \< 0.001, the AD- condition, t(39) = 7.19, p \< 0.001, and the AU- condition, t(39) = 5.17, p \< 0.001. Response times were significantly longer in the AD- condition than in the AU-, t(39) = 6.49, p \< 0.001, conditions,in the AU+, t(39) = 3.89, p \< 0.0021 conditions.There was no difference in mean reaction times between the AU+ and AU- conditions.
+
+Identity task: The Identity Hypothesis was supported, in that participants were fastest to respond in the condition in which the actor had a false belief that an undesired object was in the box. Again, there was a main effect of False-Belief Condition, F(`r RT_ANOVA_id$anova_table$num[1]`,`r RT_ANOVA_id $anova_table$den[1]`) = `r RT_ANOVA_id $anova_table$F[1]`, p \< 0.001, $\eta p^2$ = `r effect_size_4$Eta2[1]`.Bonferroni-adjusted pairwise comparisons showed that response times in the AU+ condition were significantly faster than in the AD- condition, t(38) = 5.88,p \< 0.001 , the AU- condition, t(38) = 5.21, p \< 0.001 and in the AD+ condition, t(38) = 4.28,p \< 0.001.There were no other differences.
+
+### 3.1.3 Errors
+
+```{r acc, echo=FALSE}
+
+#2.ACC
+#1.1 crital predictions
+exp1_ERR_data_1 <-ERR_data_exp1 %>%  
+    dplyr::filter((Condition  != 'adn')&(Condition  != 'aun'))
+  
+ERR_ANOVA_1 <- exp1_ERR_data_1 %>% 
+    afex::aov_ez(data =., id = 'Sub', 
+                 dv = 'err_log',
+                 within =  c('Task','Condition'),fun_aggregate = mean)
+effect_size_5 = effectsize::effectsize(ERR_ANOVA_1)
+  
+#1.2 all conditions
+exp1_ERR_data_2 <-ERR_data_exp1
+
+ERR_ANOVA_2 <- exp1_ERR_data_2 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'err_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+#summary(ERR_ANOVA_2)
+effect_size_6 = effectsize::effectsize(ERR_ANOVA_2)
+
+#1.3 Location task
+ERR_ANOVA_loc <- exp1_ERR_data_2 %>%
+  dplyr::filter(Task  == 'loc') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'err_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+effect_size_7 = effectsize::effectsize(ERR_ANOVA_loc)
+m3<-emmeans(ERR_ANOVA_loc,~Condition)
+#pairs(m3)
+
+#1.4 Identity task
+ERR_ANOVA_id <- exp1_ERR_data_2 %>%
+  dplyr::filter(Task  == 'id') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'err_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+#summary(ERR_ANOVA_id)
+effect_size_8 = effectsize::effectsize(ERR_ANOVA_id)
+m4<-emmeans(RT_ANOVA_id,~Condition)
+#pairs(m4)
+
+```
+
+Error rates served as a measurement of explicit belief reasoning; overall, participants displayed high performance levels during the training and test trials as revealed by low mean error proportions. We found no evidence of speed-accuracy trade-offs in the critical AD+/AU+ conditions; lower response times for the AD+ condition in the Location task were not accompanied by significantly greater errors in this condition. Similarly, such a reverse pattern was not found in the Identity task; there was faster responding in the AU+ condition, but no difference in mean error proportions across conditions.For the practice trials, 95% of the participants, who first experienced the Location task, and 93% of those starting with the Identity task, required just one practice block (of 8 trials) before proceeding to the test trials. The remaining two participants in the Location task, and three in the Identity task, required two practice blocks before moving on to the experimental trials. All participants were ready to proceed to trials after a single block of practice trials in their second task. In the test trials, the overall error rates were low (6% and 9% in the Location and Identity tasks respectively;for mean proportion of errors in each condition). Tests for normality revealed that the error data was positively skewed. To account for this, all analyses of variance were performed on logarithmically transformed data.
+
+```{r plot1_1,echo=FALSE}
+
+## 绘图准备
+#3.1.4 按照前三列的条件对数据进行分组并计算每个组的平均值（RT）
+exp1_data_summary <- RT_data_exp1 %>%
+  group_by(Sub, Task, Condition) %>%
+  summarise(mean_rt = mean(rt_log))
+
+exp1_data_summary_1 <- exp1_data_summary %>%
+  group_by(Task, Condition) %>%
+  summarise(mean_rt_1 = mean(mean_rt),
+            se_rt_1 = sd(mean_rt)/sqrt(n()))
+
+##3.1.5 按照前三列的条件对数据进行分组并计算每个组的平均值（ERR）
+exp1_data_ERR <- ERR_data_exp1 %>%
+  group_by(Sub, Task, Condition) %>%
+  summarise(mean_err = mean(err_log))
+
+exp1_data_ERR_1 <- exp1_data_ERR %>%
+  group_by(Task, Condition) %>%
+  summarise(mean_err_1 = mean(mean_err),
+            se_err_1 = sd(mean_err)/sqrt(n()))
+
+##3.1.6 调整顺序，将x轴按照图中重新排序
+order <- c("AD+", "AU+", "AD-","AU-")
+exp1_data_summary_1<-exp1_data_summary_1 %>%
+  dplyr::mutate(Condition = case_when(
+                            grepl("adp", Condition) ~ "AD+",
+                            grepl("aup", Condition) ~ "AU+",
+                            grepl("adn", Condition) ~ "AD-",
+                            grepl("aun", Condition) ~ "AU-",
+                            TRUE ~ Task))
+
+exp1_data_ERR_1<-exp1_data_ERR_1 %>%
+  dplyr::mutate(Condition = case_when(
+                            grepl("adp", Condition) ~ "AD+",
+                            grepl("aup", Condition) ~ "AU+",
+                            grepl("adn", Condition) ~ "AD-",
+                            grepl("aun", Condition) ~ "AU-",
+                            TRUE ~ Task))
+
+exp1_data_summary_1$Condition <- factor(exp1_data_summary_1$Condition, levels = order)
+exp1_data_ERR_1$Condition <- factor(exp1_data_ERR_1$Condition, levels = order)
+
+
+order1 <- c("loc", "id")
+exp1_data_summary_1$Task <- factor(exp1_data_summary_1$Task, levels = order1)
+exp1_data_ERR_1$Task <- factor(exp1_data_ERR_1$Task, levels = order1)
+
+```
+
+In keeping with the reaction time analysis, the initial examination was hypothesis-driven: a 2×2 ANOVA between Task (Location, Identity) and False-Belief Condition (AD+, AU+). Contrasting with reaction time analysis there was no Task × False-Belief Condition interaction, and no main effect of condition. However, a main effect of Task, F(`r ERR_ANOVA_1$anova_table$num[3]`,`r ERR_ANOVA_1$anova_table$den[3]`) = `r ERR_ANOVA_1$anova_table$F[3]`, p \< 0.001, $\eta p^2$ = `r effect_size_5$Eta2[3]`,revealed that the proportion of errors was lower in the Location (logarithmically transformed M = 0.02) than the Identity (M = 0.03) task.This main effect was also found in our subsequent 2 × 4 repeated measures ANOVA with Task (Location, Identity) and Condition (AD+, AU+, AD-,AU-), F(`r ERR_ANOVA_2$anova_table$num[1]`,`r ERR_ANOVA_2$anova_table$den[1]`) = `r ERR_ANOVA_2$anova_table$F[1]`, p \< 0.001, $\eta p^2$ = `r effect_size_6$Eta2[1]`, with Identity errors (M = 0.034) being greater than Location errors (M = 0.025).There was also a main effect of False-Belief Condition, F(`r ERR_ANOVA_2$anova_table$num[2]`,`r ERR_ANOVA_2$anova_table$den[2]`) = `r ERR_ANOVA_2$anova_table$F[2]`, p \< 0.001, $\eta p^2$ = `r effect_size_6$Eta2[2]`and an interaction between Task and False-Belief Condition,F(`r ERR_ANOVA_2$anova_table$num[3]`,`r ERR_ANOVA_2$anova_table$den[3]`) = `r ERR_ANOVA_2$anova_table$F[3]`, p \< 0.001, $\eta p^2$ = `r effect_size_6$Eta2[3]`. To examine this further, we considered each task separately.
+
+Location task: A repeated measures ANOVA determined that mean error proportions differed between the four conditions, F(`r ERR_ANOVA_loc$anova_table$num[1]`,`r ERR_ANOVA_loc$anova_table$den[1]`) = `r ERR_ANOVA_loc$anova_table$F[1]`, p \< 0.001, $\eta p^2$ = `r effect_size_7$Eta2[1]`.Pairwise comparisons with Bonferroni corrections revealed that participants made more errors in the AD- condition than in the AD+ condition, t(39) = 3.03, p = 0.021, or AU+ condition. We note that participants were significantly slower and more error-prone in the AD- condition. Whilst not the focus of our predictions this phenomenon may indicate an approach bias, where the presence of the blue ball in the box in the final frame influences the participant's 'reach/no reach' decision.
+
+Identity task: An analysis of variance revealed no significant difference in mean error proportions across conditions, F(`r ERR_ANOVA_id$anova_table$num[1]`,`r ERR_ANOVA_id$anova_table$den[1]`) = `r ERR_ANOVA_id$anova_table$F[1]`, p \< 0.001, $\eta p^2$ = `r effect_size_8$Eta2[1]`.
+
+```{r plot1_2,echo=FALSE}
+##3.2 还原图
+##3.2.1 实验一 图a 折线图
+exp1_selected_data <- exp1_data_summary_1 %>% 
+  filter(Condition == "AD+" | Condition == "AU+")
+p_line<-ggplot(exp1_selected_data, aes(x = Condition, y = mean_rt_1, group = Task, color = Task)) +
+  geom_line(color="grey", size = 1.2) + 
+  geom_point() +
+  labs(y = "Logarithmically transformed 
+       reaction times", color = "Condition") +
+  theme_classic()+
+  coord_cartesian(ylim = c(3.0,3.4))+
+  scale_y_continuous(breaks = seq(3.0, 3.4, by = 0.1), 
+                     labels = c(seq(3.0, 3.3, by = 0.1), "3.4"), 
+                     expand = c(0, 0)) 
+  
+
+
+
+##3.2.2 实验一 图b reaction times
+##3.2.2.1 p1
+exp1_data_summary_1_1 <- filter(exp1_data_summary_1,Task=="id")
+                          
+
+p1<-ggplot(data =exp1_data_summary_1_1,
+           aes(x = Condition, y = mean_rt_1, fill = Task))+
+  geom_bar(stat = "identity", position = position_dodge(),fill="#5ACFC9", na.rm = TRUE, width = 0.5)+
+  labs(x = "",
+       y = "Logarithmically transformed 
+       reaction times",
+       fill = "Task") +
+  theme_classic() +
+  coord_cartesian(ylim = c(2.8,3.5))+
+  scale_y_continuous(breaks = seq(2.8, 3.5, by = 0.1), 
+                     labels = c(seq(2.8, 3.4, by = 0.1), "3.5"), 
+                     expand = c(0, 0)) +
+  geom_errorbar(position = position_dodge(0.9),
+                aes(ymin = mean_rt_1 - se_rt_1, 
+                    ymax = mean_rt_1 + se_rt_1),
+                width = 0.2, color = "black") +
+  geom_signif(y_position = 3.3, xmin = 1, xmax = 2, 
+              annotations = c('*'),
+              tip_length = 0.01) +
+  geom_signif(y_position = 3.35, xmin = 2, xmax = 3, 
+              annotations = c('*'),
+              tip_length = 0.01) +
+  geom_signif(y_position = 3.4, xmin = 2, xmax = 4, 
+              annotations = c('*'),
+              tip_length = 0.01)+ylab('')+theme(
+                # 绘制散点图并隐藏y轴
+                axis.line.y = element_blank(),
+                axis.text.y = element_blank(),
+                axis.ticks.y = element_blank())
+
+
+
+##3.2.2.2 p2
+exp1_data_summary_1_2 <- filter(exp1_data_summary_1,Task=="loc")
+p2<- ggplot(data =exp1_data_summary_1_2,
+            aes(x = Condition, y = mean_rt_1, fill = Task))+
+  geom_bar(stat = "identity", position = position_dodge(), fill="#FD836D",na.rm = TRUE, width = 0.5)+
+  labs(x = "",
+       y = "Logarithmically transformed 
+       reaction times",
+       fill = "Task") +
+  theme_classic() +
+  coord_cartesian(ylim = c(2.8,3.5))+
+  scale_y_continuous(breaks = seq(2.8, 3.5, by = 0.1), 
+                     labels = c(seq(2.8, 3.4, by = 0.1), "3.5"), 
+                     expand = c(0, 0)) +
+  geom_errorbar(position = position_dodge(0.9),
+                aes(ymin = mean_rt_1 - se_rt_1, 
+                    ymax = mean_rt_1 + se_rt_1),
+                width = 0.2, color = "black") +
+  geom_signif(y_position = 3.3, xmin = 1, xmax = 2, 
+              annotations = c('*'),
+              tip_length = 0.01) +
+  geom_signif(y_position = 3.35, xmin = 1, xmax = 3, 
+              annotations = c('*'),
+              tip_length = 0.01) +
+  geom_signif(y_position = 3.4, xmin = 1, xmax = 4, 
+              annotations = c('*'),
+              tip_length = 0.01)
+
+#调色板palette()
+##3.2.2.3 图组合
+
+
+##3.2.3 实验一 图c error proportion
+
+p_err<-ggplot2::ggplot(data =exp1_data_ERR_1,
+                aes(x = Condition, y = mean_err_1, fill = Task))+
+  geom_bar(stat = "identity", position = position_dodge(), na.rm = TRUE, width = 0.5)+
+  labs(x = "Treatment Condition in EXP1",
+       y = "Error proportion",
+       fill = "Task") +
+  facet_wrap(~Task, nrow = 1) +
+  theme_classic() +
+  coord_cartesian(ylim = c(0,1))+
+  scale_y_continuous(breaks = seq(0, 1, by = 0.1), 
+                     labels = c(seq(0, 0.9, by = 0.1), "1"), 
+                     expand = c(0, 0)) +   
+  geom_errorbar(position = position_dodge(0.9),
+                aes(ymin = mean_err_1 - se_err_1, 
+                    ymax = mean_err_1 + se_err_1),
+                width = 0.2, color = "pink")+
+  guides(fill = "none")+ theme(strip.background = element_blank())
+
+
+```
+
+## 3.2 Experiment 2
+
+In Experiment 1, we found no behavioural effect when participants were asked to either focus on the actor's mental state or on her behaviour. As both these instructions required the participant to attend to the actor in some way, Experiment 2 sought to determine if an instruction that directed attention away from the agent would influence the overall pattern of participants' performances as compared to Experiment 1.
+
+```{r preprocessing exp2}
+
+#1.RT
+RT_data2<-raw_exp2%>%
+  tidyr::pivot_longer(.,
+                      cols = !Sub, 
+                      names_to = c(".value","Task", "Condition"), 
+                      names_sep = "_")%>%
+  filter(err==1)%>%
+  group_by(Sub,Task,Condition)%>%
+  mutate(mean_rt=mean(rt),sd_rt=sd(rt))%>%
+  mutate(Z_score = (rt - mean_rt)/ sd_rt)%>%
+  filter(Z_score >= -3 & Z_score <= 3)%>%
+  ungroup()%>%
+  group_by(Task,Condition)%>%
+  mutate(mean=mean(mean_rt),sd=sd(mean_rt))%>%
+  rowwise%>%
+  mutate(Z_score = (rt - mean)/ sd)%>%
+  filter(Z_score >= -3 & Z_score <= 3)%>%
+  ungroup()%>%
+  group_by(Sub,Task,Condition)%>%
+  mutate(mean2=mean(rt),sd2=sd(rt))%>%
+  select(1:5,11:12)%>%
+  rename(M=mean2,SD=sd2)%>%
+  mutate(rt_log = log10(M))%>%
+  select(1:3,8)
+RT_data_exp2<-unique(RT_data2)
+
+
+#2.ACC
+ERR_data2<-raw_exp2%>%
+  tidyr::pivot_longer(.,
+                      cols = !Sub, 
+                      names_to = c(".value","Task", "Condition"), 
+                      names_sep = "_")%>%
+  drop_na() %>%
+  group_by(Sub,Task,Condition)%>%
+  mutate(M=1-mean(err))%>%
+  mutate(err_log = log10(M+1))%>%
+  ungroup()%>%
+  select(1:3,7)
+ERR_data_exp2<-unique(ERR_data2)
+
+
+```
+
+Participants' explicit belief-reasoning was highly accurate as shown by the error data. Implicit mindreading differed according to task, revealed by the False-Belief Condition × Task interaction in response times. The crucial finding was that for False-Belief Conditions AD+ and AU+, reaction times were reversed; in the Location task participants were significantly fastest to respond when the actor falsely believed that a desired-colour object was in the box whereas in the Identity task they responded most rapidly when the actor falsely believed that an undesired-colour object was in the box. Faster response times in these conditions were not the result of speed-accuracy tradeoffs.
+
+
+### 3.2.1 Descriptive Analysis
+Transformed means for response times (Table A) and error proportions(Table B) of experiment 2 are presented in Supplementary.
+
+### 3.2.2 Response times
+
+```{r results of exp2,echo=FALSE}
+##### ANOVA ####################################################################
+#1.反应时
+#1.1 crital predictions
+exp2_RT_data_1 <-RT_data_exp2 %>%  
+  dplyr::filter((Condition  != 'adn')&(Condition  != 'aun'))
+
+exp2_ANOVA1_rt <- exp2_RT_data_1 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'rt_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+exp2_effect_size_1 = effectsize::effectsize(exp2_ANOVA1_rt)
+
+#1.2 all conditions
+exp2_RT_data_2 <-RT_data_exp2
+
+exp2_ANOVA2_rt <- exp2_RT_data_2 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'rt_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+exp2_effect_size_2 = effectsize::effectsize(exp2_ANOVA2_rt)
+
+#1.3 Location task
+exp2_RT_ANOVA_loc <- exp2_RT_data_2 %>%
+  dplyr::filter(Task  == 'loc') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'rt_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+
+exp2_effect_size_3 = effectsize::effectsize(exp2_RT_ANOVA_loc)
+exp2_m1<-emmeans(exp2_RT_ANOVA_loc,~Condition)
+# pairs(exp2_m1)
+
+#1.4 Identity task
+exp2_RT_ANOVA_id <- exp2_RT_data_2 %>%
+  dplyr::filter(Task  == 'id') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'rt_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+#summary(exp2_RT_ANOVA_id)
+exp2_effect_size_4 = effectsize::effectsize(exp2_RT_ANOVA_id)
+exp2_m2<-emmeans(exp2_RT_ANOVA_id,~Condition)
+#pairs(exp2_m2)
+
+```
+
+Performance was dependent on task, even under slightly different conditions (a modification of the instructions given to participants). A hypothesis-driven 2 × (Task: Location, Identity) × 2 (False-Belief Condition: AD+, AU+) repeated measures ANOVA was undertaken in order to examine the conditions in which the agent had a false belief that the object was present. Crucially, we revealed an interaction, F(`r exp2_ANOVA1_rt$anova_table$num[3]`,`r exp2_ANOVA1_rt$anova_table$den[3]`) = `r exp2_ANOVA1_rt$anova_table$F[3]`, p \< 0.001, $\eta p^2$ = `r exp2_effect_size_1$Eta2[3]`;participants were quicker to respond when they expected the agent to reach for a desired object in the Location task, but were quicker in the Identity task when the agent was not explicitly expected to reach for undesired object (see Fig. 7d). Whilst explicitly accurate, participants' implicit mindreading was adversely affected by limits to the efficient system; in the Identity task it failed to account for the way in which the agent perceived the object.
+
+A 2 (Task: Location, Identity) × 4 (False-Belief Condition: AD+, AU+, AD-,AU-) repeated measures ANOVA determined that there was an interaction between Task and False-Belief Condition, F(`r exp2_ANOVA2_rt$anova_table$num[3]`,`r exp2_ANOVA2_rt$anova_table$den[3]`) = `r exp2_ANOVA2_rt$anova_table$F[3]`, p \< 0.001, $\eta p^2$ = `r exp2_effect_size_2$Eta2[3]`.We also found a main effect of False-Belief Condition, F(`r exp2_ANOVA2_rt$anova_table$num[2]`,`r exp2_ANOVA2_rt$anova_table$den[2]`) = `r exp2_ANOVA2_rt$anova_table$F[2]`, p = 0.006, $\eta p^2$ = `r exp2_effect_size_2$Eta2[2]`. Subsequent analysis considered mean response times for each task in turn (see Fig. 7e).
+
+Location task: A repeated measure ANOVA determined a main effect of False-Belief Condition, F(`r exp2_RT_ANOVA_loc$anova_table$num[1]`,`r exp2_RT_ANOVA_loc$anova_table$den[1]`) = `r exp2_RT_ANOVA_loc$anova_table$F[1]`, p = 0.009, $\eta p^2$ = `r exp2_effect_size_3$Eta2[1]`. Pairwise comparisons with Bonferroni corrections revealed that response times in the AD+ condition were significantly faster than those in the AU+ condition, t(19) = 2.98, p = 0.035. There were no other significant differences, though the pattern of response times does trend towards the findings of Experiment 1.
+
+Identity task: Analysis showed that mean response times differed between conditions, F(`r exp2_RT_ANOVA_id$anova_table$num[1]`,`r exp2_RT_ANOVA_id$anova_table$den[1]`) = `r exp2_RT_ANOVA_id$anova_table$F[1]`, p \< 0.001, $\eta p^2$ = `r exp2_effect_size_4$Eta2[1]`, with participants responding significantly faster in the AU+ condition than in the AD+ condition, t(18) = 5.41, p \< 0.001, the AD- condition, t(18) = 6.02, p \< 0.001, or in the AU- condition, t(18) = 3.82, p = 0.006. All other comparisons were non-significant. This replicates the findings in Experiment 1, in that participants' responses were significantly faster when the actor falsely believed the unwanted dog-robot was present.
+
+### 3.2.3 Errors
+
+```{r acc ,echo=FALSE}
+#2.ACC  
+#1.1 crital predictions
+exp2_ERR_data_1 <-ERR_data_exp2 %>%  
+  dplyr::filter((Condition  != 'adn')&(Condition  != 'aun'))
+
+exp2_ERR_ANOVA_1 <- exp2_ERR_data_1 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'err_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+#summary(exp2_ERR_ANOVA_1)
+exp2_effect_size_5 = effectsize::effectsize(exp2_ERR_ANOVA_1)
+
+#1.2 all conditions
+exp2_ERR_data_2 <-ERR_data_exp2 
+
+exp2_ERR_ANOVA_2 <- exp2_ERR_data_2 %>% 
+  afex::aov_ez(data =., id = 'Sub', 
+               dv = 'err_log',
+               within =  c('Task','Condition'),fun_aggregate = mean)
+#summary(exp2_ERR_ANOVA_2)
+exp2_effect_size_6 = effectsize::effectsize(exp2_ERR_ANOVA_2)
+
+#1.3 Location task
+exp2_ERR_ANOVA_loc <- exp2_ERR_data_2 %>%
+  dplyr::filter(Task  == 'loc') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'err_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+#summary(exp2_ERR_ANOVA_loc)
+exp2_effect_size_7 = effectsize::effectsize(exp2_ERR_ANOVA_loc)
+
+
+#1.4 Identity task
+exp2_ERR_ANOVA_id <- exp2_ERR_data_2 %>%
+  dplyr::filter(Task  == 'id') %>%
+  afex::aov_ez(data =., id = 'Sub',
+               dv = 'err_log',
+               within =  'Condition',fun_aggregate = mean,
+               sph.correction = "GG")
+#summary(exp2_ERR_ANOVA_id)
+exp2_effect_size_8 = effectsize::effectsize(exp2_ERR_ANOVA_id)
+
+```
+
+```{r plot2}
+
+#3.1.4 按照前三列的条件对数据进行分组并计算每个组的平均值（RT）
+exp2_data_summary <- RT_data_exp2 %>%
+  group_by(Sub, Task, Condition) %>%
+  summarise(mean_rt = mean(rt_log))
+
+exp2_data_summary_1 <- exp2_data_summary %>%
+  group_by(Task, Condition) %>%
+  summarise(mean_rt_1 = mean(mean_rt),
+            se_rt_1 = sd(mean_rt)/sqrt(n()))
+
+##3.1.5 按照前三列的条件对数据进行分组并计算每个组的平均值（ERR）
+exp2_data_ERR <- ERR_data_exp2 %>%
+  group_by(Sub, Task, Condition) %>%
+  summarise(mean_err = mean(err_log))
+
+exp2_data_ERR_1 <- exp2_data_ERR %>%
+  group_by(Task, Condition) %>%
+  summarise(mean_err_1 = mean(mean_err),
+            se_err_1 = sd(mean_err)/sqrt(n()))
+
+##3.1.6 调整顺序，将x轴按照图中重新排序
+exp2_data_summary_1<-exp2_data_summary_1 %>%
+  dplyr::mutate(Condition = case_when(
+                            grepl("adp", Condition) ~ "AD+",
+                            grepl("aup", Condition) ~ "AU+",
+                            grepl("adn", Condition) ~ "AD-",
+                            grepl("aun", Condition) ~ "AU-",
+                            TRUE ~ Task))
+exp2_data_summary_1$Condition <- factor(exp2_data_summary_1$Condition, levels = order)
+exp2_data_ERR_1<-exp2_data_ERR_1 %>%
+  dplyr::mutate(Condition = case_when(
+                            grepl("adp", Condition) ~ "AD+",
+                            grepl("aup", Condition) ~ "AU+",
+                            grepl("adn", Condition) ~ "AD-",
+                            grepl("aun", Condition) ~ "AU-",
+                            TRUE ~ Task))
+exp2_data_ERR_1$Condition <- factor(exp2_data_ERR_1$Condition, levels = order)
+exp2_data_summary_1$Task <- factor(exp2_data_summary_1$Task, levels = order1)
+exp2_data_ERR_1$Task <- factor(exp2_data_ERR_1$Task, levels = order1)
+
+##3.2 还原图
+##3.2.1 实验一 图a 折线图
+exp2_selected_data <- exp2_data_summary_1 %>% 
+  filter(Condition == "AD+" | Condition == "AU+")
+p_line2<-ggplot(exp2_selected_data, aes(x = Condition, y = mean_rt_1, group = Task, color = Task)) +
+  geom_line(color="grey", size = 1.2) + 
+  geom_point() +
+  labs(y = "Logarithmically transformed
+             reaction times", color = "Condition") +
+  theme_classic()+
+  coord_cartesian(ylim = c(3.0,3.4))+
+  scale_y_continuous(breaks = seq(3.0, 3.4, by = 0.1), 
+                     labels = c(seq(3.0, 3.3, by = 0.1), "3.4"), 
+                     expand = c(0, 0))+ ylab('')+theme(
+                # 绘制散点图并隐藏y轴
+                axis.line.y = element_blank(),
+                axis.text.y = element_blank(),
+                axis.ticks.y = element_blank()
+                
+                )
+
+
+##3.2.2 实验一 图b reaction times
+##3.2.2.1 p3
+exp2_data_summary_1_1 <- filter(exp2_data_summary_1,Task=="id")
+p3<-ggplot(data =exp2_data_summary_1_1,
+           aes(x = Condition, y = mean_rt_1, fill = Task))+
+  geom_bar(stat = "identity", position = position_dodge(),fill="#5ACFC9", na.rm = TRUE, width = 0.5)+
+  labs(x = "Treatment Condition",
+       y = "Logarithmically transformed 
+       reaction times",
+       fill = "Task") +
+  theme_classic() +
+  coord_cartesian(ylim = c(2.8,3.5))+
+  scale_y_continuous(breaks = seq(2.8, 3.5, by = 0.1), 
+                     labels = c(seq(2.8, 3.4, by = 0.1), "3.5"), 
+                     expand = c(0, 0)) +
+  geom_errorbar(position = position_dodge(0.9),
+                aes(ymin = mean_rt_1 - se_rt_1, 
+                    ymax = mean_rt_1 + se_rt_1),
+                width = 0.2, color = "black") +
+  geom_signif(y_position = 3.38, xmin = 1, xmax = 2, 
+              annotations = c('*'),
+              tip_length = 0.01) +
+  geom_signif(y_position = 3.41, xmin = 2, xmax = 3, 
+              annotations = c('*'),
+              tip_length = 0.01) +
+  geom_signif(y_position = 3.46, xmin = 2, xmax = 4, 
+              annotations = c('*'),
+              tip_length = 0.01)+theme(
+                # 绘制散点图并隐藏y轴
+                axis.line.y = element_blank(),
+                axis.text.y = element_blank(),
+                axis.ticks.y = element_blank()
+                
+                )+ylab('')+xlab('')
+
+
+##3.2.2.2 p4
+exp2_data_summary_1_2 <- filter(exp2_data_summary_1,Task=="loc") 
+
+
+p4<- ggplot(data =exp2_data_summary_1_2,
+            aes(x = Condition, y = mean_rt_1, fill = Task))+
+  geom_bar(stat = "identity", position = position_dodge(), fill="#FD836D",na.rm = TRUE, width = 0.5)+
+  labs(x = "Treatment Condition",
+       y = "Logarithmically transformed 
+       reaction times",
+       fill = "Task") +
+  theme_classic() +
+  coord_cartesian(ylim = c(2.8,3.5))+
+  scale_y_continuous(breaks = seq(2.8, 3.5, by = 0.1), 
+                     labels = c(seq(2.8, 3.4, by = 0.1), "3.5"), 
+                     expand = c(0, 0)) +
+  geom_errorbar(position = position_dodge(0.9),
+                aes(ymin = mean_rt_1 - se_rt_1, 
+                    ymax = mean_rt_1 + se_rt_1),
+                width = 0.2, color = "black") +
+  geom_signif(y_position = 3.4, xmin = 1, xmax = 2, 
+              annotations = c('*'),
+              tip_length = 0.01) +xlab('')+ylab('')+theme(
+                # 绘制散点图并隐藏y轴
+                axis.line.y = element_blank(),
+                axis.text.y = element_blank(),
+                axis.ticks.y = element_blank()
+                )
+          # + theme(
+          #     panel.background = element_blank(),
+          #     plot.margin = margin(r=-10, unit = "cm")
+          #     )
+
+
+##3.2.2.3 图组合
+
+##3.2.3 实验一 图c error proportion
+p5<-ggplot2::ggplot(data =exp2_data_ERR_1,
+                aes(x = Condition, y = mean_err_1, fill = Task))+
+  geom_bar(stat = "identity", position = position_dodge(), na.rm = TRUE, width = 0.5)+
+  labs(x = "Treatment Condition in EXP2",
+       y = "Error proportion",
+       fill = "Task") +
+  facet_wrap(~Task,nrow=1)  +
+  theme_classic() +
+  coord_cartesian(ylim = c(0,1))+
+  scale_y_continuous(breaks = seq(0, 1, by = 0.1), 
+                     labels = c(seq(0, 0.9, by = 0.1), "1"), 
+                     expand = c(0, 0)) +   
+  geom_errorbar(position = position_dodge(0.9),
+                aes(ymin = mean_err_1 - se_err_1, 
+                    ymax = mean_err_1 + se_err_1),
+                width = 0.2, color = "pink") +
+                theme(strip.background = element_blank())+
+                guides(fill="none")+theme(
+                # 绘制散点图并隐藏y轴
+                axis.line.y = element_blank(),
+                axis.text.y = element_blank(),
+                axis.ticks.y = element_blank()
+                
+                )+ylab('')
+
+```
+Overall, explicit responses in Experiment 2 revealed low error rates for the Location and Identity tasks (10% and 9% respectively; see mean error proportions in Fig. 7f). There were no signs of a speed-accuracy tradeoff in the critical (AD+/AU+) conditions; faster response times in one condition over the other was not accompanied by significantly higher errors in that condition. A 2 (Task: Location, Identity) × 2 (False-Belief Condition: AD+, AU+) ANOVA revealed no difference in error rates, between tasks or conditions, when the agent falsely believed that an object was in the box, F(`r exp2_ERR_ANOVA_1$anova_table$num[2]`,`r exp2_ERR_ANOVA_1$anova_table$den[2]`) = `r exp2_ERR_ANOVA_1$anova_table$F[2]`, p = 0.69. Following on from this we ran a 2 (Task: Location, Identity) × 4 (False-Belief Condition: AD+, AU+, AD-, AU-) repeated measures ANOVA which also revealed no interaction,F(`r exp2_ERR_ANOVA_2$anova_table$num[3]`,`r exp2_ERR_ANOVA_2$anova_table$den[3]`) = `r exp2_ERR_ANOVA_2$anova_table$F[2]`, p = 0.89. Further analysis revealed no significant difference in error proportions across the Location task conditions, F(`r exp2_ERR_ANOVA_loc$anova_table$num[1]`,`r exp2_ERR_ANOVA_loc$anova_table$den[1]`) = `r exp2_ERR_ANOVA_loc$anova_table$F[1]`, p = 0.52 or Identity task conditions, F(`r exp2_ERR_ANOVA_id$anova_table$num[1]`,`r exp2_ERR_ANOVA_id$anova_table$den[1]`) = `r exp2_ERR_ANOVA_id$anova_table$F[1]`, p = 0.56. Unlike in Experiment 1, we found no evidence of a possible approach bias in the Location task's AD- condition.
+
+```{r image}
+
+p_line<-p_line + guides(color='none') +xlab('')
+p_line2<-p_line2+xlab('')
+
+p6<-p2+p1
+p7<-p4+p3
+
+p8<-(p_line/p6/p_err)|(p_line2/p7/p5) 
+
+# p8 + plot_annotation(
+#   tag_levels = 'a')&
+#     theme(plot.tag.position = c(0.5, 1))
+  
+ggsave(filename = "./picture/p8.png", plot = p8, height = 10, width = 9, dpi = 300)
+
+```
+
+![](./picture/p8_fixs.png)
+
+Fig. 7. 'The Task \* False-Belief Condition interactions (a & d) support the Location and Identity Hypotheses for Experiments 1 and 2./n Bar charts show the logarithmically transformed response times (b & e) and mean error proportions (c & f) for the Location and Identity tasks. Error bars represent the standard error of the mean. Note: \* significance level, p \< 0.01'
+
+# 4 Discussion
+
+In this demonstration, we reproduced the study results of Edwards & Low (2017).The original data of this study is available online, however, we have no access to get the code.And after group discussion,we thought it was highly possible that data analysis and visualization of this study were not completed in R language.So we wrote the above code by ourselves and applied what we have learned in class.It is interesting to see whether consistency of data in different analysis software processing extists.
+
+Our conclusion is,though there is slight difference in the values,our reproductive effects keeps consistent with the original results.So it is safe to conclude that the effects revealed in this study are credible.
+
+Still,we think the difference in values probably comes from preprocessing.Without original code,we wrote the R codes by ourselves following the steps described in the article.We found it hard to exclude the outliers exactly same as the study. 
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
