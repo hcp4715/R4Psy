@@ -1,9 +1,13 @@
-#小组序号：第9组
-#小组成员：邓善文（组长），王旭，邱英姿，陈燕，侯丽雯
-#复现文献：Edwards, K., & Low, J. (2017). Reaction time profiles of adults’ action prediction reveal two mindreading systems. Cognition, 160, 1–16. https://doi.org/10.1016/j.cognition.2016.12.004
-#复现内容：全部（实验1 & 实验2）
+# 小组序号：第9组
+
+# 小组成员：邓善文（组长），王旭，邱英姿，陈燕，侯丽雯
+
+# 复现文献：Edwards, K., & Low, J. (2017). Reaction time profiles of adults' action prediction reveal two mindreading systems. Cognition, 160, 1--16. <https://doi.org/10.1016/j.cognition.2016.12.004>
+
+# 复现内容：全部（实验1 & 实验2）
 
 # 这是第9组的文件夹结构
+
 如下
 
 ```         
@@ -21,27 +25,3 @@
       |----- p8.png
       |----- p8_fixs.png
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
