@@ -1,0 +1,624 @@
+---
+title: "Commonsense psychology in human infants and machines "
+author: "Gala Stojnić, Kanishk Gandhi, Shannon Yasuda, Brenden M. Lake, Moira R. Dillon"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+<font face="Microsoft YaHei UI Light">
+
+## 小组名称 {style="font-size: 20px;"}
+
+<font face="Microsoft YaHei UI Light">**代码大法官**
+</font>
+
+## 小组成员 {style="font-size: 18px;"}
+
+<font face="Microsoft YaHei UI Light">徐鹏 周莹洁 舒开颜 王伊琳 朱玉强
+</font>
+
+## 分工 {style="font-size: 18px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   徐鹏-分工安排、文献逻辑梳理、复现流程代码整理、报告文档检查
+
+-   舒开颜-引入及结果、复现流程编辑及代码检查、总讨论编辑
+
+-   周莹洁-方法及结论、复现流程中的代码标注、文档排版、汇报</font>
+
+## 1 研究概述 {style="font-size: 18px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+### 1.1 前言 {style="font-size: 17px;"}
+
+　　常识AI(commonsense
+AI)是一种新兴的人工智能研究方向，旨在让AI系统能够像人类一样理解和推理自然语言，并具有常识性知识。
+
+　　要构建常识AI，解决人类和AI之间的差异是至关重要的。在这个过程中面临的挑战之一是决定从什么知识开始。如果说常识AI的目标是构建和成年人一样的常识性思考，那么AI可能需要像成年人那样，从与婴儿相同的核心能力出发。
+
+　　在过去的几十年里，关于婴儿常识心理学的基础研究，即婴儿对agent行动背后的意图、目标、偏好和合理性的理解，表明婴儿将目标归于agent，并期望agent以合理有效的方式追求目标。支持婴儿常识心理的预测是人类社会智能的基础，因此可以为常识AI提供更多的信息。但机器学习算法通常缺乏这类预测，而是直接预测行动，因此缺乏对新环境和情况的灵活性。
+
+　　因此，需要一个全面的框架来描述婴儿对agent的知识，使婴儿和机器之间的任务结果具有可比性，这样一个框架可以为婴儿的知识理论和未来的类人人工智能提供信息。
+
+　　本研究通过评估婴儿在"婴儿直觉基准（BIB）"上的表现，为测试婴儿的常识心理学提供了一个全面的框架。BIB是一套六项探测常识心理学的任务，对计算模型和婴儿都适用。
+
+　　BIB的基本假设是，婴儿具有一种内在的、普遍适用的认知能力，可以对外部刺激进行快速的、无意识的反应。这种反应不需要经过语言或逻辑推理的过程，而是直接基于感觉和情感。为了验证这一假设，BIB方法通常使用一系列视觉、听觉或触觉刺激，并记录婴儿的反应时间和行为表现。研究人员可以通过分析这些数据来确定婴儿是否能够识别出特定的刺激，以及他们如何对这些刺激做出反应。
+
+　　因此，本研究分两个板块，板块一的两个实验，收集了婴儿对BIB六项任务的反应，旨在提供婴儿常识性心理的初步证据和三种归因方式。板块二将最新的学习驱动的神经网络模型在BIB上的表现与婴儿的表现进行比较，来检验婴儿对agent的智能是否可以反映在人工智能中。我们主要针对婴儿实验进行复现。</font>
+
+<font face="Microsoft YaHei UI Light">
+
+### 1.2 方法 {style="font-size: 16px;"}
+
+#### 1.2.1 实验材料 {style="font-size: 16px;"}
+
+![](C:%5CUsers%5C%E5%BE%90%E9%B9%8F%5CPictures%5CSaved%20Pictures%5CSnipaste_2023-06-18_17-14-55.png){width="688"}
+
+　　婴儿直觉基准测试(BIB)的任务结构采用了常用于测试婴儿的"违反预期"的注视时间范式(VOE)，这种任务结构已被用于最近聚焦于常识的机器学习基准测试。
+
+　　试验材料包括了一系列简短的无声动画视频，并呈现简单的视觉效果：一些不带人体特征（如眼睛和四肢）的基本形状，在一个网格世界(grid
+world)中进行基本运动。
+
+　　实验分为两阶段：熟悉阶段和测试阶段。
+
+　　熟悉阶段：观察者观看一系列的视频，目的是建立一种预期(expectation)。
+
+　　测试阶段的视频有两种结果，一是预期结果(expected
+outcome)，它在知觉上与熟悉阶段不同，但在概念上一致；二是意外结果(unexpected
+outcome)，它在知觉上与熟悉阶段相似，但在概念上不一致。
+
+#### The Goal-Directed Task 目标导向任务 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   探究：agent的目标指向特定对象而非某对象的位置。
+
+-   熟悉阶段：agent在一个不变的网格世界中移动到两个对象中的同一个对象，两个对象在不同的视频中位于几乎相同的位置------------（客体位置与身份特征相关，使得目标物体和非目标物体在试次间出现在大致相同的位置）。
+
+-   测试阶段：
+    当两个对象的位置交换后，agent移动到网格世界中的新对象时，观察者可能会更惊讶。------------（测试使用了在一次熟悉性测试中使用过的两个物体位置，但是在这些位置上的物体是交换的。）
+
+-   测试阶段有两种结果:
+    预期(Expected):agent移动到了熟悉阶段一直是其目标的对象上;意外(Unexpected):agent移动到了熟悉阶段不是其目标的对象上。
+
+-   试次平衡：Green-left(green-right/ blue left/ blue right)。
+
+#### The Multi-Agent Task 多代理任务 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   探究：agent对目标对象的特定偏好。
+
+-   熟悉阶段:
+    agent在变化的网格世界中移动到两个对象中的同一个对象，两个对象出现在不同的位置。
+
+-   测试阶段:
+    与新agent相比，当原agent移动到新对象时，观察者可能会更惊讶。
+
+-   测试阶段有两种结果:
+    预期(Expected):新agent接近原agent的非目标对象;意外(Unexpected):原agent接近熟悉阶段的非目标对象。
+
+-   试次平衡：Blue-green (blue-red/ orange-green/ orange-red)。
+
+#### The Inaccessible-Goal Task 不可达目标任务 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   探究：agent是否可能在现有目标或偏好对象无法达到时形成新的目标。
+
+-   熟悉阶段:
+    在不断变化的网格世界中，agent在变化的网格世界中移动到两个对象中的同一个对象，两个对象出现在不同的位置。
+
+-   测试阶段:
+    网格世界再次改变，使得agent的目标对象因被屏障阻挡而不可接近。当agent移动到一个新对象时，观察者可能会更惊讶，因为它原来的目标对象在当前是可接近的。
+
+-   测试阶段有两种结果:
+    预期(Expected):agent的目标对象因被阻隔而不可接近，agent移动到其非目标对象;意外(Unexpected):两个对象都是可接近的，agent移动到其非目标对象。
+
+-   试次平衡：Blue(orange)。
+
+#### The Efficient-Agent Task 高效代理任务 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   探究：agent理性采取行动以实现目标。
+
+-   熟悉阶段: agent在不变的网格世界中有效地绕过障碍物(fixed black
+    obstacles)移动到对象。
+
+-   测试阶段:
+    对象出现在熟悉过程中出现过的位置，但网格世界发生变化，阻挡对象的障碍已经消失。当agent沿着熟悉但在当前效率低下的路径移动到对象时，观察者可能会更惊讶。
+
+-   测试阶段有两种结果:
+    预期(Expected):agent直接沿直线移动到目标对象;意外(Unexpected):agent沿熟悉阶段中移动的一条相同的弯曲路径移动，尽管该路径现在看来是低效的。
+
+#### The Inefficient-Agent Task 低效代理任务 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   探究：观察者对在变化的网格世界中最初低效移动的agent有什么预期。
+
+-   熟悉阶段:
+    agent沿着与Efficient-Agent任务中agent相同的路径移动到一个对象，但这次路上没有障碍，所以agent的移动是低效的。
+
+-   测试阶段:
+    网格世界环境会发生变化。当agent继续以低效率向目标移动时，观察者可能会感到更惊讶，或者可能对agent是否会以低效率或高效率向目标移动没有任何预期。
+
+-   测试阶段有两种结果:
+    预期(Expected):agent在最有效路径上移动;意外(Unexpected):agent在低效路径上移动。
+
+#### The Instrumental-Action Task 工具性操作任务 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+-   探究:
+    agent的动作序列表示为工具性的，在必要时采取工具性操作，并指向一个更高阶的目标对象。
+
+-   熟悉阶段:
+    agent首先移动到钥匙(key)处，再和钥匙一起移动到嵌入点，此时触发object周围障碍解除，agent继续移动直至到达对象位置。
+
+-   测试阶段:
+    当障碍物不再阻挡对象时，agent继续移动到钥匙处，而不是直接移动到对象处时，观察者可能会更惊讶。</font>
+
+-   测试阶段有两种结果:
+    预期(Expected):agent直接移动到对象;意外(Unexpected):agent在对象没有被阻挡的情况下仍移动到钥匙处。
+
+### 1.2.2 实验设计 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+　　BIB的任务关注观察者对agent行为可能做出的三种归因：目标归因(goal
+attribution)、理性归因(rationality
+attribution)和工具性归因(instrumentality attribution)。
+
+　　【Goal-Directed/Multi-Agent/Inaccessible-Goal】任务侧重于观察者将目标归因到代理人的行为上。
+
+　　【Efficient-Agent/Inefficient-Agent】任务侧重于观察者对代理人行为的理性归因上。
+
+　　【Instrumental-Action】任务侧重于观察者对代理行为的工具性归因。</font>
+
+#### Experiment 1 {style="font-size: 16px;"}
+
+　　<font face="Microsoft YaHei UI Light">实验一选取【Goal-Directed】和【Efficient-Agent】两个任务，收集婴儿的反应。因为它们测量的常识在先前关于婴儿行为理解的文献中有一致的结论，并旨在提供婴儿常识性心理的初步证据。
+
+　　以原始观察时间作为因变量，结果(预期与意外)作为固定因子，被试作为随机截距的混合线性模型评估婴儿在每个任务中的表现；另外一个混合线性模型检查了婴儿在两个任务中的总体表现。为了获得p值，我们对每个回归的结果进行了Type
+3 wald 检验。</font>
+
+#### Experiment 2 {style="font-size: 16px;"}
+
+　　<font face="Microsoft YaHei UI Light">实验2重复了实验1中的两个任务，并添加了【Multi-Agent】、【Inaccessible-Goal】、【Inefficient-Agent】、【Instrumental-Action】四个任务。
+
+　　采用与实验一相同的混合线性模型和Type 3
+wald检验对婴儿在每个被试上的表现以及六个任务的总体表现。</font>
+
+### 1.2.3 被试 {style="font-size: 16px;"}
+
+#### Experiment 1 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+　　选取26名胎龄≥37周的11个月大的正常发育婴儿(M~age~ = 11.13 months,
+Range = 10.42 months -- 11.83 months; 12
+girls)。每个被试参加【Goal-Directed】任务或【Efficient-Agent】任务，或二者均参加，最终每个任务均有24名被试的数据。</font>
+
+#### Experiment 2 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+　　选取58名胎龄≥37周的11个月大的正常发育婴儿(M~age~ = 11.06 months,
+Range = 10.50 months -- 11.50 months; 31
+girls)。每个被试参与若干项BIB的任务，最终共有288次单独测试。
+
+　　最终样本量：Goal-Directed 48个，Multi-Agent 49个，Inaccessible-Goal
+47个，Efficient-Agent 47个，Inefficient-Agent 49个，Instrumental-Action
+48个。</font> 　　
+
+### 1.2.4 实验流程 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+1.  婴儿在Zoom上进行在线测试，Zoom记录测试过程并捕捉婴儿的脸和呈现刺激的屏幕。
+
+2.  看护人按要求固定设备及安置婴儿；看护人被要求在刺激呈现期间闭眼，并且不与婴儿有任何交流。
+
+3.  主试对婴儿观看的视频进行现场编码(experimenter
+    blinding)，使用PyHab(open-source looking-time coding and stimulus
+    presentation solution)软件和幻灯片控制刺激呈现的进程。
+
+4.  每一试次视频播放前都有一个5秒的注意力吸引过程（通过位于屏幕中央的带鸣响的旋转圆块实现），以将婴儿的注意力集中到屏幕上。agent到达object时，视频播放结束并在屏幕上呈现最后一帧直到婴儿连续看向别处2秒（或视频播放超过60秒）。
+
+</font>
+
+## 2 可重复性研究 {style="font-size: 18px;"}
+
+### 2.1 原文献结果 {style="font-size: 16px;"}
+
+#### Experiment 1 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+　　注视时间因任务而异，与Goal-Directed任务相比，婴儿注视Efficient-Agent任务的时间更长(F(1，71)=9.34，p=.003)，反映了Efficient-Agent任务中的试验时间更长。总体而言，与预期结果相比，婴儿对非预期结果的注视时间更长(F(1，66)=11.34，p=0.001)，并且任务和结果之间的交互作用不显著(F(1，66）=0.30，p=0.585）。当agent在Goal-Directed任务中移动到一个新的目标时，婴儿感到惊讶（注视时间更长）(F(1,
+23)=4.73，p=0.040)，当一个高效agent在Efficient-Agent任务中选择了一条低效路径到达一个对象时，婴儿会感到惊讶(F(1,
+23)=2.60，p=.016)。</font>
+
+#### Experiment 2 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+　　婴儿在实验2的六项任务中的表现也如图所示。注视时间因任务而异(F(5341)=2.78，p=0.018)，反映了不同任务的不同试验长度。总体而言，与预期结果相比，婴儿对非预期结果的注视时间没有延长(F(1341)=2.27，p=0.133
+)，但任务与结果的交互作用结果表明，不同的任务会引起婴儿不同的注视模式(F(5341)=2.23，p=0.051)。首先考察了婴儿在实验2的三个任务中的表现，这三个任务侧重于目标归因：Goal-Directed；Multi-Agent；和Inaccessible-Goal
+Tasks任务：
+
+1.  在Goal-Directed任务中：与实验1的结果一致，当一个agent移动到一个新的对象时，婴儿会感到惊讶(F(1,
+    47)=4.09，p=0.049)；
+
+2.  在Multi-Agent任务中：与原来的agent相比，在新agent条件下，当新agent移动到新的对象上时，婴儿表现出的惊讶之间没有显著差异(F(1,
+    48)=3.41，p=0.071；对预期结果的观察时间更长)；
+
+3.  在Inaccessible-Goal任务中，与不可接触目标相比，目标可接触条件下，当agent移动到一个新对象时，婴儿表现出惊讶之间没有显著差异(F(1,
+    46)=0.02，p=0.891)。
+
+-   接下来，研究了婴儿在两个关注理性归因的任务上的表现：Efficient-Agent和Inefficient
+    Agent任务：
+
+1.  在Efficient-Agent任务中:与实验1的结果一致，当一个本来有效率的agent选择了一条无效率的路径到达目标时，婴儿会感到惊讶(F(1,
+    46)=7.72, p=.008)；
+
+2.  在Inefficient-Agent任务中:婴儿对无效率的agent持续以无效率的路径移动到目标的反应之间没有显著差异(F(1,
+    48)=2.51，p=0.119)。
+
+-   最后，通过婴儿在【Instrumental-Action】任务上的表现来观察他们的工具性归因：当agent移动到工具上，而不是其目标对象上时，当不再需要工具来实现目标时，婴儿并没有表现出惊讶的差异（F（1，47）=0.03，P=0.853）。</font>
+
+### 2.2 复现&结果 {style="font-size: 16px;"}
+
+#### 2.2.1 复现思路 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+1.  定义相关函数（数据清理、结果呈现）。
+
+2.  读取数据。
+
+3.  数据清理：清理掉Looking时间小于1s，大于40s的极端数据。（没有完成实验任务、技术故障、主试问题、视频质量差、看护人干扰等情况已排除）
+
+4.  建立HLM模型。
+
+5.  进行Type 3 检验。
+
+6.  输出结果 </font>
+
+#### 2.2.2 复现流程
+
+##### 设置工作路径
+
+```{r warning = FALSE, results = 'hide',message=FALSE}
+WD <-  here::here()
+getwd()
+```
+
+##### 加载所需要的包 {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide',message=FALSE}
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }  
+pacman::p_load("here", "bruceR", "reticulate")
+
+use_python('C:\\Users\\徐鹏\\AppData\\Local\\Programs\\Python\\Python310\\python.exe')
+```
+
+<font face="Microsoft YaHei UI Light" >打开bruceR包的同时也打开了`lmerTest`、`data.table`等包。</font>
+
+##### 定义所需函数 {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide',message=FALSE}
+P_summary<- function(result){
+  cat("\033[1;30m 
+Type III Analysis of Variance Table with Satterthwaite's method: \033[0m\n")
+  print_table(result)
+}
+
+P_cleaning<- function(data){
+  if('Task' %in% colnames(data)){
+    setDT(data)
+    data<- data[Looking >= 1 & Looking < 40]
+    data = select(data,c('Participant','Task','Outcome','Looking'))
+  }else{
+    setDT(data)
+    data<- data[Looking >= 1 & Looking < 40]
+    data = select(data,c('Participant','Outcome','Looking'))
+  }
+}
+
+P_wider<- function(data,id,dv,idv){
+  v = c(id,dv,idv)
+  data = select(data,v)
+  pivot_wider(data = data,
+              names_from = idv,
+              values_from = dv)
+}
+
+P_describe<- function(data){
+  data_summary = P_wider(data, id = 'Participant', dv = 'Looking', idv = 'Outcome')
+  data_summary = select(data_summary, c('Unexpected','Expected'))
+  Describe(data_summary,plot = TRUE,upper.triangle = TRUE)
+}
+```
+
+<font face="Microsoft YaHei UI Light" >`P_summary`函数用于一键呈现Type 3
+Wald
+tests的结果。`P_cleaning`用于一步清洗、筛选数据。`P_wider`用于原始数据一步长数据转宽数据。`P_describe`用于一步描述性统计。</font>
+
+##### Experiment 1 {style="font-size: 16px;"}
+
+###### 读取、清理数据 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light" >实验一的数据共有三个，分别是`efficient_agent`、`goal_directed`的数据以及一份`omnibus`综合数据。</font>
+
+```{r warning = FALSE, results = 'hide',message=FALSE}
+efficient_agent<- read.csv('data/Exp1/efficient_agent.csv', encoding = 'UTF-8', header = TRUE)%>%
+  P_cleaning()
+goal_directed<- read.csv('data/Exp1/goal_directed.csv', encoding =  'UTF-8', header = TRUE)%>%
+  P_cleaning()
+omnibus<- read.csv('data/Exp1/omnibus.csv', encoding = 'UTF-8', header = TRUE)%>%
+  P_cleaning()
+```
+
+###### 综合分析Omnibus {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+model1<- lmer(Looking ~ Outcome * Task + (1|Participant), data = omnibus) #建立HLM模型
+result1<- anova(model1) #对建立的模型进行 Type 3 tests
+P_summary(result1) #呈现最终的结果
+```
+
+
+
+<font face="Microsoft YaHei UI Light" >
+分析的结果与原文一致：Efficient-Agent versus Goal-Directed Task (F(1,
+71) = 9.34, p = .003),versus expected outcomes (F(1, 66) = 11.34, p =
+.001)，no task by outcome interaction (F(1, 66) = 0.30, p =
+.585)，Goal-Directed Task (F(1, 23) = 4.73, p = .040)，Efficient-Agent
+Task (F(1, 23) = 2.60, p = .016)。</font>
+
+###### Omnibus可视化 {style="font-size: 16px;"}
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.ticker as ticker
+
+data = pd.read_csv('E:\R course\omnibus.csv') #读取数据
+plt.rcParams['font.size'] = '12' #设置字号
+sns.set(style = 'ticks') #设置主题
+g = sns.FacetGrid(data, col='Task') #设置绘图网格
+g.map_dataframe(sns.violinplot, #小提琴函数
+                x = 'Outcome', #自变量
+                y = 'Looking', #因变量
+                scale='count', #根据样本量调节图形宽度
+                saturation=1, #饱和度
+                inner='box', #中间呈现微型箱型图
+                linewidth=1, #边缘曲线宽度
+                split=True, #分开呈现
+                bw = 0.5, #核密度估计值，越大越光滑
+                palette='Pastel2' #设置颜色
+                )
+```
+
+###### Goal-Directed Task {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+goal_directed_summary<- P_wider(data = goal_directed, id = 'Participant', dv ='Looking',idv = 'Outcome')%>%
+  select(.,c('New Location','New Object'))%>%
+  Describe(., plot = TRUE,upper.triangle = TRUE) #描述性统计
+model2<- lmer(Looking ~ Outcome + (1|Participant), data = goal_directed) #建立HLM模型
+result2<- anova(model2) #对建立的模型进行 Type 3 tests
+P_summary(result2) #呈现最终的结果
+```
+
+
+
+<font face="Microsoft YaHei UI Light" > 分析的结果与原文一致：the
+Goal-Directed Task (F(1, 23) = 4.73, p = .040)。</font>
+
+###### Efficient-Agent Task {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+efficient_agent_summary<- P_wider(data = efficient_agent, id = 'Participant', dv ='Looking',idv = 'Outcome')%>%
+  select(.,c('Efficient','Inefficient'))%>%
+  Describe(., plot = TRUE,upper.triangle = TRUE) #描述性统计
+model3<- lmer(Looking ~ Outcome + (1|Participant), data = efficient_agent) #建立HLM模型
+result3<- anova(model3) #对建立的模型进行 Type 3 tests
+P_summary(result3) #呈现最终的结果
+```
+
+
+
+<font face="Microsoft YaHei UI Light" > 分析的结果与原文在F值上有出入:
+the Efficient-Agent Task (F(1, 23) = 2.60, p =
+.016)。通过检查作者公开的R代码可以得知，此处是作者填写错了F值。</font>
+
+##### Experiment 2 {style="font-size: 16px;"}
+
+###### Ominibus {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_omnibus<- read.csv('data/Exp2/Data from all participating infants/omnibus.csv',
+                      encoding = 'UTF-8',
+                      header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+model4<- lmer(Looking ~ Outcome * Task + (1|Participant), data = Exp2_omnibus) #建立HLM模型
+result4<- anova(model4) #对建立的模型进行 Type 3 Wald tests
+P_summary(result4) #呈现最终的结果
+Exp2_omnibusTest<- read.csv('data/Exp2/Data from infants who completed all six tasks/omnibus.csv')
+length(unique(Exp2_omnibus$Participant)) #检查复现过程中所用数据的被试数量，为58
+length(unique(Exp2_omnibusTest$Participant))#检查研究者所用数据的被试数量，为32
+```
+
+
+
+<font face="Microsoft YaHei UI Light" > 分析的结果与原文不一致：Infants'
+looking time varied by task (F(5, 341) = 2.78, p = .018), unexpected
+versus expected outcomes (F(1, 341) = 2.27, p = .133), a task by outcome
+interaction suggested that different tasks elicited different patterns
+of infants' looking (F(5, 341) = 2.23, p =
+.051)。通过检查研究者公开的代码可以得知，此处是作者错把预实验的数据当成正式数据进行分析了。</font>
+
+###### Omnibus可视化 {style="font-size: 16px;"}
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import matplotlib.ticker as ticker
+data = pd.read_csv('E:\R course\Data from all participating infants\omnibus.csv')
+
+sns.set(font='STSong',font_scale=1,style = 'ticks')
+g = sns.FacetGrid(data, col='Task',col_wrap=3)
+g.map_dataframe(sns.violinplot,x = "Outcome",
+               y = "Looking", 
+               scale = 'count',
+               saturation = 1,
+               inner = 'box',
+               linewidth = 1,
+               split = True,
+               bw = 0.5,
+               palette = 'Pastel2'
+               )
+```
+
+###### Efficient_Agent {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_efficient_agent<- read.csv('data/Exp2/Data from all participating infants/efficient_agent.csv',
+                             encoding = 'UTF-8',
+                             header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+P_describe(Exp2_efficient_agent)
+model5<- lmer(Looking ~ Outcome + (1|Participant), data = Exp2_efficient_agent) #建立HLM模型
+result5<- anova(model5) #对建立的模型进行 Type 3 tests
+P_summary(result5) #呈现最终的结果
+```
+
+
+
+<font face="Microsoft YaHei UI Light" > 分析的结果与原文一致：the
+Efficient-Agent Task (F(1, 46) = 7.72, p = .008)。</font>
+
+###### Goal_Directed {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_goal_directed<- read.csv('data/Exp2/Data from all participating infants/goal_directed.csv',
+                            encoding = 'UTF-8',
+                            header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+P_describe(Exp2_goal_directed)
+model6<- lmer(Looking ~ Outcome + (1|Participant), data = Exp2_goal_directed) #建立HLM模型
+result6<- anova(model6) #对建立的模型进行 Type 3 tests
+P_summary(result6) #呈现最终的结果
+```
+
+
+<font face="Microsoft YaHei UI Light" >
+
+分析的结果与原文一致：the Goal-Directed Task (F(1, 47) = 4.09, p =
+.049)。</font>
+
+###### Multi_Agent {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_multi_agent<- read.csv('data/Exp2/Data from all participating infants/multi_agent.csv',
+                          encoding = 'UTF-8',
+                          header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+P_describe(Exp2_multi_agent)
+model7<- lmer(Looking ~ Outcome + (1|Participant), data = Exp2_multi_agent) #建立HLM模型
+result7<- anova(model7) #对建立的模型进行 Type 3 tests
+P_summary(result7) #呈现最终的结果
+```
+
+
+<font face="Microsoft YaHei UI Light" >
+
+分析的结果与原文一致：the Multi-Agent Task (F(1, 48) = 3.41, p =
+.071)。</font>
+
+###### Inaccessible_Agent {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_inaccessible_agent<- read.csv('data/Exp2/Data from all participating infants/inaccessible_goal.csv',
+                                 encoding = 'UTF-8',
+                                 header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+P_describe(Exp2_inaccessible_agent)
+model8<- lmer(Looking ~ Outcome + (1|Participant), data = Exp2_inaccessible_agent) #建立HLM模型
+result8<- anova(model8) #对建立的模型进行 Type 3 tests
+P_summary(result8) #呈现最终的结果
+```
+
+<font face="Microsoft YaHei UI Light" >
+
+分析的结果与原文一致：the Inaccessible-Goal Task((F(1, 46) = 0.02, p =
+.891)。</font>
+
+###### Inefficiet_Agent {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_inefficiet_agent<- read.csv('data/Exp2/Data from all participating infants/inefficient_agent.csv',
+                               encoding = 'UTF-8',
+                               header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+P_describe(Exp2_inefficiet_agent)
+model9<- lmer(Looking ~ Outcome + (1|Participant), data = Exp2_inefficiet_agent) #建立HLM模型
+result9<- anova(model9) #对建立的模型进行 Type 3 tests
+P_summary(result9) #呈现最终的结果
+```
+
+
+<font face="Microsoft YaHei UI Light" >
+
+分析的结果与原文一致：the Inefficient-Agent Task ((F(1, 48) = 2.51, p =
+.119))。</font>
+
+###### Instrumental_Action {style="font-size: 16px;"}
+
+```{r warning = FALSE, results = 'hide', message=FALSE}
+Exp2_instrumental_action<- read.csv('data/Exp2/Data from all participating infants/instrumental_action.csv',
+                                  encoding = 'UTF-8',
+                                  header = TRUE) %>%
+  P_cleaning() #读取并清理数据
+P_describe(Exp2_instrumental_action)
+model10<- lmer(Looking ~ Outcome + (1|Participant), data = Exp2_instrumental_action) #建立HLM模型
+result10<- anova(model10) #对建立的模型进行 Type 3 Test
+P_summary(result10) #呈现最终的结果
+```
+
+
+<font face="Microsoft YaHei UI Light" >
+
+分析的结果与原文一致：the Instrumental-Action Task (F(1, 47) = 0.03, p =
+.853)。</font>
+
+#### 2.2.3 复现结果&结论 {style="font-size: 16px;"}
+
+<font face="Microsoft YaHei UI Light">
+
+　　两个实验的结果表明，婴儿对代理人的有效行为有一个理性预期，这种预期可以推广到新的、变化的环境。同时也提出了可能与常识性的抽象原则相关的新问题，比如让代理人绕过障碍物到达目标物体可能会加强婴儿在该任务中的目标归因；障碍屏障在试次间的位置变化可能影响婴儿对目标对象可接近性的评估；新agent的出现得到了婴儿的高度关注等。
+
+　　综上，我们对实验一和实验二进行了概述和复现，原作者对数据进行了比较明确的筛选和说明，因而整体复现难度不高，复现结果与原文献结果基本一致。同时，我们也在复现过程中发现了刚才已经指出的两处错误。
+
+　　我们在复现过程中，不仅对研究设计和模型验证有了更丰富的理解，也能发现研究者在有些细节方面还是会有疏漏，因而公开、透明和开放的研究取向提倡能让我们更好地推动心理学可重复性危机问题的解决。</font>
+
+## 3 总讨论 {style="font-size: 18px;"}
+
+<font face="Microsoft YaHei UI Light">
+　　本文献通过BIB任务框架对比研究了人类婴儿和机器在理解人类行为背后的期望和意图方面的共同点和差异。
+
+　　婴儿在BIB任务中的表现表明，他们对代理人的有效行为有一个高度抽象的默认预期，即代理人的行为指向目标对象，并遵循理性原则。而目标对象首次展示的环境的变化可能对婴儿的目标和理性归因产生影响，因而在部分BIB任务中，没有得到显著的结果。
+
+　　进一步的研究标明，婴儿和机器在理解人类行为方面存在一些共同的基本直觉，但最新的学习驱动的神经网络模型在BIB现有任务上尚且达不到婴儿的常识水平。尽管如此，扩展和研究表现婴儿知识的全面框架，比如，对代理人成本和价值概念的预期，或对代理人行为认可这些体现社会伙伴关系等方面，对人工智能的进展有着重要的启示意义。</font>
