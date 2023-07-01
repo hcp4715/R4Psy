@@ -1,0 +1,408 @@
+---
+title: "Group report"
+author: "Rock"
+format: 
+  revealjs:
+    scrollable: true
+---
+```{=html}
+<style>
+/*一级标题比如Introduction Result 使用#，可独立成页
+  二级标题使用##，也可独立成页
+  如果没有一级或二级标题仍需独立成页，可以打---（like分页栏）*/
+  
+  
+/*以下为设置想要的段落格式，第一行（.large/.small）为段落格式的名称*/
+/*可以自定义格式，然后都写在下面这边/
+
+/* 段落1（调整字体，前后段落间隔） */
+  .large{
+    font-family: "Times New Roman", Times, serif;
+    font-size: 40px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+/* 段落2（调整字体，前后段落间隔，缩进） */
+  .small{
+    font-family: "Times New Roman", Times, serif;
+    font-size: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 10px;
+  }
+
+/* 三级标题字体大小 */
+  .title-h3 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 40px;
+  }
+  
+/* 标注字体大小 */ 
+  .small-note {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+    margin-left: 20px;
+  }
+
+/* 列内字体大小 */ 
+.column-text {
+    font-size: 35px; 
+  }
+  
+.column-text2 {
+    font-size: 20px; 
+  }
+
+/*指定段落格式:
+  <p class="xxx">
+   段落内容
+  </p> （开始就是p,结束是/p）
+  
+  指定列表格式:列表叫li
+  <li class="xxx">
+  </li>
+  
+  但如果要修改标题的字体大小，似乎不能直接使用如<h3 class>,
+  如果这个文本已经在某一种<></>里，需要使用<span class = "">*/
+  
+/*经测试，二级标题跟下面的段落之间加一个<br>,间隔看起来不错？*/
+
+  }
+</style>
+```
+# Our Group
+![](face.png){fig-align="center"}
+
+## Roles and responsibilities
+<br>
+**刘逸康**：复刻结果6.1 + pre <br>
+**蔡亚静**：复刻结果6.2 + 总结部分前言与讨论<br>
+**何雨桐**：复刻结果6.3 + 总结部分前言与讨论<br>
+**林也**：复刻结果6.4 + 总结部分前言与讨论 + 汇总<br>
+**李先知**：总结方法+部分讨论<br>
+
+# Paper info
+![](paperinfo.png){fig-align="center"}
+<p class="small">
+Gillies, G., Park, H., Woo, J., Walther, D. B., Cant, J. S., & Fukuda, K. (2023). Tracing the emergence of the memorability benefit. *Cognition, 238,* 105489. https://doi.org/10.1016/j.cognition.2023.105489
+</p>
+
+# Introduction
+
+## Tracing the Memorability benefit
+<br>
+<li class="large">
+Humans have a remarkable ability to store large numbers of images in visual long-term memory, but not all visual information can be remembered equally well.
+</li>
+<p style="text-align: center;" class="large">
+**[subject-centric framework]{style="color: grey;"}**<br>
+            ⬇️<br>
+**stimulus-intrinsic factors**
+</p>
+<li class="large">
+There are **stimulus-intrinsic properties** that renders an image **memorable or forgettable**.
+</li>
+
+## Memorability benefit
+
+<br>
+
+### Different stage in Memory
+
+<p class="large">
+The process of visual information being encoded into **VLTM** is influenced by **the capacity-limited** visual working memory (**VWM**) system.
+</p>
+
+<li class="small">
+**High VWM capacity** predicts **better subsequent VLTM performance** for stimuli encoded during the VWM task.
+</li>
+
+## 
+
+### Possible Mechanisms
+
+<br>
+
+<p style="text-align: center;" class="large">
+[Efficiency]{style="color: blue;"} & [Competitiveness]{style="color: red;"}
+</p>
+
+<br>
+<p class="large">
+Memorable stimuli may be more efficiently represented in VWM, [requiring fewer cognitive resources,]{style="color: blue;"}
+</p>
+
+<p class="large">
+or they may have a competitive advantage in [obtaining the necessary cognitive resources.]{style="color: red;"}
+</p>
+
+## 
+
+### Memorability benefit only exists in VWM ?
+
+<br>
+
+<p class="large">
+Memorability benefit may **continue to develop** even after stimuli **passes through the VWM bottleneck**：
+</p>
+
+<li class="small">
+*memorable stimuli are **less** prone to forgetting, and **better** retained in VLTM.*
+</li>
+
+## Experiment outlook
+
+<br>
+
+<p class="large">
+To investigate how the memorability benefit emerges by examining how much visual information **passes through visual working memory (VWM)** and **"sticks" in visual long-term memory (VLTM)**
+</p>
+
+<li class="small">
+encode human faces + VWM recognition task + VLTM recognition task
+</li>
+
+<li class="small">
+encode real-world objects + VWM recognition task + VLTM recognition task
+</li>
+
+## Hypothesis to be test
+
+<br>
+
+<h3><span class="title-h3"> 1.Efficiency hypothesis</h3>
+
+<li class="small">
+encode memorable or forgettable stimuli at different set size(3 vs 6)
+</li>
+
+<h3><span class="title-h3"> 2.Competition hypothesis</h3>
+
+<li class="small">
+encode memorable and forgettable stimuli within the same trial(Mixed Memorable vs Mixed Forgettable)</br> <span class="small-note">*note: the "memorable" or "forgettable" refers to the stimuli need to be recognized in VLTM task*
+</li>
+
+<h3><span class="title-h3"> 3.Stickiness hypothesis</h3>
+
+# Method
+
+## Participants
+
+<br>
+
+<li class="large">
+**Experiment 1:** 156 psychology students from the University of Toronto Mississauga (mean age = 19.61 years, SD = 3.645, 105 females).
+</li>
+
+<li class="large">
+**Experiment 2:** used Prolific to recruit 156 young adults (mean age = 24.35 years; SD = 3.521; 92 females) who resided in the U.S. or Canada at the time of the experiment.
+</li>
+
+## Stimuli
+
+<br>
+
+![](stim.jpg){fig-align="center"}
+
+## Procedure
+
+<p class="small-note">
+*note: similar process in both exp1 and exp2*
+</p>
+
+<br>
+
+<h3><span class="title-h3"> 1.VWM Task</h3>
+
+![](vwm_task.jpg) 
+
+<br>
+
+<h4>Condition</h4>
+
+::: columns
+
+::: {.column width="30%"}
+![](condition.jpg)
+:::
+
+::: {.column width="70%"}
+[* Pure 3 Memorable condition (3 memorable faces)<br> 
+ * Pure 3 Forgettable condition (3 forgettable faces)<br> 
+ * Pure 6 Memorable condition (6 memorable faces)<br> 
+ * Pure 6 Forgettable condition (6 forgettable faces)<br> 
+ * Mixed 6 Memorable condition (3 memorable + 3 forgettable faces/tested VWM for memorable faces )<br> 
+ * Mixed 6 Forgettable condition(3 memorable + 3 forgettable faces/tested VWM for forgettable faces)]{.column-text2}
+:::
+
+:::
+
+<br>
+
+<h3><span class="title-h3"> 2.VLTM Task</h3>
+
+![](VLTM_task.jpg)
+
+## Analyses
+<ol type="1">
+  <li class="large">**AUC** for **Memory performance**<br></li>
+</ol>
+
+  <li style="padding-left: 20px;">x axis: cumulative false alarm rate 
+  <span style="font-size: 24px;">$p(response_{old}|stimulus_{new})$</span>
+  </li>
+
+  <li style="padding-left: 20px;">y axis: cumulative hit rate 
+  <span style="font-size: 24px;">$p(response_{old}|stimulus_{old})$</span>
+  </li>
+
+<ol start="2">
+  <li class="large">**Index** for **Memory stickiness**</li>
+</ol>
+  <li style="padding-left: 20px;"> (AUC for VLTM task – 0.5) / (AUC for VWM recognition task – 0.5)</li>
+
+
+
+# Result
+
+## Performance prediction
+
+<br>
+
+<p class="small">
+correlate the **average VWM performance** and the **average VLTM recognition performance**
+</p >
+
+::: columns
+::: {.column width="50%"}
+[**Original plot**]{.column-text}
+:::
+
+::: {.column width="50%"}
+[**Our plot**]{.column-text}
+:::
+:::
+
+![](6.1.png){fig-align="center"}
+
+## Testing the efficiency hypothesis
+
+<br>
+
+<p class="small">
+**2** (ArrayType: Pure 3 and Pure 6) × **2**(Memorability: Memorable and Forgettable) repeated measures ANOVA on **AUC**
+</p >
+
+::: columns
+::: {.column width="40%"}
+[**Original plot**]{.column-text}
+:::
+
+::: {.column width="60%"}
+[**Our plot**]{.column-text}
+:::
+:::
+
+![](6.2.png){fig-align="center"}
+
+## Testing the competitive hypothesis
+
+<br>
+
+<p class="small">
+**2** (ArrayType: Pure 6 and Mixed 6) × **2**(Memorability: Memorable and Forgettable) repeated measures ANOVA on **AUC**
+</p >
+
+::: columns
+::: {.column width="40%"}
+[**Original plot**]{.column-text}
+:::
+
+::: {.column width="60%"}
+[**Our plot**]{.column-text}
+:::
+:::
+
+![](6.3.png){fig-align="center"}
+
+## Testing the stickiness hypothesis
+
+<br>
+
+<p style="font-family: 'Times New Roman'; font-size: 25px;">
+**2** (ArrayType: Pure 3 and Pure 6) × **2**(Memorability: Memorable and Forgettable) rm ANOVA on **stickiness**<br>
+**2** (ArrayType: Mixed 6 and Pure 6) × **2**(Memorability: Memorable and Forgettable) rm ANOVA on **stickiness**
+</p >
+
+::: columns
+::: {.column width="50%"}
+[**Original plot**]{.column-text}
+:::
+
+::: {.column width="50%"}
+[**Our plot**]{.column-text}
+:::
+:::
+
+![](comparison.jpg){fig-align="center"}
+
+
+## 
+
+### Advanced Plot
+
+1. efficiency hypothesis
+![](efficiency.png){fig-align="center"} 
+2. competitive hypothesis
+![](competitive.png){fig-align="center"}
+3. stickiness hypothesis
+![](p_svpplot.png){fig-align="center"}
+
+
+# Discussion
+
+## Efficiency benefit
+
+<br>
+
+<p class="large">
+For the efficiency benefit of memorable stimuli:
+</p >
+<li class="large">
+Future studies should explore cognitive mechanisms under efficient representations of novel but memorable stimuli.
+</li>
+
+## Competitive benefit
+<br>
+
+<p class="large">
+Differences in **attentional allocation** during encoding might play a role
+</p >
+
+<li class="small">memorable stimuli are **more likely to attract attention**, leading to the observed competitive advantage in VWM.
+</li>
+
+<p class="large">
+Importantly, while the competitive benefit was observed in VWM, it **did not translate into VLTM.**
+</p >
+
+## Stickiness
+
+<p class="large">
+memorable stimuli were "sticker" than forgettable stimuli after they pass through VWM
+</p>
+
+<li class="small">
+where does the stickiness benefit stems from?
+</li>
+
+![](dis_8.3.jpg){fig-align="center" width="500"}
+
+<li class="small">
+some studies suggest the underlying mechanisms are dissociable
+</li>
+
+<li class="small">
+it remains unclear
+</li>
