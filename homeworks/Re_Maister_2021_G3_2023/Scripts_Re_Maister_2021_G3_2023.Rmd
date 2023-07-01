@@ -1,0 +1,481 @@
+```{r package loading}
+# 使用p_load来载入需要的包
+pacman::p_load("reshape2", "ggsci", "lmerTest", "sjPlot", "ggplot2", "effects", "Cairo", "ggeffects", "ggsci", "dplyr", "effsize", "MBESS", "Matrix", "lme4", "glmmTMB", "ggeffects", "ggsci")
+
+```
+
+## Question 1:Do self-portraits look like the participant?
+```{r}
+#1 准备工作
+#1.1 读取数据
+ALL <- read.csv('./data/RDM.csv', header = TRUE)
+real_vs_real <- read.csv('./data/real_vs_real.csv', header = FALSE)
+portrait_vs_portrait <- read.csv('./data/portrait_vs_portrait.csv', header = FALSE)
+gender_matrix <- read.csv('./data/gender_matrix.csv', header = FALSE)
+identity_matrix <- read.csv('./data/identity_matrix.csv', header = FALSE)
+
+#1.2 按性别排列
+#性别选所有行，提取第一列，方框里表示[行，列]
+gender <- ALL[,1]
+dissim <- subset(ALL, select = -c(1,2))
+#从名为ALL的数据框中选择除了第一列和第二列之外的所有列，并将结果赋值给变量dissim。
+#按性别进行排列，gender1是女，2是男。最后得到上面是女，下面是男的自画像和自我真实照片差异矩阵。
+gen_sort_dissim <- dissim[order(gender),]#行按性别排序
+gen_sort_dissim_2 <- gen_sort_dissim[,order(gender)]#列按性别排序
+
+#筛选出同一性别的自画像和其自我真实面孔的差异分数矩阵
+#portrait vs. real dissimilarity values
+female <- subset(dissim, select = (gender == 1))#先把性别是1的列选出来
+just_female <- female[(gender == 1),]#再把性别是1的行选出来，得到女性的自画像和自我真实照片差异矩阵
+male <- subset(dissim, select = (gender == 2))#男性同理
+just_male <- male[(gender == 2),]
+
+#筛选出同一性别下的自我真实面孔和他人真实面孔的差异分数矩阵
+#real vs. real dissimilarity values
+female_real <- subset(real_vs_real, select = (gender == 1))#先把性别是1的列选出来
+just_female_real <- female_real[(gender == 1),] #再把性别是1的行选出来，得到女性的真实照片和其他被试的真实照片差异矩阵
+male_real <- subset(real_vs_real, select = (gender == 2))#男性同理
+just_male_real <- male_real[(gender == 2),]
+
+#筛选出同一性别下的自画像和他人自画像的差异分数矩阵
+#portrait vs. portrait dissimilarity values
+female_portrait <- subset(portrait_vs_portrait, select = (gender == 1))#先把性别是1的列选出来
+just_female_portrait <- female_portrait[(gender == 1),] #再把性别是1的行选出来，得到女性的自画像和其他被试自画像差异矩阵
+male_portrait <- subset(portrait_vs_portrait, select = (gender == 2))#男性同理
+just_male_portrait <- male_portrait[(gender==2),]
+#得到了6个矩阵
+
+```
+
+```{r}
+#2 自我差异得分与跨个体非自我差异得分的比较（配对样本t检验）
+#2.1 准备工作
+portrait_vs_real_other <- NULL;
+portrait_vs_real_self <- NULL;
+for (ppt in 1:nrow(dissim))#ppt相当于序号
+{tem <- t(dissim[ppt,-ppt])#去掉第n行、第n列那一个，即只留下了自己和他人的比较，没有自己和自己的比较
+portrait_vs_real_other[ppt] <- mean(tem)#自画像和其他被试真实照片差异，tem是自己和他人比较差异的均值
+portrait_vs_real_self[ppt] <- dissim[ppt,ppt]}#自画像和自我真实照片差异的比较
+
+#2.2配对样本t检验
+t.test(portrait_vs_real_self,portrait_vs_real_other,paired = TRUE)
+cohen.d(portrait_vs_real_self,portrait_vs_real_other,pooled = TRUE,paired = TRUE)
+ci.smd(ncp=2.39, n.1=100, n.2=100, conf.level=0.95)
+
+```
+
+```{r}
+#3.被试真实面孔矩阵是否能显著预测自画像矩阵（线性回归分析）
+#3.1准备工作
+gen_vec <- unlist(gender_matrix)
+#将名为gender_matrix的矩阵展开成一个向量，并将其赋值给变量gen_vec。换句话说，它将原始矩阵中的所有元素按照一定顺序排列，形成一个新的一维向量。下面的操作相同，都是把列表或矩阵转成一个单一向量的矩阵
+real_vec <- unlist(real_vs_real)
+portrait_vec <- unlist(portrait_vs_portrait)
+female_portrait_vec <- unlist(just_female_portrait)
+female_real_vec <- unlist(just_female_real)
+male_portrait_vec <- unlist(just_male_portrait)
+male_real_vec <- unlist(just_male_real)
+ID_vec <- unlist(identity_matrix)
+dissim_vec <- unlist(dissim)
+
+#从四个向量（portrait_vec、gen_vec、real_vec）中删除值为0的元素，并将剩余的元素分别赋值给新的向量（portrait_vec_nodiag、gen_vec_nodiag、real_vec_nodiag）。
+indices <- which(portrait_vec==0)#自画像的向量中等于0的所在的位置
+gen_vec_nodiag <- gen_vec[-indices]#删掉0，即异性
+portrait_vec_nodiag <- portrait_vec[-indices]#删掉0.即每个人的自画像与自己自画像的差异分数
+real_vec_nodiag <- real_vec[-indices]#删掉0.即每个人的真实照片与自己真实照片的差异分数
+
+#从两个女性向量（female_portrait_vec、female_real_vec）中删除值为0的元素，并将剩余的元素分别赋值给新的向量（fem_portrait_vec_nodiag、fem_real_vec_nodiag）。
+fem_indices <- which(female_portrait_vec==0)
+fem_portrait_vec_nodiag <- female_portrait_vec[-fem_indices] #得到了女性自画像与其他女性被试自画像的差异分数
+fem_real_vec_nodiag <- female_real_vec[-fem_indices]#得到了女性真实照片与其他女性被试真实照片的差异分数
+##原代码这里错误，填的是-indice
+
+#男性同理
+male_indices <- which(male_portrait_vec==0)
+male_portrait_vec_nodiag <- male_portrait_vec[-male_indices]
+male_real_vec_nodiag <- male_real_vec[-male_indices]
+##原代码这里错误，填的是-indice
+
+#3.2线性回归分析，看真实面孔差异矩阵是否能预测自画像差异矩阵（同性别）
+#y~X，因变量~自变量，同性面孔的差异矩阵是否能预测y的差异矩阵
+#r2等于0.004从该分析中得到的
+M1 <- lm(portrait_vec_nodiag[gen_vec_nodiag==1]~real_vec_nodiag[gen_vec_nodiag==1])#同性自画像预测同性真实照片
+M1alt <- lm(portrait_vec_nodiag~real_vec_nodiag + gen_vec_nodiag)
+summary(M1)#得到M1回归的分析
+confint(M1, level=0.95)
+#线性回归分析，发现真实照片RDM显著预测自画像RDM， β = 0.06, 95% CI = [0.03, 0.09]， t(2926) = 3.63, p < 0.001，表明样本真实面孔的物理相似性结构在自画像中得到了体现。虽然非常显著，但这种影响很小(r2 = 0.004)
+
+```
+
+```{r}
+#4 验证open face算法建构差异分数的准确性
+#4.1计算人类评分者在强迫选择分类任务中对每幅自画像的平均准确率，以便后续和算法模拟出的准确性进行对比，以验证使用算法来计算差异分数的可靠性
+#(中间是77张自画像之一，左右两边都是真实照片，其中一张真实照片和自画像的被试是同一人，另一张真实照片是同性别的其他人)
+human_class_acc <- read.csv('./data/human_control_exp.csv', header = FALSE)#读取40个评分者对77名被试自画像的分类的平均正确率
+human_class_acc <- as.numeric(unlist(human_class_acc)) #先将列表展开为一个一维向量，再转成数值型向量
+
+#4.2验证人类评分者评分的准确性（单样本t检验）
+result <- t.test(human_class_acc,mu = 0.5)
+t_value <-result$statistic#进行单样本t检验，随机水平为0.5，同时提取t值
+df <- length(human_class_acc) - 1#计算df
+CohensD <- t_value / sqrt(df + 1)
+
+#4.3通过模拟实验推导了Openface算法的分类精度
+#○1.循环抽编号，模拟矩阵数据
+set.seed(333)#自己设的整数
+grand_mean_robot_experiment <- c()
+tstats <- c()
+classification <- c()
+#设了3个参数
+for (portrait_n in c(1:43)) #for female faces计算女性真实面孔的差异数据，模拟数据
+{correct_real_dissim <- just_female[portrait_n,portrait_n]#自己与自己自画像的差异分数，对角线差异分数
+#portrait_n，类似于前面的ppt；just_female只有43行43列的数据框
+incorrect_real_dissim <- just_female[portrait_n,-portrait_n]#自己的自画像与其他被试自画像的差异分数，非对角线差异分数
+classification <- rbind(classification,correct_real_dissim<incorrect_real_dissim)
+#按行合并在一起，正确的数量小于不正确的，自己和自己的差异小于自己和他人的差异，才合并
+#43行42列判断的true和false（排除了和自己比）
+}
+mean_classif_fem <- (rowSums(classification)/43)#自己自画像与其他被试自画像进行正确分类的比例，即分类准确率
+grand_mean_fem <- mean(mean_classif_fem)#对合并的数据求均值，所有女性自画像的分类准确率的平均值
+classification <- c()#清空
+#【序号i替换了portrait_n】
+for (i in 1:43) 
+  {correct_real_dissim <- just_female[i,i]
+  incorrect_real_dissim <- just_female[i,-i]
+  classification <- rbind(classification,correct_real_dissim<incorrect_real_dissim)
+}
+mean_classif_fem <- (rowSums(classification)/43)#自己自画像与其他被试自画像进行正确分类的比例，即分类准确率
+grand_mean_fem <- mean(mean_classif_fem)
+classification <- c()#清空
+
+for (portrait_n in c(1:34)) #同理，男性和前面女性相同
+{correct_real_dissim <- just_male[portrait_n,portrait_n]
+incorrect_real_dissim <- just_male[portrait_n,-portrait_n]
+classification <- rbind(classification,correct_real_dissim<incorrect_real_dissim)
+}
+mean_classif_male <- (rowSums(classification)/34)
+grand_mean_male <- mean(mean_classif_male)
+#【序号i替换了portrait_n】
+for (i in c(1:34))
+{correct_real_dissim <- just_male[i,i]
+incorrect_real_dissim <- just_male[i,-i]
+classification <- rbind(classification,correct_real_dissim<incorrect_real_dissim)
+}
+mean_classif_male <- (rowSums(classification)/34)
+grand_mean_male <- mean(mean_classif_male)
+
+#○2.通过算法模拟40个人类评分者
+#repeating the experiment 1000 times
+#重复实验1000次
+for (RobotExperimentN in c(1:1000)) 
+{classification <- c()#清空变量
+list_males <- c(1:34)#设了一个34个的list，男性的序号
+list_females <- c(1:43)#设了一个43个的list，女性的序号
+used_already <- c()#存储已经使用过的样本序号,防止重复使用
+mean_classif <- c()#存储每个实验的分类准确率，并最终求得所有实验的平均值
+mean_classif_perface <- data.frame(matrix(NA, nrow = 77, 
+                                        ncol = 40))#设了一个矩阵，77行40列
+for (robot_ppt in c(1:40))#第一个循环，模拟40个人类评分者
+{used_already <- c()#用过编号的参数
+#classification <- vector(,77)#【原始代码，报错了，下面一行是修改后的】
+classification <- vector("numeric", length = 77)#建了长度是77的向量，每一个人对77人的自画像打分
+trial_stim <- cbind(list_males,sample(list_males))
+#两列的表，list_males男性的编号1-34；sample无放回的取样
+while (mean(trial_stim[,1]==trial_stim[,2])>0)
+#第一列等于第二列，同一个位置的均值大于0，就做下面的循环
+{trial_stim <- cbind(list_males,sample(list_males))}#做男性的取样
+new_list <- trial_stim[,2]
+#males
+for (portrait_n in c(1:34))#循环34次
+{correct_real_dissim <- just_male[portrait_n,portrait_n]#计算对角线上每个男性样本集合中的正确差异值
+to_select_from <- new_list[new_list!=portrait_n]
+#从样本中选择一个与当前男性样本不同的样本作为比较对象
+to_select_from_final <- to_select_from [! to_select_from %in% used_already]
+#从可选样本中排除已经使用过的样本，并将剩余样本存入to_select_from_final参数中，以避免重复选择
+randomized <- to_select_from_final#将可选的样本随机打乱，以避免选取到的样本具有固定规律
+real_incorrect <- randomized[1]#从随机打乱后的样本中选择第一个样本作为不正确的样本
+used_already <- append(used_already,real_incorrect)#抽了一个不正确的差异值
+incorrect_dissim <- just_male[portrait_n,real_incorrect]#计算当前男性样本集合与选取的不正确样本之间的差异值
+classification[portrait_n] <- correct_real_dissim<incorrect_dissim
+}#将当前男性样本集合进行分类，并将分类结果存入classification向量中
+
+used_already <- c() #重置已使用过的样本编号
+trial_stim <- cbind(list_females,sample(list_females))#从女性样本库中随机选取一组新的女性对比对集合，以继续对男性样本集合进行分类
+while (mean(trial_stim[,1]==trial_stim[,2])>0)#当女性样本对比对集合中有任意两个样本相同时，循环继续执行；否则循环结束
+{trial_stim <- cbind(list_females,sample(list_females))}#sample() 函数从女性样本池中随机选取一组样本，并将其存入trial_stim变量中
+new_list <- trial_stim[,2]
+#主要目的是为后续的男性样本分类实验提供女性样本对比对集合，在生成女性样本对比对集合的过程中，保证了每个对比对集合中的样本都是唯一的
+
+#females
+for (portrait_n in c(1:43))#女性同理
+{correct_real_dissim <- just_female[portrait_n,portrait_n]
+to_select_from <- new_list[new_list!=portrait_n]
+to_select_from_final <- to_select_from [! to_select_from %in% used_already]
+randomized <- to_select_from_final
+real_incorrect <- randomized[1]
+used_already <- append(used_already,real_incorrect)
+incorrect_dissim <- just_female[portrait_n,real_incorrect]
+classification[portrait_n+34] <- correct_real_dissim<incorrect_dissim
+}
+
+mean_classif[robot_ppt] <- mean(classification)#计算整个实验的平均分类准确率
+mean_classif_perface[,robot_ppt] = classification #将当前的分类结果存入 mean_classif_perface 矩阵中，并将已经使用过的样本序号清空
+robot_class_acc <- rowMeans(mean_classif_perface)#通过 rowMeans() 函数计算算法的分类准确率
+} #模拟40个人类评分者的循环结束
+
+grand_mean_robot_experiment[RobotExperimentN] <- mean(mean_classif) #RobotExperimentN第几次的意思
+tstats[RobotExperimentN] <- t.test(human_class_acc,robot_class_acc)$statistic}#进行独立样本t检验，比较人类样本分类准确率与算法样本分类准确率之间的差异
+
+grand_mean_1000RobotExperiments <- mean(grand_mean_robot_experiment) #计算1000次实验的平均分类准确率
+sd(grand_mean_robot_experiment)#计算1000次实验的分类准确率标准差
+robot_class_acc <- rowMeans(mean_classif_perface)#重新计算所有机器人样本集合的分类准确率
+
+#4.4.对随机选择的N=40个模拟样本进行单样本t检验
+result <- t.test(robot_class_acc,mu = 0.5)
+t_value <-result$statistic#进行单样本t检验，随机水平为0.5，同时提取t值
+df <- length(robot_class_acc) - 1#计算df
+CohensD <- t_value / sqrt(df + 1)
+
+#4.5. bootstrap假设检验（比较人类评分准确率与机器人分类准确率）
+#主要是进行了一系列假设检验的操作，用于比较人类样本分类准确率与机器人样本分类准确率之间的差异，并判断差异是否显著
+#bootstrap假设检验的样本数量可以自由选择,在该bootstrap假设检验中，进行了10000次抽样操作，也就是说，每次抽取样本时会从两组样本中有放回地随机采样，共抽了10000次
+observed_tstat <- t.test(human_class_acc,robot_class_acc)$statistic#独立样本t检验，得到t值
+t.test(human_class_acc,robot_class_acc)[["parameter"]][["df"]]#得到df，即两组样本的样本量之和减去2
+overall_mean <- mean(rbind(robot_class_acc,human_class_acc))#计算两组样本的均值，用于构建零假设的分布
+null_robot_group <- (robot_class_acc-mean(robot_class_acc))+overall_mean
+null_human_group <- (human_class_acc-mean(human_class_acc))+overall_mean
+#构建零假设的分布，即以两组样本均值为中心的正态分布，通过对每个样本的分类准确率与对应组样本的均值进行标准化
+set.seed(444)#设置随机数
+resamples_robot <- lapply(1:10000, function(i) sample(null_robot_group, replace = T))
+resamples_human <- lapply(1:10000, function(i) sample(null_human_group, replace = T))
+#进行10000次有放回的抽样，从零假设分布中随机抽取样本，用于构建零假设的分布
+
+nullH_tstat <- c()
+nullDF <- c()
+
+for (resample in 1:length(resamples_robot)){
+  nullH_tstat[resample] <- t.test(unlist(resamples_robot[resample]),unlist(resamples_human[resample]))$statistic
+  nullDF[resample] <- t.test(unlist(resamples_robot[resample]),unlist(resamples_human[resample]))[["parameter"]][["df"]]
+}#对于每个抽样结果，计算并记录两组样本之间的t值，同时记录了每个样本所对应的自由度
+hist(nullH_tstat)#绘制零假设分布的直方图，用于检查其是否满足正态分布的要求
+#find proportion of nullHstats >=observed tstats
+estimated_p <- 1-mean(nullH_tstat>=observed_tstat)#通过计算零假设分布中大于等于观察到的t值的比例，来估计p值，用 1-mena()来计算小于观察到的t值的比例
+
+```
+
+## Question 3: Are selfportraits influenced by the psychological self? 
+```{r}
+#对于问题三，我们有2种验证方式，一种是从人格角度，另一种则是从自尊角度，以下先展示人格角度验证的代码
+#3.1前期准备工作
+ALL_TRIALS_BFI <- read.csv('./data/EXP1_BFI.csv', header=TRUE) 
+
+names(ALL_TRIALS_BFI)[1] <-'PPT'#将id命名为PPT
+ALL_TRIALS_BFI$personality <- factor(ALL_TRIALS_BFI$personality)#转成因子型变量
+ALL_TRIALS_BFI <- ALL_TRIALS_BFI[1:385,]#没用
+ALL_TRIALS_BFI$GENDER <- factor(ALL_TRIALS_BFI$GENDER)#转成因子型变量
+ALL_TRIALS_BFI$PPT <- factor(ALL_TRIALS_BFI$PPT)#转成因子型变量
+
+set.seed(583) # just to make it reproducible
+#randomizing control test
+#打乱被试的大五人格自我评分
+for (i in unique(ALL_TRIALS_BFI$PPT)) 
+{ALL_TRIALS_BFI$BFI_1PP_rand[ALL_TRIALS_BFI$PPT==i] <- sample(ALL_TRIALS_BFI$BFI10_1PP[ALL_TRIALS_BFI$PPT==i])}
+
+#3.2构建线性混合模型
+#第一步：构建H0模型#Finding the null model: Winning model is BFI0c, results described in Table S2
+BFI0 <- lmer(BFI10_3PP_sp~BFI10_3PP_real  + (1|PPT), data=ALL_TRIALS_BFI) #探索真实照片的大五人格外部打分对自画像的大五人格外部打分的影响，同时考虑到了个体差异
+BFI0a <- lmer(BFI10_3PP_sp~BFI10_3PP_real + personality + (1|PPT), data=ALL_TRIALS_BFI) #探索真实照片的大五人格外部打分和人格类型对自画像的大五人格外部打分的影响，同时考虑到了个体差异
+BFI0b <- lmer(BFI10_3PP_sp~BFI10_3PP_real + personality + GENDER+ (1|PPT), data=ALL_TRIALS_BFI) #探索真实照片的大五人格外部打分、人格类型、性别对自画像的大五人格外部打分的影响，同时考虑到了个体差异
+BFI0c <- lmer(BFI10_3PP_sp~BFI10_3PP_real + personality*GENDER+ (1|PPT), data=ALL_TRIALS_BFI) #探索真实照片的大五人格外部打分、人格类型和性别交互对自画像的大五人格外部打分的影响，同时考虑到了个体差异 
+summary(BFI0c)#查看该模型的概括性输出
+
+#第二步：在H0的基础上构建H1模型，加入大五人格自评分
+#testing the hypothesis
+#a H1 model(BFI1) that additionally included self-ratings of the five personality traits (Self TRAITS) 
+#explained significantly more variance in portrait ratings (BFI10_3PP_sp) than the H0 model
+BFI1 <- lmer(BFI10_3PP_sp~BFI10_3PP_real + personality*GENDER+ BFI10_1PP+(1|PPT), data=ALL_TRIALS_BFI) #BFI1在模型BFI0c的基础上纳入了自己的大五人格评分
+anova(BFI0c,BFI1)#比较两个线性混合效应模型BFI0c和BFI1的拟合优度,发现BFI1拟合更好
+fixef(BFI1)#查看BFI1的固定效应估计值
+anova(BFI1)#查看线性混合效应模型BFI1的拟合结果，发现自我评分（BFI——1PP)对他人评分有显著预测作用
+
+#第三步：randomised control model（构建控制模型）
+#在控制模型中，每个参与者对五种人格特质的自我评价随机打乱
+BFI1_rand <- lmer(BFI10_3PP_sp~BFI10_3PP_real + personality*GENDER+ BFI_1PP_rand+(1|PPT), data=ALL_TRIALS_BFI)
+anova(BFI1,BFI1_rand)#发现参数估计不显著，χ2<.001,P>.999,个人性格特征确实与自画像中面部特征的特定配置有意义的联系
+
+#第四步：check assumptions of fitted model
+options(repr.plot.width=4, repr.plot.height=3) #设置绘图大小
+plot_residuals(BFI1)#绘制模型BFI1的残差图
+plot(fitted(BFI1),residuals(BFI1))#查看残差与拟合值之间是否存在任何规律
+hist(residuals(BFI1))#直方图将显示不同残差值的频数或频率分布情况，可以判断模型残差是否符合正态分布或其他特定的分布假设
+plot_model(BFI1, type='diag')#绘制一个包含多个诊断图的综合图表
+#plotting random effects
+randomeffects <- ranef(BFI1)#计算BFI1的随机效应估计值
+str(randomeffects)#转换为字符型
+randomeffects$PPT#输出截距
+names(randomeffects$PPT) <- "Intercept"#命名为截距
+randomeffects$PPT$Participant <- rownames(randomeffects[[1]])#将每个随机效应和对应的参与者编号联系起来，方便进一步分析和解释模型的结果
+#不同被试的自画像特质评分散点图
+p <- ggplot(data=randomeffects$PPT, aes(x=as.factor(Participant), y=Intercept)) + 
+       geom_point(stat="identity") + 
+       ylab("Deviation from Grand Mean Intercept (0)") + xlab("Participant") +
+       geom_hline(yintercept=0) +
+       ggtitle("Portrait ratings as deviations from the grand mean") +
+       theme_bw() + 
+       theme(text=element_text(size=14))
+p
+
+ranef(BFI1)#计算BFI1的随机效应估计值
+
+# fixed effects
+fixef(BFI1)#前面也有过
+
+pred_wholegroup <- ggpredict(BFI1, c("BFI10_1PP"),type = "fe", ci.lvl = 0.95)#基于BFI10_1PP变量（大五人格自我评分）进行预测，并将预测类型设定为固定效应
+pred_eachPPT<- ggpredict(BFI1, terms = c("BFI10_1PP", "PPT"), type = "re", pretty = FALSE)#基于BFI10_1PP变量、被试的交互作用进行预测，并将预测类型设定为随机效应
+
+#第五步：输出结果图fig2a
+#这里我们的一大进步之处在于使用比原作者更为精简的代码来呈现结果
+fig2a <- ggplot(pred_eachPPT) +
+          geom_smooth(aes(x = x, y = predicted, group = group, colour = "individual participants"), method = "lm", size =0.4) +
+          geom_line(data = pred_wholegroup, aes(x = x, y = predicted, colour = "\ngroup mean\n"), size =2) +
+          labs(x="\nselfreported personality traits",y="personality traits of self-portrait\n") +
+          papaja::theme_apa()
+fig2a
+ggsave(filename = "./picture/fig2a.png", plot = fig2a, height = 5, width = 10, dpi = 300)
+
+```
+
+```{r}
+#以上代码是从人格角度进行验证，下面从自尊角度进行验证
+
+#读取数据，该数据包含状态自尊的自我评分，外部评分者对自画像、真实面孔的状态自尊评分
+final_LONG_TRAIT <- read.csv('./data/EXP1_TRAIT.csv', header=TRUE) 
+names(final_LONG_TRAIT)[1] <- 'PPT'#将数据框中第一列的名称改为'PPT'，用于表示参与者的标识符
+#将GENDER、trait列转换为因子变量
+final_LONG_TRAIT$GENDER <- as.factor(final_LONG_TRAIT$GENDER)
+final_LONG_TRAIT$trait <- as.factor(final_LONG_TRAIT$trait)
+
+#建立三个线性混合效应模型，其中因变量trait_3PP_sp:外部评分者对自画像的状态自尊评分
+#自变量分别为trait即状态自尊的三个维度，"(1|PPT)"即PPT对应的随机截距项、trait_3PP_real即外部评分者对真实照片的状态自尊评分、性别和状态自尊维度的交互作用。
+M0a <- lmer(trait_3PP_sp~trait + (1|PPT), data=final_LONG_TRAIT) 
+M0b <- lmer(trait_3PP_sp~trait+trait_3PP_real + (1|PPT), data=final_LONG_TRAIT) 
+M0c <- lmer(trait_3PP_sp~trait_3PP_real +GENDER*trait+ (1|PPT), data=final_LONG_TRAIT)#null
+summary(M0c)
+
+#建立线性混合效应模型M1a，添加了新的自变量'trait_1PP'即被试的状态自尊自评分
+M1a <- lmer(trait_3PP_sp~trait_3PP_real +GENDER*trait+ trait_1PP+(1|PPT), data=final_LONG_TRAIT) 
+anova(M0c,M1a)#比较M0c和M1a两个线性混合效应模型的拟合优度
+#新建线性混合模型M1b，在M1a的基础上加入随机效应项(1 + trait_1PP | PPT)
+M1b <- lmer(trait_3PP_sp~trait_3PP_real +GENDER*trait+ trait_1PP+(1+trait_1PP|PPT), data=final_LONG_TRAIT)
+anova(M1a,M1b)#比较M1a、M1b两个线性混合效应模型的拟合优度
+summary(M1b)
+
+#构建control model
+set.seed(001) # just to make it reproducible
+for (i in unique(final_LONG_TRAIT$PPT)) #对数据集final_LONG_TRAIT中的每个不重复的PPT值进行迭代
+  #在每次迭代中，该语句将对应于当前PPT值的trait_1PP（被试的状态自尊自评分）变量随机重排，并将结果存储在新的变量trait_1PP_rand中，以创建随机重排的数据。
+{final_LONG_TRAIT$trait_1PP_rand[final_LONG_TRAIT$PPT==i]<-sample(final_LONG_TRAIT$trait_1PP[final_LONG_TRAIT$PPT==i])}
+#根据随机重排后的数据，定义了一个新的线性混合效应模型M1a_rand，与之前的模型M1a相似，但使用了随机重排后的trait_1PP_rand变量。
+M1a_rand <- lmer(trait_3PP_sp~trait_3PP_real +GENDER*trait+ trait_1PP_rand+(1|PPT), data=final_LONG_TRAIT)
+
+anova(M1a,M1a_rand)#比较原始模型M1a和随机重排模型M1a_rand之间的拟合优度
+summary(M1a_rand)
+
+```
+
+
+## Question 4: Is the accuracy of self-portraits related to self-reported personality or self-esteem?
+```{r}
+#计算后面需要用到的变量，比如面孔平均性
+#计算面孔平均性
+#首先创建了两个空的数值向量，用于存储后续计算得到的结果
+M_samegen_nonSelfmeanREAL<-c()
+F_samegen_nonSelfmeanREAL<-c()
+
+for (ppt in 1:nrow(just_female_real))#for语句分别对just_female_real和just_male_real数据框中的每一行进行遍历
+{F_samegen_nonSelfmeanREAL[ppt]<-mean(as.numeric(just_female_real[ppt,-ppt]))}#依次计算每个被试在与同性别其他被试的真实面孔的平均差异得分，并将其存储在M_samegen_nonSelfmeanREAL和F_samegen_nonSelfmeanREAL中。
+for (ppt in 1:nrow(just_male_real))
+{M_samegen_nonSelfmeanREAL[ppt]<-mean(as.numeric(just_male_real[ppt,-ppt]))}
+
+#将just_female_real数据框中的所有行的行名转换为数值型，放到名为F_ppt_names的数值向量中；这里的是编号
+#同样地，将just_male_real数据框中所有行的行名转换为数值型，存储到名为M_ppt_names的数值向量中。
+F_ppt_names<-as.numeric(rownames(just_female_real))
+M_ppt_names<-as.numeric(rownames(just_male_real))
+
+#使用cbind函数合并成新的数据框，按列合并
+male_samegen_nonSelfmeanREAL<-cbind(M_ppt_names,M_samegen_nonSelfmeanREAL)
+female_samegen_nonSelfmeanREAL<-cbind(F_ppt_names,F_samegen_nonSelfmeanREAL)
+
+#用rbind函数按行合并成一个新的数据框samegen_nonSelfmeanREAL
+samegen_nonSelfmeanREAL<-rbind(male_samegen_nonSelfmeanREAL,female_samegen_nonSelfmeanREAL)
+newsamegen_nonSelfmeanREAL<-samegen_nonSelfmeanREAL[order(samegen_nonSelfmeanREAL[,1]),]#对现有的samegen_nonSelfmeanREAL进行了排序
+averageness_control<-newsamegen_nonSelfmeanREAL[,2]#将第二列（即averageness_control）提取出来，存储在向量averageness_control中
+
+```
+
+```{r}
+#验证自画像的准确性是否与自我报告的人格特质或者自尊有关
+#4.1构建多层线性回归模型
+#读取数据
+data <- read.csv('./data/acc_indivDiff.csv', header=TRUE) 
+#构建多层线性回归模型,拟合最好的模型为M1。
+#SIM为自画像和自己的真实面孔的差异分数，即因变量自画像的准确性；SE_soc代表社会自尊(social self-esteem)得分；nonself_SIM:每个被试的自画像与其他同性别被试真实人脸的平均差异分数
+M1 <- lm(SIM~nonself_SIM + SE_soc, data = data) #this is the winning model from stepwise procedure (run in SPSS)
+summary(M1)
+confint(M1, level = 0.95)
+M0 <- lm(SIM~nonself_SIM, data = data)
+summary(M0)
+confint(M0, level = 0.95)
+C0 <- lm(SIM~averageness_control+ SE_soc, data = data)
+summary(C0)
+confint(C0, level = 0.95)
+C1 <- lm(SIM~averageness_control, data = data)
+summary(C1)
+
+##4.2使用广义线性回归模型的新方法进行构建，发现与原结果一致
+glm_model1 <- glm(formula = SIM~nonself_SIM + SE_soc, data = data)
+summary(glm_model1)
+
+#4.3为什么只加入了社会自尊？
+#为探究作者在状态自尊里为什么只放入了社会自尊，我们还对其他自尊进行了放入，其中sum_se为被试的平均状态自尊得分
+data$sum_se <- rowSums(data[, c("SE_soc", "SE_perf", "SE_phys")])
+data$ave_se <- mean(data$sum_se)
+
+models <- list( M1 = lm(SIM ~ nonself_SIM + SE_soc, data = data), M1_a = lm(SIM ~ nonself_SIM + SE_soc + SE_perf + SE_phys, data = data), M1_b = lm(SIM ~ nonself_SIM + sum_se, data = data), M1_c = lm(SIM ~ nonself_SIM + SE_perf, data = data), M1_d = lm(SIM ~ nonself_SIM + SE_phys, data = data) ) 
+# 提取参数估计和假设检验结果 
+coefficients <- lapply(models, function(model) coef(summary(model))[, c("Estimate", "Pr(>|t|)")])
+coefficients 
+
+#4.4排除面孔吸引力、面孔平均性的替代性解释（additional control checks）
+#（一）首先对面孔平均性进行控制
+##构建线性回归模型B1，发现面孔平均性不能显著预测社会自尊
+B1<-lm( SE_soc~averageness_control, data = data) #real-face averageness was not significantly related to social self-esteem
+confint(B1, level = 0.95)#用于计算线性回归模型中参数的置信区间
+
+#（二）其次对面孔吸引力进行控制
+#为排除面孔吸引力的替代性解释，计算了面孔吸引力和社交自尊的相关关系，但作者没有给出real_att（被试真实面孔吸引力）的数据，无法探讨。
+
+#4.5绘制fig 2b
+#前期准备
+M0 <- lm(SIM~nonself_SIM, data = data)#构建线性回归模型M0，SIM为自画像和自己的真实面孔的差异分数，即因变量自画像的准确性；nonself_SIM:每个被试的自画像与其他同性别被试真实人脸的平均差异分数
+Y_controlled <- resid(M0)#计算线性回归模型M0的残差，并将结果存储在Y_controlled中
+x <- data$SE_soc#从data数据框中提取出变量SE_soc的值，并将其存储在x中。
+y <- Y_controlled #将之前计算的残差值Y_controlled存储在y中，this controls similarity rating for general averageness of each face before plotting, as in 1st step of regression
+
+mypal = pal_npg("nrc", alpha = 0.7)(5) #生成一个包含5个颜色的调色板，并将透明度设置为0.7，然后将结果存储在mypal中
+
+#绘制fig 2b
+#这里我们同样使用了比原作者更为简短的代码来进行画图
+##绘制带有平滑曲线的散点图，x为社交自尊，y为线性回归模型M0的残差。
+fig2b <- ggplot(data, aes(x = x, y = y)) + 
+          geom_point(shape=16, size = 2, color=mypal[4], alpha = 1)+
+          geom_smooth(method="lm",size = 0.5, color=mypal[4], fill=mypal[4], linetype = 1,  alpha = 0.2 , se = TRUE, level = 0.95, fullrange = TRUE) +
+          labs(x="\nsocial self-esteem",y="self-portrait dissimilarity\n")+
+          theme_update(panel.background = element_rect(fill = "white"), panel.grid = element_blank()) 
+
+fig2b
+ggsave(filename = "./picture/fig2b.png", plot = fig2b, height = 5, width = 10, dpi = 300)
+
+```
+
+
