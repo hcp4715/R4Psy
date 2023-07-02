@@ -1,0 +1,13 @@
+R学不太会但坚持上课组
+
+小组序号：5
+
+复现文献：Doğan, G., Glowacki, L., & Rusch, H. (2018). Spoils division rules shape aggression between natural groups. Nature Human Behaviour, 2(5), 322-326.
+
+复现实验：实验1 and 实验2
+小组成员：
+组长：林昕；组员：宋丹丹、万心茹、陈娟、樊富强。
+
+原始数据储存在data文件中
+R大作业.html是文档；
+R大作业.Rmd是代码。
