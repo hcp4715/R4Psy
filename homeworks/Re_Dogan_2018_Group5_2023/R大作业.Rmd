@@ -1,0 +1,309 @@
+---
+title: "对‘Spoils division rules shape aggression between natural groups’的可重复性研究"
+author: "林昕、宋丹丹、万心茹、陈娟、樊富强"
+date: "2023-06-12"
+output:
+  pdf_document: default
+  html_document: default
+---
+对‘Spoils division rules shape aggression between natural groups’的可重复性研究
+
+引言：本研究旨在探究已有的群际关系和战利品的配分配规则在自然群体之间攻击性的影响。
+作者假设，敌对的群际关系会加大群体间的攻击行为；
+战利品分配的不规则会使得那些处于战利品分配劣势的群体成员表现出更低的攻击意愿。
+作者通过对192名来自埃塞尔比亚三个自然群体的被试进行研究，发现实验结果支撑了作者的假设。
+复现思路：
+由于本研究主要是采用方差分析进行统计分析，因此在方差分析之前先对需要的变量进行编码和预处理，
+将需要的变量储存在表格中，方便后续制图。
+---
+流程如下：
+```{r}
+####导入数据
+pacman::p_load("tidyverse", "bruceR", "ggplot2", "ggsignif", "PropCIs")
+data <- bruceR::import("./data/Dogan_Glowacki_Rusch_Data.csv", as = "data.table")
+```
+
+```{r 采用作者编写的各种函数}
+# 1. Convenience wrapper function for Fisher's exact test [FET]
+fisher = function(A,B) {
+   m = matrix(c(
+    sum(A), length(A)-sum(A),
+    sum(B), length(B)-sum(B)), byrow=T, nrow=2)
+  print(fisher.test(m))
+  print(m)
+  return(fisher.test(m))
+}
+
+rFromWilcox = function(wilcoxModel, N) {
+  # Function extracts effect size estimates (r's) from a given Wilcox model with N observations
+  # Source: Andy Field et al. (2012): "Discovering statistics using R", SAGE, p. 665
+  z <- qnorm(wilcoxModel$p.value/2)
+  r <- z/sqrt(N)
+  cat(wilcoxModel$data.name, "Effect Size, r = ", r)
+}
+
+wilcoxon = function(A,B) {
+  # Convenience wrapper function for Wilcoxon rank-sum test [WRST]
+  k = wilcox.test(A, B, exact=F, conf.int = T)
+  length(A);length(B);median(A);median(B); print(k); rFromWilcox(k, length(c(A,B)))  
+  print("")
+  print(paste("N's (A/B): ", length(A),"/", length(B), sep=""))
+  print(paste("Medians (A/B): ", median(A),"/", median(B), sep=""))
+}
+```
+
+```{r}
+#如果data$Stage1.Contribution的值等于6，data$S1.Contrib将被设置为1，否则为0。
+# S1阶段做出的贡献值为6，意味着在S1阶段该被试做出了贡献。
+data <- data %>%
+  mutate(S1.Contrib = if_else(Stage1.Contribution == 6, 1, 0))
+```
+
+#================================================================================
+# 第一阶段：按实验条件和共享角色划分的贡献者比例
+# 负责成员：宋丹丹、万心茹、陈娟
+#================================================================================
+
+```{r S1.描述统计-宋丹丹}
+# 描述统计
+table_counts <- table(data$S1.Contrib, data$Shares, data$GroupRelationship)
+table_counts
+# 输出的table可以看到，在2（敌对或中立）× 3（分配条件：平等、高、低）情况下的贡献人数。
+```
+
+```{r 准备用于绘图的摘要表格-宋丹丹}
+S1 <- as.data.frame(matrix(nrow=6, ncol=5))
+# 第1列是不同分配条件
+S1[, 1] <- c("Equal", "Equal", "Low", "High", "Low", "High")
+# 第2列是不同群际关系
+S1[, 2] <- c("Neutral", "Enmity", "Neutral", "Neutral", "Enmity", "Enmity")
+# 命名各变量
+colnames(S1) <- c("ShareCondition", "GroupRelationship", "Contributors", "CI.l", "CI.u")
+
+S1[1:6, 3] <- c(
+  # Equal & Neutral 
+  mean(data[data$Shares == "Equal" & data$GroupRelationship == "Neutral", ]$S1.Contrib),
+    # Equal & Enmity
+  mean(data[data$Shares == "Equal" & data$GroupRelationship == "Enmity", ]$S1.Contrib),
+    # Low & Neutral
+  mean(data[data$Shares == "Low" & data$GroupRelationship == "Neutral", ]$S1.Contrib),
+    # High & Neutral
+  mean(data[data$Shares == "High" & data$GroupRelationship == "Neutral", ]$S1.Contrib),
+    # Low & Enmity
+  mean(data[data$Shares == "Low" & data$GroupRelationship == "Enmity", ]$S1.Contrib),
+    # High & Enmity
+  mean(data[data$Shares == "High" & data$GroupRelationship == "Enmity", ]$S1.Contrib)
+)
+
+```
+
+
+```{r 完成表格-万心茹}
+# 计算置信区间
+S1[1,4:5] = scoreci(sum(data[data$Shares=="Equal" & data$GroupRelationship=="Neutral",]$S1.Contrib),
+                    length(data[data$Shares=="Equal" & data$GroupRelationship=="Neutral",]$S1.Contrib), 0.95)$conf.int
+S1[2,4:5] = scoreci(sum(data[data$Shares=="Equal" & data$GroupRelationship=="Enmity", ]$S1.Contrib),
+                    length(data[data$Shares=="Equal" & data$GroupRelationship=="Enmity", ]$S1.Contrib), 0.95)$conf.int
+S1[3,4:5] = scoreci(sum(data[data$Shares=="Low" & data$GroupRelationship=="Neutral",]$S1.Contrib),
+                    length(data[data$Shares=="Low"   & data$GroupRelationship=="Neutral",]$S1.Contrib), 0.95)$conf.int
+S1[4,4:5] = scoreci(sum(data[data$Shares=="High"  & data$GroupRelationship=="Neutral",]$S1.Contrib),
+                    length(data[data$Shares=="High"  & data$GroupRelationship=="Neutral",]$S1.Contrib), 0.95)$conf.int
+S1[5,4:5] = scoreci(sum(data[data$Shares=="Low"   & data$GroupRelationship=="Enmity", ]$S1.Contrib),
+                    length(data[data$Shares=="Low"   & data$GroupRelationship=="Enmity", ]$S1.Contrib), 0.95)$conf.int
+
+S1[6,4:5] = scoreci(sum(data[data$Shares=="High"  & data$GroupRelationship=="Enmity",]$S1.Contrib),length(data[data$Shares=="High"  & data$GroupRelationship=="Enmity", ]$S1.Contrib), 0.95)$conf.int
+# 转换为百分比
+S1.100 <- S1
+S1.100[, 3:5] <- S1.100[, 3:5] * 100
+```
+
+```{r 计算p-value-万心茹}
+###Fisher检验 采用作者编制的fisher函数
+# 对于"Equal"分享角色和"Enmity"与"Neutral"群体关系之间的Fisher精确检验
+fisher_equal <- fisher(data[data$Shares=="Equal" & 
+                              data$GroupRelationship=="Enmity", ]$S1.Contrib, 
+                      data[data$Shares=="Equal" & 
+                              data$GroupRelationship=="Neutral", ]$S1.Contrib)
+
+# 对于"Low"分享角色和"Enmity"与"Neutral"群体关系之间的Fisher精确检验
+fisher_low <- fisher(data[data$Shares=="Low" & 
+                            data$GroupRelationship=="Enmity", ]$S1.Contrib, 
+                          data[data$Shares=="Low" & 
+                             data$GroupRelationship=="Neutral", ]$S1.Contrib)
+
+# 对于"High"分享角色和"Enmity"与"Neutral"群体关系之间的Fisher精确检验
+fisher_high <- fisher(data[data$Shares=="High" & 
+                             data$GroupRelationship=="Enmity", ]$S1.Contrib, 
+                           data[data$Shares=="High" & 
+                             data$GroupRelationship=="Neutral", ]$S1.Contrib)
+```
+
+```{r 绘制实验1图-陈娟}
+# 设置图形的数据和美学映射
+p1 <- ggplot(S1.100, aes(fill = factor(GroupRelationship), 
+                         y = Contributors, x = factor(ShareCondition, 
+                         levels = c("Equal", "Low", "High"), 
+                         labels = c("Equal sharing", "Low-role", "High-role")))) 
+
+# 设置主题样式
+p1 <- p1 + theme_bw() +
+  scale_fill_grey(name = "Group relation: ", start = 0.75, end = 1) +
+  scale_fill_manual(values = c("steelblue", "darkorange")) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = c(0.5, 0.95),
+    legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "dotted"),
+    axis.text.x = element_text(colour = "black", size = 12, angle = 0, hjust = .5, vjust = .5, face = "plain"),
+    axis.text.y = element_text(colour = "black", size = 12, angle = 0, hjust = .5, vjust = .5, face = "plain"),
+    axis.title.y = element_text(colour = "black", size = 12, angle = 90, hjust = .5, vjust = .5, face = "plain"),
+    text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    legend.title = element_text(size = 11),
+    legend.direction = "horizontal"
+  )
+
+# 添加柱状图和误差线
+p1 <- p1 + geom_bar(stat = "identity", position = "dodge", color = "black") +
+  geom_errorbar(aes(ymax = CI.u, ymin = CI.l), position = position_dodge(0.9), width = 0.25) 
+
+# 设置坐标轴标签和范围
+p1 <- p1 + ylab("Percentage of contributors") +
+  ylim(c(-7.5, 105)) + xlab("")
+
+
+# 添加显著性标记
+p1 <- p1 + geom_signif(
+    y_position = c(-7.5, -7.5, -7.5),
+    xmin = c(0.775, 1.775, 2.775),
+    xmax = c(1.225, 2.225, 3.225),
+    annotation = c(
+      paste("P =", format(round(fisher_equal$p.value, 3), nsmall = 3)),
+      paste("P =", format(round(fisher_low$p.value, 3), nsmall = 3)),
+      paste("P =", format(round(fisher_high$p.value, 3), nsmall = 3))
+    ),
+    tip_length = -0.02
+) 
+
+print(p1)
+```
+
+
+#=======================================================================================
+# 实验2：按照实验条件和共享角色划分的条件性贡献决策
+# 负责成员：樊富强、林昕
+#=======================================================================================
+
+```{r 预处理-樊富强}
+# 将被试当对手池子的不同情况（0，6，12，18, 分别对应0，1，2，3个对手做出贡献）放进策略变量中
+data$Strategy <- paste(data$Stage2.OppPot0, data$Stage2.OppPot6, data$Stage2.OppPot12,data$Stage2.OppPot18, sep = "")
+
+# 根据作者的方法，至少一次随着外群体奖池大小的增加，而从贡献到不贡献转换的受试者被归类为“Mixed”
+table(ifelse(data$Strategy %in% c("6666", "0666", "0066", "0006", "0000"), data$Strategy, "Mixed"), data$GroupRelationship, data$Shares)
+
+# 设置升级阈值，EscThreshold
+data$E.T <- NA
+data$E.T[data$Strategy == "6666"] <- 0
+data$E.T[data$Strategy == "0666"] <- 6
+data$E.T[data$Strategy == "0066"] <- 12
+data$E.T[data$Strategy == "0006"] <- 18
+data$E.T[data$Strategy == "0000"] <- 24
+
+
+```
+
+```{r 创建实验2表格-樊富强}
+ # 选取非混合策略的被试, 即有缺失值的那些被试
+subd <- data %>%
+  drop_na()
+
+# 同实验1，创建表格 
+E.T = as.data.frame(matrix(nrow=6,ncol=5))
+
+E.T <- data.frame(
+  ShareCondition = c("Equal","Equal","Low","High","Low","High"),
+  GroupRelationship = c("Neutral","Enmity","Neutral","Neutral","Enmity","Enmity"),
+  Contributors = E.T[,3],
+  CI.l = E.T[,4],
+  CI.u = E.T[,5]
+)
+# 计算不同被试的升级阈值的均值
+E.T[1,3] <- mean(subd[subd$Shares=="Equal" & subd$GroupRelationship=="Neutral",]$E.T)
+E.T[2,3] <- mean(subd[subd$Shares=="Equal" & subd$GroupRelationship=="Enmity", ]$E.T)
+E.T[3,3] <- mean(subd[subd$Shares=="Low"   & subd$GroupRelationship=="Neutral",]$E.T)
+E.T[4,3] <- mean(subd[subd$Shares=="High"  & subd$GroupRelationship=="Neutral",]$E.T)
+E.T[5,3] <- mean(subd[subd$Shares=="Low"   & subd$GroupRelationship=="Enmity", ]$E.T)
+E.T[6,3] <- mean(subd[subd$Shares=="High"  & subd$GroupRelationship=="Enmity", ]$E.T)
+
+# 计算置信区间
+E.T[1,4:5] = t.test(subd[subd$Shares=="Equal" & subd$GroupRelationship=="Neutral",]$E.T)$conf.int
+E.T[2,4:5] = t.test(subd[subd$Shares=="Equal" & subd$GroupRelationship=="Enmity",]$E.T)$conf.int
+E.T[3,4:5] = t.test(subd[subd$Shares=="Low" & subd$GroupRelationship=="Neutral",]$E.T)$conf.int
+E.T[4,4:5] = t.test(subd[subd$Shares=="High" & subd$GroupRelationship=="Neutral",]$E.T)$conf.int
+E.T[5,4:5] = t.test(subd[subd$Shares=="Low" & subd$GroupRelationship=="Enmity", ]$E.T)$conf.int
+E.T[6,4:5] = t.test(subd[subd$Shares=="High" & subd$GroupRelationship=="Enmity", ]$E.T)$conf.int
+
+# 保留2位小数
+E.T[, 3:5] <- round(E.T[, 3:5], 2)
+
+```
+
+```{r 计算p值- 林昕}
+# 计算 p值
+wil_high_equal <- wilcoxon(subd[subd$Shares=="High", ]$E.T, subd[subd$Shares=="Equal",]$E.T)
+wil_high_low <- wilcoxon(subd[subd$Shares=="High", ]$E.T, subd[subd$Shares=="Low",  ]$E.T)
+wil_equal_low <- wilcoxon(subd[subd$Shares=="Equal",]$E.T, subd[subd$Shares=="Low",  ]$E.T)
+```
+
+```{r 实验2绘图 - 林昕}
+p2 <- ggplot(E.T, aes(fill = factor(GroupRelationship), y = Contributors, 
+                      x = factor(ShareCondition, levels = c("Equal", "Low", "High"), 
+                      labels = c("Equal sharing", "Low-role", "High-role")))) 
+
+p2 <- p2 + geom_bar(stat = "identity", position = "dodge", color = "black") +
+  geom_errorbar(aes(ymax = CI.u, ymin = CI.l), position = position_dodge(0.9), width = 0.25) +
+  geom_signif(
+    y_position = c(-3, -1.5, -1.5),
+    xmin = c(1, 2.01, 1),
+    xmax = c(3, 3, 1.99),
+    annotation = c("P < 0.001", "P < 0.001", "P = 0.884"),
+    tip_length = -0.02
+  ) + ylab("Average Escalation Threshold") + xlab("") +ylim(c(-3, 17))
+
+p2 <- p2 + theme_bw() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = c(0.5, 0.95),
+    legend.background = element_rect(color = "black", fill = "white", 
+                                     size = 0.5, linetype = "dotted"),
+    axis.text.x = element_text(colour = "black", size = 12, angle = 0, 
+                               hjust = .5, vjust = .5, face = "plain"),
+    axis.text.y = element_text(colour = "black", size = 12, angle = 0, 
+                               hjust = .5, vjust = .5, face = "plain"),
+    axis.title.y = element_text(colour = "black", size = 12, angle = 90, 
+                                hjust = .5, vjust = .5, face = "plain"),
+    text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    legend.direction = "horizontal"
+  ) +
+  scale_fill_manual(values = c("steelblue", "darkorange"))
+
+
+print(p2)
+```
+---
+复现结果和实验相同。
+---
+分工：
+（1）代码复刻：
+实验一：宋丹丹、万心茹、陈娟
+实验二：林昕、樊富强
+（2）文档撰写：
+引言：宋丹丹、樊富强
+复现思路：万心茹、陈娟
+讨论总结：林昕
+（3）PPT制作：林昕
+
