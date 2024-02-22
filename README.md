@@ -8,11 +8,11 @@ Instructor: Prof. Hu Chuan-Peng
 
 Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
-此仓库为南京师范大学心理学研究生课程，2023年春季学期的授课内容转为文字稿，见https://github.com/hcp4715/R4PsyBook。
+此仓库为南京师范大学心理学研究生课程，2023年春季学期的授课内容转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook)。
 
 教师：胡传鹏(hcp4715 AT hotmail DOT com)
 
-助教：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
+助教(2023 Spring)：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
 
 ## 版权与许可(License)
