@@ -1,0 +1,7 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Demo_files/figure-latex/dprime-1.pdf}
+\caption{\label{fig:dprime}\emph{d} prime.}
+\end{figure*}
