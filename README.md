@@ -6,7 +6,9 @@ This is a repo for the coming R course for graduate students, School of Psycholo
 
 Instructor: Prof. Hu Chuan-Peng
 
-Teaching assistants: Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
+Teaching assistants (2023 Spring): Yiqun Chen; Jiahui Wen; Tingting Wu
+
+Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
 此仓库为南京师范大学心理学研究生课程，2023年春季学期的授课内容转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook)。
 
@@ -66,7 +68,7 @@ root_dir
 |....
 ```
 
-## 课程大纲 (Syllabus, 仍然为2023年大纲，待更新)
+## 课程大纲
 
 #### 第一讲：为什么要学习R（2学时）
 
