@@ -1,9 +1,9 @@
 ---
-title: ""
-subtitle: ""
-author: ""
-institute: ""
-date: ""
+title: "Lecture 3"
+subtitle: "How to import data"
+author: "Hu Chuan-Peng (PhD)"
+institute: "Nanjing Normal University"
+date: "2024-03-13"
 output:
   xaringan::moon_reader:
     css: [default, css/zh-CN.css, css/Custumed_Style.css]
@@ -113,9 +113,10 @@ Sys.setenv(LANG = "en")
 # 查看当前工作目录
 getwd()
 ```
-```{r seted}
+
+```{r setwd}
 # 修改当前工作路径
-setwd("./picture/chapter3")
+setwd(here::here("picture","chp3"))
 getwd()
 ```
 
@@ -134,7 +135,6 @@ getwd()
 # 将获取的路径储存到变量my.path中，方便调用
 # 可以使用::来调用未加载包中的函数，推荐在少量调用时使用这种方式
 here::here()
-
 ```
 ---
 # 3.1 路径与工作目录
@@ -142,7 +142,7 @@ here::here()
 ## Here包的使用
 ```{r Here or getwd}
 # 当我更改目录之后会出现什么情况？
-setwd("./picture/chapter3")
+setwd("./picture/chp3")
 getwd()
 here::here()
 ```
@@ -289,7 +289,7 @@ DT::datatable(head(match.data, 10),
 
 - <font size=6> 经过以上的操作，我们的"Environment"里发生了什么变化？</font>
 
-![show_env](./picture/chapter3/fig_3_1.png)
+![show_env](./picture/chp3/fig_3_1.png)
 ---
 
 # 3.3 认识R里的数据 （R语言中的对象）
