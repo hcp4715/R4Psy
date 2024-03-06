@@ -1,487 +1,542 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Lecture 3</title>
+    <title>Lecture 3: Git &amp; More</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Hu Chuan-Peng (PhD)" />
-    <meta name="date" content="2024-03-13" />
+    <meta name="author" content="Chuan-Peng" />
     <script src="libs/header-attrs-2.25/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
-    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.30/datatables.js"></script>
-    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
-    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
-    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+    <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
 .title[
-# Lecture 3
-]
-.subtitle[
-## How to import data
+# Lecture 3: Git &amp; More
 ]
 .author[
-### Hu Chuan-Peng (PhD)
+### Chuan-Peng
 ]
 .institute[
-### Nanjing Normal University
-]
-.date[
-### 2024-03-13
+### NNU
 ]
 
 ---
 
-
 class: center, middle
-&lt;span style="font-size: 60px;"&gt;第三章&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;如何导入数据&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;第十章&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt; Git and Tidy Codes&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;版本控制与整洁的代码&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-03-06&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2023/05/08&lt;/span&gt; &lt;br&gt;
+---
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.1 Git and GitHub&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.2 Files and Folders System&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.3 Tidy Code&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.4 OCD-level Codes&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+
 
 ---
-# 补充
-## 使r语言的报错变为英文
-- &lt;font size = 5.5&gt;在自己代码的开头输入如下命令，可以让当前的session报错为英文
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.1 Git and GitHub&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.1 Download Git&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.2 Sign up GitHub&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.3 New repository&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.4 Download GitHub Desktop&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.5 GitHub Desktop: Clone repository&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.6 Create README&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.1.7 First Commit&lt;/span&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.1 Download Git&lt;/h1&gt; 
+&lt;img src="./picture/chp10/git.png" width="100%"&gt; &lt;br&gt;
+- Git是版本控制的工具，GitHub是存放你历史版本的平台 &lt;br&gt;
+- 首先，我们要下载Git https://git-scm.com/downloads &lt;br&gt;
+- ~~(可能你直接安装GitHub Desktop也会自动安装Git)~~
+
+---
+## &lt;h1 lang="en"&gt;10.1.2 Sign up GitHub&lt;/h1&gt; 
+&lt;img src="./picture/chp10/signup_github_1.png" width="100%"&gt; &lt;br&gt;
+- 注册一个GitHub账号 https://github.com &lt;br&gt;
+- ~~推荐使用outlook, gmail, icloud, hotmail, yahoo等"你懂的"邮箱~~
+
+---
+## &lt;h1 lang="en"&gt;10.1.3 New repository&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_repo.png" width="100%"&gt; &lt;br&gt;
+- 在自己的用户界面找到repository，点击new &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.3 New repository&lt;/h1&gt; 
+&lt;img src="./picture/chp10/repo_name.png" width="70%"&gt; &lt;br&gt;
+- 设定一个repository的名字，然后点击create repository &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.4 Download GitHub Desktop&lt;/h1&gt; 
+&lt;img src="./picture/chp10/github_desktop.png" width="100%"&gt; &lt;br&gt;
+- 下载安装 GitHub Desktop https://desktop.github.com/ &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.5 GitHub Desktop: Clone repository&lt;/h1&gt; 
+&lt;img src="./picture/chp10/desktop_clone.png" width="100%"&gt; &lt;br&gt;
+- 打开GitHub Desktop，点击 Add -- Clone repository &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.5 GitHub Desktop: Clone repository&lt;/h1&gt; 
+&lt;img src="./picture/chp10/desktop_clone_path.png" width="90%"&gt; &lt;br&gt;
+- 选择你刚刚创建的repository &lt;br&gt;
+- 设定你想保存的本地地址，点击clone  &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.5 GitHub Desktop: Clone repository&lt;/h1&gt; 
+&lt;img src="./picture/chp10/hide_file.png" width="100%"&gt; &lt;br&gt;
+- 点击"查看"，点击"显示隐藏的项目" &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.5 GitHub Desktop: Clone repository&lt;/h1&gt; 
+&lt;img src="./picture/chp10/git_hide.png" width="100%"&gt; &lt;br&gt;
+- 可以看到一个半透明的git文件夹 &lt;br&gt;
+- git文件夹内会记录你对Example这个文件夹的每一次修改 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.6 Create README&lt;/h1&gt; 
+&lt;img src="./picture/chp10/README.png" width="100%"&gt; &lt;br&gt;
+- 我们创建一个READEME &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.7 First Commit&lt;/h1&gt; 
+&lt;img src="./picture/chp10/README_commit.png" width="90%"&gt; &lt;br&gt;
+ - 左下角，如果你只是更改了一个文件，GitHub Desktop会自动帮你命名(版本名) &lt;br&gt;
+ - 你只需要写一个Description来描述你这一次做了些什么&lt;br&gt;
+ - 写完后点击Commit to main &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.7 First Commit&lt;/h1&gt; 
+&lt;img src="./picture/chp10/publish_branch.png" width="90%"&gt; &lt;br&gt;
+- 点击右侧的publish_branch，上传到GitHub &lt;br&gt;
+- (如果是第二次写commit，这里会变成push origin) &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.7 First Commit&lt;/h1&gt; 
+&lt;img src="./picture/chp10/readme_web.png" width="100%"&gt; &lt;br&gt;
+- README会在网页上显示，方便他人查看 &lt;br&gt;
+---
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.2 Files and Folders System&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.0 Root Directory&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.1 "1_Protocol"&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.2 "2_Literature_Search"&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.3 "3_Article_Screen"&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.4 "4_Data_Extraction"&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.5 "5_Analysis"&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; - 10.2.6 "6_Reports"&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Reference: &lt;br&gt;
+[https://psych-transparency-guide.uni-koeln.de/folder-structure.html](https://psych-transparency-guide.uni-koeln.de/folder-structure.html)
+
+
+---
+## &lt;h1 lang="en"&gt;10.2.0 Root Directory &lt;/h1&gt; 
+&lt;br&gt;
+- 1_Protocol &lt;br&gt;
+- 2_Literature_Search &lt;br&gt;
+- 3_Article_Screen &lt;br&gt;
+- 4_Data_Extraction &lt;br&gt;
+- 5_Analysis &lt;br&gt;
+- 6_Reports &lt;br&gt;
+&lt;br&gt;
+- .git &lt;br&gt;
+- .gitignore &lt;br&gt;
+- README.md(.txt) &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.2.1 "1_Protocol"&lt;/h1&gt; 
+&lt;img src="./picture/chp10/1_protocol.png" width="120%"&gt; &lt;br&gt;
+- 包含"预注册报告的文章"和"该研究会用到的所有代码" &lt;br&gt;
+- 当然，这些代码是使用模拟数据运行的 &lt;br&gt;
+- About.txt是类似README一样的说明文档 &lt;br&gt;
+
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.2.2 "2_Literature_Search"&lt;/h1&gt; 
+&lt;img src="./picture/chp10/2_literature_search.png" width="120%"&gt; &lt;br&gt;
+- 这一部分相对自由 &lt;br&gt;
+- 主要包含了你在进行这个项目中阅读过的参考文献 &lt;br&gt;
+- 这个文件夹通常会被放在gitignore中，因为这些pdf并不需要被上传到GitHub &lt;br&gt;
+
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.2.3 "3_Article_Screen"&lt;/h1&gt; 
+&lt;img src="./picture/chp10/3_article_screen.png" width="120%"&gt; &lt;br&gt;
+- 例如，助教乙一般会在这里存放Endnote文件 &lt;br&gt;
+- 阅读文献时的笔记，也可以记录在Endnote中 &lt;br&gt;
+- 这个文件夹内的文件可以忽略，也可以保留 &lt;br&gt;
+- 例如，助教乙上传了".enl"文件，这样当他在其他电脑上修改文章中的引用信息时，仍然可以使用Endnote来管理 &lt;br&gt;
+
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.2.4 "4_Data_Extraction"&lt;/h1&gt; 
+&lt;img src="./picture/chp10/4_data_extraction.png" width="90%"&gt; &lt;br&gt;
+- 这个文件夹内存放你所有的实验数据 &lt;br&gt;
+- 图片中的项目是对SPMT这个范式进行信度分析 &lt;br&gt;
+- 因此有一份传鹏自己的数据，以及其他很多公开的数据 &lt;br&gt;
+- 这部分的文件也相对自由，你需要根据自己的实验来整理 &lt;br&gt;
+- 比如4_1_Study1, 4_2_Study2 &lt;br&gt;
+
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.2.5 "5_Analysis"&lt;/h1&gt; 
+&lt;img src="./picture/chp10/5_analysis.png" width="60%"&gt; &lt;br&gt;
+- 这个部分存放你正式实验时的分析代码 &lt;br&gt;
+- 今天的Example就是单独将这一部分演示了上传与同步GitHub &lt;br&gt;
+- 当你正式开展一个项目时，应该包含10.2 Files and Folders System 的所有内容  &lt;br&gt;
+
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.2.6 "6_Reports"&lt;/h1&gt; 
+&lt;img src="./picture/chp10/6_reports.png" width="120%"&gt; &lt;br&gt;
+- 这个部分存放你汇报时的PPT &lt;br&gt;
+
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;Extra&lt;/h1&gt; 
+&lt;img src="./picture/chp10/jyqwbxqz.png" width="100%"&gt; &lt;br&gt;
+- 不要让你的文件夹外部看起来非常整洁 &lt;br&gt;
+- 但当打开几个文件夹后，内部文件的存放毫无逻辑 &lt;br&gt;
+
+---
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.3 Tidy Code&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.1 Create a R project&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.2 Create a R markdown&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.3 Write Codes in Chunks&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.4 Create Folders&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.5 Create Lists for (df, out, p,...)&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.6 df: Clean Data&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.7 out: MANOVA&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.3.8 plot: ggplot2&lt;/span&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.1 Create a R project&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_project.png" width="100%"&gt; &lt;br&gt;
+- 如果你要做一个新的项目，创建一个R project &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.1 Create a R project&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_project_path.png" width="90%"&gt; &lt;br&gt;
+- 设定路径为我们刚刚创建的git文件夹Example &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.1 Create a R project&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_project_window.png" width="90%"&gt; &lt;br&gt;
+- 创建完成后会打开一个新的R studio窗口 &lt;br&gt;
+- (可以看到R studio识别到这是一个git文件夹，自动帮我们创建了R相关的.gitignore) &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.2 Create a R markdown&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_rmarkdown.png" width="100%"&gt; &lt;br&gt;
+- 创建一个rmarkdown用来写代码 &lt;br&gt;
+- 不要创建R script, 它没有Chunk，代码会很乱&lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.2 Create a R markdown&lt;/h1&gt; 
+&lt;img src="./picture/chp10/create_rmarkdown_title.png" width="90%"&gt; &lt;br&gt;
+- 给这个Rmarkdown取一个名字，最好使用驼峰式大小写，最好不要加空格&lt;br&gt;
+- ~~(如果你没有强迫症，可以全部小写或全部大写)~~ &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.2 Create a R markdown&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_rmarkdown_1.png" width="100%"&gt; &lt;br&gt;
+- 这就算创建好了一个R markdown，会有默认的几行代码作为示例&lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.2 Create a R markdown&lt;/h1&gt; 
+&lt;img src="./picture/chp10/new_rmarkdown_save.png" width="90%"&gt; &lt;br&gt;
+- 保存这个R markdown，名字可以与之前的Title一致，也可以不一致&lt;br&gt;
+- ~~强迫症一定会写一致~~ &lt;br&gt;
+- 你刚刚只是创建了这个R markdown，可以在右侧的Files看到，并没有rmd文件&lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.3 Write Codes in Chunks&lt;/h1&gt; 
+&lt;img src="./picture/chp10/chunk_library.png" width="100%"&gt; &lt;br&gt;
+- 一个Chunk由这样几部分组成&lt;br&gt;
+1. 三个 "`" 数字键1左边的点，表示这个Chunk的开始&lt;br&gt;
+2. 大括号 "{}" 字母键P右边，表示这个Chunk内的语言是什么语言&lt;br&gt;
+3. 大括号内， ","逗号后的argument，比如warning = FALSE 意味着这段Chunk在运行后不会出现warning&lt;br&gt;
+4. 三个 "`" 表示这个Chunk的结束&lt;br&gt;
+5. 最右侧的绿色三角，表示运行这个Chunk
+&lt;br&gt;
+_- 一些强迫症的东西_&lt;br&gt;
+_a. 等号左右的空格_&lt;br&gt;
+_b. 逗号后面的空格_&lt;br&gt;
+_c. 赋值符号 " &lt;- " 左右的空格_&lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.3.1 Notes&lt;/h1&gt; 
 
 ```r
-# set local encoding to English
-if (.Platform$OS.type == 'windows') {
-  Sys.setlocale(category = 'LC_ALL','English_United States.1250')
-} else {
-  Sys.setlocale(category = 'LC_ALL','en_US.UTF-8')
+  # Scientific notation
+  options(scipen = 999)
+
+  # Convert data.frame to data.table
+  setDT(df.split)
+
+  # setting subject and splitting the data by var1, var2, var3
+  split_data &lt;- split(df.split, list(df.split[[sub]], df.split[[var1]],
+                                     df.split[[var2]], df.split[[var3]]))
+```
+- 每写一行代码，写一行注释 &lt;br&gt;
+- 如果你让GPT帮你写代码(比如这里的代码)，他自然就会给每行代码添加注释 &lt;br&gt;
+&lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.3.3.2 Variable Names&lt;/h1&gt; 
+
+```r
+# 局部变量的变量名可以不带任何定语,状语
+data &lt;- read.csv("./yourdata.csv")
+
+# 当然这不是真正意义上的局部变量。只是说这个变量只在这个chunk中使用
+# 这样的局部变量，在使用完后，一定要清除
+rm(data)
+
+# 全局变量的变量名尽可能用简单的字母描述他是什么
+df.icc &lt;- df.raw %&gt;%
+  dplyr::filter(ACC == 1 | ACC == 0)
+
+# 其实，除非你在function内写代码，你的变量都是全局变量
+# 我这里指的全局变量是你在之后的代码中依然会使用的变量
+# 因此它的名字一定是可以让你直觉的想到，这是做什么的
+```
+- 但是这种做法也有弊端 &lt;br&gt;
+- 当你需要用到非常多变量的时候，如果所有变量都是全局变量，再标准化的变量名，也不能让读者甚至让你自己明白这个变量指代的是什么 &lt;br&gt;
+&lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.3.3.2 Variable Names&lt;/h1&gt; 
+&lt;img src="./picture/chp10/badexample.png" width="100%"&gt; &lt;br&gt;
+- 你也不想你的代码变成这样吧 &lt;br&gt;
+&lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.3.4 Create Folders&lt;/h1&gt; 
+&lt;img src="./picture/chp10/folders.png" width="80%"&gt; &lt;br&gt;
+- 助教乙认为更好的方法是将每一步操作，每一个结果都存放进list中 &lt;br&gt;
+- 首先，我们创建三个文件夹，分别用来存放数据，结果和图片
+
+---
+## &lt;h1 lang="en"&gt;10.3.5 Create Lists for (df, out, p,...)&lt;/h1&gt; 
+&lt;img src="./picture/chp10/NULL_list.png" width="100%"&gt; &lt;br&gt;
+- 代码中，我们对应创建三个list &lt;br&gt;
+- 分别存放所有的数据集，所有的结果文件，所有的图片&lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.6 df: Clean Data&lt;/h1&gt; 
+&lt;img src="./picture/chp10/df_clean_data.png" width="90%"&gt; &lt;br&gt;
+- 每一步操作，对应df这个list中的一个元素 &lt;br&gt;
+- 做完每一步操作，都给这个list中的对应元素命名 &lt;br&gt;
+- Chunk的名字，很多时候比Notes注释更好用。
+
+---
+## &lt;h1 lang="en"&gt;10.3.6 df: Clean Data&lt;/h1&gt; 
+&lt;img src="./picture/chp10/cleandata_example.png" width="100%"&gt; &lt;br&gt;
+- 尤其是当你做完每一个清洗数据的Chunk，然后把所有Chunk收起时 &lt;br&gt;
+- 你的每一步操作，一目了然 &lt;br&gt;
+&lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.3.6 df: Clean Data&lt;/h1&gt; 
+&lt;img src="./picture/chp10/cleandata_list.png" width="110%"&gt; &lt;br&gt;
+- 点开df这个list &lt;br&gt;
+- 相较于全局变量中的变量名，list中元素的名称可以更长，更多"非法字符" &lt;br&gt;
+- 换句话说，更容易让你自己理解每一步在做什么 &lt;br&gt;
+&lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.3.6 df: Clean Data&lt;/h1&gt; 
+&lt;img src="./picture/chp10/df_environment.png" width="100%"&gt; &lt;br&gt;
+- 同时，这样也可以保证你的Global Environment很干净 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.6 df: Clean Data&lt;/h1&gt; 
+&lt;img src="./picture/chp10/cleandata_bad.png" width="80%"&gt; &lt;br&gt;
+- 你也不想你的Global Environment变成这样吧 &lt;br&gt;
+&lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.1.8 Second Commit&lt;/h1&gt; 
+&lt;img src="./picture/chp10/second_commit.png" width="100%"&gt; &lt;br&gt;
+- 假设今天做到这里下班了，你可以上传你刚刚的成果到GitHub上 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.8 Second Commit&lt;/h1&gt; 
+&lt;img src="./picture/chp10/second_commit_web.png" width="80%"&gt; &lt;br&gt;
+- 网页上会显示你刚刚的更新 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.7 out: MANOVA&lt;/h1&gt; 
+&lt;img src="./picture/chp10/OUTPUT_1.png" width="80%"&gt; &lt;br&gt;
+- 我们新建一个RMD来写结果部分的代码 &lt;br&gt;
+- 你可能现在觉得，之前Clean Data的RMD只有几行，为什么不接着写，而要重开一个新的RMD &lt;br&gt;
+- 但如果当你所有代码有上千行的时候，都放在一个RMD里，哪怕你标题层级再清晰，也会很难找到你想修改的那部分代码了 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.8 plot: ggplot2&lt;/h1&gt; 
+&lt;img src="./picture/chp10/palette.png" width="100%"&gt; &lt;br&gt;
+- 再新建一个RMD写画图的代码 &lt;br&gt;
+- 为了画图，我们预先设定好一个调色盘palette，便于之后提取颜色 &lt;br&gt;
+- ~~颜色搭配来源于知乎~~ &lt;br&gt;
+- 由于三种颜色组合都被存入了list palette中，因此这三个颜色变量就是冗余数据了，应该及时从环境变量中清除 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.8 plot: ggplot2&lt;/h1&gt; 
+&lt;img src="./picture/chp10/ggplot2.png" width="100%"&gt; &lt;br&gt;
+- 用ggplot2画一个雨云图 &lt;br&gt;
+- 与之前类似，将图片存入list中，并且命名为"RainCloud Plot" &lt;br&gt;
+- 具体画法将在下一节课讲解 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.3.8 plot: ggplot2&lt;/h1&gt; 
+&lt;img src="./picture/chp10/plot.png" width="100%"&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.1.9 Third Commit&lt;/h1&gt; 
+&lt;img src="./picture/chp10/third_commit.png" width="100%"&gt; &lt;br&gt;
+- 至此我们就算用整洁的代码完成一个项目了 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;Extra&lt;/h1&gt; 
+&lt;img src="./picture/chp10/code_file.png" width="100%"&gt; &lt;br&gt;
+- 做完后，感觉还可以更整洁一点，就把所有代码RMD文件放在了code文件夹中 &lt;br&gt;
+
+---
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;10.4 OCD-level Codes&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+
+&lt;span style="font-size: 30px;"&gt;- 10.4.3 Separate Codes&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.4.4 Functions&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;- 10.4.5 Packages&lt;/span&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.4.1 Separate Codes&lt;/h1&gt; 
+&lt;img src="./picture/chp10/separate_codes.png" width="100%"&gt; &lt;br&gt;
+- 第一步，其实我们在刚刚的操作中几乎完成了 &lt;br&gt;
+- 我们将清洗数据，方差分析和画图的代码分开了 &lt;br&gt;
+- 但如果你代码中总会重复同一个操作，那么单单将不同内容的代码分开，可能并不能让代码更简洁 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.4.2 Functions&lt;/h1&gt; 
+&lt;img src="./picture/chp10/create_R.png" width="100%"&gt; &lt;br&gt;
+- 创建一个R script文件 &lt;br&gt;
+- 将我们的重复操作变成一个函数 &lt;br&gt;
+- 注意：`source()`和打包，都只识别R script，而不识别R markdown &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.4.2 Functions&lt;/h1&gt; 
+
+```r
+myfunction &lt;- function(df, Sub = "Sub", var1, var2, y) {
+  df.clean &lt;- df %&gt;%
+    # 输入的是字符串，需要用!!sym()将字符串转化为dplyr识别的列名
+    dplyr::group_by(!!sym(Sub), !!sym(var1), !!sym(var2)) %&gt;%
+    dplyr::summarise(RT_mean = mean(!!sym(y))) %&gt;%
+    dplyr::ungroup()
+  return(df.clean)
 }
 ```
-
-```
-## [1] "en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8"
-```
-
-```r
-# set the feedback language to English
-Sys.setenv(LANG = "en") 
-```
+- 一个函数由这几部分构成 &lt;br&gt;
+- 小括号内的argument，大括号内的函数本体 &lt;br&gt;
+- 本质上是你告诉函数argument是什么，函数将这些argument带入本体中进行运算 &lt;br&gt;
+- 最终返回一个你设定好的东西，可能是图片，可能是表格，可能是一个向量 &lt;br&gt;
+- NOTE: 如果你在小括号内设定了某个argument的值，则是在设定这个argument的默认值 &lt;br&gt;
 
 ---
-
-# 回顾与问题
-
-## 回顾
-
-- # &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
-- # &lt;font size = 5.5&gt; 实验数据：Perceptual matching &lt;/font&gt; 
-
-
----
-
-# 回顾与问题
-
-## 回顾 
-
-- # &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
-- # &lt;font size = 5.5&gt; 实验数据：Perceptual matching &lt;/font&gt; 
-
-&lt;br&gt;&lt;br&gt;
-## 问题
-
-- # &lt;font size = 5.5&gt; 如何将这些数据“输入”到R里进行分析？ &lt;/font&gt; 
-
-  # &lt;font size = 4.5&gt; 如何让R“识别”这些数据文件并读取它们？ &lt;/font&gt; 
-
----
-
-# 3.1 路径与工作目录
-
-## 什么是工作目录？&lt;br&gt;&lt;br&gt;
-
-- # &lt;font size = 5.5&gt; 工作目录（working directory）是指用户当前的工作台(console)所进行交互的目录/文件夹。在此目录/文件夹中，你可在此通过相对路径访问文件或者文件夹。&lt;/font&gt;
-
-- # &lt;font size = 5.5&gt; 当你打开R时，R会自动设置一个默认的工作目录，通常为你的用户文件夹。&lt;/font&gt; 
-
-- # &lt;font size = 5.5&gt; 当你打开R project时，R会自动将这个R Project所在的目录作为工作目录，通常为你的用户文件夹。&lt;/font&gt; 
-
----
-
-# 3.1 路径与工作目录
-
-## 什么是路径？&lt;br&gt;&lt;br&gt;
-
-- &lt;font size=5.5&gt; 路径是指文件（或文件夹）所在位置，包含绝对路径和相对路劲。&lt;/font&gt; 
-
-- &lt;font size=5.5&gt; 绝对路径：文件在硬盘上的真实路径，如&lt;/font&gt; &lt;br&gt;&lt;br&gt;
-&lt;font size=5.5&gt; `D:/Documents/r_course/chapter_3/data` &lt;/font&gt;
-&lt;br&gt;&lt;br&gt;
-
-- &lt;font size=5.5&gt;相对路径：相对于当前文件（或当前工作目录）的路径,如&lt;/font&gt; &lt;br&gt;&lt;br&gt;
-&lt;font size=5.5&gt; "data" 或者 "./data" &lt;br&gt;&lt;br&gt;&lt;/font&gt;
-
----
-
-# 3.1 路径与工作目录
-
-## 什么是路径？&lt;br&gt;&lt;br&gt;
-
-- &lt;font size=5.5&gt; 注意：Windows与MacOS/Linux的目录结构上有差异&lt;/font&gt; &lt;br&gt;&lt;br&gt;
-
-&lt;font size=5.5&gt;**此时我们的工作路径为chapter_3文件夹，也被称之为母文件夹(patent directory)，在工作路径之下的文件夹也被成为子文件夹（child directory）**
-&lt;br&gt;&lt;br&gt;
-
-- 在数据分析时使用哪一种路径更好？&lt;/font&gt; 
-
----
-# 3.1 路径与工作目录
-
-## 获取及修改工作目录的基本操作
-
-
-```r
-# 查看当前工作目录
-getwd()
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy"
-```
-
-
-```r
-# 修改当前工作路径
-setwd(here::here("picture","chp3"))
-getwd()
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy/picture/chp3"
-```
-
----
-# 3.1 路径与工作目录
-
-## Here包的使用
-
-- &lt;font size=5.5&gt; Here是R的一个package，它可以帮助使用者方便快捷的获取路径&lt;/font&gt;&lt;br&gt;
- &lt;br&gt;
-- &lt;font size=5.5&gt; 请注意，here()获取的路径取决于你打开项目的位置&lt;/font&gt;&lt;br&gt;
- &lt;br&gt;
-- &lt;font size=5.5&gt; here()只能返回路径，并不能更改路径&lt;/font&gt; 
-
-
-```r
-# 将获取的路径储存到变量my.path中，方便调用
-# 可以使用::来调用未加载包中的函数，推荐在少量调用时使用这种方式
-here::here()
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy"
-```
----
-# 3.1 路径与工作目录
-
-## Here包的使用
-
-```r
-# 当我更改目录之后会出现什么情况？
-setwd("./picture/chp3")
-getwd()
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy/picture/chp3"
-```
-
-```r
-here::here()
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy"
-```
-
-&lt;font size=5.5&gt;**不同的场合下选择适合的函数来简化你的代码**
-
----
-
-# 3.1 路径与工作目录
-
-## 需要注意在R中输入地址与Windows中地址栏的区别
-
-
-```r
-# r语言中的地址
-first_path &lt;- getwd()
-cat(first_path,"\n")
-```
-
-```
-## /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy
-```
-
-```r
-# Windows的地址
-normalized_path &lt;- normalizePath(first_path, winslash = "\\")
-cat(normalized_path)
-```
-
-```
-## /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy
-```
-&lt;font size=5.5&gt;**因此注意不要直接复制Windows地址栏中的地址**
-
----
+## &lt;h1 lang="en"&gt;10.4.2 Functions&lt;/h1&gt; 
+&lt;img src="./picture/chp10/cleandata_withmyfunction.png" width="100%"&gt; &lt;br&gt;
+- 如果你的重复操作(比如这里的清洗数据)非常长 &lt;br&gt;
+- 那么使用function可以帮你节约很多行 &lt;br&gt;
+- 最重要的是，这样代码看起来非常整洁(强迫症狂喜) &lt;br&gt;
 &lt;br&gt;
+- 但其实大多数情况下清洗数据并不会使用函数来封装，你需要展示你清洗数据的细节 &lt;br&gt;
+- 当你需要重复计算某个值时，比如我想计算某个数据集的D prime，才会使用到函数 &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.4.2 Functions&lt;/h1&gt; 
+
+```r
+source("../functions/Functions.R")
+```
+- 如果你写了非常多的函数，可以用source命令一次调取 &lt;br&gt;
+- 但这样的做法会让你的Global Environment充斥着函数 &lt;br&gt;
+&lt;img src="./picture/chp10/functions_inGE.png" width="80%"&gt; &lt;br&gt;
+- 你也不想你的Global Environment变成这样吧 &lt;br&gt;
 &lt;br&gt;
+_仅供举例，非Example中内容_
+
+---
+## &lt;h1 lang="en"&gt;10.4.5 Packages&lt;/h1&gt; 
+- 或许最整洁的方法，是把自己写的函数打包 &lt;br&gt;
+- 但这一部分可能比较困难，会出现很多bug &lt;br&gt;
+- 有兴趣的可以去助教乙的GitHub上看PPT学习(遇到bug问助教乙) &lt;br&gt;
+https://github.com/sinnyuki/Presentation/tree/main/230511_foreach%26package/PPT
 &lt;br&gt;
+&lt;img src="./picture/chp10/anya.png" width="50%"&gt; &lt;br&gt;
+
+---
+## &lt;h1 lang="en"&gt;10.4.5 Packages&lt;/h1&gt; 
+&lt;img src="./picture/chp10/batch_shr.png" width="100%"&gt; &lt;br&gt;
+- 比如我想计算一个数据集的蒙特卡洛分半信度(是否是蒙特卡洛，2种可能)&lt;br&gt;
+- 每种指标的分半信度我都想计算，比如rt，acc，dprime等等(6种Indice) &lt;br&gt;
+- 我还想指定这个分半信度是针对Self和Friend之间的，还是Self和Stranger之间的(2种Target) &lt;br&gt;
+- 这种情况下，如果我要写函数，全局变量会出现2x6x2 = 24个函数 &lt;br&gt;
+- 但是封装成包后，就只有一个命令 batch::shr &lt;br&gt;
 &lt;br&gt;
-&lt;br&gt;
-.center[ &lt;font size=10&gt;现在我们知道了工作目录和路径，看看我们的数据文件的绝对路径和相对路径是什么？&lt;/font&gt; ]
----
-
-
-# 3.2 读取数据
-
-## 使用R语言读取数据&lt;br&gt;&lt;br&gt;
-
-- &lt;font size=6&gt;使用R读取数据，是处理数据的预备工作&lt;/font&gt;&lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-- &lt;font size=6&gt;最好将数据放于工作目录下的子文件夹中&lt;/font&gt;&lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-- &lt;font size=6&gt;通过相对路径读取数据，便于分享你的工作&lt;/font&gt;&lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+_仅供举例，非Example中内容_
 
 ---
-
-# 3.2 读取数据
-
-## 读取csv文件
-
-
-```r
-# 读取.csv类型文件
-penguin.data &lt;- read.csv('./data/penguin/penguin_rawdata.csv',
-                         header = TRUE, sep=",",
-                         stringsAsFactors = FALSE)
-```
-
-- &lt;font size=5.5&gt; './data/penguin/penguin_rawdata.csv' :表示csv文件的相对路径
-
-- &lt;font size=5.5&gt; 'header = TRUE':表示文件中包含列名
-
-- &lt;font size=5.5&gt; 'sep = ","':表示文件中数据之间用逗号分隔，这也是.csv文件的默认分隔方式
-
-- &lt;font size=5.5&gt; 'stringsAsFactors = FALSE':表示读入的字符串数据不转化成 factors类，保持字符类
-
-- &lt;font size=5.5&gt; 读取之后数据变量可以从Environment中找到，变量名为penguin.data &lt;/font&gt;
-
----
-
-
-# 3.2 读取数据
-
-## 读取csv文件
-
-```r
-# 读取.csv类型文件
-penguin.data &lt;- read.csv('./data/penguin/penguin_rawdata.csv',
-                         header = TRUE, sep=",",
-                         stringsAsFactors = FALSE)
-
-# 使用DT包中的datatable在ppt中展示表格
-DT::datatable(head(penguin.data, 10),
-              fillContainer = TRUE, options = list(pageLength = 3))
-```
-
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-65a594e7050b65804cea" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-65a594e7050b65804cea">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[1975,1995,1995,1988,1991,1995,1996,1973,1996,1996],[1,2,4,2,2,2,1,3,2,3],[1,2,1,3,1,3,1,3,3,3],[1,2,1,4,1,1,1,2,1,1],[2,2,2,5,5,3,1,3,3,2],[2,2,4,3,2,2,4,4,2,4],[1,2,1,4,2,1,1,4,2,1],[2,2,4,2,3,1,2,4,2,2],[2,2,1,4,4,2,1,4,2,4],[4,4,1,4,1,1,4,4,2,4],[1,2,2,3,1,2,2,5,2,1],[1,2,1,2,2,1,1,3,1,4],[2,2,1,2,1,2,2,2,2,1],[4,2,2,4,2,3,4,2,2,2],[3,2,1,2,4,4,3,3,4,3],[4,3,1,4,4,5,5,4,3,5],[2,2,1,3,2,4,5,1,2,4],[3.72222222222222,4.05555555555556,1.44444444444444,4.72222222222222,2.11111111111111,2,2.55555555555556,3.05555555555556,3.55555555555556,4.38888888888889],[6,0,0,2,0,0,null,0,0,0],[3.11111111111111,4.88888888888889,1.33333333333333,3.88888888888889,4.66666666666667,3.33333333333333,3.11111111111111,3.55555555555556,3.33333333333333,3.22222222222222],[3.44444444444444,2,2,3,1.77777777777778,2.44444444444444,3.77777777777778,3.33333333333333,1.88888888888889,4.22222222222222],[89,89,89,89,89,89,89,89,89,89],[3.27777777777778,3,1.61111111111111,3.94444444444444,4.94444444444444,3.77777777777778,6.44444444444444,3.22222222222222,4,5.27777777777778],[15,null,null,null,null,null,null,10,null,1],[1.63636363636364,2.18181818181818,2,3.27272727272727,2.18181818181818,1.72727272727273,1.72727272727273,3.54545454545455,2,2.63636363636364],[1,1,1,2,1,1,1,1,1,1],[5,6,1,3,1,1,2,3,4,5],[5,4,1,6,1,1,1,2,4,6],[3,2,1,6,1,1,4,3,4,6],[5,5,1,5,1,2,1,2,4,5],[5,5,1,4,1,2,4,3,4,4],[3,2,1,4,5,1,1,3,1,3],[1,3,1,3,2,1,2,3,4,5],[6,5,1,3,1,2,7,3,4,7],[5,2,1,4,7,6,1,3,4,3],[2,3,1,4,1,2,4,1,4,3],[6,7,1,6,6,2,2,5,2,6],[3,4,1,5,1,2,1,2,4,4],[3,3,1,6,2,4,2,5,4,4],[2,3,7,5,1,1,1,4,1,2],[3,4,1,5,2,2,1,5,4,1],[3,5,3,5,1,1,2,3,4,4],[6,5,1,6,2,3,6,3,4,7],[1,5,1,5,2,2,4,2,4,4],[2,3,2,5,1,5,7,3,4,5],[2,4,2,5,7,5,1,2,4,7],[5,3,2,5,2,4,6,4,4,5],[3,2,2,4,5,4,7,3,4,5],[3,2,2,3,2,3,7,3,4,6],[2,3,1,4,4,4,7,3,4,5],[5,3,1,6,2,3,7,4,4,6],[5,4,1,3,6,3,7,4,4,7],[3,5,1,3,7,1,7,4,4,7],[2,3,1,4,6,3,6,3,4,4],[4,2,2,5,6,6,6,3,4,4],[2,2,2,3,6,5,7,2,4,5],[3,4,1,4,7,4,7,2,4,3],[3,2,2,5,2,3,7,3,4,6],[4,3,3,3,7,4,6,3,4,5],[5,3,1,2,6,5,7,4,4,6],[4,3,1,3,6,3,7,6,4,5],[2,3,2,4,7,3,7,2,4,4],["9:23:38","9:23:26","8:57:08","8:55:14","8:54:35","8:39:12","8:32:08","8:28:57","8:28:03","8:25:57"],[3,2.2,1.2,3,2.6,3.6,3.8,2.4,2.6,3],[2,2,2,2,2,2,2,2,2,2],[0,0,12,0,5,0,null,1,0,2],[4,4,4,3,4,4,4,1,3,3],[4,5,1,5,5,4,5,3,3,4],[3,5,1,4,5,4,2,3,3,5],[4,5,4,5,5,4,4,2,4,3],[3,5,1,5,5,4,5,4,5,3],[3,5,1,4,4,4,2,3,4,4],[2,4,1,2,5,2,1,4,3,2],[4,5,1,2,4,2,5,5,2,2],[3,5,1,4,4,3,1,4,3,3],[2,5,1,4,5,3,3,4,3,3],[4,1,5,5,1,3,2,3,3,4],[4,2,6,4,1,3,2,3,3,5],[5,6,5,3,3,3,2,2,2,1],[4,2,4,1,2,2,2,2,1,3],[4,3,3,2,2,2,2,2,3,2],[1,2,1,2,2,4,2,3,3,3],[2,2,1,2,1,4,2,3,1,2],[17,28,24,19,29,33,53,17,17,19],[4.33333333333333,6.5,6.83333333333333,3.5,1.5,2,5.83333333333333,6.33333333333333,5.66666666666667,5.16666666666667],[2.27272727272727,2.63636363636364,2.18181818181818,2,1.90909090909091,2.45454545454545,2.81818181818182,2.54545454545455,1.81818181818182,3.90909090909091],[2,3,3,1,3,4,4,2,2,5],[2,2,4,1,2,4,4,3,3,4],[2,3,2,2,1,2,2,3,2,5],[4,3,4,3,4,4,2,2,2,4],[2,3,1,2,1,3,3,3,2,3],[2,2,1,2,1,1,2,2,1,3],[2,2,1,2,1,2,2,4,2,4],[2,3,3,1,1,1,2,3,2,3],[3,3,3,2,2,2,4,2,1,3],[2,3,1,4,2,1,2,1,1,4],[2,2,1,2,3,3,4,3,2,5],[4,2,1,2,2,3,3,3,3,4],[4,2,4,4,1,3,4,4,2,4],[2,2,1,3,1,2,5,3,1,2],[5,2,4,2,1,3,4,3,4,4],[2,2,1,3,1,2,1,2,3,5],[2,2,1,2,3,2,3,4,1,4],[4,2,1,3,2,2,5,3,1,5],[4,2,1,4,1,3,5,4,1,5],[4,2,4,4,4,2,4,4,1,5],[2,2,1,1,2,2,2,2,2,2],[2,4,2,4,3,5,2,1,3,3],[2,4,3,2,5,5,4,4,3,4],[2,4,3,1,5,5,2,5,5,5],[1,4,2,1,3,2,2,2,5,1],[1,4,4,2,5,3,1,2,5,2],[4,3,2,1,5,4,3,3,3,1],[2,4,4,2,5,3,2,3,4,2],[2,2,1,3,4,3,2,2,5,4],[5,4,3,4,4,5,4,4,3,3],[4,3,5,3,3,5,5,3,4,2],[3,4,4,2,4,5,3,2,2,5],[5,5,4,2,4,4,1,3,4,3],[4,4,4,2,4,3,2,2,2,2],[2.84615384615385,3.76923076923077,3.15384615384615,2.23076923076923,4.15384615384615,4,2.53846153846154,2.76923076923077,3.69230769230769,2.84615384615385],[1,1,1,2,1,1,2,1,1,2],[1,2,2,2,2,2,2,1,2,1],[2,1,1,1,2,2,2,4,2,2],[1,1,1,1,1,1,1,1,1,1],[null,null,null,null,null,null,null,null,null,null],[4,4,4,4,2,4,4,4,4,4],[4,4,4,4,2,4,4,2,4,4],[5,1,4,5,5,5,5,5,5,5],[null,null,4,null,null,null,null,null,null,null],[1,8,2,1,8,2,3,8,2,6],[null,6,2,null,5,1,2,3,2,3],[6,4,5,5,7,5,8,4,3,8],[3,1,5,1,3,5,8,4,2,8],[1,1,1,1,2,1,1,1,1,1],[null,null,null,null,8,null,null,null,null,null],[1,2,2,1,1,2,2,2,2,2],[null,8,8,null,null,8,8,8,8,8],[3,3,2,3,3,1,1,1,1,1],[2,8,1,8,1,null,null,null,null,null],[6,5,6,4,8,null,null,null,null,null],[1,3,1,1,1,8,6,4,1,3],[1,1,1,1,1,1,1,2,1,1],[null,null,null,null,null,null,null,2,null,null],[1,1,1,2,1,2,2,2,2,1],[" "," "," "," "," ","Rowing Club","University Friends","ODAA","Oxford Latin Speaking Society"," "],[" "," "," "," "," ","Rugby Club","Business Social"," ","Oxford Latin Conversation Society"," "],[" "," "," "," "," "," ","Lecturers/ Advisors"," ","Plato Reading Group"," "],[" "," "," "," "," "," ","Friends from home"," "," "," "],[" "," "," "," "," "," ","Neighbors"," "," "," "],[null,null,null,null,null,7,20,1,2,null],[null,null,null,null,null,7,15,null,4,null],[null,null,null,null,null,null,5,null,1,null],[null,null,null,null,null,null,9,null,null,null],[null,null,null,null,null,null,6,null,null,null],[6,6,7,2,1,1,6,6,7,7],[5,7,7,5,2,2,7,6,7,4],[5,6,7,3,2,3,5,7,6,5],[3,7,7,4,1,2,5,6,6,5],[2,6,7,5,2,2,6,7,5,5],[5,7,6,2,1,2,6,6,3,5],[4,6,6,4,1,2,5,6,3,4],[5,7,8,5,7,6,null,7,6,6],[1,2,3,1,2,4,null,2,2,3],[4,2,4,4,1,2,2,3,3,1],[4,4,5,2,1,4,4,2,5,4],[4,3,4,3,1,4,2,3,4,4],[5,3,4,3,4,4,4,4,2,4],[2,3,4,4,4,4,5,2,2,3],[2,4,4,3,1,3,4,3,1,3],[2,5,4,3,3,4,5,4,2,2],[2,2,4,3,4,3,5,3,2,4],[4,5,5,2,1,2,4,2,4,5],[2,3,2,2,1,4,1,4,4,5],[2,2,1,2,1,2,2,2,2,1],[1,2,2,2,4,4,4,2,2,2],[4,4,4,3,4,2,2,3,2,1],[5,4,2,3,2,4,3,4,4,4],[4,4,2,3,3,1,2,4,5,3],[2,3,4,4,4,5,5,4,4,4],[2,3,5,4,4,3,2,4,2,2],[4,3,4,2,4,3,4,3,3,2],[3,3,5,2,4,4,4,4,3,3],[2,3,1,3,5,4,1,3,2,4],[4,3,4,2,4,4,5,4,3,5],[3,3,5,4,4,3,2,2,3,3],[2,3,1,3,4,3,2,3,4,3],[3,3,1,4,1,2,2,2,3,3],[4,3,5,3,1,2,5,1,4,4],[3,3,3,2,1,3,3,2,3,3],[4,3,1,4,4,4,2,4,1,1],[4,5,4,2,1,3,1,4,4,5],[3,5,4,4,1,2,1,3,5,5],[3,2,2,4,4,2,5,2,2,4],[2,4,2,5,1,2,1,3,2,4],[4,3,1,2,4,2,5,1,1,4],[4,3,2,2,3,3,1,4,3,4],[1,4,3,4,4,2,1,3,2,2],[2,4,2,3,5,4,2,5,1,4],[2,4,2,4,5,4,4,4,2,4],[4,4,4,3,4,4,2,4,2,4],[3,4,2,4,4,4,4,5,5,1],[4,2,2,3,4,4,5,2,2,4],[5,3,3,2,4,2,2,2,2,4],[4,3,2,3,3,3,2,1,2,4],[4,3,5,2,4,4,4,4,4,4],[1,4,2,3,4,2,2,3,2,3],[1,2,2,4,4,2,1,2,1,2],[4,3,2,3,1,2,1,4,4,2],[4,4,4,2,1,4,1,4,3,3],[3,3,4,3,4,2,4,3,3,4],[1,2,5,4,4,2,1,2,1,2],[2,3,5,4,4,2,1,2,1,2],[4,3,5,4,4,4,3,3,3,4],[4,4,2,5,1,3,5,2,4,5],[2,4,5,3,1,2,5,4,2,4],[2,4,4,3,4,2,1,3,2,2],[4,3,4,3,5,2,4,4,2,4],[2,4,2,2,4,3,3,2,2,4],[2,4,1,2,4,2,2,2,2,2],[1,2,5,4,1,1,4,2,2,2],[3.07692307692308,2.46153846153846,2.38461538461538,2.84615384615385,2.53846153846154,2.07692307692308,1.53846153846154,3,2.61538461538462,3.15384615384615],[4,2,3,3,3,2,1,4,5,3],[2,3,3,3,4,2,2,3,2,4],[4,3,4,4,3,3,1,3,3,5],[4,3,1,2,2,2,2,3,2,4],[4,2,2,3,2,2,2,3,2,3],[3,2,1,2,1,2,2,3,2,1],[4,2,2,3,3,2,1,4,2,3],[3,2,2,2,2,2,1,4,3,4],[3,2,3,3,2,2,2,1,2,3],[2,3,3,3,3,2,1,3,4,3],[4,2,3,4,3,2,2,2,1,2],[3,4,4,3,5,4,4,4,5,4],[2,4,2,3,2,2,2,3,3,2],[1,2,2,2,3,2,1,3,3,4],[34.9,35.8,34,36.9,35.3,34.7,36,36.5,34.7,35.9],[35.9,36,36.2,37,36.1,36.4,36.3,36.6,36.3,36.3],[2,2,2,2,4,4,2,2,2,2],[35.4,35.9,35.1,36.95,35.7,35.55,36.15,36.55,35.5,36.1],[1,1,1,1,1,1,1,1,1,1],[-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667],[5,5,5,5,5,5,5,5,5,5],[1,1,1,1,1,1,1,1,1,1],[0.186319647739787,0.472682850177291,-1.77049556891649,1.0454092550523,-1.19776916404149,-1.29322356485399,-0.815951560791479,-0.386406757135223,0.0431380465210342,0.759046052614796],[-0.00190690952064737,-0.249805147204807,-1.48929633562561,0.593048860921336,1.48548251658431,0.44430991831084,2.82413300007877,-0.0514865570574791,0.642628508458168,1.7829604018053],["Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>age<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>anxiety<\/th>\n      <th>artgluctot<\/th>\n      <th>attachhome<\/th>\n      <th>attachphone<\/th>\n      <th>AvgHumidity<\/th>\n      <th>avoidance<\/th>\n      <th>cigs<\/th>\n      <th>DIDF<\/th>\n      <th>eatdrink<\/th>\n      <th>ECR1<\/th>\n      <th>ECR2<\/th>\n      <th>ECR3<\/th>\n      <th>ECR4<\/th>\n      <th>ECR5<\/th>\n      <th>ECR6<\/th>\n      <th>ECR7<\/th>\n      <th>ECR8<\/th>\n      <th>ECR9<\/th>\n      <th>ECR10<\/th>\n      <th>ECR11<\/th>\n      <th>ECR12<\/th>\n      <th>ECR13<\/th>\n      <th>ECR14<\/th>\n      <th>ECR15<\/th>\n      <th>ECR16<\/th>\n      <th>ECR17<\/th>\n      <th>ECR18<\/th>\n      <th>ECR19<\/th>\n      <th>ECR20<\/th>\n      <th>ECR21<\/th>\n      <th>ECR22<\/th>\n      <th>ECR23<\/th>\n      <th>ECR24<\/th>\n      <th>ECR25<\/th>\n      <th>ECR26<\/th>\n      <th>ECR27<\/th>\n      <th>ECR28<\/th>\n      <th>ECR29<\/th>\n      <th>ECR30<\/th>\n      <th>ECR31<\/th>\n      <th>ECR32<\/th>\n      <th>ECR33<\/th>\n      <th>ECR34<\/th>\n      <th>ECR35<\/th>\n      <th>ECR36<\/th>\n      <th>endtime<\/th>\n      <th>EOT<\/th>\n      <th>exercise<\/th>\n      <th>gluctot<\/th>\n      <th>health<\/th>\n      <th>HOME1<\/th>\n      <th>HOME2<\/th>\n      <th>HOME3<\/th>\n      <th>HOME4<\/th>\n      <th>HOME5<\/th>\n      <th>HOME6<\/th>\n      <th>HOME7<\/th>\n      <th>HOME8<\/th>\n      <th>HOME9<\/th>\n      <th>KAMF1<\/th>\n      <th>KAMF2<\/th>\n      <th>KAMF3<\/th>\n      <th>KAMF4<\/th>\n      <th>KAMF5<\/th>\n      <th>KAMF6<\/th>\n      <th>KAMF7<\/th>\n      <th>networksize<\/th>\n      <th>nostalgia<\/th>\n      <th>onlineid<\/th>\n      <th>onlineid1<\/th>\n      <th>onlineid2<\/th>\n      <th>onlineid3<\/th>\n      <th>onlineid4<\/th>\n      <th>onlineid5<\/th>\n      <th>onlineid6<\/th>\n      <th>onlineid7<\/th>\n      <th>onlineid8<\/th>\n      <th>onlineid9<\/th>\n      <th>onlineid10<\/th>\n      <th>onlineide11<\/th>\n      <th>phone1<\/th>\n      <th>phone2<\/th>\n      <th>phone3<\/th>\n      <th>phone4<\/th>\n      <th>phone5<\/th>\n      <th>phone6<\/th>\n      <th>phone7<\/th>\n      <th>phone8<\/th>\n      <th>phone9<\/th>\n      <th>romantic<\/th>\n      <th>scontrol1<\/th>\n      <th>scontrol2<\/th>\n      <th>scontrol3<\/th>\n      <th>scontrol4<\/th>\n      <th>scontrol5<\/th>\n      <th>scontrol6<\/th>\n      <th>scontrol7<\/th>\n      <th>scontrol8<\/th>\n      <th>scontrol9<\/th>\n      <th>scontrol10<\/th>\n      <th>scontrol11<\/th>\n      <th>scontrol12<\/th>\n      <th>scontrol13<\/th>\n      <th>selfcontrol<\/th>\n      <th>sex<\/th>\n      <th>smoke<\/th>\n      <th>SNI1<\/th>\n      <th>SNI2<\/th>\n      <th>SNI3<\/th>\n      <th>SNI4<\/th>\n      <th>SNI5<\/th>\n      <th>SNI6<\/th>\n      <th>SNI7<\/th>\n      <th>SNI8<\/th>\n      <th>SNI9<\/th>\n      <th>SNI10<\/th>\n      <th>SNI11<\/th>\n      <th>SNI12<\/th>\n      <th>SNI13<\/th>\n      <th>SNI14<\/th>\n      <th>SNI15<\/th>\n      <th>SNI16<\/th>\n      <th>SNI17<\/th>\n      <th>SNI18<\/th>\n      <th>SNI19<\/th>\n      <th>SNI20<\/th>\n      <th>SNI21<\/th>\n      <th>SNI22<\/th>\n      <th>SNI23<\/th>\n      <th>SNI24<\/th>\n      <th>SNI25<\/th>\n      <th>SNI26<\/th>\n      <th>SNI27<\/th>\n      <th>SNI28<\/th>\n      <th>SNI29<\/th>\n      <th>SNI30<\/th>\n      <th>SNI31<\/th>\n      <th>SNI32<\/th>\n      <th>SNS1<\/th>\n      <th>SNS2<\/th>\n      <th>SNS3<\/th>\n      <th>SNS4<\/th>\n      <th>SNS5<\/th>\n      <th>SNS6<\/th>\n      <th>SNS7<\/th>\n      <th>socialdiversity<\/th>\n      <th>socialembedded<\/th>\n      <th>STRAQ_1<\/th>\n      <th>STRAQ_2<\/th>\n      <th>STRAQ_3<\/th>\n      <th>STRAQ_4<\/th>\n      <th>STRAQ_6<\/th>\n      <th>STRAQ_7<\/th>\n      <th>STRAQ_8<\/th>\n      <th>STRAQ_9<\/th>\n      <th>STRAQ_10<\/th>\n      <th>STRAQ_11<\/th>\n      <th>STRAQ_12<\/th>\n      <th>STRAQ_19<\/th>\n      <th>STRAQ_20<\/th>\n      <th>STRAQ_21<\/th>\n      <th>STRAQ_22<\/th>\n      <th>STRAQ_23<\/th>\n      <th>STRAQ_24<\/th>\n      <th>STRAQ_25<\/th>\n      <th>STRAQ_26<\/th>\n      <th>STRAQ_27<\/th>\n      <th>STRAQ_28<\/th>\n      <th>STRAQ_29<\/th>\n      <th>STRAQ_30<\/th>\n      <th>STRAQ_31<\/th>\n      <th>STRAQ_32<\/th>\n      <th>STRAQ_33<\/th>\n      <th>STRAQ_5<\/th>\n      <th>STRAQ_13<\/th>\n      <th>STRAQ_14<\/th>\n      <th>STRAQ_15<\/th>\n      <th>STRAQ_16<\/th>\n      <th>STRAQ_17<\/th>\n      <th>STRAQ_18<\/th>\n      <th>STRAQ_34<\/th>\n      <th>STRAQ_35<\/th>\n      <th>STRAQ_36<\/th>\n      <th>STRAQ_37<\/th>\n      <th>STRAQ_38<\/th>\n      <th>STRAQ_39<\/th>\n      <th>STRAQ_40<\/th>\n      <th>STRAQ_41<\/th>\n      <th>STRAQ_42<\/th>\n      <th>STRAQ_43<\/th>\n      <th>STRAQ_44<\/th>\n      <th>STRAQ_45<\/th>\n      <th>STRAQ_46<\/th>\n      <th>STRAQ_47<\/th>\n      <th>STRAQ_48<\/th>\n      <th>STRAQ_49<\/th>\n      <th>STRAQ_50<\/th>\n      <th>STRAQ_51<\/th>\n      <th>STRAQ_52<\/th>\n      <th>STRAQ_53<\/th>\n      <th>STRAQ_54<\/th>\n      <th>STRAQ_55<\/th>\n      <th>STRAQ_56<\/th>\n      <th>STRAQ_57<\/th>\n      <th>stress<\/th>\n      <th>stress1<\/th>\n      <th>stress2<\/th>\n      <th>stress3<\/th>\n      <th>stress4<\/th>\n      <th>stress5<\/th>\n      <th>stress6<\/th>\n      <th>stress7<\/th>\n      <th>stress8<\/th>\n      <th>stress9<\/th>\n      <th>stress10<\/th>\n      <th>stress11<\/th>\n      <th>stress12<\/th>\n      <th>stress13<\/th>\n      <th>stress14<\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>thermotype<\/th>\n      <th>avgtemp<\/th>\n      <th>filter_.<\/th>\n      <th>mintemp<\/th>\n      <th>language<\/th>\n      <th>langfamily<\/th>\n      <th>Zanxiety<\/th>\n      <th>Zavoidance<\/th>\n      <th>Site<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":3,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[3,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
-
----
-
-# 3.2 读取数据
-
-## 对于常用的心理学数据文件，可用bruceR包读取csv文件
-
-
-```r
-# 函数的内嵌，记得要检查左右括号一一匹配，数量一致
-penguin.Data &lt;- bruceR::import(here::here('data',
-                                          'penguin',
-                                          'penguin_rawdata.csv'))
-```
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-1fea760e9904fcbc85cd" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-1fea760e9904fcbc85cd">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[1975,1995,1995,1988,1991,1995,1996,1973,1996,1996],[1,2,4,2,2,2,1,3,2,3],[1,2,1,3,1,3,1,3,3,3],[1,2,1,4,1,1,1,2,1,1],[2,2,2,5,5,3,1,3,3,2],[2,2,4,3,2,2,4,4,2,4],[1,2,1,4,2,1,1,4,2,1],[2,2,4,2,3,1,2,4,2,2],[2,2,1,4,4,2,1,4,2,4],[4,4,1,4,1,1,4,4,2,4],[1,2,2,3,1,2,2,5,2,1],[1,2,1,2,2,1,1,3,1,4],[2,2,1,2,1,2,2,2,2,1],[4,2,2,4,2,3,4,2,2,2],[3,2,1,2,4,4,3,3,4,3],[4,3,1,4,4,5,5,4,3,5],[2,2,1,3,2,4,5,1,2,4],[3.72222222222222,4.05555555555556,1.44444444444444,4.72222222222222,2.11111111111111,2,2.55555555555556,3.05555555555556,3.55555555555556,4.38888888888889],[6,0,0,2,0,0,null,0,0,0],[3.11111111111111,4.88888888888889,1.33333333333333,3.88888888888889,4.66666666666667,3.33333333333333,3.11111111111111,3.55555555555556,3.33333333333333,3.22222222222222],[3.44444444444444,2,2,3,1.77777777777778,2.44444444444444,3.77777777777778,3.33333333333333,1.88888888888889,4.22222222222222],[89,89,89,89,89,89,89,89,89,89],[3.27777777777778,3,1.61111111111111,3.94444444444444,4.94444444444444,3.77777777777778,6.44444444444444,3.22222222222222,4,5.27777777777778],[15,null,null,null,null,null,null,10,null,1],[1.63636363636364,2.18181818181818,2,3.27272727272727,2.18181818181818,1.72727272727273,1.72727272727273,3.54545454545455,2,2.63636363636364],[1,1,1,2,1,1,1,1,1,1],[5,6,1,3,1,1,2,3,4,5],[5,4,1,6,1,1,1,2,4,6],[3,2,1,6,1,1,4,3,4,6],[5,5,1,5,1,2,1,2,4,5],[5,5,1,4,1,2,4,3,4,4],[3,2,1,4,5,1,1,3,1,3],[1,3,1,3,2,1,2,3,4,5],[6,5,1,3,1,2,7,3,4,7],[5,2,1,4,7,6,1,3,4,3],[2,3,1,4,1,2,4,1,4,3],[6,7,1,6,6,2,2,5,2,6],[3,4,1,5,1,2,1,2,4,4],[3,3,1,6,2,4,2,5,4,4],[2,3,7,5,1,1,1,4,1,2],[3,4,1,5,2,2,1,5,4,1],[3,5,3,5,1,1,2,3,4,4],[6,5,1,6,2,3,6,3,4,7],[1,5,1,5,2,2,4,2,4,4],[2,3,2,5,1,5,7,3,4,5],[2,4,2,5,7,5,1,2,4,7],[5,3,2,5,2,4,6,4,4,5],[3,2,2,4,5,4,7,3,4,5],[3,2,2,3,2,3,7,3,4,6],[2,3,1,4,4,4,7,3,4,5],[5,3,1,6,2,3,7,4,4,6],[5,4,1,3,6,3,7,4,4,7],[3,5,1,3,7,1,7,4,4,7],[2,3,1,4,6,3,6,3,4,4],[4,2,2,5,6,6,6,3,4,4],[2,2,2,3,6,5,7,2,4,5],[3,4,1,4,7,4,7,2,4,3],[3,2,2,5,2,3,7,3,4,6],[4,3,3,3,7,4,6,3,4,5],[5,3,1,2,6,5,7,4,4,6],[4,3,1,3,6,3,7,6,4,5],[2,3,2,4,7,3,7,2,4,4],["9:23:38","9:23:26","8:57:08","8:55:14","8:54:35","8:39:12","8:32:08","8:28:57","8:28:03","8:25:57"],[3,2.2,1.2,3,2.6,3.6,3.8,2.4,2.6,3],[2,2,2,2,2,2,2,2,2,2],[0,0,12,0,5,0,null,1,0,2],[4,4,4,3,4,4,4,1,3,3],[4,5,1,5,5,4,5,3,3,4],[3,5,1,4,5,4,2,3,3,5],[4,5,4,5,5,4,4,2,4,3],[3,5,1,5,5,4,5,4,5,3],[3,5,1,4,4,4,2,3,4,4],[2,4,1,2,5,2,1,4,3,2],[4,5,1,2,4,2,5,5,2,2],[3,5,1,4,4,3,1,4,3,3],[2,5,1,4,5,3,3,4,3,3],[4,1,5,5,1,3,2,3,3,4],[4,2,6,4,1,3,2,3,3,5],[5,6,5,3,3,3,2,2,2,1],[4,2,4,1,2,2,2,2,1,3],[4,3,3,2,2,2,2,2,3,2],[1,2,1,2,2,4,2,3,3,3],[2,2,1,2,1,4,2,3,1,2],[17,28,24,19,29,33,53,17,17,19],[4.33333333333333,6.5,6.83333333333333,3.5,1.5,2,5.83333333333333,6.33333333333333,5.66666666666667,5.16666666666667],[2.27272727272727,2.63636363636364,2.18181818181818,2,1.90909090909091,2.45454545454545,2.81818181818182,2.54545454545455,1.81818181818182,3.90909090909091],[2,3,3,1,3,4,4,2,2,5],[2,2,4,1,2,4,4,3,3,4],[2,3,2,2,1,2,2,3,2,5],[4,3,4,3,4,4,2,2,2,4],[2,3,1,2,1,3,3,3,2,3],[2,2,1,2,1,1,2,2,1,3],[2,2,1,2,1,2,2,4,2,4],[2,3,3,1,1,1,2,3,2,3],[3,3,3,2,2,2,4,2,1,3],[2,3,1,4,2,1,2,1,1,4],[2,2,1,2,3,3,4,3,2,5],[4,2,1,2,2,3,3,3,3,4],[4,2,4,4,1,3,4,4,2,4],[2,2,1,3,1,2,5,3,1,2],[5,2,4,2,1,3,4,3,4,4],[2,2,1,3,1,2,1,2,3,5],[2,2,1,2,3,2,3,4,1,4],[4,2,1,3,2,2,5,3,1,5],[4,2,1,4,1,3,5,4,1,5],[4,2,4,4,4,2,4,4,1,5],[2,2,1,1,2,2,2,2,2,2],[2,4,2,4,3,5,2,1,3,3],[2,4,3,2,5,5,4,4,3,4],[2,4,3,1,5,5,2,5,5,5],[1,4,2,1,3,2,2,2,5,1],[1,4,4,2,5,3,1,2,5,2],[4,3,2,1,5,4,3,3,3,1],[2,4,4,2,5,3,2,3,4,2],[2,2,1,3,4,3,2,2,5,4],[5,4,3,4,4,5,4,4,3,3],[4,3,5,3,3,5,5,3,4,2],[3,4,4,2,4,5,3,2,2,5],[5,5,4,2,4,4,1,3,4,3],[4,4,4,2,4,3,2,2,2,2],[2.84615384615385,3.76923076923077,3.15384615384615,2.23076923076923,4.15384615384615,4,2.53846153846154,2.76923076923077,3.69230769230769,2.84615384615385],[1,1,1,2,1,1,2,1,1,2],[1,2,2,2,2,2,2,1,2,1],[2,1,1,1,2,2,2,4,2,2],[1,1,1,1,1,1,1,1,1,1],[null,null,null,null,null,null,null,null,null,null],[4,4,4,4,2,4,4,4,4,4],[4,4,4,4,2,4,4,2,4,4],[5,1,4,5,5,5,5,5,5,5],[null,null,4,null,null,null,null,null,null,null],[1,8,2,1,8,2,3,8,2,6],[null,6,2,null,5,1,2,3,2,3],[6,4,5,5,7,5,8,4,3,8],[3,1,5,1,3,5,8,4,2,8],[1,1,1,1,2,1,1,1,1,1],[null,null,null,null,8,null,null,null,null,null],[1,2,2,1,1,2,2,2,2,2],[null,8,8,null,null,8,8,8,8,8],[3,3,2,3,3,1,1,1,1,1],[2,8,1,8,1,null,null,null,null,null],[6,5,6,4,8,null,null,null,null,null],[1,3,1,1,1,8,6,4,1,3],[1,1,1,1,1,1,1,2,1,1],[null,null,null,null,null,null,null,2,null,null],[1,1,1,2,1,2,2,2,2,1],["","","","","","Rowing Club","University Friends","ODAA","Oxford Latin Speaking Society",""],["","","","","","Rugby Club","Business Social","","Oxford Latin Conversation Society",""],["","","","","","","Lecturers/ Advisors","","Plato Reading Group",""],["","","","","","","Friends from home","","",""],["","","","","","","Neighbors","","",""],[null,null,null,null,null,7,20,1,2,null],[null,null,null,null,null,7,15,null,4,null],[null,null,null,null,null,null,5,null,1,null],[null,null,null,null,null,null,9,null,null,null],[null,null,null,null,null,null,6,null,null,null],[6,6,7,2,1,1,6,6,7,7],[5,7,7,5,2,2,7,6,7,4],[5,6,7,3,2,3,5,7,6,5],[3,7,7,4,1,2,5,6,6,5],[2,6,7,5,2,2,6,7,5,5],[5,7,6,2,1,2,6,6,3,5],[4,6,6,4,1,2,5,6,3,4],[5,7,8,5,7,6,null,7,6,6],[1,2,3,1,2,4,null,2,2,3],[4,2,4,4,1,2,2,3,3,1],[4,4,5,2,1,4,4,2,5,4],[4,3,4,3,1,4,2,3,4,4],[5,3,4,3,4,4,4,4,2,4],[2,3,4,4,4,4,5,2,2,3],[2,4,4,3,1,3,4,3,1,3],[2,5,4,3,3,4,5,4,2,2],[2,2,4,3,4,3,5,3,2,4],[4,5,5,2,1,2,4,2,4,5],[2,3,2,2,1,4,1,4,4,5],[2,2,1,2,1,2,2,2,2,1],[1,2,2,2,4,4,4,2,2,2],[4,4,4,3,4,2,2,3,2,1],[5,4,2,3,2,4,3,4,4,4],[4,4,2,3,3,1,2,4,5,3],[2,3,4,4,4,5,5,4,4,4],[2,3,5,4,4,3,2,4,2,2],[4,3,4,2,4,3,4,3,3,2],[3,3,5,2,4,4,4,4,3,3],[2,3,1,3,5,4,1,3,2,4],[4,3,4,2,4,4,5,4,3,5],[3,3,5,4,4,3,2,2,3,3],[2,3,1,3,4,3,2,3,4,3],[3,3,1,4,1,2,2,2,3,3],[4,3,5,3,1,2,5,1,4,4],[3,3,3,2,1,3,3,2,3,3],[4,3,1,4,4,4,2,4,1,1],[4,5,4,2,1,3,1,4,4,5],[3,5,4,4,1,2,1,3,5,5],[3,2,2,4,4,2,5,2,2,4],[2,4,2,5,1,2,1,3,2,4],[4,3,1,2,4,2,5,1,1,4],[4,3,2,2,3,3,1,4,3,4],[1,4,3,4,4,2,1,3,2,2],[2,4,2,3,5,4,2,5,1,4],[2,4,2,4,5,4,4,4,2,4],[4,4,4,3,4,4,2,4,2,4],[3,4,2,4,4,4,4,5,5,1],[4,2,2,3,4,4,5,2,2,4],[5,3,3,2,4,2,2,2,2,4],[4,3,2,3,3,3,2,1,2,4],[4,3,5,2,4,4,4,4,4,4],[1,4,2,3,4,2,2,3,2,3],[1,2,2,4,4,2,1,2,1,2],[4,3,2,3,1,2,1,4,4,2],[4,4,4,2,1,4,1,4,3,3],[3,3,4,3,4,2,4,3,3,4],[1,2,5,4,4,2,1,2,1,2],[2,3,5,4,4,2,1,2,1,2],[4,3,5,4,4,4,3,3,3,4],[4,4,2,5,1,3,5,2,4,5],[2,4,5,3,1,2,5,4,2,4],[2,4,4,3,4,2,1,3,2,2],[4,3,4,3,5,2,4,4,2,4],[2,4,2,2,4,3,3,2,2,4],[2,4,1,2,4,2,2,2,2,2],[1,2,5,4,1,1,4,2,2,2],[3.07692307692308,2.46153846153846,2.38461538461538,2.84615384615385,2.53846153846154,2.07692307692308,1.53846153846154,3,2.61538461538462,3.15384615384615],[4,2,3,3,3,2,1,4,5,3],[2,3,3,3,4,2,2,3,2,4],[4,3,4,4,3,3,1,3,3,5],[4,3,1,2,2,2,2,3,2,4],[4,2,2,3,2,2,2,3,2,3],[3,2,1,2,1,2,2,3,2,1],[4,2,2,3,3,2,1,4,2,3],[3,2,2,2,2,2,1,4,3,4],[3,2,3,3,2,2,2,1,2,3],[2,3,3,3,3,2,1,3,4,3],[4,2,3,4,3,2,2,2,1,2],[3,4,4,3,5,4,4,4,5,4],[2,4,2,3,2,2,2,3,3,2],[1,2,2,2,3,2,1,3,3,4],[34.9,35.8,34,36.9,35.3,34.7,36,36.5,34.7,35.9],[35.9,36,36.2,37,36.1,36.4,36.3,36.6,36.3,36.3],[2,2,2,2,4,4,2,2,2,2],[35.4,35.9,35.1,36.95,35.7,35.55,36.15,36.55,35.5,36.1],[1,1,1,1,1,1,1,1,1,1],[-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667],[5,5,5,5,5,5,5,5,5,5],[1,1,1,1,1,1,1,1,1,1],[0.186319647739787,0.4726828501772911,-1.77049556891649,1.0454092550523,-1.19776916404149,-1.29322356485399,-0.815951560791479,-0.386406757135223,0.0431380465210342,0.7590460526147961],[-0.00190690952064737,-0.249805147204807,-1.48929633562561,0.593048860921336,1.48548251658431,0.44430991831084,2.82413300007877,-0.0514865570574791,0.6426285084581681,1.7829604018053],["Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>age<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>anxiety<\/th>\n      <th>artgluctot<\/th>\n      <th>attachhome<\/th>\n      <th>attachphone<\/th>\n      <th>AvgHumidity<\/th>\n      <th>avoidance<\/th>\n      <th>cigs<\/th>\n      <th>DIDF<\/th>\n      <th>eatdrink<\/th>\n      <th>ECR1<\/th>\n      <th>ECR2<\/th>\n      <th>ECR3<\/th>\n      <th>ECR4<\/th>\n      <th>ECR5<\/th>\n      <th>ECR6<\/th>\n      <th>ECR7<\/th>\n      <th>ECR8<\/th>\n      <th>ECR9<\/th>\n      <th>ECR10<\/th>\n      <th>ECR11<\/th>\n      <th>ECR12<\/th>\n      <th>ECR13<\/th>\n      <th>ECR14<\/th>\n      <th>ECR15<\/th>\n      <th>ECR16<\/th>\n      <th>ECR17<\/th>\n      <th>ECR18<\/th>\n      <th>ECR19<\/th>\n      <th>ECR20<\/th>\n      <th>ECR21<\/th>\n      <th>ECR22<\/th>\n      <th>ECR23<\/th>\n      <th>ECR24<\/th>\n      <th>ECR25<\/th>\n      <th>ECR26<\/th>\n      <th>ECR27<\/th>\n      <th>ECR28<\/th>\n      <th>ECR29<\/th>\n      <th>ECR30<\/th>\n      <th>ECR31<\/th>\n      <th>ECR32<\/th>\n      <th>ECR33<\/th>\n      <th>ECR34<\/th>\n      <th>ECR35<\/th>\n      <th>ECR36<\/th>\n      <th>endtime<\/th>\n      <th>EOT<\/th>\n      <th>exercise<\/th>\n      <th>gluctot<\/th>\n      <th>health<\/th>\n      <th>HOME1<\/th>\n      <th>HOME2<\/th>\n      <th>HOME3<\/th>\n      <th>HOME4<\/th>\n      <th>HOME5<\/th>\n      <th>HOME6<\/th>\n      <th>HOME7<\/th>\n      <th>HOME8<\/th>\n      <th>HOME9<\/th>\n      <th>KAMF1<\/th>\n      <th>KAMF2<\/th>\n      <th>KAMF3<\/th>\n      <th>KAMF4<\/th>\n      <th>KAMF5<\/th>\n      <th>KAMF6<\/th>\n      <th>KAMF7<\/th>\n      <th>networksize<\/th>\n      <th>nostalgia<\/th>\n      <th>onlineid<\/th>\n      <th>onlineid1<\/th>\n      <th>onlineid2<\/th>\n      <th>onlineid3<\/th>\n      <th>onlineid4<\/th>\n      <th>onlineid5<\/th>\n      <th>onlineid6<\/th>\n      <th>onlineid7<\/th>\n      <th>onlineid8<\/th>\n      <th>onlineid9<\/th>\n      <th>onlineid10<\/th>\n      <th>onlineide11<\/th>\n      <th>phone1<\/th>\n      <th>phone2<\/th>\n      <th>phone3<\/th>\n      <th>phone4<\/th>\n      <th>phone5<\/th>\n      <th>phone6<\/th>\n      <th>phone7<\/th>\n      <th>phone8<\/th>\n      <th>phone9<\/th>\n      <th>romantic<\/th>\n      <th>scontrol1<\/th>\n      <th>scontrol2<\/th>\n      <th>scontrol3<\/th>\n      <th>scontrol4<\/th>\n      <th>scontrol5<\/th>\n      <th>scontrol6<\/th>\n      <th>scontrol7<\/th>\n      <th>scontrol8<\/th>\n      <th>scontrol9<\/th>\n      <th>scontrol10<\/th>\n      <th>scontrol11<\/th>\n      <th>scontrol12<\/th>\n      <th>scontrol13<\/th>\n      <th>selfcontrol<\/th>\n      <th>sex<\/th>\n      <th>smoke<\/th>\n      <th>SNI1<\/th>\n      <th>SNI2<\/th>\n      <th>SNI3<\/th>\n      <th>SNI4<\/th>\n      <th>SNI5<\/th>\n      <th>SNI6<\/th>\n      <th>SNI7<\/th>\n      <th>SNI8<\/th>\n      <th>SNI9<\/th>\n      <th>SNI10<\/th>\n      <th>SNI11<\/th>\n      <th>SNI12<\/th>\n      <th>SNI13<\/th>\n      <th>SNI14<\/th>\n      <th>SNI15<\/th>\n      <th>SNI16<\/th>\n      <th>SNI17<\/th>\n      <th>SNI18<\/th>\n      <th>SNI19<\/th>\n      <th>SNI20<\/th>\n      <th>SNI21<\/th>\n      <th>SNI22<\/th>\n      <th>SNI23<\/th>\n      <th>SNI24<\/th>\n      <th>SNI25<\/th>\n      <th>SNI26<\/th>\n      <th>SNI27<\/th>\n      <th>SNI28<\/th>\n      <th>SNI29<\/th>\n      <th>SNI30<\/th>\n      <th>SNI31<\/th>\n      <th>SNI32<\/th>\n      <th>SNS1<\/th>\n      <th>SNS2<\/th>\n      <th>SNS3<\/th>\n      <th>SNS4<\/th>\n      <th>SNS5<\/th>\n      <th>SNS6<\/th>\n      <th>SNS7<\/th>\n      <th>socialdiversity<\/th>\n      <th>socialembedded<\/th>\n      <th>STRAQ_1<\/th>\n      <th>STRAQ_2<\/th>\n      <th>STRAQ_3<\/th>\n      <th>STRAQ_4<\/th>\n      <th>STRAQ_6<\/th>\n      <th>STRAQ_7<\/th>\n      <th>STRAQ_8<\/th>\n      <th>STRAQ_9<\/th>\n      <th>STRAQ_10<\/th>\n      <th>STRAQ_11<\/th>\n      <th>STRAQ_12<\/th>\n      <th>STRAQ_19<\/th>\n      <th>STRAQ_20<\/th>\n      <th>STRAQ_21<\/th>\n      <th>STRAQ_22<\/th>\n      <th>STRAQ_23<\/th>\n      <th>STRAQ_24<\/th>\n      <th>STRAQ_25<\/th>\n      <th>STRAQ_26<\/th>\n      <th>STRAQ_27<\/th>\n      <th>STRAQ_28<\/th>\n      <th>STRAQ_29<\/th>\n      <th>STRAQ_30<\/th>\n      <th>STRAQ_31<\/th>\n      <th>STRAQ_32<\/th>\n      <th>STRAQ_33<\/th>\n      <th>STRAQ_5<\/th>\n      <th>STRAQ_13<\/th>\n      <th>STRAQ_14<\/th>\n      <th>STRAQ_15<\/th>\n      <th>STRAQ_16<\/th>\n      <th>STRAQ_17<\/th>\n      <th>STRAQ_18<\/th>\n      <th>STRAQ_34<\/th>\n      <th>STRAQ_35<\/th>\n      <th>STRAQ_36<\/th>\n      <th>STRAQ_37<\/th>\n      <th>STRAQ_38<\/th>\n      <th>STRAQ_39<\/th>\n      <th>STRAQ_40<\/th>\n      <th>STRAQ_41<\/th>\n      <th>STRAQ_42<\/th>\n      <th>STRAQ_43<\/th>\n      <th>STRAQ_44<\/th>\n      <th>STRAQ_45<\/th>\n      <th>STRAQ_46<\/th>\n      <th>STRAQ_47<\/th>\n      <th>STRAQ_48<\/th>\n      <th>STRAQ_49<\/th>\n      <th>STRAQ_50<\/th>\n      <th>STRAQ_51<\/th>\n      <th>STRAQ_52<\/th>\n      <th>STRAQ_53<\/th>\n      <th>STRAQ_54<\/th>\n      <th>STRAQ_55<\/th>\n      <th>STRAQ_56<\/th>\n      <th>STRAQ_57<\/th>\n      <th>stress<\/th>\n      <th>stress1<\/th>\n      <th>stress2<\/th>\n      <th>stress3<\/th>\n      <th>stress4<\/th>\n      <th>stress5<\/th>\n      <th>stress6<\/th>\n      <th>stress7<\/th>\n      <th>stress8<\/th>\n      <th>stress9<\/th>\n      <th>stress10<\/th>\n      <th>stress11<\/th>\n      <th>stress12<\/th>\n      <th>stress13<\/th>\n      <th>stress14<\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>thermotype<\/th>\n      <th>avgtemp<\/th>\n      <th>filter_$<\/th>\n      <th>mintemp<\/th>\n      <th>language<\/th>\n      <th>langfamily<\/th>\n      <th>Zanxiety<\/th>\n      <th>Zavoidance<\/th>\n      <th>Site<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":3,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[3,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
-
----
-
-# 3.2 读取数据
-
-## 读取txt文件
-
-```r
-# 读取.txt类型文件
-match.data &lt;- read.csv("./data/match/data_exp7_rep_categ_7302.out", 
-                        header = TRUE, sep = "\t",
-                        stringsAsFactors = FALSE)
-```
-
-&lt;font size=5.5&gt;
-- 'sep = "\t"': txt文件以“tab”作为分隔符时，参数为“\t”
-
-- 'sep = ': 默认的分隔符为","，也有“;”，""，"\n"等。
-
-- 也可以使用read.table()函数读取
-
----
-
-# 3.2 读取数据
-
-## 读取txt文件
-
-```r
-# 读取.txt类型文件
-match.data &lt;- read.csv("./data/match/data_exp7_rep_categ_7302.out", 
-                        header = TRUE, sep = "\t",
-                        stringsAsFactors = FALSE)
-```
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-49a098350b56b56aac9e" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-49a098350b56b56aac9e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],["02-May-2018_14:36:40 7302 22 female R 1 1 1 self immoralOther J NA -1 1.0420 ","02-May-2018_14:36:42 7302 22 female R 1 1 2 self moralSelf H h 1 0.7564 ","02-May-2018_14:36:44 7302 22 female R 1 1 3 self immoralSelf H h 1 0.4825 ","02-May-2018_14:36:46 7302 22 female R 1 1 4 self moralSelf H h 1 0.5446 ","02-May-2018_14:36:47 7302 22 female R 1 1 5 self moralOther J j 1 0.5028 ","02-May-2018_14:36:49 7302 22 female R 1 1 6 self moralSelf H h 1 0.5228 ","02-May-2018_14:36:51 7302 22 female R 1 1 7 self immoralSelf H h 1 0.4969 ","02-May-2018_14:36:53 7302 22 female R 1 1 8 self moralOther J j 1 0.5110 ","02-May-2018_14:36:54 7302 22 female R 1 1 9 self immoralSelf H h 1 0.5591 ","02-May-2018_14:36:56 7302 22 female R 1 1 10 self immoralOther J j 1 0.7311 "]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date.Sub.Age.Sex.Hand.Block.Bin.Trial.Task.Shape.corrResp.Resp.ACC.RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":3,"columnDefs":[{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[3,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
-
----
-
-# 3.3 认识R里的数据 （R语言中的对象）
-
-- &lt;font size=6&gt; 经过以上的操作，我们的"Environment"里发生了什么变化？&lt;/font&gt;
-
-![show_env](./picture/chp3/fig_3_1.png)
----
-
-# 3.3 认识R里的数据 （R语言中的对象）
-
-## 对象
-&lt;br&gt;
-&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt; partner × &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt; object √ &lt;/span&gt; &lt;br&gt;
-
-- &lt;span style="font-size: 30px;"&gt; 在R中存储的数据称为对象，R语言数据处理实际上就是不断地创建和操控这些对象。 &lt;/span&gt; &lt;br&gt;
-
----
-
-# 3.3 认识R里的数据 （R语言中的对象）
-
-## 查看对象
-
-
-```r
-class(first_path)
-```
-
-```
-## [1] "character"
-```
-
-
-```r
-class(match.data)
-```
-
-```
-## [1] "data.frame"
-```
-
-
-
-```r
-class(penguin.data)
-```
-
-```
-## [1] "data.frame"
-```
-
----
-
-
-```r
-str(first_path)
-```
-
-```
-##  chr "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy"
-```
-
-
-```r
-str(penguin.data[, 1:5])
-```
-
-```
-## 'data.frame':	1523 obs. of  5 variables:
-##  $ age  : int  1975 1995 1995 1988 1991 1995 1996 1973 1996 1996 ...
-##  $ ALEX1: int  1 2 4 2 2 2 1 3 2 3 ...
-##  $ ALEX2: int  1 2 1 3 1 3 1 3 3 3 ...
-##  $ ALEX3: int  1 2 1 4 1 1 1 2 1 1 ...
-##  $ ALEX4: int  2 2 2 5 5 3 1 3 3 2 ...
-```
----
-
-
-```r
-summary(penguin.data[, 1:5])
-```
-
-```
-##       age           ALEX1          ALEX2           ALEX3           ALEX4      
-##  Min.   :1922   Min.   :1.00   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-##  1st Qu.:1991   1st Qu.:2.00   1st Qu.:2.000   1st Qu.:1.000   1st Qu.:2.000  
-##  Median :1994   Median :2.00   Median :3.000   Median :2.000   Median :2.000  
-##  Mean   :1991   Mean   :2.51   Mean   :2.756   Mean   :2.027   Mean   :2.654  
-##  3rd Qu.:1995   3rd Qu.:3.00   3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.:3.000  
-##  Max.   :1998   Max.   :5.00   Max.   :5.000   Max.   :5.000   Max.   :5.000  
-##  NA's   :39     NA's   :15     NA's   :15      NA's   :15      NA's   :15
-```
-
-
-```r
-summary(first_path)
-```
-
-```
-##    Length     Class      Mode 
-##         1 character character
-```
-
----
-
-## 3.3 认识R里的数据 （R语言中的对象)
-![data structure](https://devopedia.org/images/article/46/9213.1526125966.png)
-&lt;br&gt;
-&lt;p align="right"&gt;&lt;font size=2&gt;from http://venus.ifca.unican.es/Rintro/dataStruct.html&lt;/font&gt;&lt;/p&gt;
-
----
-
-# 3.3 了解R里的数据 （R语言中的对象)
-## R中的对象类型&lt;br&gt;&lt;br&gt;
-- &lt;font size=6&gt;Vector(向量)&lt;/font&gt;
-- &lt;font size=6&gt;Matrix(矩阵)&lt;/font&gt;
-- &lt;font size=6&gt;Array(数组)&lt;/font&gt;
-- &lt;font size=6&gt;Data frame(数据框)&lt;/font&gt;
-- &lt;font size=6&gt;List(列表)&lt;/font&gt;
----
-class: center, middle
-&lt;span style="font-size: 60px;"&gt;Any questions?&lt;/span&gt; &lt;br&gt;
-
+## &lt;h1&gt;小结&lt;/h1&gt; 
+- Git &amp; Github: 代码管理与版本控制&lt;br&gt;
+- 项目管理：文件夹管理系统R Project &lt;br&gt;
+- 代码管理：变量名管理、tidy风格、与封装（函数、打包） &lt;br&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
