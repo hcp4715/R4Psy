@@ -1,9 +1,9 @@
 ---
-title: ""
-subtitle: ""
-author: ""
-# institute: "RStudio, PBC"
-date: ""
+title: "Lecture 2.1"
+subtitle: "Objects in R"
+author: "Hu Chuan-Peng et al."
+institute: "Nanjing Normal University"
+date: "2024-03-06"
 output:
   xaringan::moon_reader:
     css: 
@@ -18,8 +18,8 @@ output:
 ---
 
 class: center, middle
-<span style="font-size: 60px;">第二章</span> <br>
-<span style="font-size: 50px;">R 语言中的对象及数据类型</span> <br>
+<span style="font-size: 60px;">第二章(续)</span> <br>
+<span style="font-size: 50px;">初识R中的对象及数据类型</span> <br>
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
@@ -29,7 +29,7 @@ class: center, middle
 ---
 layout: true
 
-# 1 认识R里的数据 （R语言中的对象）
+# 1 初识R里的数据 （R语言中的对象）
 
 ---
 
