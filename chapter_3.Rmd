@@ -345,8 +345,14 @@ Reference: <br>
 - 向自己fork的远端GitHub repository推送更新。<br>
 
 ---
-## <h1 lang="en">3.4.3 Pull changes from GitHub repository</h1> 
-<br><img src="./pic_new/chp3/git push.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+## <h1 lang="en">3.4.4 Pull changes from GitHub repository</h1> 
+<br><img src="./pic_new/chp3/git pull.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+ <br>
+- 从远端GitHub repository下拉更新。<br>
+
+---
+## <h1 lang="en">3.4.4 Pull request to the central GitHub repository</h1> 
+<br><img src="./pic_new/chp3/git pull.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 从远端GitHub repository下拉更新。<br>
 
