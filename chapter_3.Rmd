@@ -343,6 +343,12 @@ Reference: <br>
 <br><img src="./pic_new/chp3/git push.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 向自己fork的远端GitHub repository推送更新。<br>
+- push前不要忘记先commit你的修改！<br>
+
+---
+## <h1 lang="en">3.4.3 Push changes to GitHub repository</h1> 
+<br><img src="./pic_new/chp3/git push success.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"> <br>
+- 推送成功。<br>
 
 ---
 ## <h1 lang="en">3.4.4 Pull changes from GitHub repository</h1> 
