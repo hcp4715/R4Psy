@@ -36,7 +36,7 @@ Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the 
 <span style="font-size: 60px;">3.1 Git and GitHub</span></center> <br>
 <span style="font-size: 60px;">3.2 Files and Folders System</span></center> <br>
 <span style="font-size: 60px;">3.3 Local Version Control</span></center> <br>
-<span style="font-size: 60px;">3.4 Collaborating Version Control</span></center> <br>
+<span style="font-size: 60px;">3.4 Remote Version Control</span></center> <br>
 <br>
 
 
@@ -69,28 +69,28 @@ Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the 
 ## <h1 lang="en">3.1.2 Git</h1> 
 <img src="./pic_new/chp3/git.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- Git是一个免费开源的版本控制的工具 <br>
-- 首先，我们要下载Git https://git-scm.com/downloads <br>
+- Git是一个免费开源的版本控制的工具。 <br>
+- 首先，我们要下载Git(https://git-scm.com/downloads)。 <br>
 
 ---
 ## <h1 lang="en">3.1.3 GitHub</h1> 
  <br><img src="./pic_new/chp3/github.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- GitHub是一个在线软件源代码托管服务平台，使用Git作为版本控制软件 <br>
-- 注册一个GitHub账号 https://github.com <br>
+- GitHub是一个在线软件源代码托管服务平台，使用Git作为版本控制软件。 <br>
+- 注册一个GitHub账号(https://github.com)。<br>
 - ~~使用科学上网工具时较为稳定，推荐使用outlook, gmail, icloud, hotmail, yahoo等"你懂的"邮箱~~
 
 ---
 ## <h1 lang="en">3.1.4 New repository</h1> 
  <br> <br><img src="./pic_new/chp3/new repo1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 在自己的用户界面找到repository，点击new <br>
+- 在自己的用户界面找到repository，点击new。 <br>
 
 ---
 ## <h1 lang="en">3.1.4 New repository</h1> 
 <br><img src="./pic_new/chp3/new repo2.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 设定一个repository的名字，创建README文件，然后点击create repository <br>
+- 设定一个repository的名字，创建README文件，然后点击create repository。<br>
 
 ---
 ## <h1 lang="en">3.1.5 Editing Read Me</h1> 
@@ -98,7 +98,7 @@ Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the 
  <br>
 - README文件是位于项目根目录中的文本文件（通常为README.md、README.txt等），提供了关于项目的基本信息。 <br>
 - 基于Markdown语法，图中为常见的使用情况。 <br>
-- 本课的PPT由xaringan包生成，R Markdown，在Markdown的基础上进行扩展. <br>
+- 本课的PPT由xaringan包生成，R Markdown，在Markdown的基础上进行扩展。 <br>
 
 ---
 ## <h1 lang="en">3.1.6 First Commit</h1> 
@@ -116,7 +116,7 @@ Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the 
 ## <h1 lang="en">Git Alternative: GitHub Desktop</h1> 
 <img src="./pic_new/chp3/github desktop.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 下载安装 GitHub Desktop https://desktop.github.com/ <br>
+- 下载安装 GitHub Desktop(https://desktop.github.com/)。 <br>
 
 ---
 <br>
@@ -139,9 +139,10 @@ Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the 
 ## <h1 lang="en">3.2.2 How to improve</h1> 
 <img src="./pic_new/chp3/files contrast.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 制定一定的命名规则
-- 创建清晰的层级结构，并且使用文件夹分类
-- 定期清理和维护
+- 制定一定的命名规则；
+- 创建清晰的层级结构，并且使用文件夹分类；
+- 定期清理和维护；
+- ……
  
 ---
 ## <h1 lang="en">3.2.3 Recommended Structure</h1> 
@@ -178,7 +179,7 @@ Reference: <br>
 <span style="font-size: 60px;">3.3 Local Version Control</span></center> <br>
 <br>
 <span style="font-size: 30px;">- 3.3.1 Local Version Control</span> <br>
-<span style="font-size: 30px;">- 3.3.2 Creating git repository for project</span> <br>
+<span style="font-size: 30px;">- 3.3.2 Creating Git repository for project</span> <br>
 <span style="font-size: 30px;">- 3.3.3 Adding files to Git</span> <br>
 <span style="font-size: 30px;">- 3.3.4 Keeping track of changes with Git</span> <br>
 <span style="font-size: 30px;">- 3.3.5 Accessing files’ past versions</span> <br>
@@ -188,25 +189,27 @@ Reference: <br>
 
 ---
 ## <h1 lang="en">3.3.1 Local Version Control</h1> 
+<br><img src="./pic_new/chp3/local.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+ <br>
 
 ---
-## <h1 lang="en">3.3.2 Creating git repository for project</h1> 
+## <h1 lang="en">3.3.2 Creating Git repository for project</h1> 
 <br><img src="./pic_new/chp3/new project1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 在R Studio中创建一个本地的新项目，并创建其git repository。 <br>
+- 在R Studio中创建一个本地的新项目，并创建其Git repository。 <br>
 
 ---
 ## <h1 lang="en">3.3.3 Adding files to Git</h1> 
 <br><img src="./pic_new/chp3/add files1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 默认情况下，R Studio中git位于右上角的子窗口。 <br>
-- 点击commit，会跳出git面板。 <br>
+- 默认情况下，R Studio中Git位于右上角的子窗口。 <br>
+- 点击commit，会跳出Git面板。 <br>
 
 ---
 ## <h1 lang="en">3.3.3 Adding files to Git</h1> 
 <br><img src="./pic_new/chp3/add files2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 勾选更新的文件，向git repository提交更改。 <br>
+- 勾选更新的文件，向Git repository提交更改。 <br>
 
 ---
 ## <h1 lang="en">3.3.3 Adding files to Git</h1> 
@@ -229,13 +232,13 @@ Reference: <br>
 ## <h1 lang="en">3.3.4 Keeping track of changes with Git</h1> 
 <br><img src="./pic_new/chp3/add files6.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 修改readme文件并提交，git面板中会出现前后内容的比较。 <br>
+- 修改readme文件并提交，Git面板中会出现前后内容的比较。 <br>
 
 ---
 ## <h1 lang="en">3.3.5 Accessing files’ past versions</h1> 
 <img src="./pic_new/chp3/add files7.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 点击git面板中的History按钮，会弹出一个列出了所有的提交历史的窗口。 <br>
+- 点击Git面板中的History按钮，会弹出一个列出了所有的提交历史的窗口。 <br>
 - 点击任何一个提交，查看该提交的详细信息，包括具体的更改内容。 <br>
 
 ---
@@ -248,7 +251,7 @@ Reference: <br>
 ## <h1 lang="en">3.3.6 Telling Git to ignore files</h1> 
 <img src="./pic_new/chp3/gitignore2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 修改‘.gitignore’，向git repository提交修改。 <br>
+- 修改‘.gitignore’，向Git repository提交修改。 <br>
 - 图中的修改分别表示忽略test1整个文件夹、忽略test2文件夹中所有.txt文件、忽略test3文件夹中的secret.txt。<br>
 
 
@@ -262,22 +265,22 @@ Reference: <br>
 ## <h1 lang="en">3.3.6 Telling Git to ignore files</h1> 
 <img src="./pic_new/chp3/gitignore4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 - 关闭R Studio，在test文件夹中创建3个子文件夹，test1、test2、test3。 <br>
-- 每个子文件夹中都包括‘test.txt’‘secret.txt’两个文件。<br>
+- 每个子文件夹中都包括‘test.txt’,‘secret.txt’两个文件。<br>
 
 ---
 ## <h1 lang="en">3.3.6 Telling Git to ignore files</h1> 
  <br><img src="./pic_new/chp3/gitignore5.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- R Studio右上角的子窗口应该只存在如图所示的更改，其他修改都被git忽略。 <br>
+- R Studio右上角的子窗口应该只存在如图所示的更改，其他修改都被Git忽略。 <br>
 
 
 ---
 ## <h1 lang="en">3.3.6 Telling Git to ignore files</h1> 
 <img src="./pic_new/chp3/debug.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;">
 - 如果你发现 Git 没有如预期那样忽略指定的文件，请保持冷静，跟随以下步骤来进行故障排除： <br>
-- 是不是先添加的文件后修改的gitignore？那么文件可能已被git跟踪，存在缓存，仅修改gitignore是不够的。可以尝试在左下角子窗口的Terminal下输入git rm --cached -r <目录名>/git rm --cached <文件名>这个命令。<br>
+- 是不是先添加的文件后修改的gitignore？那么文件可能已被Git跟踪，存在缓存，仅修改gitignore是不够的。可以尝试在左下角子窗口的Terminal下输入git rm --cached -r <目录名>/git rm --cached <文件名>这个命令。<br>
 - 不存在缓存问题？请检查一下.gitignore中是否存在语法错误。<br>
-- 都不存在？在Terminal输入git check-ignore -v .gitignore检查.gitignore文件是否被git忽略。如果命令没有任何输出，这意味着 .gitignore 是有效的并被 Git 正确处理。<br>
+- 都不存在？在Terminal输入git check-ignore -v .gitignore检查.gitignore文件是否被Git忽略。如果命令没有任何输出，这意味着 .gitignore 是有效的并被 Git 正确处理。<br>
 - ……
 
 ---
@@ -285,83 +288,104 @@ Reference: <br>
 <br>
 <br>
 <br>
-<span style="font-size: 60px;">3.4 Collaborating Version Control</span></center> <br>
+<span style="font-size: 60px;">3.4 Remote Version Control</span></center> <br>
 <br>
-<span style="font-size: 30px;">- 3.4.1 Collaborating Version Control</span> <br>
+<span style="font-size: 30px;">- 3.4.1 Remote Version Control</span> <br>
 <span style="font-size: 30px;">- 3.4.2 linking GitHub repository with a local Git repository</span> <br>
-<span style="font-size: 30px;">- 3.4.3 </span> <br>
-<span style="font-size: 30px;">- 3.4.4 </span> <br>
-<span style="font-size: 30px;">- 3.4.5 </span> <br>
-<span style="font-size: 30px;">- 3.4.6 </span> <br>
+<span style="font-size: 30px;">- 3.4.3 Fork GitHub repository</span> <br>
+<span style="font-size: 30px;">- 3.4.4 Push changes to GitHub repository</span> <br>
+<span style="font-size: 30px;">- 3.4.5 Pull changes from GitHub repository</span> <br>
+<span style="font-size: 30px;">- 3.4.6 Pull request to central GitHub repository</span> <br>
+
 
 ---
-## <h1 lang="en">3.4.1 Collaborating Version Control</h1> 
-
+## <h1 lang="en">3.4.1 Remote Version Control</h1> 
+ <br><img src="./pic_new/chp3/remote.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+ <br>
 
 ---
 ## <h1 lang="en">3.4.2 linking GitHub repository with a local Git repository</h1> 
-<img src="./pic_new/chp3/new repo3.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;">
-- 有两种方法，将现有本地Git repository连接到新创建的远程GitHub repository或从远程GitHub repository创建新的本地Git repository（这称为克隆）。<br>
-- 请先在GitHub创建一个新的仓库。 <br>
-- 请选择“公共”，并且跳过创建 README、.gitignore 和许可证文件，因为这些文件已在本地Git repository中创建。<br>
+<img src="./pic_new/chp3/link.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+- 有两种方法，将现有本地Git repository连接到新创建的远程GitHub repository(Method 1);<br>
+- 或从远程GitHub repository创建新的本地Git repository(Method 2, clone)。<br>
+
 
 ---
-## <h1 lang="en">3.4.2 linking GitHub repository with a local Git repository(Method 1)</h1> 
+## <h1 lang="en">3.4.2 Method 1</h1> 
+<img src="./pic_new/chp3/new repo3.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;">
+- 请先在GitHub创建一个新的仓库。 <br>
+- 请跳过创建 README、.gitignore 和许可证文件，因为这些文件已在本地Git repository中创建。<br>
+
+---
+## <h1 lang="en">3.4.2 Method 1</h1> 
 <img src="./pic_new/chp3/new project2.png" width="75%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 目前，RStudio 仅允许**在创建新项目时**将本地 Git repository链接到远程存储库，无法将本地现有的 Git repository连接到 GitHub。<br>
+- 目前，RStudio的Git面板 仅允许**在创建新项目时**将本地 Git repository链接到远程存储库，无法将本地现有的 Git repository连接到 GitHub。<br>
 - 按图所示创建本地仓库。<br>
 
 ---
-## <h1 lang="en">3.4.2 linking GitHub repository with a local Git repository(Method 1)</h1> 
+## <h1 lang="en">3.4.2 Method 1</h1> 
 <br><img src="./pic_new/chp3/new repo4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 在新建的GitHub仓库中获取URL。<br>
 
 ---
-## <h1 lang="en">3.4.2 linking GitHub repository with a local Git repository(Method 1)</h1> 
+## <h1 lang="en">3.4.2 Method 1</h1> 
 <img src="./pic_new/chp3/new project3.png" width="75%" style="display: block; margin-left: auto; margin-right: auto;">
 - 粘贴URL后仓库名字将自动生成，选择本地Git仓库创建的位置。<br>
 - 创建后连接成功建立，需要复制旧文件夹的内容并将其粘贴到新的本地仓库中。注意，请先复制.gitignore文件。<br>
 
 ---
-## <h1 lang="en">3.4.2 linking GitHub repository with a local Git repository(Method 2)</h1> 
+## <h1 lang="en">3.4.3 Fork GitHub repository</h1> 
+<br><img src="./pic_new/chp3/fork.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+ <br>
+- 合作时推荐大家先将中央仓库fork到自己的仓库,最终通过pull request推送到中央仓库。<br>
+
+---
+## <h1 lang="en">3.4.2 Method 2</h1> 
 <br><img src="./pic_new/chp3/new repo5.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 从已有的GitHub仓库中获取URL。<br>
-- 合作时推荐大家先将中央仓库fork到自己的仓库，填写自己仓库的URL。<br>
 
 ---
-## <h1 lang="en">3.4.2 linking GitHub repository with a local Git repository(Method 2)</h1> 
+## <h1 lang="en">3.4.2 Method 2</h1> 
 <br><img src="./pic_new/chp3/new project4.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 在R Studio中创建新的版本控制仓库，选择合适的储存路径。<br>
 - 创建后连接成功建立，已将已有的仓库克隆到本地。<br>
 
 ---
-## <h1 lang="en">3.4.3 Push changes to GitHub repository</h1> 
+## <h1 lang="en">3.4.4 Push changes to GitHub repository</h1> 
 <br><img src="./pic_new/chp3/git push.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 向自己fork的远端GitHub repository推送更新。<br>
 - push前不要忘记先commit你的修改！<br>
 
 ---
-## <h1 lang="en">3.4.3 Push changes to GitHub repository</h1> 
+## <h1 lang="en">3.4.4 Push changes to GitHub repository</h1> 
 <br><img src="./pic_new/chp3/git push success.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"> <br>
 - 推送成功。<br>
 
 ---
-## <h1 lang="en">3.4.4 Pull changes from GitHub repository</h1> 
+## <h1 lang="en">3.4.5 Pull changes from GitHub repository</h1> 
 <br><img src="./pic_new/chp3/git pull.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 - 从远端GitHub repository下拉更新。<br>
+- 注意fork的仓库与中央远端GitHub repository保持一致。<br>
 
 ---
-## <h1 lang="en">3.4.4 Pull request to the central GitHub repository</h1> 
-<br><img src="./pic_new/chp3/git pull.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+## <h1 lang="en">3.4.6 Pull request to central GitHub repository</h1> 
+<br>
+<br>
+<br>
+<img src="./pic_new/chp3/pull request1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
-- 从远端GitHub repository下拉更新。<br>
 
+---
+## <h1 lang="en">3.4.6 Pull request to central GitHub repository</h1> 
+<br><img src="./pic_new/chp3/pull request2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+ <br>
+ 
 ---
 <br><img src="./pic_new/chp3/zhangwei.jpg" width="35%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
@@ -370,7 +394,6 @@ Reference: <br>
 </div>
 <br>
 
-
 ---
 ## <h1>小结</h1> 
 <br>
@@ -378,3 +401,10 @@ Reference: <br>
 - 项目管理：文件夹管理系统<br>
 - 使用R Studio与Git进行本地版本控制<br>
 - 使用R Studio, Git与GitHub进行协作版本控制<br>
+<br>
+<br>
+<br>
+**Advanced:**
+- 使用R Studio中的Terminal输入代码也可以实现操作。常用操作代码请搜索git cheatsheet（R Package也有cheatsheet）。<br>
+- 可以通过在Terminal输入git remote add origin https://github.com/username/reponame.git 与git push -u origin master实现将本地已有的Git repository与远程的GitHub repository建立连接，不需要移动文件位置。<br>
+<br>
