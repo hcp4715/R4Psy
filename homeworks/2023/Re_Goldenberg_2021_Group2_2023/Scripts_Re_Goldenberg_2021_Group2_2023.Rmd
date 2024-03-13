@@ -1,0 +1,351 @@
+## 1.准备工作
+```{r, include=FALSE,echo=FALSE}
+# 使用p_load加载需要的包
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+pacman::p_load("Rmisc", "tidyverse","lme4","lmerTest","coefplot","cowplot","ggeffects")# 原先的代码是library(Rmisc);library(tidyverse);library(lme4); library(lmerTest)，不方便其他人复制
+```
+
+## 2.读取数据，并对数据进行初步的处理
+```{r, include=FALSE,echo=FALSE}
+d <- read_csv("./data/OSF_study1.csv")
+
+# 计算估计的情绪强度与真实情绪强度之间的差值，并将结果储存于新变量dif中
+d$dif = d$rating-d$meanGroup
+mean(d$dif)
+
+# 将faceTIme变量转化为因子型变量，以便进行后续操作
+d$faceTimeF = factor(d$faceTime)
+
+# 计算被试的总人数
+length (unique(d$id))
+
+# 选取数据中的列重新组成一个新的数据框，并增加了两列由宽数据转化来的新列
+dif =d %>%
+  select(condition, id, meanGroup, trial, rating, faceIdentity,numberFaces)%>%
+  gather(ratingType, value, -id, -condition,-trial,-faceIdentity,-numberFaces)#新增两列由宽数据转化来的数据
+
+dif$ratingType = factor(dif$ratingType, label = c("Actual Mean", "Estimated Mean"
+))
+dif$value = dif$value -100 #确保正性情绪和负性情绪的值是相同的
+
+# 在r中禁用科学计数法并将小数点的显示精度设置为四位小数
+options("scipen"=100, "digits"=4)
+
+# 定义了三个函数
+confidence =function (reg) {
+  confint(reg,level = .95)
+}
+```
+
+```{r, include=FALSE,echo=FALSE}
+# 计算回归模型的参数估计的95%的置信区间并返回结果
+
+cohenLmer = function (reg) {
+  
+}# 不明所以的空函数
+
+rsquare = function (reg){
+  1-var(residuals(reg))/(var(model.response(model.frame(reg))))
+}
+# 函数利用residuals（reg）计算回归模型残差，model.response(model.frame(reg))计算模型的响应变量，最终计算参数的R平方值，并返回结果
+```
+
+## 3.描述性统计
+```{r, include=FALSE,echo=FALSE}
+# 绘制基于id和不同condition下，被试试次的交叉表，并添加了行和列的总计，以及被试的人数
+addmargins(table(d$condition, d$id))  
+length(unique(d$id)) 
+
+# 计算被试的平均年龄、年龄标准差以及男女人数
+des= d %>%
+  group_by(id)%>%
+  slice(1)
+
+age_mean <- mean(des$age)
+age_sd <- sd (des$age)
+
+table(des$sex)
+
+# 新增描述图表
+des_plot <- ggplot(des, aes(x = sex, fill = sex)) +
+  geom_bar(color = "black", width = 0.7) +  
+  theme_minimal() +
+  geom_hline(yintercept = age_mean, color = "gray", linetype = "dashed") +
+  annotate("text", x = 1, y = age_mean, label = paste("MeanAge:", age_mean),
+           vjust = -0.5, hjust = 0, color = "black", size = 4) +
+  geom_text(stat = "count", aes(label = stat(count)), vjust = -0.5, color = "black", size = 3) +
+  xlab("Sex") +
+  ylab("Frequency") +
+  ggtitle("Frequency Plot of Sex with Age Statistics") +
+  scale_fill_manual(values = c("#B03060", "#4682B4")) + 
+  theme(
+    plot.background = element_rect(fill = "lightgray"),  
+    panel.background = element_rect(fill = "white"),  
+    panel.grid.major = element_blank(),  
+    panel.grid.minor = element_blank(),  
+    legend.position = "top",  
+    legend.background = element_rect(fill = "white"), 
+    legend.title = element_blank(),  
+    axis.title = element_text(size = 12, face = "bold"), 
+    axis.text = element_text(size = 10), 
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  
+    panel.border = element_rect(color = "black", fill = NA) 
+  )
+
+des_plot
+
+# 对被试的种族进行统计分析
+race =des %>%
+  select(raceWhite, raceBlack, raceAsian,raceLatin,raceOther)%>%
+  gather (race, value, -id)  %>%
+  group_by(race)  %>%
+  count (value==1) %>%
+  filter() # 疑似没什么意义的一行代码
+
+```
+
+## 4.对假设1进行验证
+```{r, include=FALSE,echo=FALSE}
+r = lmer (value~ratingType+(1|id)+(1|faceIdentity),
+          dif);summary(r)
+#混合线性模型对假设1进行检验，基于dif数据集，以value为响应变量，ratingtype为预测变量，id和faceidentity为随机变量，进行分析
+
+rsquare(r)
+# 计算回归模型“r”的R方值
+
+confint(r, level =.95)
+# 计算模型“r”的95%的置信区间
+
+```
+
+## 5.对假设2和3进行检验
+```{r, include=FALSE,echo=FALSE}
+d$condition <- factor(d$condition) # 原代码没有这一行，这里要进行进一步分析，需要将condition转化为因子型变量才能使用relevel
+d$condition=relevel(d$condition,"positive") # 将conditon中的level水平“positive”设为新的基准，其他水平将与该基准进行比较
+d$Ncondition = as.integer(d$condition) # 将conditon转化为整数形式，为后续分析提供一个数值变量
+d$Ncondition=ifelse(d$Ncondition==1,-1,1) # 将conditon中的数值进行反转，1变成-1，-1变成1，意义不明。应该是为了后面的交互效应检验，如果确实get不了啥意思，就写为后面做交互吧
+
+r = lmer (dif~ condition+numberFaces +(1|faceIdentity)+ (1|id), d);summary(r)
+# 混合线性模型对假设2和假设3进行检验，以dif为响应变量，conditon和numberfaces为预测变量，id和faceidentity为随机变量，进行分析
+# 文献中说假设2和假设3用的是一般线性模型，但这里跟前面的公式一样，都是lmer？
+
+r = lmer (dif~ Ncondition*scale(numberFaces) +(1|faceIdentity)+ (1|id), d);summary(r)
+# 混合线性模型，检验conditon和numberface各自的效应，以及交互效应
+# 问题来了，文章中的数据是这个代码输出结果中提取出来的，那88行代码是干嘛的呀
+
+confidence(r)
+# 计算回归模型95%的置信区间
+rsquare(r)
+#计算回归模型的R方值
+
+#新增结果可视化(原代码有部分变量名不正确+颜色修正)
+g=ggplot(d, aes(x=numberFaces+1, y=dif, fill=condition, colour =condition)) +
+    stat_smooth(size =1.2, method='lm',fill = "grey", se = T, na.rm =T)+  
+    scale_color_manual(values=c("limegreen", "tomato", "#66cc60"))+
+    labs(title="")+
+    guides(fill=guide_legend(title=NULL))+
+    theme_bw()+
+    theme(
+        panel.grid = element_blank(),
+        legend.background= element_rect(),
+        legend.text = element_text(),
+        plot.title = element_text(size = rel(1.3),hjust =.5),
+        axis.title.y = element_text(face="bold",  size=14,),
+        axis.text.x  = element_text( vjust=0.5, size=14),
+        axis.text.y  = element_text( vjust=0.5, size=16),
+        axis.title.x = element_text(face="bold",  size=14)) +  
+  scale_x_continuous(limits = c(1, 12), breaks=seq(1,12,1))+
+     labs(title = "Difference Between Estimated and Real Mean Group Emotion", 
+         x = "Number of Faces",
+         y = "Difference = Estimated-Real")
+g
+```
+
+## 6.进行探索性分析
+```{r}
+# 创建一个二进制指示变量white来表示个体是否为白种人
+d$white = ifelse(d$raceWhite == 1, 1, 0)
+# 使用线性混合效应模型（LME）拟合了一个模型
+r = lmer(dif ~ white + (1|faceIdentity) + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+```
+
+```{r}
+# 处理与社交焦虑相关的变量
+anx = d %>%
+  group_by(id) %>%
+  slice(1) %>%
+  ungroup() %>%
+  select(starts_with("socialAn"))
+
+psych::alpha(anx)
+
+anx$meanAnx = rowMeans(anx)
+
+mean(anx$meanAnx)
+sd(anx$meanAnx)
+
+d$anxietyScale = rowMeans(d[, c('socialAnxiety1', 'socialAnxiety2', 'socialAnxiety3', 'socialAnxiety4', 'socialAnxiety5', 'socialAnxiety6')], na.rm = TRUE)
+d = select(d, -starts_with("socialA"))
+
+rm(anx)
+
+r = lmer(dif ~ anxietyScale + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+```
+
+```{r}
+# 处理与归属需求相关的变量
+d$needToBelong1 = 5 - d$needToBelong1
+d$needToBelong3 = 5 - d$needToBelong3
+d$needToBelong7 = 5 - d$needToBelong7
+
+ntb = d %>%
+  group_by(id) %>%
+  slice(1) %>%
+  ungroup() %>%
+  select(starts_with("needTo"))
+
+psych::alpha(ntb)
+
+ntb$meanNtb = rowMeans(ntb)
+
+mean(ntb$meanNtb)
+sd(ntb$meanNtb)
+
+d$ntb = rowMeans(d[, c('needToBelong1', 'needToBelong2', 'needToBelong3', 'needToBelong4', 'needToBelong5', 'needToBelong6', 'needToBelong7', 'needToBelong8', 'needToBelong9', 'needToBelong10')], na.rm = TRUE)
+d = select(d, -starts_with("needTo"))
+
+r = lmer(dif ~ ntb + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+```
+
+```{r}
+# 处理与个性特质相关的变量
+#extraversion（外向性）
+d$bigFiveReservedr = 7 - d$bigFiveReserved
+d$extravertedScale = rowMeans(d[, c('bigFiveExtraverted', 'bigFiveReservedr')], na.rm = TRUE)
+
+r = lmer(dif ~ extravertedScale + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+#agreeableness（宜人性）
+d$bigFiveCriticalr = 7 - d$bigFiveCritical
+d$agreeScale = rowMeans(d[, c('bigFiveCriticalr', 'bigFiveWarm')], na.rm = TRUE)
+
+r = lmer(dif ~ agreeScale + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+#Conscientiousness（责任心）
+d$bigFiveCarelessr = 7 - d$bigFiveCareless
+d$consc = rowMeans(d[, c('bigFiveCons', 'bigFiveCarelessr')], na.rm = TRUE)
+
+r = lmer(dif ~ consc + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+#neuro（神经质）
+d$bigFiveCalmr = 7 - d$bigFiveCalm
+d$neuro = rowMeans(d[, c('bigFiveCalmr', 'bigFiveNeuro')], na.rm = TRUE)
+
+r = lmer(dif ~ neuro + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+#openness（开放性）
+d$bigFiceConventional = 7 - d$bigFiceConventional
+d$open = rowMeans(d[, c('bigFiceConventional', 'bigFiveOpen')], na.rm = TRUE)
+
+r = lmer(dif ~ open + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+# 新增一个图来更好的表现
+traits_data <- data.frame(
+  extraversion = d$extravertedScale,
+  agreeableness = d$agreeScale,
+  conscientiousness = d$consc,
+  neuroticism = d$neuro,
+  openness = d$open,
+  difference = d$dif
+)
+
+teaits_plot <- ggplot(traits_data, aes(x = extraversion, y = difference)) +
+  geom_jitter(aes(color = "Extraversion"), width = 0.2, height = 0.05, alpha = 0.5) +
+  geom_jitter(aes(x = agreeableness, color = "Agreeableness"), width = 0.2, height = 0.05, alpha = 0.5) +
+  geom_jitter(aes(x = conscientiousness, color = "Conscientiousness"), width = 0.2, height = 0.05, alpha = 0.5) +
+  geom_jitter(aes(x = neuroticism, color = "Neuroticism"), width = 0.2, height = 0.05, alpha = 0.5) +
+  geom_jitter(aes(x = openness, color = "Openness"), width = 0.2, height = 0.05, alpha = 0.5) +
+  labs(title = "Difference vs. Personality Traits",
+       x = "Personality Traits",
+       y = "Difference") +
+  scale_color_manual(values = c("Extraversion" = "blue",
+                                "Agreeableness" = "green",
+                                "Conscientiousness" = "red",
+                                "Neuroticism" = "orange",
+                                "Openness" = "purple")) +
+  theme_minimal()
+teaits_plot
+```
+
+```{r}
+# 处理与性别相关的变量
+d$sex = factor(d$sex)
+
+r = lmer(dif ~ sex + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+# 补充一个图
+gender_counts <- table(d$sex)
+gender_data <- data.frame(
+  gender = names(gender_counts),
+  count = as.vector(gender_counts)
+)
+sex_plot <- ggplot(gender_data, aes(x = gender, y = count)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Participants by Gender", x = "Gender", y = "Count") +
+  theme_minimal()
+sex_plot
+```
+
+```{r}
+# 处理与试验次数相关的变量
+r = lmer(dif ~ trial + (1|id), d)
+summary(r)
+confint(r, level = .95)
+
+dfc <- summarySE(d, measurevar = "dif", groupvars = c("trial"), na.rm = TRUE)
+
+pd <- position_dodge(.1)
+
+g2 = ggplot(dfc, aes(x = trial, y = dif)) +
+  geom_line(size = 0.8) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = rel(1.4), hjust = 0.5),
+    axis.title.y = element_text(face = "bold", size = 14),
+    axis.text.x = element_text(vjust = 0.5, size = 18),
+    axis.text.y = element_text(vjust = 0.5, size = 12),
+    axis.title.x = element_text(face = "bold", size = 14)
+  ) +
+  scale_fill_grey() +
+  labs(
+    title = "Difference as function of trial number",
+    x = "Trial Number",
+    y = "Difference = Estimated-Real"
+  )
+g2
+
+```
+

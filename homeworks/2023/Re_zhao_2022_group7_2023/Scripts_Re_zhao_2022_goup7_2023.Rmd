@@ -1,0 +1,490 @@
+---
+title: "replication of study 'Surprisingly Happy to Have Helped: Underestimating Prosociality Creates a Misplaced Barrier to Asking for Help'"
+output: html_document
+date: "2023-06-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Method
+
+**Study design**: 2 (perspective: Requester vs. Helper) by 2 (gratitude: mentioned vs. not mentioned) between-participants design
+
+```{r setup}
+rm(list = ls())
+
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("tidyverse","easystats",'psych','papaja','lsr','plyr','bruceR')
+
+# load data:
+dt.raw <-  read.csv('./data/Study_1a_data.csv',
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+
+
+##clean the data 
+```{r prepare the data}
+dt.study1 <- dt.raw %>%
+  dplyr::mutate(Role = factor(Role, levels = c("Requester", "Helper"),labels = c("Requesters", "Helpers")))%>%
+  dplyr::mutate(ID = as.factor(ID))%>%
+  dplyr::mutate(PositiveMood=(Positive+5+Pleased)/2)%>%
+  #积极/消极项目的测量采用的是(-5)-(5)量表，在数据分析前转换为0-10分制计分的结果
+  dplyr::mutate(InconveniencePerc=(Inconvenient + Annoyed)/2)%>%
+  dplyr::mutate(ProsocialAttr=(Prosocial1 + Prosocial2)/2)%>%
+  dplyr::mutate(ComplyAttr=(Comfort1 + Conform2)/2)%>%
+  dplyr::mutate(Willingness=(Willing + Likely)/2)%>%
+  dplyr::mutate(Discomfort=(Difficult+Awkward+Embarrased)/3)
+   
+```
+
+##part1:first stage
+
+## Willingness to Help
+
+* "How willing do you think you would be to let them use your cell phone?/ How willing do you think they would be to let you use their cell phone?" [0: not at all willing; 10: completely willing]
+* "How likely do you think you would actually agree to let them use your cell phone?/How likely do you think they would actually agree to let you use their cell phone?" [0: not at all likely; 10: completely likely]
+
+We'll first test whether these two items are highly correlated before combining them to calculate a composite score.
+
+```{r}
+#计算相关性
+cor.test(dt.study1$Willing, dt.study1$Likely, method=c("pearson"))
+```
+#t test
+```{r}
+bruceR::TTEST(data=dt.study1, 
+                y="Willingness",
+                x="Role")
+#比较不同Role条件下在Willingness得分上的差异
+#Willingness=(Willing + Likely)/2
+```
+
+
+```{r}
+#按Role分组，分别计算两组在willingness得分上的均值、方差、标准误
+dt.study1_willingness <- dt.study1 %>%
+  dplyr::group_by(Role) %>%
+  dplyr::summarise(Willingness_mean = mean(Willingness,na.rm = TRUE),
+                   SD_Willingness = sd(Willingness,na.rm = TRUE),
+                   SE_Willingness = SD_Willingness/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+#绘制条形图
+p1<-ggplot2::ggplot(data=dt.study1_willingness, aes(x=Role, y=Willingness_mean,fill=Role)) + 
+  geom_bar(stat='identity',width=0.4,position=position_dodge(0.5))+
+  labs(y='Willingness to help')+
+  geom_errorbar(aes(ymin=Willingness_mean-SE_Willingness ,
+                    ymax=Willingness_mean+SE_Willingness),
+                    width=.05,
+                    position = position_dodge(0.5))+
+  scale_y_continuous(expand = c(0,0))+
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()
+p1
+#ggsave(filename = "./willingness.png",plot=p1,height = 5, width = 8, dpi = 300)
+  
+```
+
+## Estimated percentage agreement
+
+* "What percentage of people do you think would agree to this request?"
+
+```{r}
+#按Role分组，分别计算两组在Percentage_1得分上的均值、方差、标准误
+dt.study1_agreementperc <- dt.study1 %>%
+  dplyr::group_by(Role) %>%
+  dplyr::summarise(PercentageAgree_1_mean = mean(PercentageAgree_1,na.rm = TRUE),
+                   SD_PercentageAgree_1 = sd(PercentageAgree_1,na.rm = TRUE),
+                   SE_PercentageAgree_1 = SD_PercentageAgree_1/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+
+bruceR::TTEST(data=dt.study1, y="PercentageAgree_1",x="Role")
+
+#绘图
+p2<-ggplot2::ggplot(data=dt.study1_agreementperc,aes(x=Role,y=PercentageAgree_1_mean,fill=Role))+
+  geom_bar(stat='identity',width=0.4,position=position_dodge(.5))+ 
+  geom_errorbar(aes(ymin=PercentageAgree_1_mean-SE_PercentageAgree_1 ,
+                    ymax=PercentageAgree_1_mean+SE_PercentageAgree_1),
+                    width=.05,
+                    position = position_dodge(0.5))+
+  labs(y='% of people who would agree')+
+  scale_y_continuous(expand = c(0,0))+
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()
+p2
+#ggsave(filename = "./agreementperc.png",plot=p2,height = 5, width = 8, dpi = 300)
+
+```
+
+
+
+## Discomfort rejecting request
+
+** items (0 to 10)**:
+
+* How difficult do you think they would find it to say "no" to your request?
+* How awkward do you think they would find it to say "no" to your request?
+* How embarrassed do you think they would feel if they said "no" to your request?
+
+```{r}
+#计算difficult、awkward、embarrassed三个条目的Cronbach’s alphas
+dt.study1 %>%
+  dplyr::select(Difficult:Embarrased)%>%
+  psych::alpha()
+# t test
+bruceR::TTEST(data=dt.study1, y="Discomfort",x="Role")
+```
+
+
+```{r}
+#Discomfort=(Difficult+Awkward+Embarrased)/3
+dt.study1_discomfort <- dt.study1 %>%
+  dplyr::group_by(Role) %>%
+  dplyr::summarise(Discomfort_mean = mean(Discomfort,na.rm = TRUE),
+                   SD_Discomfort = sd(Discomfort,na.rm = TRUE),
+                   SE_Discomfort = SD_Discomfort/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+#绘图
+p3<-ggplot2::ggplot(data=dt.study1_discomfort,aes(x=Role,y=Discomfort_mean,fill=Role))+
+  geom_bar(stat='identity',width=0.4,position=position_dodge(0.5))+ 
+  geom_errorbar(aes(ymin=Discomfort_mean-SE_Discomfort ,
+                    ymax=Discomfort_mean+SE_Discomfort),
+                    width=.05,
+                    position = position_dodge(0.5))+
+  labs(y='Discomfort')+
+  scale_y_continuous(expand = c(0,0))+
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()
+p3
+#ggsave(filename = "./discomfort.png",plot=p3,height = 5, width = 8, dpi = 300)
+
+```
+
+
+# Part 2: After helping
+
+[Page 1]
+
+Now imagine that this person agreed to your request, handed you their phone. 
+
+You made a short phone call, and then handed the phone back.
+
+[Page 2 (only "gratitude" condition)]
+
+"Thanks so much for helping me! You really saved my day! Otherwise, my doctor might have canceled my appointment!” 
+
+You thanked them several times for helping you.
+ 
+## Expernece of Helping
+
+* How positive/negative do you think they would feel after this interaction?
+* How inconvenient do you think it would be to have let you borrow their phone? 
+* How annoyed do you think they would feel about this interaction?
+* How pleased do you think they would feel about this interaction?
+
+### PCA/Item analysis
+
+Should we calculate one or two composite scores of positive and negative mood? Let's conduct a PCA.
+```{r}
+#PCA分析
+after_mood<-dt.study1 %>%
+  dplyr::select(Positive:Pleased)%>%
+  dplyr::mutate(Positive=Positive+5)
+alpha(after_mood,check.keys=TRUE)
+scree(after_mood)
+
+pca_after_mood <- principal(after_mood, nfactors=2, rotate="varimax")
+print(pca_after_mood)
+```
+
+Note that the Cronbach's alpha for these four mood items is only .65. And PCA reveals two separate PCs. So let's analyze positive mood and inconvenience perception separately. But before that, let's confirm on their correlation coefficients
+
+```{r}
+#计算相关性
+cor.test(dt.study1$Positive, data_study1$Pleased, method=c("pearson"))
+cor.test(dt.study1$Annoyed, data_study1$Inconvenient, method=c("pearson"))
+#Between these two constructs:
+cor.test(dt.study1$PositiveMood, dt.study1$InconveniencePerc, method=c("pearson"))
+```
+
+
+
+Hence, positive mood and inconvenience perception should be treated as two separate constructs.
+## Positive Mood
+```{r}
+
+#方差分析2 (perspective) × 2 (gratitude) analysis of variance (ANOVA) on positive mood 
+p_mood_aov <- aov(PositiveMood ~ Role * Gratitude, data = dt.study1)
+summary(p_mood_aov)
+lsr::etaSquared(p_mood_aov)#计算效应量
+
+#描述性统计:计算不同Role条件下被试在PositiveMood得分上的均值、标准差等；以及不同Gratitude组被试在PositiveMood得分上的均值、标准差、标准误
+ddply(dt.study1, c("Role"), summarise,
+               N    = length(PositiveMood),
+               mean = mean(PositiveMood, na.rm=T),
+               sd   = sd(PositiveMood, na.rm=T),
+               se   = sd / sqrt(N-1))
+
+ddply(dt.study1, c("Gratitude"), summarise,
+               N    = length(PositiveMood),
+               mean = mean(PositiveMood, na.rm=T),
+               sd   = sd(PositiveMood, na.rm=T),
+               se   = sd / sqrt(N-1))
+
+```
+
+
+```{r}
+
+#positiveMood=(Positive+5+Pleased)/2
+dt.study1_PM <- dt.study1 %>%
+  dplyr::group_by(Role,Gratitude) %>%
+  dplyr::summarise(PositiveMood_mean = mean(PositiveMood,na.rm = TRUE),
+                   SD_PositiveMood = sd(PositiveMood,na.rm = TRUE),
+                   SE_PositiveMood = SD_PositiveMood/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+#绘图
+p4<-ggplot2::ggplot(data=dt.study1_PM,aes(x=Role,y=PositiveMood_mean,fill=Gratitude))+
+  geom_bar(stat='identity',width=0.8,position=position_dodge(.9))+ 
+  labs(y='positive mood')+
+  geom_errorbar(aes(ymin=PositiveMood_mean-SE_PositiveMood ,
+                    ymax=PositiveMood_mean+SE_PositiveMood),
+                    width=.05,
+                    position = position_dodge(.9))+
+  scale_y_continuous(expand = c(0,0))+
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()#设置主题
+p4
+#ggsave(filename = "./positivemood.png",plot=p4,height = 5, width = 8, dpi = 300)
+```
+
+
+## Inconvenience Perception
+```{r}
+
+#方差分析2 (perspective) × 2 (gratitude) analysis of variance (ANOVA) on Inconvenience Perception
+inconve_aov <- aov(InconveniencePerc ~ Role * Gratitude, data = dt.study1)
+summary(inconve_aov)
+etaSquared(inconve_aov)
+#描述性统计
+ddply(dt.study1, c("Role"), summarise,
+               N    = length(InconveniencePerc),
+               mean = mean(InconveniencePerc, na.rm=T),
+               sd   = sd(InconveniencePerc, na.rm=T),
+               se   = sd / sqrt(N-1))
+
+```
+
+```{r}
+
+#InconveniencePerc=(Inconvenient + Annoyed)/2
+dt.study1_inconve <- dt.study1 %>%
+  dplyr::group_by(Role,Gratitude) %>%
+  dplyr::summarise(InconveniencePerc_mean = mean(InconveniencePerc,na.rm = TRUE),
+                   SD_InconveniencePerc = sd(InconveniencePerc,na.rm = TRUE),
+                   SE_InconveniencePerc = SD_InconveniencePerc/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+#绘图
+p5<-ggplot2::ggplot(data=dt.study1_inconve,aes(x=Role,y=InconveniencePerc_mean,fill=Gratitude))+
+  geom_bar(stat='identity',width=0.8,position=position_dodge(0.9))+ 
+  labs(y='Inconvenience Perception')+
+  geom_errorbar(aes(ymin=InconveniencePerc_mean-SE_InconveniencePerc ,
+                    ymax=InconveniencePerc_mean+SE_InconveniencePerc),
+                    width=.05,
+                    position = position_dodge(0.9))+
+  scale_y_continuous(expand = c(0,0),breaks = seq(0,5,2))+
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()
+p5
+#ggsave(filename = "./inconvenience.png",plot=p5,height = 5, width = 8, dpi = 300)
+```
+
+
+
+## Motivation Attribution
+
+"To what extent do you agree or disagree that each of the following statements describes their motivation to help?
+ 
+They would have agreed to help me because...
+
+* they wanted to see me out of my trouble [Prosocial 1]
+* they wanted to avoid saying "no" to me [Compliance 1/comfort1]
+* they believed their small favor would mean a lot to me [Prosocial 2]
+* they were forced by the social pressure [Compliance 2/conform2]
+
+### PCA/Item analysis
+
+Should we analyze prosocial and compliance motivations (antonomous vs. controlled) separately? Again let's start with PCA.
+```{r}
+##PCA分析
+attribution <- dt.study1 %>%
+  dplyr::select(Prosocial1:Conform2)
+
+psych::alpha(attribution, check.keys=TRUE)
+scree(attribution)
+
+pca_attribution <- principal(attribution, nfactors=2, rotate="varimax")
+print(pca_attribution)
+```
+
+
+## Prosocial Motivation
+```{r}
+##测量Prosocial motivation亲社会动机的两个条目之间的相关性
+cor.test(dt.study1$Prosocial1, dt.study1$Prosocial2, method=c("pearson"))
+##测量依从性动机的两个条目之间的相关性
+cor.test(dt.study1$Comfort1, dt.study1$Conform2, method=c("pearson"))
+##测量亲社会动机与依从性动机之间的相关性
+cor.test(dt.study1$ProsocialAttr, dt.study1$ComplyAttr, method=c("pearson"))
+
+```
+
+```{r}
+#方差分析2 (perspective) × 2 (gratitude) analysis of variance (ANOVA) on prosocial motivation
+prosocial_aov <- aov(ProsocialAttr ~ Role * Gratitude, data = dt.study1)
+summary(prosocial_aov)
+etaSquared(prosocial_aov)
+#描述性统计
+ddply(dt.study1, c("Role"), summarise,
+               N    = length(ProsocialAttr),
+               mean = mean(ProsocialAttr, na.rm=T),
+               sd   = sd(ProsocialAttr, na.rm=T),
+               se   = sd / sqrt(N-1))
+```
+
+
+```{r}
+dt.study1_prosocial <- dt.study1 %>%
+  dplyr::group_by(Role,Gratitude) %>%
+  dplyr::summarise(prosocial_mean = mean(ProsocialAttr,na.rm = TRUE),
+                   SD_prosocial = sd(ProsocialAttr,na.rm = TRUE),
+                   SE_prosocial = SD_prosocial/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+#绘图
+p6<-ggplot2::ggplot(data=dt.study1_prosocial
+                ,aes(x=Role,y=prosocial_mean,fill=Gratitude))+
+  geom_bar(stat='identity',width=0.8,position=position_dodge(0.9))+ 
+  labs(y='Prosocial Motivation')+
+  geom_errorbar(aes(ymin=prosocial_mean-SE_prosocial ,
+                    ymax=prosocial_mean+SE_prosocial),
+                    width=.2,
+                    position = position_dodge(0.9)) +
+  scale_y_continuous(expand = c(0,0))+
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()
+p6
+#ggsave(filename = "./prosocial.png",plot=p6,height = 5, width = 8, dpi = 300)
+
+```
+
+
+## Compliance Motivation
+```{r}
+#测量compliance motivation依从性动机的两个条目之间的相关性
+cor.test(dt.study1$Comfort1, dt.study1$Conform2, method=c("pearson"))
+#测量亲社会动机与依从性动机之间的相关性
+cor.test(dt.study1$ProsocialAttr, dt.study1$ComplyAttr, method=c("pearson"))
+```
+
+
+```{r}
+#方差分析2 (perspective) × 2 (gratitude) analysis of variance (ANOVA) on comliance motivation
+compliance_aov <- aov(ComplyAttr ~ Role * Gratitude, data = dt.study1)
+summary(compliance_aov)
+etaSquared(compliance_aov)
+
+#描述性统计
+ddply(dt.study1, c("Role"), summarise,
+               N    = length(ComplyAttr),
+               mean = mean(ComplyAttr, na.rm=T),
+               sd   = sd(ComplyAttr, na.rm=T),
+               se   = sd / sqrt(N))
+```
+
+```{r}
+dt.study1_compliance <- dt.study1 %>%
+  dplyr::group_by(Role,Gratitude) %>%
+  dplyr::summarise(compliance_mean = mean(ComplyAttr,na.rm = TRUE),
+                   SD_compliance = sd(ComplyAttr,na.rm = TRUE),
+                   SE_compliance = SD_compliance/sqrt(n()-1),
+                   n = n()) %>%
+  dplyr::ungroup()
+#绘图
+p7<-ggplot2::ggplot(data=dt.study1_compliance
+                ,aes(x=Role,y=compliance_mean,fill=Gratitude))+
+  geom_bar(stat='identity',width=0.8,position=position_dodge(0.9))+ 
+  labs(y='Compliance Motivation')+
+  geom_errorbar(aes(ymin=compliance_mean-SE_compliance ,
+                    ymax=compliance_mean+SE_compliance),
+                    width=.05,
+                    position = position_dodge(0.9))+
+#设置纵坐标的范围、间隔 
+  scale_y_continuous(expand = c(0,0),limits=c(-2,2),breaks=seq(-2,2,1))+ 
+  scale_fill_brewer(palette = "Blues")+
+  papaja::theme_apa()
+p7
+#ggsave(filename = "./compliance.png",plot=p7,height = 5, width = 8, dpi = 300)
+
+
+```
+
+##Mediation analysis
+we conducted mediation analyses to examine the extent to which motivation attributions mediated perspective differences in helpers’ (a) willingness to help, (b) positive mood from helping,and (c) perceived inconvenience of helping
+
+## PROCESS Model 4
+```{r bruceR::PROCESS model 4}
+  bruceR::PROCESS(dt.study1,
+                  x = "Role", #自变量
+                  y = "Willingness", # 因变量
+                  meds = c("ProsocialAttr","ComplyAttr"), # 中介变量 
+                  med.type = c("parallel"),#平行中介
+                  ci = c("boot"), # 置信区间使用bootstrap 或其他抽样方法
+                  nsim = 5000, # 抽样的次数
+                  seed = 10, # 设置seed可以让每次的抽样结果都一样
+                  center = FALSE, # 是否对自变量和调节变量中心化。非中心化在解释时更方便
+                  std = TRUE, # 是否在计算前对所有变量进行标准化
+                  digits = 3, 
+                  ) 
+```
+
+```{r}
+bruceR::PROCESS(dt.study1,
+                  x = "Role", 
+                  y = "PositiveMood", 
+                  meds = c("ProsocialAttr","ComplyAttr"),
+                  med.type = c("parallel"),
+                  ci = c("boot"), 
+                  nsim = 5000, 
+                  seed = 10, 
+                  center = FALSE, 
+                  std = TRUE, 
+                  digits = 3, 
+                  ) 
+```
+
+```{r}
+bruceR::PROCESS(dt.study1,
+                  x = "Role", 
+                  y = "InconveniencePerc", 
+                  meds = c("ProsocialAttr","ComplyAttr"),
+                  med.type = c("parallel"),
+                  ci = c("boot"), 
+                  nsim = 5000, 
+                  seed = 10, 
+                  center = FALSE, 
+                  std = TRUE, 
+                  digits = 3, 
+                  ) 
+```
+
