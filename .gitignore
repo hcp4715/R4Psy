@@ -1,5 +1,11 @@
+
+#  R files
 .Rhistory
 .RData
 .Rproj.user
-.Ruserdata
 
+## Mac OS files
+.DS_Store
+
+## files for html
+*_files/*
