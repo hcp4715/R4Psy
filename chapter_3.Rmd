@@ -415,10 +415,10 @@ Reference: <br>
 - 也可以通过在Terminal输入git remote add origin https://github.com/username/reponame.git 与git push -u origin master实现将本地已有的Git repository与远程的GitHub repository建立连接，不需要移动文件位置。<br>
 
 ---
-<br><img src="./pic_new/chp3/zhangwei.jpg" width="35%" style="display: block; margin-left: auto; margin-right: auto;">
+<br><img src="./pic_new/chp3/youTurn.gif" width="35%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 <div style="text-align: center;">
-    <span style="font-size: 60px;">Time for Display</span>
+    <span style="font-size: 60px;">Now It's Your Turn!</span>
 </div>
 <br>
 
