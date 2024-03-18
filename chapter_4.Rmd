@@ -606,14 +606,6 @@ class: center, middle
 <span style="font-size: 60px;">Any questions?</span> <br>
 
 
-
-
----
-
-
-
--   <font size=5> 
-
 ---
 # 4.7  Trifles
 
