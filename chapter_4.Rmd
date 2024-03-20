@@ -1,6 +1,6 @@
 ---
 title: "Lecture 4"
-subtitle: "How to import data"
+subtitle: "Importing data"
 author: "Hu Chuan-Peng (PhD)"
 institute: "Nanjing Normal University"
 date: "2024-03-20"
@@ -15,18 +15,18 @@ output:
 ---
 
 class: center, middle
-<span style="font-size: 60px;">第四章</span> <br>
-<span style="font-size: 50px;">如何导入数据</span> <br>
+<span style="font-size: 60px;">第四章: 导入数据</span> <br>
 <br>
-<span style="font-size: 30px;">胡传鹏</span> <br>
+<br>
+<span style="font-size: 30px;">胡传鹏(博士) </span> <br>
 <span style="font-size: 20px;"> </span> <br>
-<span style="font-size: 30px;">2024-03-20</span> <br>
-<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
+<span style="font-size: 30px;"> 2024-03-20 </span> <br>
+<span style="font-size: 20px;"> Created with Rmarkdown </span> <br>
 
 ---
-# 补充
-## 使r语言的报错变为英文
-- <font size = 5.5>在自己代码的开头输入如下命令，可以让当前的session报错为英文
+# Tips
+## 将`Rstudio`中报错语言变为英文
+- <font size = 5.5>打开Rstudio后，输入如下命令，可以让当前的session报错为英文。
 ```{r local,echo=TRUE, eval=FALSE}
 # set local encoding to English
 if (.Platform$OS.type == 'windows') {
@@ -53,33 +53,23 @@ layout: true
 # 4.0 回顾与问题
 ---
 
-
 ![process](pic_new/chp4/process.png)
 
 --
-- # <font size = 5.5> 
-问卷数据：Human Penguin Project </font> 
+- # <font size = 5.5> 问卷数据：Human Penguin Project </font> 
 
-- # <font size = 5.5> 
-实验数据：Perceptual matching </font> 
+- # <font size = 5.5> 实验数据：Perceptual matching </font> 
 
 --
  
 <br><br>
-##  问题提出
+##  问题: 
 
-- # <font size = 5.5>
-导入 penguin_rawdata.csv </font> 
+- # <font size = 5.5> 导入 “penguin_rawdata.csv” </font> 
 
-- # <font size = 5.5> 
-查看数据 —— 数据的类型与结构  </font> 
+- # <font size = 5.5> 查看数据 —— 数据的类型与结构  </font> 
 
-- # <font size = 5.5> 
-尝试选取变量进行初步统计计算  </font> 
-
-
-
-
+- # <font size = 5.5> 尝试选取变量进行初步统计计算  </font> 
 
 ---
 layout: false
@@ -92,11 +82,9 @@ layout: false
 <!-- ##### -->
 <!-- ##### -->
 
-
 <br>
 <font size=5.5>
-
-路径:  如果我们要找到 R4Psy 中data文件夹下的 penguin 的数据集 penguin_rawdata.csv，需要先打开 R4Psy 文件夹：
+路径:  如果我们要找到`R4Psy`中`data`文件夹下的`penguin`数据"penguin_rawdata.csv"，需要先打开`R4Psy`文件夹：
 </font>
 
 <br>
@@ -111,9 +99,6 @@ layout: false
 </font>
 
 
-
-
-
 ---
 ## 4.1.1 数据的“住址”——路径 (_in Mac_)
 
@@ -126,7 +111,7 @@ layout: false
 --
 <br>
 <font size=5.5 class=center color=red>
-"/Users/czarray/Documents/github/R4Psy/data/penguin/penguin_rawdata.csv"
+"/Users/cz***/Documents/github/R4Psy/data/penguin/penguin_rawdata.csv"
 </font>
 
 <div class="center">
@@ -152,13 +137,13 @@ layout: false
 </font>
 <br><br>
 <font size=5.5 class=center color=red>
-"/Users/czarray/Documents/github/R4Psy/data/penguin/penguin_rawdata.csv"
+"/Users/cz***/Documents/github/R4Psy/data/penguin/penguin_rawdata.csv"
 </font>
 
 <br><br><br>
 --
 
--   相对路径相当于设置了某个文件夹作为搜寻的“起点”(即R4Psy)；
+-   相对路径相当于设置了某个文件夹作为搜寻的“起点”(这里的`R4Psy`)；
 
 -   设置了“起点”文件夹后，之前的路径可以忽略不写，因此更加简洁；
 
@@ -235,7 +220,19 @@ cat(normalized_path)
 ```
 <font size=5.5>**因此注意不要直接复制Windows地址栏中的地址**
 
-.footnote[注：在Psychopy(Python)及大多数编程语言中，路径都支持斜杠（/）]
+<br>
+<font size = 5.5> 避免不同操纵系统中分割符切换的问题：`here()` </font>
+
+```{r using here, echo=TRUE, message=FALSE, warning=FALSE,results='hide'}
+pacman::p_load(here)
+
+# here::here()
+here::here("data","penguin","penguin_rawdata.csv")
+```
+
+<br>
+
+.footnote[注：在Python及大多数编程语言中，路径都支持斜杠（/）]
 
 ---
 ## 4.1.3 设定工作目录 -- 手动挡与自动挡
@@ -291,7 +288,7 @@ bruceR::set_wd(ask = T)
 
 ```{r Read_csv}
 # 读取数据,命名为penguin_data
-penguin_data = import('data/penguin/penguin_rawdata.csv')
+penguin_data = import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
 # 查看头(head) 5 行，有头就有尾(tail)
 # head(penguin_data,n = 3)
 # tail(penguin_data,n = 3)
@@ -300,7 +297,7 @@ nrow(penguin_data)
 ```
 --
 
--   <font size=5>由于已经加载bruceR，`bruceR::import()`简写为 `import()`
+-   <font size=5>由于已经加载bruceR，`bruceR::import()`可以简写为 `import()`，但不推荐；
 
 -   <font size=5>心理学中常用数据基本都可以使用该函数导入(使用`?bruceR::import()`查看支持导入哪些类型)。
 
@@ -309,7 +306,7 @@ nrow(penguin_data)
 
 
 ---
-## 4.2 读取数据——自动挡
+## 4.2 读取数据——自动挡(GUI点击操作)
 
 在设置好当前工作目录后，直接在 Files 窗口中点点点：
 
@@ -522,22 +519,23 @@ class: center, middle
 ---
 
 # <h1 lang="zh-CN">About the final project</h1><br>
-## 截止时间：  
-<br>
-
+## 对已发表论文的数据分析进行复现：<br>
 <font size=5.5>1、展示：待定，每小组约8分钟+2分钟提问  <br><br></font>  
 
 <font size=5.5>2、代码及报告提交：2024.6.30(待定)<br><br></font>  
 
-<font size=5.5>3、需要上交如下内容：<br><br></font>  
+<font size=5.5>3、需要上交如下内容：<br></font>  
 
--   <font size=5.5>代码（RMD格式，最好使用papaja进行准备）
-</font>  <br><br>
+-   <font size=5.5>代码（RMD格式，最好使用papaja进行准备）</font>  <br>
 
--   <font size=5.5>文档（PDF或者Word，采用APA格式撰写,推荐由Papaja生成）  </font><br><br>
+-   <font size=5.5>文档（PDF或者Word，采用APA格式撰写,推荐由Papaja生成）  </font><br>
 
--   <font size=5.5>报告（PPT或者HTML在课堂上展示）  
-</font><br><br>
+-   <font size=5.5>报告（PPT或者HTML在课堂上展示）  </font><br>
+
+<font size=5.5>4、选题范围，以下期刊上发表有公开数据的论文：</font>  
+
+-   <font size=5.5>Nature Human Behaviour; Nature communications; elife; Psychological Science, Cognition, JEG:General; Collabra: Psychology; Communications Psychology</font><br><br>
+
 
 ---
 
@@ -550,7 +548,7 @@ class: center, middle
 
 -   <font size=5.5>描述性统计结果 + 可视化（集中量数，离散量数，相关等）</font>  <br><br>  
 
--   <font size=5.5>与文献相一致的统计检验或模型验证</font>  <br><br>  
+-   <font size=5.5>对原文数据分析结果的计算可重复性的评估(按照模板回答问题)</font>  <br><br>  
 
 -   <font size=5.5>检验结果可视化</font>  <br><br>  
 
@@ -561,12 +559,13 @@ class: center, middle
 # <h1 lang="zh-CN">Requirements</h1><br>
 ## 文档要求：
 -     <font size=5.5>标题《对XXX的可重复性研究》及作者</font>  <br><br>  
+-  <font size=5.5>小组成员与分工</font>  <br><br>  
 -   <font size=5.5>引言（对选取研究的简述，包含其假设、数据、方法、结果等）</font>  <br><br>  
 -  <font size=5.5>研究复现思路及流程</font>  <br><br>  
 -  <font size=5.5>复现结果</font>  <br><br>  
 -  <font size=5.5>对结果的讨论及结论</font>  <br><br>  
 -  <font size=5.5>参考文献</font>  <br><br>  
--  <font size=5.5>分工</font>  <br><br>  
+-  <font size=5.5>附件：对计算可重复性模板中问题的逐条回复</font>  <br><br>  
 
 ---
 

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 4</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Hu Chuan-Peng (PhD)" />
+    <meta name="date" content="2024-03-20" />
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Lecture 4
+]
+.subtitle[
+## Importing data
+]
+.author[
+### Hu Chuan-Peng (PhD)
+]
+.institute[
+### Nanjing Normal University
+]
+.date[
+### 2024-03-20
+]
+
+---
+
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第四章: 导入数据&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏(博士) &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; 2024-03-20 &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Created with Rmarkdown &lt;/span&gt; &lt;br&gt;
+
+---
+# Tips
+## 使r语言的报错变为英文
+- &lt;font size = 5.5&gt;在自己代码的开头输入如下命令，可以让当前的session报错为英文。
+
+```r
+# set local encoding to English
+if (.Platform$OS.type == 'windows') {
+  Sys.setlocale(category = 'LC_ALL','English_United States.1250')
+} else {
+  Sys.setlocale(category = 'LC_ALL','en_US.UTF-8')
+}
+# set the feedback language to English
+Sys.setenv(LANG = "en") 
+```
+
+## loading packages
+
+```r
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+pacman::p_load(bruceR)
+```
+
+---
+
+layout: true
+
+# 4.0 回顾与问题
+---
+
+![process](pic_new/chp4/process.png)
+
+--
+- # &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
+
+- # &lt;font size = 5.5&gt; 实验数据：Perceptual matching &lt;/font&gt; 
+
+--
+ 
+&lt;br&gt;&lt;br&gt;
+##  问题: 
+
+- # &lt;font size = 5.5&gt; 导入 “penguin_rawdata.csv” &lt;/font&gt; 
+
+- # &lt;font size = 5.5&gt; 查看数据 —— 数据的类型与结构  &lt;/font&gt; 
+
+- # &lt;font size = 5.5&gt; 尝试选取变量进行初步统计计算  &lt;/font&gt; 
+
+---
+layout: false
+# 4.1 数据导入
+## 4.1.1 数据的“住址”——路径 (_in Mac_)
+
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- Mac 的文件夹更适合展示，因此先说 Mac --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+
+&lt;br&gt;
+&lt;font size=5.5&gt;
+路径:  如果我们要找到`R4Psy`中`data`文件夹下的`penguin`数据"penguin_rawdata.csv"，需要先打开`R4Psy`文件夹：
+&lt;/font&gt;
+
+&lt;br&gt;
+![path](pic_new/chp4/path1.jpg)
+--
+
+&lt;br&gt;&lt;br&gt;
+这个顺序就形成了“路径”，用代码可以表示为：
+
+&lt;font size=5.5 class=center color=red&gt;
+"data/penguin/penguin_rawdata.csv"
+&lt;/font&gt;
+
+
+---
+## 4.1.1 数据的“住址”——路径 (_in Mac_)
+
+&lt;br&gt;
+但实际上，在 R4Psy 之前还存在文件夹(父文件夹)，如果一直追溯的话：  
+&lt;br&gt;&lt;br&gt;
+![path2](pic_new/chp4/path2.jpg)
+&lt;br&gt;&lt;br&gt;
+因而对于数据penguin_rawdata.csv来说，完整路径就变得莫名其妙的长：
+--
+&lt;br&gt;
+&lt;font size=5.5 class=center color=red&gt;
+"/Users/cz***/Documents/github/R4Psy/data/penguin/penguin_rawdata.csv"
+&lt;/font&gt;
+
+&lt;div class="center"&gt;
+    &lt;img src="pic_new/chp4/emj1.jpg" alt="emj1" style="zoom:50%;"/&gt;
+&lt;/div&gt;
+
+---
+## 4.1.2 绝对路径/相对路径
+&lt;br&gt;
+&lt;font size=5.5&gt;
+相对路径：
+&lt;/font&gt;
+    &lt;font size=5.5 class=center color=red&gt;  
+    "data/penguin/penguin_rawdata.csv"   
+    或 
+    "./data/penguin/penguin_rawdata.csv"
+    &lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+
+
+&lt;font size=5.5&gt;
+绝对路径：
+&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;font size=5.5 class=center color=red&gt;
+"/Users/cz***/Documents/github/R4Psy/data/penguin/penguin_rawdata.csv"
+&lt;/font&gt;
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+--
+
+-   相对路径相当于设置了某个文件夹作为搜寻的“起点”(这里的`R4Psy`)；
+
+-   设置了“起点”文件夹后，之前的路径可以忽略不写，因此更加简洁；
+
+-   这个“起点”文件夹也被称为*工作目录*(working directory)；
+
+-   使用`getwd()`(get working directory)查看当前工作目录；
+
+-   使用`setwd()`设置工作目录的路径
+
+
+---
+## 4.1.2 绝对路径/相对路径
+
+
+-   在 global options 中可以设置默认的工作目录  
+&lt;br&gt;
+&lt;div class="center"&gt;
+    &lt;img src="pic_new/chp4/wd1.png" alt="def_wd" style="zoom:30%;"/&gt;
+&lt;/div&gt;
+
+&lt;br&gt;&lt;br&gt;
+
+-   **对于 .rmd文件和.Rproj 文件来说，会默认将该文件所在的文件夹当做工作目录**，比如当前 rmd文件默认目录为：  
+
+```r
+getwd()
+```
+
+```
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy"
+```
+
+
+---
+## 4.1.2 绝对路径/相对路径(_in Windows_)
+&lt;br&gt;
+
+&lt;font size=5.5&gt;
+在 Windows 系统中，点击任意文件夹的地址栏空白也能显示绝对路径：
+&lt;/font&gt;
+&lt;br&gt;
+&lt;div class="center"&gt;
+    &lt;img src="pic_new/chp4/abspath.jpg" alt="abs_path" style="zoom:50%;"/&gt;
+&lt;/div&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;font size=5.5&gt;
+绝对路径应该写为：
+&lt;/font&gt;
+
+&lt;/font&gt;
+    &lt;font class='center' color='red'&gt;
+    "C:/Users/****/Desktop/doc"
+    &lt;/font&gt;
+
+&lt;font size=5.5&gt;
+似乎有些不一样：  
+&lt;/font&gt;  
+--
+&lt;br&gt;
+`/`：斜杠   
+`\`：反斜杠
+
+
+---
+## 4.1.2 绝对路径/相对路径(_in Windows_)
+&lt;br&gt;
+&lt;font size = 5.5&gt;
+需要注意在R中输入地址与Windows中地址栏的区别
+&lt;/font&gt;
+
+```r
+######  Run in WinOS !!! #####
+# r语言中的地址
+first_path &lt;- getwd()
+cat(first_path,"\n")
+
+# Windows的地址
+normalized_path &lt;- normalizePath(first_path, winslash = "\\")
+cat(normalized_path)
+```
+&lt;font size=5.5&gt;**因此注意不要直接复制Windows地址栏中的地址**
+
+&lt;br&gt;
+&lt;font size = 5.5&gt; 避免不同操纵系统中分割符切换的问题：`here()` &lt;/font&gt;
+
+
+```r
+pacman::p_load(here)
+
+# here::here()
+here::here("data","penguin","penguin_rawdata.csv")
+```
+
+&lt;br&gt;
+
+.footnote[注：在Python及大多数编程语言中，路径都支持斜杠（/）]
+
+---
+## 4.1.3 设定工作目录 -- 手动挡与自动挡
+
+
+-   &lt;font size=5.5&gt;手动档&lt;/font&gt;
+
+  使用 `setwd`输入具体路径，例如：
+
+```r
+# setwd('D:/R4Psy/data/penguin/')
+# or 
+# setwd('D:\\R4Psy\\data\\penguin')
+```
+
+--
+
+-   &lt;font size=5.5&gt;半自动档&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+
+```r
+# 两个函数等价，ask = T设置弹出交互式窗口选择文件夹
+bruceR::set.wd(ask = T)
+bruceR::set_wd(ask = T)
+```
+
+---
+## 4.1.3 设定工作目录 -- 手动挡与自动挡
+
+-   &lt;font size=5.5&gt;全自动档&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+![](pic_new/chp4/wd2.jpg)
+
+
+
+---
+
+
+## 4.2 读取数据
+
+&lt;br&gt;&lt;br&gt;
+
+- &lt;font size=6&gt;使用R读取数据，是处理数据的预备工作&lt;/font&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+- &lt;font size=6&gt;最好将数据放于工作目录下的子文件夹中&lt;/font&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+- &lt;font size=6&gt;通过相对路径读取数据，便于分享你的工作
+  &lt;/font&gt;
+  &lt;font size=4.5&gt;(*主要写起来省事儿*)&lt;/font&gt;&lt;br&gt;
+
+
+---
+
+## 4.2 读取数据——手动档
+
+
+```r
+# 读取数据,命名为penguin_data
+penguin_data = import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
+# 查看头(head) 5 行，有头就有尾(tail)
+# head(penguin_data,n = 3)
+# tail(penguin_data,n = 3)
+ncol(penguin_data)
+```
+
+```
+## [1] 247
+```
+
+```r
+nrow(penguin_data)
+```
+
+```
+## [1] 1523
+```
+--
+
+-   &lt;font size=5&gt;由于已经加载bruceR，`bruceR::import()`可以简写为 `import()`，但不推荐；
+
+-   &lt;font size=5&gt;心理学中常用数据基本都可以使用该函数导入(使用`?bruceR::import()`查看支持导入哪些类型)。
+
+
+-   &lt;font size=5&gt;读取之后数据变量可以从Environment窗口中找到，变量名为penguin_data，点击会弹出窗口显示数据（也可在console中输入 `View(penguin_data)`查看）
+
+
+---
+## 4.2 读取数据——自动挡(GUI点击操作)
+
+在设置好当前工作目录后，直接在 Files 窗口中点点点：
+
+
+![imp1](pic_new/chp4/imp1.png)
+
+---
+## 4.2 读取数据——自动挡
+&lt;br&gt;
+![imp1](pic_new/chp4/imp2.png)
+
+---
+## 4.3 数据类型
+&lt;br&gt;&lt;br&gt;
+使用自动档读取penguin_rawdata.csv数据时，可以发现列名底下带有斜体字：
+
+![imp3](pic_new/chp4/imp3.png)
+
+似乎：  *double*指的是数字，*character* 指的是字母
+
+---
+
+## 4.3 数据类型(in Excel)
+
+
+&lt;div class="center"&gt;
+    &lt;img src="pic_new/chp4/datatype.png" alt="emj1" style="zoom:45%;"/&gt;
+&lt;/div&gt;
+
+
+
+---
+## 4.3 数据类型(in R)  
+
+
+&lt;div class="center"&gt;
+    &lt;img src="pic_new/chp4/datatype1.png" alt="datatype" style="zoom:45%;"/&gt;
+&lt;/div&gt;
+
+
+类似Excel但不同。每个单元格内的元素可以分为(部分)：  
+
+-   数值(numeric)：
+
+    包含小数(double)和整数型(int)
+
+-   字符串(character):   
+  
+    文字数据，在字符串的开头或结尾一定要有单引号或双引号；
+
+-   逻辑值(logical):
+
+    比较大小或是否相等--TRUE(1)和FALSE(0)
+
+-   因子(factor):
+
+    对顺序数据的编码(数字/字符串)
+
+
+---
+## 4.3 数据类型
+&lt;br&gt;
+使用`class()`函数可以查看数据类型：
+
+```r
+# getwd 返回当前工作目录，返回的数据类型是？
+class(getwd())
+```
+
+```
+## [1] "character"
+```
+
+```r
+# 字符串的数字与数值型的数字；
+# 注意区别== 与 =
+class('1' == 1)
+```
+
+```
+## [1] "logical"
+```
+
+```r
+# 导入数据的类型
+class(penguin_data)
+```
+
+```
+## [1] "data.frame"
+```
+
+
+
+---
+
+## 4.4 数据结构
+&lt;br&gt;
+&lt;font size=6&gt;不同类型的数据进行组合，形成了不同的数据结构
+&lt;br&gt;
+
+
+-   Vector(向量)  
+
+-   Matrix(矩阵)  
+
+-   Array(数组)  
+
+-   Data frame(数据框)  
+
+-   List(列表)  
+
+
+---
+
+## 4.4 数据结构
+&lt;br&gt;
+&lt;font size=6&gt;不同类型的数据进行组合，形成了不同的数据结构
+&lt;br&gt;
+
+.pull-left[
+![datatype](pic_new/chp4/vector1.png)
+
+]
+.pull-right[
+![datatype](pic_new/chp4/vector2.png)
+]
+
+
+
+---
+
+## 4.4 数据结构
+![data structure](https://devopedia.org/images/article/46/9213.1526125966.png)
+&lt;br&gt;
+&lt;p align="right"&gt;&lt;font size=2&gt;from http://venus.ifca.unican.es/Rintro/dataStruct.html&lt;/font&gt;&lt;/p&gt;
+
+---
+## 4.5.1 数据索引(中括号)
+&lt;font size=5&gt;中括号索引(data[row,col])  
+
+-   数字索引&lt;/font&gt;  
+
+```r
+# 选取前 2 行以及前 3 列数据
+penguin_data[1:2,1:3]
+```
+
+```
+##    age ALEX1 ALEX2
+## 1 1975     1     1
+## 2 1995     2     2
+```
+
+```r
+# 也可以使用减号
+penguin_data[1:2,-c(4:ncol(penguin_data))]
+```
+
+```
+##    age ALEX1 ALEX2
+## 1 1975     1     1
+## 2 1995     2     2
+```
+
+---
+## 4.5.1 数据索引(中括号)
+&lt;font size=5&gt;中括号索引(data[row,col])  
+
+-   名称索引&lt;/font&gt;  
+
+```r
+# 同样选取前 2 行以及前 4 列数据
+penguin_data[1:2,c('age','ALEX1','ALEX2')]
+```
+
+```
+##    age ALEX1 ALEX2
+## 1 1975     1     1
+## 2 1995     2     2
+```
+TIP：输入字符串每次都要打很多引号会非常麻烦，因此可以使用bruceR::cc()，只需在首尾写冒号：
+
+```r
+c('age','ALEX1','ALEX2') == cc('age,ALEX1,ALEX2')
+```
+
+```
+## [1] TRUE TRUE TRUE
+```
+
+---
+## 4.5.2 数据索引($)  
+&lt;font size=5&gt;美元符索引data$colname&lt;/font&gt;
+
+
+```r
+## 根据列名进行索引
+head(penguin_data$age)
+```
+
+```
+## [1] 1975 1995 1995 1988 1991 1995
+```
+
+```r
+## 如果数据类型的格式是 ***data.frame***
+## 则使用$提取和中括号提取是等价的
+
+class(penguin_data$age)
+```
+
+```
+## [1] "integer"
+```
+
+```r
+class(penguin_data[,1])
+```
+
+```
+## [1] "integer"
+```
+
+```r
+## 但另外一种数据框的格式tibble中
+## 会出现差异，当然这是下节课的内容了
+```
+
+
+
+---
+## 4.5.3 数据索引(逻辑值)  
+&lt;font size=5&gt; 使用逻辑值进行索引，用于根据条件对数据进行筛选：&lt;/font&gt;
+
+```r
+## 输出逻辑值
+head(penguin_data$age &gt;1980)
+```
+
+```
+## [1] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE
+```
+
+```r
+## 筛选出生年份大于 1980 且(&amp;)小于 1990 的数据
+agedata = penguin_data[
+  penguin_data$age &gt;1980 &amp; 
+  penguin_data$age &lt; 1990 ,]
+unique(agedata$age)
+```
+
+```
+##  [1] 1988 1985 1981 1987 1986 1989 1982 1984   NA 1983
+```
+
+```r
+## 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于)
+```
+
+
+
+---
+## 4.6 对象
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; partner 🙅 &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; object 👌&lt;/span&gt; &lt;br&gt;
+
+--
+
+-   &lt;span style="font-size: 30px;"&gt;   在R中存储的数据称为对象，R语言数据处理实际上就是不断地创建和操控这些对象； &lt;/span&gt; &lt;br&gt;  
+
+
+-   &lt;span style="font-size: 30px;"&gt; 可以将对象理解为“容器”，那就可以去装各种东西，数字、数据集、图片等，而变量名，就像“容器”的“标签” &lt;/span&gt; &lt;br&gt;  
+  
+
+&lt;div class="center"&gt;
+    &lt;img src="https://bookdown.org/wangminjie/R4DS/images/objects_box.png" alt="emj1" style="zoom:30%;"/&gt;
+&lt;/div&gt;
+&lt;!-- ![](https://bookdown.org/wangminjie/R4DS/images/objects_box.png){width=50} --&gt;
+
+
+
+---
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;Final Project&lt;/span&gt; &lt;br&gt;
+
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;About the final project&lt;/h1&gt;&lt;br&gt;
+## 对已发表论文的数据分析进行复现：&lt;br&gt;
+&lt;font size=5.5&gt;1、展示：待定，每小组约8分钟+2分钟提问  &lt;br&gt;&lt;br&gt;&lt;/font&gt;  
+
+&lt;font size=5.5&gt;2、代码及报告提交：2024.6.30(待定)&lt;br&gt;&lt;br&gt;&lt;/font&gt;  
+
+&lt;font size=5.5&gt;3、需要上交如下内容：&lt;br&gt;&lt;/font&gt;  
+
+-   &lt;font size=5.5&gt;代码（RMD格式，最好使用papaja进行准备）&lt;/font&gt;  &lt;br&gt;
+
+-   &lt;font size=5.5&gt;文档（PDF或者Word，采用APA格式撰写,推荐由Papaja生成）  &lt;/font&gt;&lt;br&gt;
+
+-   &lt;font size=5.5&gt;报告（PPT或者HTML在课堂上展示）  &lt;/font&gt;&lt;br&gt;
+
+&lt;font size=5.5&gt;4、选题范围，以下期刊上发表有公开数据的论文：&lt;/font&gt;  
+
+-   &lt;font size=5.5&gt;Nature Human Behaviour; Nature communications; elife; Psychological Science, Cognition, JEG:General; Collabra: Psychology; Communications Psychology&lt;/font&gt;&lt;br&gt;&lt;br&gt;
+
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 代码要求：  
+
+&lt;font size=5.5&gt;1、数据预处理流程&lt;br&gt;&lt;br&gt;&lt;/font&gt;  
+
+&lt;font size=5.5&gt;2、完整的数据分析流程，包括：&lt;br&gt;&lt;br&gt;&lt;/font&gt;  
+
+-   &lt;font size=5.5&gt;描述性统计结果 + 可视化（集中量数，离散量数，相关等）&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+
+-   &lt;font size=5.5&gt;对原文数据分析结果的计算可重复性的评估(按照模板回答问题)&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+
+-   &lt;font size=5.5&gt;检验结果可视化&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+
+
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 文档要求：
+-     &lt;font size=5.5&gt;标题《对XXX的可重复性研究》及作者&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-  &lt;font size=5.5&gt;小组成员与分工&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-   &lt;font size=5.5&gt;引言（对选取研究的简述，包含其假设、数据、方法、结果等）&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-  &lt;font size=5.5&gt;研究复现思路及流程&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-  &lt;font size=5.5&gt;复现结果&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-  &lt;font size=5.5&gt;对结果的讨论及结论&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-  &lt;font size=5.5&gt;参考文献&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-  &lt;font size=5.5&gt;附件：对计算可重复性模板中问题的逐条回复&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 报告要求：
+-   &lt;font size=5.5&gt;标题，作者&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-   &lt;font size=5.5&gt;成员信息、分工&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-   &lt;font size=5.5&gt;所选研究简介，包含其前言、方法、结果三个部分&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-   &lt;font size=5.5&gt;研究复现思路及流程&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-   &lt;font size=5.5&gt;复现结果&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+-   &lt;font size=5.5&gt;对结果的讨论及结论&lt;/font&gt;  &lt;br&gt;&lt;br&gt;  
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Marking&lt;/h1&gt;&lt;br&gt;
+|         | 代码40% | 论文30% | 报告30% |
+|---------|------|------|------|
+| 基础要求 |  作为一个整体项目可运行  |  内容的完整性  |  时间分配的合理性  |
+|         |  分析方法的一致性  |  格式的标准性  |  讲述的清晰性  |
+|         |  代码的可读性（包括辅助文字以及对代码的注释）  |  逻辑的连贯与一致性  |  团队分工的合理性  |
+| 加分项   |  代码的可读性，图表的美观性  |  英文写作，Papaja生成  |  英文报告，R生成  |
+&lt;br&gt;
+###额外加分项：以小组为单位将三部分内容pull  
+
+request到Repo(https://github.com/hcp4715/R4Psy/tree/main/homeworks)
+
+-   &lt;font size=5.5&gt;对于报告的评分每组对其他组进行评分 + 胡传鹏老师和助教进行评分，对所有评分去
+掉最高最低，取平均作为最终得分。&lt;/font&gt;  &lt;br&gt;&lt;br&gt; 
+-   &lt;font size=5.5&gt;对于代码及论文的评分，将由胡传鹏老师和四位助教进行评分，并取平均作为最终得分。&lt;/font&gt;  &lt;br&gt;&lt;br&gt; 
+
+
+
+
+
+---
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;Any questions?&lt;/span&gt; &lt;br&gt;
+
+
+---
+# 4.7  Trifles
+
+## 4.7.1  变量命名
+
+
+
+
+-   大小写敏感  
+
+-   不能有空格，可以用下划线代替空格  
+
+-   开头不能是数字和一些特殊符号(如+-*/)  
+
+-   关于`.`：R语言是允许变量名中带`.`的，比如将数据命名为penguin.rawdata是合法的，但是`.`在许多编程语言中都具有特殊含义(如Python)，所以更建议使用`_`来代替`.`。  
+
+-   如果一定要使用非法的变量名的话：将变量名使用\`illegal_varname\`括起来：  
+
+```r
+# 比如变量名以数字开头且包含空格：
+`1 首先` = 1
+print(`1 首先`)
+```
+
+```
+## [1] 1
+```
+
+```r
+# 从环境中删除该变量
+rm(`1 首先`)
+```
+
+
+---
+
+## 4.7.2  缺失值(NA)与 NULL
+
+-   NA：代表缺失值，任何数值与 NA 进行计算都会得到 NA，因此在计算或绘图中，需要移除缺失值或对其进行填补
+
+```r
+unique(penguin_data$ALEX1)
+```
+
+```
+## [1]  1  2  4  3  5 NA
+```
+
+```r
+#直接计算会得到 NA
+mean(penguin_data$ALEX1)
+```
+
+```
+## [1] NA
+```
+
+```r
+# 因此计算时需要移除 NA(remove)
+mean(penguin_data$ALEX1,na.rm = T)
+```
+
+```
+## [1] 2.509947
+```
+    
+-   NULL表示空值，没有任何数据或内容，比如penguin_data$ALEX1 = NULL 会直接删除 ALEX1 这一列（注意：该操作不可逆）
+
+---
+## 4.7.3 数据类型的转换
+
+R 语言中有一类函数以 `as.`开头，如 as.numeric()、as.data.frame()，会对数据类型进行转换，比如：
+
+```r
+x = TRUE
+x = as.numeric(x)
+class(x)
+```
+
+```
+## [1] "numeric"
+```
+
+```r
+x = as.character(x)
+class(x)
+```
+
+```
+## [1] "character"
+```
+
+类似，也存在一类函数以`is.`开头，判断对象是否属于某一类型，返回逻辑值：
+
+```r
+is.character(x)
+```
+
+```
+## [1] TRUE
+```
+
+
+---
+## 4.7.4  目录和文件管理函数:
+
+- `getwd()`—返回当前工作目录。
+- `setwd()`—设置当前工作目录。
+- `list.files()`或`dir()`—查看目录中内容。 
+
+    `list.files(pattern=’.*[.]r$’)`可以列出所有以“.r”结尾的文件。
+- `file.path()`—把目录和文件名组合得到文件路径。
+- `file.info(filenames)`—显示文件的详细信息。
+- `file.exists()`—查看文件是否存在。
+- `file.access()`—考察文件的访问权限。
+- `create.dir()`—新建目录。
+- `file.create()`—生成文件。
+- `file.remove()`或`unlink()`—删除文件。
+
+    `unlink()`可以删除目录。
+- `file.rename()`—为文件改名。
+- `file.append()`—把两个文件相连。
+- `file.copy()`—复制文件。
+- `basename()`和`dirname()`- 从一个全路径文件名获取文件名和目录。
+
+
+---
+## 4.7.5  对象与变量名
+
+关于对象更加细节的内容，可以参考《R 语言入门与实践》[（点击这里）](https://rstudio-education.github.io/hopr/r-objects.html)。
+
+
+R 语言中，对象就是存储数据的容器，而变量名相当于容器的标签，通过标签来找到对应的数据：比如`x = 1`，`y = x`，y 的值也为 1，而'x'和'y'只是数值 1 的两个标签，二者访问的计算机内存地址相同；  
+
+但 R 语言中所使用的复制为浅拷贝(shallow copy)：当对 y 进行更改的时候并不会影响原本 x 的值（在 R 3.1.0之前为deep copies），而 y 这个标签也被“贴在”了新的内存地址上（copy-on-modify）。  
+
+
+```r
+x = 1;y = x
+address(x)
+```
+
+```
+## [1] "0x14e335d40"
+```
+
+```r
+address(y)
+```
+
+```
+## [1] "0x14e335d40"
+```
+
+```r
+y = 2
+address(y)
+```
+
+```
+## [1] "0x14e335c28"
+```
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
