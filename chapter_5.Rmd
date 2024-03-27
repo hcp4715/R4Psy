@@ -82,7 +82,9 @@ object + 2
 ```
 但注意此时的“object”本身并未发生改变。
 ```{r 5.2 obj3}
+
 object
+
 ```
 ---
 # <h1 lang="zh-CN">5.2 赋值与变量</h1>
