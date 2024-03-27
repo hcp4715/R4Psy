@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
     <meta name="date" content="2024-03-27" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -18,7 +18,7 @@ class: center, middle, inverse, title-slide
 # Lecture 5
 ]
 .subtitle[
-## Function
+## Objects &amp; Function
 ]
 .author[
 ### Hu Chuan-Peng (PhD)
@@ -34,7 +34,7 @@ class: center, middle, inverse, title-slide
 
 class: center, middle
 &lt;span style="font-size: 60px;"&gt;第五讲&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 60px;"&gt;函数&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;R语言中的对象2: 函数&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;2024-03-27&lt;/span&gt; &lt;br&gt;
@@ -64,7 +64,7 @@ paste(getwd(),"/data/penguin/penguin_rawdata.csv",sep = "")
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy/data/penguin/penguin_rawdata.csv"
+## [1] "C:/Users/hcp4715/OneDrive/Teaching/Grad_R_course/R4Psy/data/penguin/penguin_rawdata.csv"
 ```
 - # &lt;font size = 5.5&gt; 相对路径:对文件或目录位置的部分描述，从当前工作目录开始。 &lt;/font&gt;
 "data/penguin/penguin_rawdata.csv"
@@ -75,7 +75,7 @@ getwd()#获取工作目录
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy"
+## [1] "C:/Users/hcp4715/OneDrive/Teaching/Grad_R_course/R4Psy"
 ```
 --
 - # &lt;font size = 5.5&gt;绝对路径=工作目录+相对路径&lt;/font&gt;
@@ -166,6 +166,7 @@ tips：&lt;br&gt;
 - complex（复数类型），复数&lt;/h3&gt;
 - raw（原始型），用于存储原始字节数据&lt;/h3&gt;
 
+
 ```r
 object &lt;- 10
 class(object)#查看数据类型
@@ -234,6 +235,7 @@ class(e)
 ---
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
+
 ```r
 #创建向量
 v1 &lt;- c(1,2,3,4,5)#数值型向量
@@ -274,6 +276,7 @@ v4
 ---
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
+
 ```r
 #创建数据框(每个成分都是一个向量)
 d1 &lt;- data.frame(v1,v2,v3)
@@ -296,6 +299,7 @@ d1
 数据框每一列的元素数目要相同 &lt;br&gt;
 ---
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
+
 
 ```r
 #创建矩阵
@@ -331,6 +335,19 @@ a1
 ## [2,]   14   17   20   23
 ## [3,]   15   18   21   24
 ```
+---
+# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
+
+&lt;/br&gt;
+## 创建空的dataframe，但有列名。
+
+
+```r
+df &lt;- data.frame(matrix(ncol = 3, nrow = 0))
+x &lt;- c("name", "age", "gender")
+colnames(df) &lt;- x
+```
+
 ---
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
@@ -381,6 +398,7 @@ R 提供了因子这一数据结构（容器），专门用来存放名义型和
 直接用字符向量也可以表示分类变量，但它只有字母顺序，不能规定想要的顺序，也不能表达有序分类变量。&lt;br&gt;
 --
 
+
 ```r
 x &lt;- c('good','better','best','bad','worse','worst')
 sort(x)#排序
@@ -390,7 +408,8 @@ sort(x)#排序
 ## [1] "bad"    "best"   "better" "good"   "worse"  "worst"
 ```
 只会按照字母顺序排序
---
+-
+
 
 ```r
 x1 &lt;- factor(x,levels = c('best','better','good','bad','worse','worst'))
@@ -401,6 +420,7 @@ sort(x1)#排序
 ## [1] best   better good   bad    worse  worst 
 ## Levels: best better good bad worse worst
 ```
+
 转化为因子之后可按照设置的方式排序
 ---
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
@@ -408,6 +428,7 @@ sort(x1)#排序
 --
 &lt;font size = 5&gt;
 -   数字索引&lt;/font&gt;  
+
 
 ```r
 # 选取前 2 行以及前 3 列数据
@@ -430,8 +451,10 @@ penguin_data[1:2,-c(4:ncol(penguin_data))]
 ## 1 1975     1     1
 ## 2 1995     2     2
 ```
+
 &lt;font size = 5&gt;
 -   名称索引&lt;/font&gt;  
+
 
 ```r
 # 同样选取前 2 行以及前 4 列数据
@@ -451,13 +474,14 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 尝试把以下表格中的内容创建为数据框，并把第一列改为因子
 ![dataframe](pic_new/chp5/dataframe.png)
 
+
 ```r
-#gender &lt;- c(***)
-#gender1 &lt;- ***
-#score &lt;- c(***)
-#letter &lt;- c(***)
-#logic &lt;- c(***)
-#data &lt;- ***(***)
+# gender &lt;- c(***)
+# gender1 &lt;- ***
+# score &lt;- c(***)
+# letter &lt;- c(***)
+# logic &lt;- c(***)
+# data &lt;- ***(***)
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
@@ -481,6 +505,7 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
 
+
 ```r
 3.14 + 2
 ```
@@ -488,8 +513,10 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ```
 ## [1] 5.14
 ```
+
 数值型可以进行数学运算
 --
+
 
 ```r
 TRUE * 3
@@ -506,8 +533,10 @@ F ^ 2
 ```
 ## [1] 0
 ```
+
 逻辑型可以进行数学运算
 --
+
 
 ```r
 (3+1i)^2
@@ -516,12 +545,16 @@ F ^ 2
 ```
 ## [1] 8+6i
 ```
+
 复数型可以进行数学运算
 --
+
 ![error5](pic_new/chp5/error5.png)
 ---
+
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
 
 ```r
 c(1:5) ^ 2
@@ -554,6 +587,7 @@ c(8+6i,7+4i) + c(3+2i,4+4i)
 ```
 ## [1] 11+8i 11+8i
 ```
+
 ![error6](pic_new/chp5/error6.png)
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
@@ -562,6 +596,7 @@ c(8+6i,7+4i) + c(3+2i,4+4i)
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
+
 
 ```r
 3 &lt; 5
@@ -596,8 +631,10 @@ T &gt; F
 ```
 数值型和逻辑型可以进行比较运算
 ---
+
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+
 
 ```r
 (3+4i) != (3-4i)
@@ -614,11 +651,13 @@ T &gt; F
 ```
 ## [1] FALSE
 ```
+
 ![errorCom](./pic_new/chp5/errorCom.png)
 复数型仅可以进行“==、!=”的比较运算
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+
 
 ```r
 'a' == 'A'
@@ -643,10 +682,12 @@ T &gt; F
 ```
 ## [1] TRUE
 ```
+
 字符型可以进行比较运算
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
+
 
 ```r
 3 &lt; c(1:5)
@@ -687,11 +728,13 @@ c(T,F,T) != c(F,T,T)
 ```
 ## [1]  TRUE  TRUE FALSE
 ```
+
 数值型和逻辑型向量可以进行比较运算。
 
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+
 
 ```r
 'apple' %in% c('apple','pear','banana','strawberry','lemon')
@@ -708,11 +751,13 @@ c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
 ```
 ## [1]  TRUE FALSE
 ```
+
 字符型向量可以进行比较运算
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
 字符是否匹配的问题还可以具体为是否完全匹配、是否部分匹配&lt;br&gt;
+
 
 ```r
 #完全匹配
@@ -773,6 +818,7 @@ R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
 ---
 # &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 ## 逻辑运算：| &amp; ! (或、与、非)等
+
 
 ```r
 !1
@@ -866,13 +912,13 @@ c(1,2) &amp; c(0,1)
 创建一个向量，包含数字1到20的三次方&lt;br&gt;
 （首先创建一个包含数字1到20的向量，然后进行数学运算）&lt;br&gt;
 
+
 ```r
 #a &lt;- ***
 #a3 &lt;- ***
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
-
 
 ---
 # &lt;h1 lang="zh-CN"&gt;5.6 数据类型的判断与转换&lt;/h1&gt;
@@ -932,6 +978,7 @@ is.na(c(1,NA))#判断是否为NA值
 ## 数据类型的转化:as族函数
 &lt;font size = 5&gt; 转化为数值：as.numeric
 
+
 ```r
 as.numeric(c('1','2','3'))
 ```
@@ -945,7 +992,7 @@ as.numeric(c('1','2','a'))
 ```
 
 ```
-## Warning: NAs introduced by coercion
+## Warning: 强制改变过程中产生了NA
 ```
 
 ```
@@ -964,6 +1011,7 @@ as.numeric(c(T,F))
 # &lt;h1 lang="zh-CN"&gt;5.6 数据类型的判断与转换&lt;/h1&gt;
 ## 数据类型的转化
 &lt;font size = 5&gt; 转化为字符串：as.character
+
 
 ```r
 as.character(c(1,2,3))
@@ -1071,12 +1119,13 @@ unique(sex1)
 未加载时不能直接调用函数
 --
 
+
 ```r
 here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy"
+## [1] "C:/Users/hcp4715/OneDrive/Teaching/Grad_R_course/R4Psy"
 ```
 
 ```r
@@ -1084,7 +1133,7 @@ library(here)
 ```
 
 ```
-## here() starts at D:/Study/NNU/YAN2/2/R4Psy
+## here() starts at C:/Users/hcp4715/OneDrive/Teaching/Grad_R_course/R4Psy
 ```
 
 ```r
@@ -1092,12 +1141,13 @@ here()
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy"
+## [1] "C:/Users/hcp4715/OneDrive/Teaching/Grad_R_course/R4Psy"
 ```
 
 ---
 # &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
 ## 函数调用
+
 
 ```r
 df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
@@ -1105,6 +1155,7 @@ df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
                        sep=",",
                        stringsAsFactors = FALSE) 
 ```
+
 &amp;emsp;&amp;emsp;df.pg.raw 变量名 &lt;br&gt;
 &amp;emsp;&amp;emsp;utils 函数所在的R包 &lt;br&gt;
 &amp;emsp;&amp;emsp;read.csv 函数名 &lt;br&gt;
@@ -1146,6 +1197,7 @@ file = './data/penguin/penguin_rawdata.csv':&lt;br&gt;
 &amp;emsp;-返回值: 指定函数的输出结果，使用关键字return。&lt;br&gt;
 --
 
+
 ```r
 #定义一个函数：输入x和y，返回3倍x和5倍y的和
 mysum &lt;- function(x,y){
@@ -1179,6 +1231,7 @@ mysum(y=1,x=2)
 &lt;font size = 5&gt;
 小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值&lt;br&gt;
 
+
 ```r
 #myabc &lt;- function(***){
 #  result = ***
@@ -1199,12 +1252,13 @@ mysum(y=1,x=2)
 &lt;font size = 5&gt;
 &lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
 
+
 ```r
-mysum2.0 &lt;- function(x = 6,y = 7){
+mysum2 &lt;- function(x = 6,y = 7){
   result = 3*x+5*y
   return(result)
 }
-mysum2.0()
+mysum2()
 ```
 
 ```
@@ -1212,7 +1266,7 @@ mysum2.0()
 ```
 
 ```r
-mysum2.0(5)
+mysum2(5)
 ```
 
 ```
@@ -1259,7 +1313,7 @@ mysum2.0(5)
 
 
 ```r
-mysum3.0 &lt;- function(x = 6,y = 7){
+mysum3 &lt;- function(x = 6,y = 7){
   if(is.numeric(x) == T &amp; is.numeric(y) == T){
     result = 3*x+5*y
     return(result)}
@@ -1268,7 +1322,7 @@ mysum3.0 &lt;- function(x = 6,y = 7){
 #print：输出指定的内容
 #is.numeric:判断是否为数值型。是则返回T，否则返回F
 # &amp; : 表示“且”
-mysum3.0(5,6)
+mysum3(5,6)
 ```
 
 ```
@@ -1276,7 +1330,7 @@ mysum3.0(5,6)
 ```
 
 ```r
-mysum3.0('a','b')
+mysum3('a','b')
 ```
 
 ```

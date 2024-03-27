@@ -1,6 +1,6 @@
 ---
 title: "Lecture 5"
-subtitle: "Function"
+subtitle: "Objects & Function"
 author: "Hu Chuan-Peng (PhD)"
 institute: "Nanjing Normal University"
 date: "2024-03-27"
@@ -15,7 +15,7 @@ output:
 ---
 class: center, middle
 <span style="font-size: 60px;">第五讲</span> <br>
-<span style="font-size: 60px;">函数</span> <br>
+<span style="font-size: 60px;">R语言中的对象2: 函数</span> <br>
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 30px;">`r Sys.Date()`</span> <br>
@@ -119,6 +119,7 @@ tips：<br>
 - character（字符型），引号括起来的若干字符</h3>
 - complex（复数类型），复数</h3>
 - raw（原始型），用于存储原始字节数据</h3>
+
 ```{r 5.2 class}
 object <- 10
 class(object)#查看数据类型
@@ -149,6 +150,7 @@ class(e)
 ![data structure](https://devopedia.org/images/article/46/9213.1526125966.png)
 ---
 # <h1 lang="zh-CN">5.4 数据结构</h1>
+
 ```{r 5.3 creat the vector}
 #创建向量
 v1 <- c(1,2,3,4,5)#数值型向量
@@ -164,6 +166,7 @@ v4
 
 ---
 # <h1 lang="zh-CN">5.4 数据结构</h1>
+
 ```{r 5.4 creat the data.frame}
 #创建数据框(每个成分都是一个向量)
 d1 <- data.frame(v1,v2,v3)
@@ -177,14 +180,28 @@ d1
 数据框每一列的元素数目要相同 <br>
 ---
 # <h1 lang="zh-CN">5.4 数据结构</h1>
+
 ```{r 5.4 creat the matrix}
 #创建矩阵
 m1 <- matrix(c(1:9),nrow=3)
 m1
+
 #创建三维数组
 a1 <- array(1:24,dim=c(3,4,2))
 a1
 ```
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+
+</br>
+## 创建空的dataframe，但有列名。
+
+```{r create empty df}
+df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("name", "age", "gender")
+colnames(df) <- x
+```
+
 ---
 # <h1 lang="zh-CN">5.4 数据结构</h1>
 ```{r creat the list}
@@ -203,16 +220,19 @@ R 提供了因子这一数据结构（容器），专门用来存放名义型和
 <br>
 直接用字符向量也可以表示分类变量，但它只有字母顺序，不能规定想要的顺序，也不能表达有序分类变量。<br>
 --
+
 ```{r 5.4 factor1}
 x <- c('good','better','best','bad','worse','worst')
 sort(x)#排序
 ```
 只会按照字母顺序排序
---
+-
+
 ```{r 5.4 factor2}
 x1 <- factor(x,levels = c('best','better','good','bad','worse','worst'))
 sort(x1)#排序
 ```
+
 转化为因子之后可按照设置的方式排序
 ---
 # <h1 lang="zh-CN">5.4 数据结构</h1>
@@ -220,14 +240,17 @@ sort(x1)#排序
 --
 <font size = 5>
 -   数字索引</font>  
+
 ```{r 5.4 index1}
 # 选取前 2 行以及前 3 列数据
 penguin_data[1:2,1:3]
 # 也可以使用减号
 penguin_data[1:2,-c(4:ncol(penguin_data))]
 ```
+
 <font size = 5>
 -   名称索引</font>  
+
 ```{r 5.4 index2}
 # 同样选取前 2 行以及前 4 列数据
 penguin_data[1:2,c('age','ALEX1','ALEX2')]
@@ -239,13 +262,14 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 <font size = 5>
 尝试把以下表格中的内容创建为数据框，并把第一列改为因子
 ![dataframe](pic_new/chp5/dataframe.png)
+
 ```{r 5.4 exercise}
-#gender <- c(***)
-#gender1 <- ***
-#score <- c(***)
-#letter <- c(***)
-#logic <- c(***)
-#data <- ***(***)
+# gender <- c(***)
+# gender1 <- ***
+# score <- c(***)
+# letter <- c(***)
+# logic <- c(***)
+# data <- ***(***)
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
@@ -268,32 +292,42 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
 ```{r 5.5 arithmetical1}
 3.14 + 2
 ```
+
 数值型可以进行数学运算
 --
+
 ```{r 5.5 arithmetical2}
 TRUE * 3
 F ^ 2
 ```
+
 逻辑型可以进行数学运算
 --
+
 ```{r 5.5 arithmetical3}
 (3+1i)^2
 ```
+
 复数型可以进行数学运算
 --
+
 ![error5](pic_new/chp5/error5.png)
 ---
+
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
 ```{r 5.5 arithmetical4}
 c(1:5) ^ 2
 c(1:5) * c(6:10)
 c(T,F) / c(T,T)
 c(8+6i,7+4i) + c(3+2i,4+4i)
 ```
+
 ![error6](pic_new/chp5/error6.png)
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
@@ -302,6 +336,7 @@ c(8+6i,7+4i) + c(3+2i,4+4i)
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!= 
+
 ```{r 5.5 comparision1}
 3 < 5
 7.00 == 7
@@ -310,26 +345,32 @@ T > F
 ```
 数值型和逻辑型可以进行比较运算
 ---
+
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!=
+
 ```{r 5.5 comparision2}
 (3+4i) != (3-4i)
 (1+1i) == (1+3i) 
 ```
+
 ![errorCom](./pic_new/chp5/errorCom.png)
 复数型仅可以进行“==、!=”的比较运算
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!=
+
 ```{r 5.5 comparision3}
 'a' == 'A'
 'a' <= 'b'
 'abc'>'a'
 ```
+
 字符型可以进行比较运算
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!= 
+
 ```{r 5.5 comparision4}
 3 < c(1:5)
 c(1:3) < c(4:6)
@@ -337,20 +378,24 @@ c(1:3) < c(4:6)
 c(1:3) %in% c(3:5)
 c(T,F,T) != c(F,T,T)
 ```
+
 数值型和逻辑型向量可以进行比较运算。
 
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!=
+
 ```{r 5.5 comparision5}
 'apple' %in% c('apple','pear','banana','strawberry','lemon')
 c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
 ```
+
 字符型向量可以进行比较运算
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!=
 字符是否匹配的问题还可以具体为是否完全匹配、是否部分匹配<br>
+
 ```{r 5.5 comparision6}
 #完全匹配
 'c' %in% c('abc','cd','c')
@@ -386,6 +431,7 @@ R中常使用的通配符包括"*""?"和"[]"。<br>
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 逻辑运算：| & ! (或、与、非)等
+
 ```{r 5.5 logical1}
 !1
 !0
@@ -412,13 +458,13 @@ c(1,2) & c(0,1)
 <font size = 5>
 创建一个向量，包含数字1到20的三次方<br>
 （首先创建一个包含数字1到20的向量，然后进行数学运算）<br>
+
 ```{r 5.5 exercise}
 #a <- ***
 #a3 <- ***
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
-
 
 ---
 # <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
@@ -437,6 +483,7 @@ is.na(c(1,NA))#判断是否为NA值
 # <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
 ## 数据类型的转化:as族函数
 <font size = 5> 转化为数值：as.numeric
+
 ```{r 5.6 as1}
 as.numeric(c('1','2','3'))
 as.numeric(c('1','2','a'))
@@ -447,6 +494,7 @@ as.numeric(c(T,F))
 # <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
 ## 数据类型的转化
 <font size = 5> 转化为字符串：as.character
+
 ```{r 5.6 as2}
 as.character(c(1,2,3))
 as.character(c(T,F))
@@ -514,6 +562,7 @@ unique(sex1)
 <font size = 5>
 未加载时不能直接调用函数
 --
+
 ```{r}
 here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
 library(here)
@@ -523,12 +572,14 @@ here()
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 函数调用
+
 ```{r 5.7 read.csv}
 df.pg.raw <- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
                        header = T, 
                        sep=",",
                        stringsAsFactors = FALSE) 
 ```
+
 &emsp;&emsp;df.pg.raw 变量名 <br>
 &emsp;&emsp;utils 函数所在的R包 <br>
 &emsp;&emsp;read.csv 函数名 <br>
@@ -569,6 +620,7 @@ file = './data/penguin/penguin_rawdata.csv':<br>
 &emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。<br>
 &emsp;-返回值: 指定函数的输出结果，使用关键字return。<br>
 --
+
 ```{r 5.7 mysum}
 #定义一个函数：输入x和y，返回3倍x和5倍y的和
 mysum <- function(x,y){
@@ -590,6 +642,7 @@ mysum(y=1,x=2)
 ## 自定义函数（小练习）
 <font size = 5>
 小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值<br>
+
 ```{r 5.7 myabc}
 #myabc <- function(***){
 #  result = ***
@@ -609,13 +662,14 @@ mysum(y=1,x=2)
 --
 <font size = 5>
 <br>在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
+
 ```{r}
-mysum2.0 <- function(x = 6,y = 7){
+mysum2 <- function(x = 6,y = 7){
   result = 3*x+5*y
   return(result)
 }
-mysum2.0()
-mysum2.0(5)
+mysum2()
+mysum2(5)
 ```
 
 ---
@@ -655,8 +709,8 @@ mysum2.0(5)
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 自定义函数
 
-```{r mysum3.0}
-mysum3.0 <- function(x = 6,y = 7){
+```{r mysum3}
+mysum3 <- function(x = 6,y = 7){
   if(is.numeric(x) == T & is.numeric(y) == T){
     result = 3*x+5*y
     return(result)}
@@ -665,8 +719,8 @@ mysum3.0 <- function(x = 6,y = 7){
 #print：输出指定的内容
 #is.numeric:判断是否为数值型。是则返回T，否则返回F
 # & : 表示“且”
-mysum3.0(5,6)
-mysum3.0('a','b')
+mysum3(5,6)
+mysum3('a','b')
 ```
 
 ---
