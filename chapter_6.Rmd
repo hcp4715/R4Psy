@@ -1,730 +1,763 @@
 ---
-title: ""
-author: "Pac_B"
-date: ""
+title: "Lecture 5"
+subtitle: "Objects & Function"
+author: "Hu Chuan-Peng (PhD)"
+institute: "Nanjing Normal University"
+date: "2024-03-27"
 output:
   xaringan::moon_reader:
-    css: [default, css/Custumed_Style.css, css/zh-CN.css]
+    css: [default, css/zh-CN.css, css/Custumed_Style.css]
     lib_dir: libs
     nature:
-      highlightLines: true
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
-params:
-  output_dir: "../output"
 ---
 class: center, middle
-<span style="font-size: 50px;">**第六章**</span> <br>
-<span style="font-size: 50px;">__如何探索数据: __</span> <br>
-<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
-<span style="font-size: 30px;">胡传鹏</span> <br>
-<span style="font-size: 20px;"> </span> <br>
-<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
-<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
-
----
-#回顾
-##函数及用法
-##-函数名及语句
-##-group_by()
-##for loop
-##练习题
-<br><br>
-#本节课内容
-##探索性数据分析
-##--描述性统计
-##--数据可视化基础
-##----ggplot2介绍
-##----ggplot2可视化基础
-
----
-#回顾
-##函数及用法
-<font size=5>
-&emsp;&emsp;重新了解函数：
-</font>
-```{r}
-df.mt.raw <-  read.csv('./data/match/match_raw.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
-```
-<font size=5>
-&emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名,在“()”中输入参数。<br>
-&emsp;&emsp;比如，“header=…”：是否要使用第一行作为列名；<br>
-&emsp;&emsp;再如，“sep=…” ：指定什么为分割符 <br>
-
-</font>
-
----
-#回顾
-##函数及用法
-<font size=5>
-&emsp;&emsp;重新了解函数：
-</font>
-```{r}
-df.mt.raw <-  read.csv('./data/match/match_raw.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
-```
-<font size=5>
-&emsp;&emsp;以用的最多的read.csv()这一函数为例，它包括两部分：“read.csv”——函数名；“()”中的输入参数。<br>
-&emsp;&emsp;比如，“header=…”：是否要使用第一行作为列名；<br>
-&emsp;&emsp;再如，“sep=…” ：指定什么是分割符 <br>
+<span style="font-size: 60px;">第五讲</span> <br>
+<span style="font-size: 60px;">R语言中的对象2: 函数</span> <br>
 <br>
-&emsp;&emsp;为什么第一个文件名没有相应的argument？。
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+
+---
+<br>
+<br>
+# <h1 lang="zh-CN">回顾</h1>
+# <h2 lang="zh-CN">&emsp;5.1 数据导入</h2>
+# <h2 lang="zh-CN">&emsp;5.2 赋值</h2>
+# <h2 lang="zh-CN">&emsp;5.3 数据类型</h2>
+# <h2 lang="zh-CN">&emsp;5.4 数据结构</h2>
+<br>
+<br>
+# <h1 lang="zh-CN">本节课内容</h1>
+# <h2 lang="zh-CN">&emsp;5.5 对数据的操纵</h2>
+# <h2 lang="zh-CN">&emsp;5.6 数据类型的判断与转换</h2>
+# <h2 lang="zh-CN">&emsp;5.7 函数</h2>
+
+---
+# <h1 lang="zh-CN">5.1 数据导入</h1>
+# <font size = 5.5> 问卷数据：Human Penguin Project </font> 
+- # <font size = 5.5> 绝对路径:对文件或目录位置的完整描述，从根目录开始 </font>
+```{r 5.1 absolute path}
+paste(getwd(),"/data/penguin/penguin_rawdata.csv",sep = "")
+```
+- # <font size = 5.5> 相对路径:对文件或目录位置的部分描述，从当前工作目录开始。 </font>
+"data/penguin/penguin_rawdata.csv"
+- # <font size = 5.5> 工作目录 </font>
+```{r 5.1 relative path}
+getwd()#获取工作目录
+```
+--
+- # <font size = 5.5>绝对路径=工作目录+相对路径</font>
+- # <font size = 5.5>推荐使用相对路径</font>
+---
+```{r 5.1 R package}
+#下载、导入所需R包
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+pacman::p_load(bruceR,tidyverse)
+```
+
+```{r 5.1 read}
+#读取数据
+penguin_data = bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))#当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
+```
+--
+<br><img src="./pic_new/chp5/env.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+---
+# <h1 lang="zh-CN">5.2 赋值与变量</h1>
+
+在R中，我们可以使用赋值操作符“<-”或“=”给对象赋值。<br>
+比如：
+```{r 5.2 obj1}
+object <- 10
+object
+```
+我们给对象“object”赋值为10。<br>
+赋值后可以对“object”进行操作，比如：<br>
+```{r 5.2 obj2}
+object + 2
+```
+但注意此时的“object”本身并未发生改变。
+```{r 5.2 obj3}
+
+object
+
+```
+---
+# <h1 lang="zh-CN">5.2 赋值与变量</h1>
+![error1](pic_new/chp5/error1.png)
+<font size=5> 为什么会报错？<br>
+<br>
+--
+<font size=5> R中变量名是区分大小写的<br>
+--
+<br>
+![error2](pic_new/chp5/error2.png)
+<br>
+<br>
+<font size=5>  变量名可以由字母、数字、_和.组成。并且变量名的第一个字符不能为数字或者特殊符号，比如 +, -, *, /, ^, !, @, &。</font> <br>  
+<br>
+---
+# <h1 lang="zh-CN">5.2 赋值与变量</h1>
+<font size="5">
+<br>
+<br>
+tips：<br>
+<br>
+&emsp;&emsp;变量名可以使用中文，但不推荐，可能出现这样的乱码：<br>
+&emsp;&emsp;鍙︿竴涓▼搴忔鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂��。<br>
+<br>
+&emsp;&emsp;命名对象最好有不错的可读性，比如“age”就要比“x”更易读。
 </font>
 
 ---
-#回顾
-##函数及用法
-<font size=5>
-&emsp;&emsp;重新了解函数：
-</font>
+# <h1 lang="zh-CN">5.3 基本数据类型</h1>
+<font size=5> 
+- numeric（数值型），又分为 integer（整数型）和 double（浮点型）</h3>
+- logical（逻辑型），只有 TRUE 和 FALSE，或 T 和 F</h3>
+- character（字符型），引号括起来的若干字符</h3>
+- complex（复数类型），复数</h3>
+- raw（原始型），用于存储原始字节数据</h3>
 
-完整输入arguments
-```{r, eval=FALSE}
-result1 <- functionName(arg1 = value1, arg2 = value2, arg3 = value3)
-result1 <- functionName(arg3 = value3, arg1 = value1, arg2 = value2)
+```{r 5.2 class}
+object <- 10
+class(object)#查看数据类型
+a <- 3.14
+class(a)
 ```
 
-省略arguments,按照顺序输入argument的值
-```{r, eval=FALSE}
-result2 <- functionName(value1, value2, value3)
-
-result2 <- functionName(value3, value1, value2) # will not return expected
+---
+# <h1 lang="zh-CN">5.3 基本数据类型</h1>
+```{r 5.3 data type}
+b <- T
+class(b)
+c <- 'R4Psy'
+class(c)
+d <- 3+4i
+class(d)
+e <- charToRaw('hello')
+class(e)
 ```
 
-省略有默认值的arguments
-```{r, eval=FALSE}
-result3 <- functionName(arg1 = value1)
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+数据结构是为了便于存储相同或不同类型的数据而设计的数据容器。<br>
+常用数据结构<br>
+&emsp;存放同类型数据：向量(Vector),矩阵(Matrix),多维数组(Array)<br>
+&emsp;存放不同类型数据：列表(List)、数据框(Data Frame)<br>
+&emsp;因子(Factor)<br>
+![data structure](https://devopedia.org/images/article/46/9213.1526125966.png)
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+
+```{r 5.3 creat the vector}
+#创建向量
+v1 <- c(1,2,3,4,5)#数值型向量
+v1
+v2 <- c('apple','pear','banana','strawberry','lemon')#字符型向量
+v2
+v3 <- c(T,F,F,T,T)#逻辑型向量
+v3
+v4 <- c(1:3)#数值型向量
+v4
 
 ```
 
 ---
-#回顾
-##函数及用法
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+
+```{r 5.4 creat the data.frame}
+#创建数据框(每个成分都是一个向量)
+d1 <- data.frame(v1,v2,v3)
+d1
+```
+
+--
+![error3](pic_new/chp5/error3.png)
+--
+<font size = 5> 
+数据框每一列的元素数目要相同 <br>
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+
+```{r 5.4 creat the matrix}
+#创建矩阵
+m1 <- matrix(c(1:9),nrow=3)
+m1
+
+#创建三维数组
+a1 <- array(1:24,dim=c(3,4,2))
+a1
+```
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+
+</br>
+## 创建空的dataframe，但有列名。
+
+```{r create empty df}
+df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("name", "age", "gender")
+colnames(df) <- x
+```
+
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+```{r creat the list}
+#创建列表
+l1 <- list(1,c('a','b'),c(T,F))
+l1
+l2 <- list(d1,m1)
+l2
+```
+
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+数据可分为：定量数据（数值型）、定性数据（分类型）；定性数据又可分为名义型（无好坏顺序之分，如性别）、有序型（有好坏顺序之分，如疗效）。<br>
+<br>
+R 提供了因子这一数据结构（容器），专门用来存放名义型和有序型的分类变量。<br>
+<br>
+直接用字符向量也可以表示分类变量，但它只有字母顺序，不能规定想要的顺序，也不能表达有序分类变量。<br>
+--
+
+```{r 5.4 factor1}
+x <- c('good','better','best','bad','worse','worst')
+sort(x)#排序
+```
+只会按照字母顺序排序
+-
+
+```{r 5.4 factor2}
+x1 <- factor(x,levels = c('best','better','good','bad','worse','worst'))
+sort(x1)#排序
+```
+
+转化为因子之后可按照设置的方式排序
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+## 索引<br>
+--
+<font size = 5>
+-   数字索引</font>  
+
+```{r 5.4 index1}
+# 选取前 2 行以及前 3 列数据
+penguin_data[1:2,1:3]
+# 也可以使用减号
+penguin_data[1:2,-c(4:ncol(penguin_data))]
+```
+
+<font size = 5>
+-   名称索引</font>  
+
+```{r 5.4 index2}
+# 同样选取前 2 行以及前 4 列数据
+penguin_data[1:2,c('age','ALEX1','ALEX2')]
+```
+
+---
+# <h1 lang="zh-CN">5.4 数据结构</h1>
+## 小练习
+<font size = 5>
+尝试把以下表格中的内容创建为数据框，并把第一列改为因子
+![dataframe](pic_new/chp5/dataframe.png)
+
+```{r 5.4 exercise}
+# gender <- c(***)
+# gender1 <- ***
+# score <- c(***)
+# letter <- c(***)
+# logic <- c(***)
+# data <- ***(***)
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+<br>
+<br>
+<font size = 5>
+数学运算 <br>
+&emsp;+ - * / ^(加、减、乘、除、求幂)等 <br>
+<br>
+比较运算 <br>
+&emsp;>、<、>=、<=、==、!= <br>
+&emsp;identical(x,y) —— 判断两个对象是否严格相等 <br>
+<br>
+逻辑运算 <br>
+&emsp;| & ! (或、与、非)等 <br>
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
+```{r 5.5 arithmetical1}
+3.14 + 2
+```
+
+数值型可以进行数学运算
+--
+
+```{r 5.5 arithmetical2}
+TRUE * 3
+F ^ 2
+```
+
+逻辑型可以进行数学运算
+--
+
+```{r 5.5 arithmetical3}
+(3+1i)^2
+```
+
+复数型可以进行数学运算
+--
+
+![error5](pic_new/chp5/error5.png)
+---
+
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
+```{r 5.5 arithmetical4}
+c(1:5) ^ 2
+c(1:5) * c(6:10)
+c(T,F) / c(T,T)
+c(8+6i,7+4i) + c(3+2i,4+4i)
+```
+
+![error6](pic_new/chp5/error6.png)
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!= 
+![bijiao](./pic_new/chp5/bijiao.png)
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!= 
+
+```{r 5.5 comparision1}
+3 < 5
+7.00 == 7
+T == TRUE
+T > F
+```
+数值型和逻辑型可以进行比较运算
+---
+
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!=
+
+```{r 5.5 comparision2}
+(3+4i) != (3-4i)
+(1+1i) == (1+3i) 
+```
+
+![errorCom](./pic_new/chp5/errorCom.png)
+复数型仅可以进行“==、!=”的比较运算
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!=
+
+```{r 5.5 comparision3}
+'a' == 'A'
+'a' <= 'b'
+'abc'>'a'
+```
+
+字符型可以进行比较运算
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!= 
+
+```{r 5.5 comparision4}
+3 < c(1:5)
+c(1:3) < c(4:6)
+3 %in% c(1:5)
+c(1:3) %in% c(3:5)
+c(T,F,T) != c(F,T,T)
+```
+
+数值型和逻辑型向量可以进行比较运算。
+
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!=
+
+```{r 5.5 comparision5}
+'apple' %in% c('apple','pear','banana','strawberry','lemon')
+c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
+```
+
+字符型向量可以进行比较运算
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!=
+字符是否匹配的问题还可以具体为是否完全匹配、是否部分匹配<br>
+
+```{r 5.5 comparision6}
+#完全匹配
+'c' %in% c('abc','cd','c')
+#部分匹配
+base::grepl('c',c('abc','cd','c'))
+#部分匹配之开头匹配
+base::startsWith(c('abc','cd','c'),'c')
+#部分匹配之结尾匹配
+base::endsWith(c('abc','cd','c'),'c')
+          
+```
+
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 比较运算:>、<、>=、<=、==、!=
+
 <font size=5>
-&emsp;&emsp;比如，完整地写出argument应该是这样。
+什么是通配符？<br>
+--
+&emsp;&emsp;通配符是一种特殊字符，它可以在匹配文件名或其他文本字符串时代替其他字符。<br>
+<br>
+--
+R中常使用的通配符包括"*""?"和"[]"。<br>
+--
+&emsp;&emsp;*：代表任意数量的字符，例如*.csv将匹配所有以.csv结尾的文件。<br>
+&emsp;&emsp;?：代表单个字符，例如file?.txt将匹配file1.txt，file2.txt等文件，但不会匹配file10.txt。<br>
+&emsp;&emsp;[]：用于匹配指定的一组字符。例如，file[123].txt将匹配file1.txt，file2.txt和file3.txt。
 </font>
+
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+![table](pic_new/chp5/table.png)
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 逻辑运算：| & ! (或、与、非)等
+
+```{r 5.5 logical1}
+!1
+!0
+1 & 0
+11 | 0
+T & F
+!T
+```
+
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 逻辑运算：| & ! (或、与、非)等
+
+```{r 5.5 logical2}
+c(T,F,F) | T
+c(T,F,F) | F
+c(T,F,F) & c(T,T,F)
+c(1,2) & c(0,1)
+```
+
+---
+# <h1 lang="zh-CN">5.5 对数据的操纵</h1>
+## 小练习
+<font size = 5>
+创建一个向量，包含数字1到20的三次方<br>
+（首先创建一个包含数字1到20的向量，然后进行数学运算）<br>
+
+```{r 5.5 exercise}
+#a <- ***
+#a3 <- ***
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+---
+# <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
+## 数据类型的判断:is族函数
+
+```{r 5.6 is}
+is.numeric(1.0)#判断是否为数值型
+is.numeric('a')
+is.character(c('a','b'))#判断是否为字符型
+is.complex(1+1i)#判断是否为复数型
+is.null(NULL)#判断是否为null值
+is.na(c(1,NA))#判断是否为NA值
+```
+
+---
+# <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
+## 数据类型的转化:as族函数
+<font size = 5> 转化为数值：as.numeric
+
+```{r 5.6 as1}
+as.numeric(c('1','2','3'))
+as.numeric(c('1','2','a'))
+as.numeric(c(T,F))
+```
+
+---
+# <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
+## 数据类型的转化
+<font size = 5> 转化为字符串：as.character
+
+```{r 5.6 as2}
+as.character(c(1,2,3))
+as.character(c(T,F))
+as.character(as.numeric(c('1','2','3')))
+```
+
+---
+# <h1 lang="zh-CN">5.6 数据类型的判断与转换</h1>
+## 数据类型的转化
+<font size = 5> 转化为因子(factor)：factor<br>
+R中用因子代表数据中分类变量, 如性别、省份、职业。
+
+```{r 5.6 factor}
+class(penguin_data$sex)
+unique(penguin_data$sex)
+sex1 <- factor(penguin_data$sex,levels = c(1,2),labels = c('male','female'))
+unique(sex1)
+```
+
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 什么是函数
+<font size=5>
+&emsp;&emsp;sqrt()、getwd()、here()等都是R中的函数。
+<br>
+&emsp;&emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
+</font>
+<br>
+--
+## 函数求助
+<font size=5>
+&emsp;&emsp;如果我们不知道一个函数是什么，有什么用处。在R中，我们可以在Console中使用“?函数名”来打开帮助文档。
+--
+</font><br>
+![help](./pic_new/chp5/help.png)
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数示例
+![help](./pic_new/chp5/help2.png)
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数示例
+![help](./pic_new/chp5/help3.png)
+<font size = 5>
+参数可以分为形式参数和实际参数。这里给出的是形式参数，实际运行中输入的值为实际参数。（举例：求函数y(x)在x=2时的值，x为形式参数，2为实际参数。）
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数示例
+![help](./pic_new/chp5/help4.png)
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数调用
+<font size=5>
+-首先需要下载函数所在的R包（部分R包在下载R时已经自动下载）<br>
+&emsp;&emsp;install.pcakages("R包名称")<br>
+-然后需要加载R包<br>
+&emsp;&emsp;library(R包名称)<br>
+-已下载的R包，也可以直接 R包::函数名称 来调用函数<br>
+
+-不同的R包中可能会有相同的函数名，为了避免调用错误，推荐使用：R包::函数名称<br>
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数调用
+![error4](./pic_new/chp5/error4.png)
+<font size = 5>
+未加载时不能直接调用函数
+--
+
 ```{r}
-df.mt.raw <-  read.csv(file = './data/match/match_raw.csv',
+here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
+library(here)
+here()
+```
+
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数调用
+
+```{r 5.7 read.csv}
+df.pg.raw <- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
                        header = T, 
                        sep=",",
                        stringsAsFactors = FALSE) 
 ```
 
----
-#回顾
-##函数及用法
-<font size=5>
-&emsp;&emsp;argument: “TRUE ~ NA_real_”?<br>
-</font>
-
-![p1](./picture/chp6/real.png)
+&emsp;&emsp;df.pg.raw 变量名 <br>
+&emsp;&emsp;utils 函数所在的R包 <br>
+&emsp;&emsp;read.csv 函数名 <br>
+&emsp;&emsp;file 参数：文件路径 <br>
+&emsp;&emsp;header 参数：是否将第一行作为列名 <br>
+&emsp;&emsp;sep 参数：指定分隔符 <br>
+&emsp;&emsp;stringsAsFactors 参数：是否将字符型数据转化为因子 <br>
+--
 <br>
-<font size=5>
-&emsp;&emsp;首先，查找case_when()，但是我们并未发现对这一语句的描述，这可能是因为该argument已经在最新的语句中有了替代。<br>
-&emsp;&emsp;因此，我们直接查找Na_real_，可以发现它表示这个默认值是一个缺失值（NA），并且是数值类型（real），那再结合case_when()的作用就很好理解了，那些“TRUE”，也即不在给出的任何条件中的值，被赋为NA。<br>
-&emsp;&emsp;同学们也可以尝试使用case_when()文档中提供的语句重新写。
-</font>
-
----
-#回顾
-##函数及用法
-<font size=5>
-&emsp;&emsp;关于函数“dplyr::group_by()"的作用: 比较操作前后的结果。
-</font>   
-```{r}
-library("tidyverse")
-group <- df.mt.raw %>% 
-  group_by(Shape)
-group#注意看数据框的第二行，有Groups:   Shape [4]的信息
-```
----
-#回顾
-##函数及用法
-<font size=5>
-&emsp;&emsp;当某一列作为group_by分类的对象时，生成的数据框具有此分类列的信息，这个信息是数据框的一个基本信息，你甚至无法删除这一列。
-</font>   
-```{r}
-group <- group %>% 
-  select(-Shape)
-#注意返回的提示，因为数据框已经按照此列分类，所以不能再检索到此列。
-```
-
----
-# 回顾
-## 函数及用法
-<font size=5>
-&emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
-</font>
-
-```{r}
-library("tidyverse")
-df.mt.raw <-  read.csv('./data/match/match_raw.csv',
-                       header = T, sep=",", 
-                       stringsAsFactors = FALSE) 
-group <- df.mt.raw %>% 
-  group_by(., Shape) %>% 
-  summarise(n())
-DT::datatable(group)
-```
----
-# 回顾
-## 函数及用法
-<font size=5>
-&emsp;&emsp;对于group_by()函数的作用，我们可以对比不使用它的效果。
-</font>
-```{r}
-ungroup <- df.mt.raw %>% 
-  summarise(n())
-DT::datatable(ungroup)
-```
-
----
-# 回顾
-## 函数及用法
-<font size=5>
-&emsp;&emsp;从对比中可以看出，使用了group_by()后，实际上对数据框进行了分组，summarise针对的是每一个按照Shape列拆分开的数据框。
-</font>
-```{r}
-remove(group, ungroup)
- 
-```
-
----
-
-# 回顾
-## 函数及用法
-<font size=5>
-&emsp;&emsp; 理解函数的最好办法：创建函数
-</font>
-```{r}
-simpleFun <- function(a = 1, b = 100){
-  sum <- a + b
-  product <- a * b
-  
-  res <- c(sum, product)
-  
-  return(res)
-}
-
-```
-
-```{r}
-simpleFun()
-```
-
-```{r}
-simpleResult <- simpleFun(a=1, b=5)
-```
----
-
-# 回顾
-## for loop
-<font size=5>
-&emsp;&emsp;我们看一下for loop语句最基础的结构：<br>
-&emsp;&emsp; __for (variable in sequence) {statement}__ <br>
-&emsp;&emsp;其中，variable是循环变量，sequence是一个向量或列表，statement是要重复执行的语句。在每次循环中，variable会被赋值为sequence中的下一个元素，然后执行statement。<br>
-比如，我如果想计算1到100的和：
-</font>
-```{r}
-sum <- 0
-for (i in 1:100) {
-  sum <- sum + i
-}
-print(sum)
-```
-
----
-# 回顾
-## for loop
-<font size=5>
-&emsp;&emsp;理解了这一点我们再来看使用for loop如何批量读取文件。
-</font>
-```{r}
-files <- list.files(file.path("data/match"), 
-                    pattern = "data_exp7_rep_match_.*\\.out$")
-
-df_list <- list()
-
-for (i in seq_along(files)) {
-  df <- read.table(file.path("data/match", files[i]), header = TRUE) 
-  df_list[[i]] <- df
-}
-```
-
-```{r include=FALSE}
-remove(files,i,sum,df,df_list)
-```
-<font size=5>
-&emsp;&emsp;1.利用list.files读取所有的文件保存成value<br>
-&emsp;&emsp;2.创建新的df_list存储结果<br>
-&emsp;&emsp;3.for (i in seq_along(files))……部分是，对files里的第一个值执行read.table()，并将结果放进df_list中。接着对第二个值执行，直至循环结束整个files
-</font>
----
-# 回顾
-## 练习
-
-定义一下函数，其有两个整数型的arguments (a, b)，第一个比第二个小，函数的输出是计算从a到b的所有整数之和。
-
-```
-# 回顾
-## 练习题
-<font size=5>
-&emsp;&emsp;我们在实际使用这些函数时，是带着目的去使用的。想要计算击中率虚报率，我们首先要知道什么情况是击中，也要让计算机知道什么情况是击中，一旦分类了，计算的时候也需要进行判断。但在分类判断之前，我们要先告诉计算机什么是正确情况什么是错误情况，哪些是这个被试做的，哪些不是，所以也需要分组。<br>
-&emsp;&emsp;梳理到这，我们有了基本的思路：1.分组，使用group_by。2.告诉计算机什么是hit，什么是miss，使用summarise函数。3.利用判断语句进行分类计算，我们这里使用了ifelse。<br>
-&emsp;&emsp;当然，具体执行时，我们也需要考虑缺失值等细节，但总体的思路不会有变。
 <br>
-&emsp;&emsp;以上次的练习为例。首先我们需要加载数据。
-</font>
+<font size = 5>
+参数可分为形式参数（简称形参）和实际参数（简称实参）<br>
+file = './data/penguin/penguin_rawdata.csv':<br>
+&emsp;&emsp;file为形参<br>
+&emsp;&emsp;'./data/penguin/penguin_rawdata.csv'为实参<br>
+
+
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 函数分类
+<font size=5>
+已有函数<br>
+&emsp;&emsp;R base; <br>
+&emsp;&emsp;R packages; <br>
+&emsp;&emsp;functions from other sources<br>
+--
+<font size=5>
+自定义函数<br>
+&emsp;&emsp;自己命名和创建函数
+
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数
+<font size = 5>
+函数定义通常由以下几个部分组成：<br>
+&emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。<br>
+&emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。<br>
+&emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。<br>
+&emsp;-返回值: 指定函数的输出结果，使用关键字return。<br>
+--
+
+```{r 5.7 mysum}
+#定义一个函数：输入x和y，返回3倍x和5倍y的和
+mysum <- function(x,y){
+  result = 3*x+5*y
+  return(result)
+}
+#mysum:自定义的函数名
+#x,y:形式参数
+#result = 3*x+5*y:函数体
+#return(result):返回值
+
+#调用函数,x=1,y=2
+mysum(1,2)
+mysum(y=1,x=2)
+```
+
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数（小练习）
+<font size = 5>
+小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值<br>
+
+```{r 5.7 myabc}
+#myabc <- function(***){
+#  result = ***
+#  return(***)
+#}
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
+
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数
+<font size = 5>
+<br>我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
+--
+![error7](./pic_new/chp5/error7.png)
+--
+<font size = 5>
+<br>在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
 
 ```{r}
-# 读取原始数据
-df.mt.raw <-  read.csv('./data/match/match_raw.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
-```
----
-# 回顾
-## 练习题
-<font size=5>
-&emsp;&emsp;接着，我们选出需要的几列，包括自变量和因变量，以及分组变量。使用select()函数
-</font>
-```{r}
-df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Sub, Block, Bin,  # block and bin
-                Shape, Match, # 自变量
-                ACC, RT, # 反应结果
-                )
-```
-<font size=5>
-&emsp;&emsp;因为数据中存在缺失值，所以也需要除去它们。
-</font>
-```{r}
-df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Sub, Block, Bin,  # block and bin
-                Shape, Match, # 自变量
-                ACC, RT, # 反应结果
-                ) %>% 
-  tidyr::drop_na()
+mysum2 <- function(x = 6,y = 7){
+  result = 3*x+5*y
+  return(result)
+}
+mysum2()
+mysum2(5)
 ```
 
 ---
-# 回顾
-## 练习题
-<font size=5>
-&emsp;&emsp;在计算击中率误报率等的时候，我们针对的是被试的在某一特定实验条件下的反应。所以我们需要通过bin、block、shape、sub进行分组，这样进行计算时，就是每一个条件组下分别计算。不会出现在虚报的实验条件下计算正确拒绝的情况。
-</font>
-```{r}
-df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Sub, Block, Bin,  # block and bin
-                Shape, Match, # 自变量
-                ACC, RT, # 反应结果
-                ) %>% 
-  tidyr::drop_na()  %>% #删除缺失值
-  dplyr::group_by(Sub, Block, Bin, Shape)
-```
----
-# 回顾
-## 练习题
-<font size=5>
-&emsp;&emsp;接下来就是要使用summarise函数来给击中、虚报等分类，并使用ifelse函数根据分类计算概率
-</font>
-```{r}
-df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Sub, Block, Bin,  # block and bin
-                Shape, Match, # 自变量
-                ACC, RT, # 反应结果
-                ) %>% 
-  tidyr::drop_na()  %>% #删除缺失值
-  dplyr::group_by(Sub, Block, Bin, Shape) %>%
-  dplyr::summarise(
-      hit = length(ACC[Match == "match" & ACC == 1]),
-      fa = length(ACC[Match == "mismatch" & ACC == 0]),
-      miss = length(ACC[Match == "match" & ACC == 0]),
-      cr = length(ACC[Match == "mismatch" & ACC == 1]),
-      Dprime = qnorm(
-        ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss),
-               1 - 1 / (2 * (hit + miss))
-              )
-           ) - qnorm(
-        ifelse(fa / (fa + cr) > 0,
-               fa / (fa + cr),
-               1 / (2 * (fa + cr))
-              )
-                    ))
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数(小练习)
+<font size = 5>
+小练习：<br>
+&emsp;定义一个函数,输入值a,b,c,返回(a+b)/c;<br>
+**&emsp;设置a、b、c的默认值为3、2、1<br>**
+
+
+```{r 5.7 myabc2}
+#myabc <- function(a = ***, b = ***, c = ***){
+#  result = ***
+#  return(***)
+#}
+#myabc(***)
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
 ```
 
 ---
-# 回顾
-## 练习题
-<font size=5>
-&emsp;&emsp;最后使用ungroup、select等函数对数据进行清理，除去计算中的过程变量，并进行长宽转换方便查看。
-</font>
-```{r}
-df.mt.clean <- df.mt.raw %>%
-  dplyr::select(Sub, Block, Bin,  # block and bin
-                Shape, Match, # 自变量
-                ACC, RT, # 反应结果
-                ) %>% 
-  tidyr::drop_na()  %>% #删除缺失值
-  dplyr::group_by(Sub, Block, Bin, Shape) %>%
-  dplyr::summarise(
-      hit = length(ACC[Match == "match" & ACC == 1]),
-      fa = length(ACC[Match == "mismatch" & ACC == 0]),
-      miss = length(ACC[Match == "match" & ACC == 0]),
-      cr = length(ACC[Match == "mismatch" & ACC == 1]),
-      Dprime = qnorm(
-        ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss),
-               1 - 1 / (2 * (hit + miss))
-              )
-           ) - qnorm(
-        ifelse(fa / (fa + cr) > 0,
-               fa / (fa + cr),
-               1 / (2 * (fa + cr))
-              )
-                    )) %>% 
-  dplyr::ungroup() %>%
-  select(-"hit",-"fa",-"miss",-"cr") %>%
-  dplyr::group_by(Sub, Shape)  %>%
-  tidyr::pivot_wider(names_from = Shape,
-                     values_from = Dprime) 
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数
+<font size = 5>
+在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算<br>
+--
+![error8](./pic_new/chp5/error8.png)
+--
+<font size = 5>
+自定义函数时可以手动添加报错信息。<br>
+只有在输入的内容符合要求时才可以正常运行，否则报错。<br>
+此处判断是否符合要求本质上是一种逻辑判断。<br>
+--
+![if-else](./pic_new/chp5/if-else.png)
+---
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数
+
+```{r mysum3}
+mysum3 <- function(x = 6,y = 7){
+  if(is.numeric(x) == T & is.numeric(y) == T){
+    result = 3*x+5*y
+    return(result)}
+  else{print("x and y must be number")}
+}
+#print：输出指定的内容
+#is.numeric:判断是否为数值型。是则返回T，否则返回F
+# & : 表示“且”
+mysum3(5,6)
+mysum3('a','b')
 ```
 
 ---
-class: center, middle
-<span style="font-size: 50px;">**第六章**</span> <br>
-<span style="font-size: 50px;">__如何探索数据: __</span> <br>
-<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
----
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数(小练习)
+<font size = 5>
+小练习：<br>
+&emsp;定义一个函数,输入值a,b,c,返回(a+b)/c;<br>
+&emsp;设置a、b、c的默认值为3、2、1;<br>
+**&emsp;当c为0时报错“c should not be 0”**
 
-# 探索性数据分析
-## What is exploratory data analysis?
-<font size=5>
-&emsp;&emsp;在介绍描述性统计和可视化之前，我们先了解一个概念：探索性数据分析(Exploratory Data Analysis, EDA)。<br>
-&emsp;&emsp;In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their maincharacteristics, often with visual methods (Wikipedia).
-</font>
-<div style="text-align:center;">
-  <img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" alt="layer" style="width:70%; height:auto;" />
-</div>
+```{r 5.7 myabc3}
+#myabc <- function(***){
+#  if(***){
+#    result = ***
+#    return(***)
+#  }
+#  else{print(***)}
+#}
 
----
-# 探索性数据分析
-## What is exploratory data analysis?
-<font size=5>
-&emsp;&emsp;要进行EDA，首先要了解自己的数据，并提出有质量的问题。但是提出有质量的问题前，我们可以先从几个基础的简单问题开始：<br>
-&emsp;&emsp;有哪些变量，类型如何？变量的值是如何变化的？变量之间有什么关系？
-</font>
-```{r prepare the packages}
-
-# 检查是否已安装 pacman
-if (!requireNamespace("pacman", quietly = TRUE)) {
-  install.packages("pacman") }   # 如果未安装，则安装包
-
-# 加载所需要的R包
-pacman::p_load("tidyverse")
-# 读取数据
-df.pg.raw <- read.csv("./data/penguin/penguin_rawdata.csv",
-                      header = TRUE, sep=",", stringsAsFactors = FALSE)
-df.mt.raw <-  read.csv('./data/match/match_raw.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
 ```
 
 ---
-# 探索性数据分析
-## 有哪些变量，类型如何？
-
-```{r, out.width = "10px", out.height = "300px"}
-colnames(df.mt.raw)                # 查看列名，观察有哪些变量
-DT::datatable(head(df.mt.raw, 3))  # 了解数据内容
+# <h1 lang="zh-CN">5.7 函数</h1>
+## 自定义函数(小练习)
+```{r myabc4}
+#示例
+myabc <- function(a = 3, b = 2, c = 1){
+  if(c!=0){
+    result = (a+b)/c
+    return(result)
+  }
+  else{print('c should not be 0')}
+}
 ```
-
----
-# 探索性数据分析
-## 了解数据
-```{r, out.width = "10px", out.height = "300px"}
-# 前几节课提过的summary()函数
-# 这里使用datatable()是为了方便在ppt呈现
-DT::datatable(summary(df.mt.raw))
-```
-
----
-# 探索性数据分析
-## 了解你的数据
-<font size=5>
-&emsp;&emsp;更进一步，如果我想知道变量的平均数、中位数和标准差等统计量应该怎么办？
-</font><br>
-```{r, width = 400, height = 300}
-# 使用psych包中的describe()函数
-DT::datatable(psych::describe(df.mt.raw))
-# 需要注意的是，describe()函数不会帮你处理缺失值，它会跳过缺失值。
-```
-
----
-# 探索性数据分析
-## 了解你的数据
-<font size=5>
-&emsp;&emsp;更进一步，如果我想知道变量的平均数、中位数和标准差等统计量应该怎么办？
-</font><br>
-```{r}
-# 使用dplyr包中的summarise()函数
-df.mt.raw %>%
-  summarise(mean_RT = mean(RT),
-            sd_RT = sd(RT),
-            n_values = n())
-# summarise函数不会忽略缺失值，如果计算的列中有缺失值，会有报错。
-```
-
----
-# 探索性数据分析
-## 变量的值是如何变化的？可视化
-<font size=5>
-&emsp;&emsp;可视化的部分我们介绍一个最常用的包：ggplot2。<br>
-&emsp;&emsp;所谓gg源于“grammar of graphics”，即图形语法。<br>
-&emsp;&emsp;ggplot2绘图的核心在于使用图层去描述和构建图形。<br>
-&emsp;&emsp;我们在这里给出一个示例，探究体温和健康的关系，并简单了解一下ggplot2的语法。
-</font>
-<div style="text-align:center;">
-  <img src="https://picb.zhimg.com/v2-1ea8eef8abdab39c4e5cfcc0285f9d95_720w.jpg?source=172ae18b" alt="layer" style="width:60%; height:auto;" />
-</div>
-
----
-# 可视化
-## 柱状图
-<font size=5>
-&emsp;&emsp;比方说，我们想要看看被试回答正确率的情况。
-</font>
-```{r warning=FALSE, fig.width=6, fig.height=4}
-ggplot2::ggplot(data=df.mt.raw,       # 指定数据
-                aes(x=ACC)) +         # 确定映射到x轴的变量
-  geom_bar() +                        # 绘制直方图
-  theme_classic()                     # 设定绘图风格
-```
----
-# 可视化
-## 柱状图
-<font size=5>
-&emsp;&emsp;消除图形与x轴之间的空白。
-</font>
-```{r warning=FALSE, fig.width=6, fig.height=4}
-ggplot2::ggplot(data=df.mt.raw,         # 指定数据
-                aes(x=ACC)) +           # 确定映射到x轴的变量
-  geom_bar() +                          # 绘制直方图
-  scale_y_continuous(expand=c(0, 0)) +  # x轴在 y=0 处  
-  theme_classic()                       # 设定绘图风格
-```
----
-
-# 可视化
-## 直方图
-<font size=5>
-&emsp;&emsp;对于连续变量，我们可以使用直方图进行可视化。比如说，我们想看看被试的反应时分布。
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data=df.mt.raw,      # 指定数据
-                aes(x=RT)) + # 确定映射到x轴的变量
-  geom_histogram() +                   # 绘制直方图
-  stat_bin(bins = 40) +                # 设定连续变量分组数量
-  scale_x_continuous(name = "RT") +    # 命名x轴
-  scale_y_continuous(expand=c(0, 0)) + # x轴在 y=0 处 
-  theme_classic()                      # 设定绘图风格
-```
----
-# 可视化
-## 密度图
-<font size=5>
-&emsp;&emsp;同样的我们可以使用密度图来描述反应时的分布情况。
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data=df.mt.raw,         # 指定数据
-                aes(x=RT)) +  # 确定映射到x轴的变量
-  geom_density() +                      # 绘制密度曲线
-  scale_x_discrete(name="RT") +         # 命名x轴
-  scale_y_continuous(expand=c(0, 0)) +  # x轴在 y=0 处 
-  theme_classic()                       # 设定绘图风格
-```
----
-# 可视化
-## 图层叠加
-
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data=df.mt.raw,             # 指定数据
-                aes(x=RT,                   # x轴的变量
-                    y=after_stat(density),  # y轴对应的是密度曲线
-                    alpha=0.8)) +           # 透明度
-  geom_histogram() +                        # 绘制直方图
-  geom_density() +                          # 绘制密度曲线
-  guides(alpha=FALSE) +                     # 隐藏透明度alpha设置带来的图例
-  theme_classic()                           # 设定绘图风格
-```
-
----
-# 可视化
-## 箱线图
-<font size=5>
-&emsp;&emsp;除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。
-&emsp;&emsp;这里我们利用箱线图看看不同Label的RT如何。
-</font>
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data=df.mt.raw,  # 指定数据
-                aes(x=Label,     # 确定映射到xy轴的变量
-                    y=RT)) +                 
-  geom_boxplot() +               # 绘制箱线图
-  theme_classic()                # 设定绘图风格
-```
-
----
-# 可视化
-## 散点图
-<font size=5>
-&emsp;&emsp;而对于两个连续变量，我们可以使用散点图。比如，我们可以看看被试在做penguin问卷前后体温的关系。
-</font>
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-ggplot2::ggplot(data=df.pg.raw,                  # 指定数据
-                aes(x=Temperature_t1,            # 确定映射到xy轴的变量
-                    y=Temperature_t2)) +
-  geom_point() +                                 # 绘制散点图
-  scale_x_continuous(name = "Temperature_t1") +  # 修改X轴的名称
-  scale_y_continuous(name = "Temperature_t2") +  # 修改Y轴的名称
-  theme_classic()                                # 设定绘图风格
-```
-
----
-# 可视化
-## 散点图
-<font size=5>
-&emsp;&emsp;事实上，当我们进行探索时往往需要先对数据进行处理，再进行可视化。以下我们想看看手机使用和焦虑是否存在关系。
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-# 利用管道符，可以帮助我们更简洁地合并数据处理和可视化的过程。
-df.pg.raw %>% 
-  dplyr::mutate(stress_ave=rowMeans(.[,c("stress1", "stress2", "stress3","stress4", "stress5", 
-                                         "stress6","stress7", "stress8", "stress9","stress10", 
-                                         "stress11", "stress12","stress13", "stress14")]),
-                phone_ave=rowMeans(.[,c("phone1","phone2","phone3","phone4","phone5",
-                                        "phone6","phone7","phone8","phone9")])
-                ) %>% 
-  ggplot(aes(x=stress_ave, 
-             y=phone_ave)) +
-  geom_point() +
-  geom_smooth(method="lm") +    # 在散点图上叠加回归线，语法可以查找帮助文档
-  theme_classic()
-```
-
----
-
-# 可视化
-## ggplot2小组
-
-* 化繁为简：大量的默认值
-* 精准定制：所有元素均可控
-* 易于叠加：丰富的信息
-* 日益丰富的生态系统 https://r-graph-gallery.com/
-
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-# load DataExplorer
-pacman::p_load("DataExplorer")
-
-DataExplorer::plot_str(df.pg.raw)
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_str(df.mt.raw)
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_intro(df.mt.raw)
-```
----
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_missing(df.mt.raw)
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_bar(df.mt.raw)
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_bar(df.mt.raw, by="Match")
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_histogram(df.mt.raw)
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_qq(df.pg.raw[,2:10])
-```
----
-
-# 可视化
-## Explore data with DataExplorer
-<font size=5>
-&emsp;&emsp;DataExplorer可能是是一个不错的工具
-</font>
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
-DataExplorer::plot_correlation(na.omit(df.pg.raw[, 2:30]))
-```
----
-
-#练习
-## 1. 读取match数据，对自己感兴趣的变量进行描述性统计。
-## 2. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
-## 3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
-## 4. 对两个数据中自己感兴趣的变量们做探索性数据分析。
-#探索
-## 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
-
-
-
-
 
 
