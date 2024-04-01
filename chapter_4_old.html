@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>chapter_4_old.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pac_B" />
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;**第四章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;__如何清理数据（一）__&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;R语言编程基础&lt;/span&gt;&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-03-30&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+
+---
+#回顾
+##工作目录与路径
+##读取数据
+&lt;br&gt;&lt;br&gt;
+#本节课内容
+##了解函数
+##- 数据筛选
+##-- 向量类型
+##-- 比较运算
+
+---
+#准备
+##下载压缩包，解压
+##打开文件夹，双击打开__R4Psy.Rproj__
+
+
+---
+# 回顾
+## 创建 R Script
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;我们可以创建一个R Script文件帮助我们更好地记录曾经写过什么，也方便我们对写的代码进行检查。
+&lt;/font&gt;&lt;br&gt;
+![rscript](./picture/chp4/scrip.png) &lt;br&gt;
+
+
+---
+# 回顾
+## 创建 R Script
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;并选择 File-Save as…进行保存。这里我们统一保存压缩包的目录里。data文件里有本课涉及到的两个数据。
+&lt;/font&gt;&lt;br&gt;
+![rscript](./picture/chp4/mulu.png)
+
+---
+# 回顾
+## 读取数据
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;同学们可以根据相对路径读取数据。
+&lt;/font&gt;&lt;br&gt;
+
+```r
+#问卷数据参考读取方法：
+penguin.data &lt;- read.csv("./data/penguin/penguin_rawdata.csv",
+                         header = TRUE, sep=",",
+                         stringsAsFactors = FALSE)
+```
+
+---
+# 回顾
+## 读取数据
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;同学们可以根据相对路径读取数据。
+&lt;/font&gt;&lt;br&gt;
+
+```r
+#实验数据参考读取方法，这里我们随便选择三个被试：
+match.data1 &lt;- read.csv("./data/match/data_exp7_rep_match_7304.out", 
+                        header = TRUE, sep = "", 
+                        stringsAsFactors = FALSE)
+match.data2 &lt;- read.csv("./data/match/data_exp7_rep_match_7305.out", 
+                        header = TRUE, sep = "", 
+                        stringsAsFactors = FALSE)
+match.data3 &lt;- read.csv("./data/match/data_exp7_rep_match_7306.out", 
+                        header = TRUE, sep = "", 
+                        stringsAsFactors = FALSE)
+```
+
+---
+# 回顾
+## 读取数据
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;这里我们有了三个被试的数据，可是他们分散在三个data中，我们并不好进行比较，这里我们可以使用rbind()函数对他们进行组合。
+&lt;/font&gt;&lt;br&gt;
+
+```r
+#组合三个数据：
+match.data.all &lt;- rbind(match.data1, match.data2, match.data3)
+```
+
+---
+# 补充
+## R对象的赋值
+在R中，我们可以使用赋值操作符“&lt;-”给对象赋值。&lt;br&gt;
+比如：
+
+```r
+object &lt;- 10
+object
+```
+
+```
+## [1] 10
+```
+我们给对象“object”赋值为10。&lt;br&gt;
+赋值后可以对“object”进行操作，比如：&lt;br&gt;
+
+```r
+object + 2
+```
+
+```
+## [1] 12
+```
+但注意此时的“object”本身并未发生改变。
+
+```r
+object
+```
+
+```
+## [1] 10
+```
+
+---
+# 补充
+## R对象的赋值
+&amp;emsp;&amp;emsp;因此，在组合三个数据时，我们需要一个新的R的对象来容纳组合成的新数据&lt;br&gt;
+
+```r
+#组合三个数据：
+match.data.all &lt;- rbind(match.data1, match.data2, match.data3)
+```
+&amp;emsp;&amp;emsp;在这里，新的对象叫做match.data.all，三个被试的数据被组合在一起装了进去。
+
+---
+# 补充
+## 创建对象
+&amp;emsp;&amp;emsp; &lt;font size=5&gt;  变量名可以由字母、数字、_和.组成。并且变量名的第一个字符不能为数字或者特殊符号，比如 +, -, *, /, ^, !, @, &amp;。&lt;/font&gt; &lt;br&gt;  
+&lt;br&gt;
+&lt;font size="5"&gt;
+tips：&lt;br&gt;
+&amp;emsp;&amp;emsp;- 对象命名区分大小写，“X” 和 “x” 表示的是不同的对象。&lt;br&gt;
+&lt;br&gt;
+&amp;emsp;&amp;emsp;- 可以使用中文，但不推荐，可能出现这样的乱码：&lt;br&gt;
+&amp;emsp;&amp;emsp;鍙︿竴涓▼搴忔鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂��。&lt;br&gt;
+&lt;br&gt;
+&amp;emsp;&amp;emsp;- 命名对象最好有不错的可读性，比如“age”就要比“x”更易读。
+&lt;/font&gt;
+
+---
+# 函数
+## 什么是函数
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;我们在这里使用的rbind()就是R base中的一个基本函数。
+&lt;br&gt;
+&amp;emsp;&amp;emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
+&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;font size=6&gt;
+- 已有函数&lt;br&gt;
+&amp;emsp;&amp;emsp;- R base; &lt;br&gt;
+&amp;emsp;&amp;emsp;- R packages; &lt;br&gt;
+&amp;emsp;&amp;emsp;- functions from other sources&lt;br&gt;
+- 自定义函数
+&lt;/font&gt;
+
+---
+# 函数
+## 什么是函数
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;如果我们不知道一个函数是什么，有什么用处。在R中，我们可以在Console中使用“?函数名”来打开帮助文档。
+&lt;/font&gt;&lt;br&gt;
+![qiuzhu](./picture/chp4/qiuzhu.png)
+![qiuzhu2](./picture/chp4/qiuzhu2.png){:height="20px" width="80px"}
+
+---
+# 函数
+## 如何调用已有函数
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;直接调用:functions()
+&lt;/font&gt;
+
+```r
+#直接调用：
+library("here")#加载here包，install的R包需要library后使用
+```
+
+```
+## here() starts at C:/Users/dazai osamu/Desktop/R 2024/R4Psy
+```
+
+```r
+here()
+```
+
+```
+## [1] "C:/Users/dazai osamu/Desktop/R 2024/R4Psy"
+```
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;注意，当你使用不同的包的时候，为了避免出现函数名重复导致调用错误，可以使用：R包::functions()
+&lt;/font&gt;
+
+```r
+#给出R包的调用：
+here::here()#这里第一个here是R包，第二个here是调用这个包里here函数
+```
+
+```
+## [1] "C:/Users/dazai osamu/Desktop/R 2024/R4Psy"
+```
+
+---
+# 函数
+## 常用函数
+## unique()
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;如果我们拿到了match.data.all，想要知道Label这一列有多少种独特的情况，我们可以使用unique()函数。
+&lt;/font&gt;
+
+```r
+#使用$符号定位某一列
+head(match.data.all$Label,10)
+```
+
+```
+##  [1] "immoralSelf"  "moralSelf"    "moralOther"   "immoralOther" "moralSelf"   
+##  [6] "moralSelf"    "moralSelf"    "immoralOther" "moralSelf"    "immoralOther"
+```
+
+```r
+#使用unique查看这一列有多少种独特的情况
+unique(match.data.all$Label)
+```
+
+```
+## [1] "immoralSelf"  "moralSelf"    "moralOther"   "immoralOther" "Label"
+```
+---
+# 函数
+## 常用函数
+## r filter()
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;函数可以帮助我们完成很多操作，比如筛选数据。这里我们介绍filter()函数。
+&lt;/font&gt;
+library
+
+```r
+#筛选出match.data.all的Match列中所有mismatch的数据
+mismatch &lt;- dplyr::filter(match.data.all, match.data.all$Match == "mismatch")
+#查看是否成功
+unique(mismatch$Match)
+```
+
+```
+## [1] "mismatch"
+```
+
+---
+# 运算
+## 比较运算
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;我们先看函数里的内容。在这里我们使用了match.data.all$Match == "mismatch"来判断Match列中的每一个对象是否“==”mismatch，这里的“==”是R的比较运算符。
+&lt;/font&gt;
+
+---
+# 运算
+## 比较运算
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;比较运算符，旨在将两个两个向量的相应元素进行比较，返回比较结果为真TRUE、假FALSE。
+&lt;/font&gt;
+![bijiao](./picture/chp4/bijiao.png)
+
+---
+# 向量的类型
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;我们在进行比较运算时，比较的两个向量需要类型相同。
+&lt;/font&gt;
+## 向量（Vector）&lt;br&gt;
+&lt;font size=6&gt;
+- 逻辑型（logical）&lt;br&gt;
+- 整型（integer）&lt;br&gt;
+- 双精度型（double）&lt;br&gt;
+- 字符型（character）&lt;br&gt;
+- 复数型（complex）&lt;br&gt; 
+- 原始型（raw）&lt;br&gt;
+
+---
+# 向量的类型
+&lt;font size=5&gt;
+- 逻辑型（logical）&lt;br&gt;
+
+```r
+#注意需要全部大写
+a &lt;- TRUE 
+b &lt;- FALSE
+print(c(a,b))
+```
+
+```
+## [1]  TRUE FALSE
+```
+- 整型（integer）&lt;br&gt;
+
+```r
+a &lt;- 3L
+a
+```
+
+```
+## [1] 3
+```
+
+---
+# 向量的类型
+&lt;font size=5&gt;
+- 双精度型（double）&lt;br&gt;
+
+```r
+a &lt;- 3.14
+a
+```
+
+```
+## [1] 3.14
+```
+- 字符型（character）&lt;br&gt;
+
+```r
+a &lt;- "R4Psy"
+a
+```
+
+```
+## [1] "R4Psy"
+```
+
+---
+# 向量的类型
+&lt;font size=5&gt;
+- 复数型（complex）&lt;br&gt; 
+
+```r
+a &lt;- 3+4i
+a
+```
+
+```
+## [1] 3+4i
+```
+- 原始型（raw）&lt;br&gt;
+
+```r
+a &lt;- charToRaw('hello')
+a
+```
+
+```
+## [1] 68 65 6c 6c 6f
+```
+
+---
+# 向量的类型
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;回到match.data.all$Match == "mismatch"这里，我们可以通过class()函数查看某一向量的类型。
+&lt;/font&gt;
+
+```r
+class(match.data.all$Match)
+```
+
+```
+## [1] "character"
+```
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;所以，这其实是字符串的比较运算，通过Match列中每一个字符串是否和字符串“mismatch”相等来进行判断。
+&lt;/font&gt;
+
+---
+# 函数
+## 常用函数
+## filter()
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;以上我们理解了函数内的比较，接下来我们看看filter()函数是如何运作的。
+&lt;/font&gt;
+
+```r
+head(match.data.all$Match == "mismatch")
+```
+
+```
+## [1]  TRUE  TRUE FALSE FALSE  TRUE  TRUE
+```
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;从结果我们能看出来，进行比较判断后返回的是TRUE和FALSE，也就是我们在类型中说的逻辑型。&lt;br&gt;
+&amp;emsp;&amp;emsp;filter()函数做的，就是将返回为TRUE的数据保留下来，丢弃那些FALSE的数据，并返回一个新的数据框。
+&lt;/font&gt;
+
+---
+# 函数
+## 常用函数
+## filter()
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;除了字符串以外，我们也可以利用比较判断进行数值比较。
+&lt;/font&gt;
+
+```r
+class(match.data.all$ACC)#发现类型是character而不是numeric，我们需要先转换。
+```
+
+```
+## [1] "character"
+```
+
+```r
+#通过as.numeric()将其他类型转化为数值型向量
+match.data.all$ACC &lt;- as.numeric(match.data.all$ACC)
+class(match.data.all$ACC)
+```
+
+```
+## [1] "numeric"
+```
+
+---
+# 函数
+## 常用函数
+## filter()
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;我们想把所有ACC大于等于0的被试提出来。
+&lt;/font&gt;
+
+```r
+#筛选出match.data.all的ACC列中所有大于等于0的数据
+mismatch &lt;- dplyr::filter(match.data.all, match.data.all$ACC &gt;=0)
+#查看是否成功
+unique(mismatch$ACC)
+```
+
+```
+## [1] 0 1 2
+```
+
+---
+# 练习
+## 对match数据
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;1.读取data_exp7_rep_match_7302.out和data_exp7_rep_match_7303.out文件，使用rbind()整合&lt;br&gt;
+&amp;emsp;&amp;emsp;2.利用filter()提取出Sex为male的被试数据&lt;br&gt;
+&amp;emsp;&amp;emsp;3.利用filter()提取出Age大于20的被试数据（注意数据类型）
+&lt;/font&gt;
+&lt;br&gt;
+
+---
+# 练习
+## 对penguins数据
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;1.读取数据&lt;br&gt;
+&amp;emsp;&amp;emsp;2.利用filter()提取出Site为Oxford的被试数据&lt;br&gt;
+&amp;emsp;&amp;emsp;3.利用filter()提取出1988年及之后出生的被试的数据（注意数据类型）
+&lt;/font&gt;
+&lt;br&gt;
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
