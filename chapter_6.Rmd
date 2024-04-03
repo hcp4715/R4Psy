@@ -138,6 +138,7 @@ ALEX: 述情障碍，探索性监督机器学习需要的变量之一，5点量�
 # 导入数据
 df1 <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
 ```
+
 ```{r example of penguin, echo=FALSE}
 DT::datatable(head(df1),
               fillContainer = TRUE, options = list(pageLength = 4))
@@ -200,7 +201,7 @@ base::summary(df1)
 # 转换数据类型
 # 这里数据类型是正确的，只是示例
 df1 <- dplyr::mutate(df1, 
-                     Temperature_t1 = as.numeric(Temperature_t1), 
+                     Temperature_t1_new = as.numeric(Temperature_t1), 
                      Temperature_t2 = as.numeric(Temperature_t2))
 ```
 <br>
@@ -322,7 +323,7 @@ df1$ALEX <- bruceR::SUM(df1,
 ```{r}
 # 按Site计算Temperature的平均值
 df1 <- dplyr::group_by(df1, Site)
-df2 <- dplyr::summarise(df1, mean_Temperature = mean(Temperature))
+df2 <- dplyr::summarise(df1, mean_Temperature = mean(Temperature), n = n())
 df1 <- dplyr::ungroup(df1)
 ```
 <br>
