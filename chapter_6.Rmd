@@ -55,12 +55,12 @@ class: center, middle
 # <h1 lang="en">6.1 Tidyverse</h1>
 - **优势：共享一个底层设计哲学、语法和数据结构，具有高度的一致性**<br>
 <br>
+- **"整洁数据(tidy)"**：每行代表一个观察值，每列代表一个变量的值<br>
 - **函数的第一个参数总是一个数据框**<br>
-- **整洁数据的概念**：每行代表一个观察值，每列代表一个变量的值<br>
 - **管道操作符**：连接独立代码，省去中间变量，流水线<br>
 最常用的管道操作符为**%>%**，它将一个函数的输出作为下一个函数的输入<br>
 <br>
-假设需找到data中age大于30的所有行，并排序，代码如下：<br>
+假设需找到`data`中`age`大于`30`的所有行，并排序，代码如下：<br>
 ```{r eval=FALSE}
 filtered_data <- filter(data, age > 30)
 filtered_sorted_data <- arrange(filtered_data, age)
@@ -76,20 +76,20 @@ filtered_sorted_data <- data %>%
 ---
 # <h1 lang="en">6.1 Tidyverse</h1>
 <br><img src="./pic_new/chp6/pipe.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
-- tidyverse常见的管道符如表所示，依赖于magrittr包<br>
-- R 4.1以上版本加入了原生管道操作符|>，不再依赖R包<br>
+- tidyverse常见的管道符如表所示，依赖于`magrittr`包<br>
+- R 4.1.0 以上版本加入了原生管道操作符`|>`<br>
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.1 研究问题 & 数据情况</span></center> <br>
+<span style="font-size: 30px;"> 6.2.1 研究问题 & 数据情况</span></center> <br>
 <br>
-- 课程接下来会以重复Izerman et al., 2018的分析进行问卷数据分析的示例<br>
+- 课程接下来会以重复[IJzerman et al (2018)](https://doi.org/10.1525/collabra.165)的分析进行问卷数据分析的示例<br>
 <br>
-- **研究问题**：复杂社交整合(CSI)是否影响核心体温(CBT)，特别是在低环境温度(DEQ)下<br>
+- **研究问题**：社交复杂度(CSI)是否影响核心体温(CBT)，特别是在离赤道比较远的（低温）地区(DEQ)下<br>
 <br>
 - **研究假设**：<br>
-依据社会体温调节理论，在低环境温度下，具有更高质量社交网络的个体可能有更高的核心体温<br>
-受个体的恋爱情况(romantic)调节<br>
+对于在低温环境中的人来说，（在众多的变量中）社交网络复杂度能够影响个体的核心体温<br>
+这一效应受个体的恋爱状态(romantic)调节<br>
 <br>
 - **研究方法**：路径模型，探索性监督机器学习<br>
 
@@ -133,6 +133,7 @@ ALEX: 述情障碍，探索性监督机器学习需要的变量之一，5点量�
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
 <span style="font-size: 30px;">6.2.1 研究问题 & 数据情况</span></center><br>
+
 ```{r}
 # 导入数据
 df1 <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
@@ -161,14 +162,14 @@ Step3: 处理缺失值[filter, is.na]<br>
 Step4: 计算所需变量[mutate, case when]<br>
 Step5: 分组求统计量 [group_by, summarise]
 
-```{r}
+```{r, message=FALSE}
 # 不要忘记加载包
 library(tidyverse)
 ```
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step1: 选择变量[select]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step1: 选择变量[select]</span></center><br>
 ```{r}
 # 加载包后函数前不需要注明包，此处只是为了提示函数属于哪个包
 # 选择我们需要的变量：Temperature_t1, Temperature_t2, SNI28-32, DEQ, romantic, ALEX1-16
@@ -186,7 +187,7 @@ df1 <- dplyr::select(df1,
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step2: 检查数据类型[summary]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step2: 检查数据类型[summary]</span></center><br>
 ```{r}
 # 检查变量的数据类型
 base::summary(df1)
@@ -194,7 +195,7 @@ base::summary(df1)
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step2: 检查数据类型[as族函数]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step2: 检查数据类型[as族函数]</span></center><br>
 ```{r}
 # 转换数据类型
 # 这里数据类型是正确的，只是示例
@@ -203,40 +204,45 @@ df1 <- dplyr::mutate(df1,
                      Temperature_t2 = as.numeric(Temperature_t2))
 ```
 <br>
-- mutate()函数常用于创建新的变量或修改现有变量<br>
-- 存在多种变式，如mutate_at()通过列名、位置或者列的类型进行选择，mutate_if()对数据框中满足条件的列应用指定的函数<br>
-- 某些函数在计算过程中可能无法处理缺失值，因此可能需要先对缺失值进行处理<br>
-- 注意mutate运算后的数据类型是否符合预期<br>
+- `mutate()`函数常用于创建新的变量或修改现有变量<br>
+- 存在多种变式，如`mutate_at()`通过列名、位置或者列的类型进行选择，`mutate_if()`对数据框中满足条件的列应用指定的函数<br>
+- `mutate()`内使用函数时，同样需要注意缺失值的问题<br>
+- 注意`mutate()`进行转换之后需要进行核查：是否符合预期<br>
 - 注意需要将函数结果赋值给一个新的变量/原始变量完成保存
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step3: 处理缺失值[filter, is.na]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step3: 处理缺失值[filter, is.na]</span></center><br>
+
 ```{r}
 # 按照Temperature, DEQ处理缺失值
 df1 <- filter(df1, !is.na(Temperature_t1) 
               & !is.na(Temperature_t2) & !is.na(DEQ))
 ```
+
 <br>
-- filter()函数用于从数据框中筛选行（观测值），可以通过逻辑运算符组合多个条件<br>
+- filter()函数用于从数据框中筛选**行**（观测值），可以通过逻辑运算符组合多个条件<br>
 - 运算逻辑：遍历每一行，将给定的条件应用于该行，条件为真则保留，保留的行被组成一个新的数据框作为函数的返回值<br>
 - 注意需要将函数结果赋值给一个新的变量/原始变量完成保存
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step4: 计算所需变量[mutate]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[mutate]</span></center><br>
+
 ```{r}
 # 计算每个被试两次核心温度的均值，保存为Temperature
 df1 <- dplyr::mutate(df1, 
                      Temperature = rowMeans(select(df1, starts_with("Temperature"))))
 ```
-- mean()函数用于计算向量或数组的平均值，colMeans()函数用于计算矩阵或数据框的每一列的平均值，rowMeans()函数用于计算矩阵或数据框的每一行的平均值<br>
+
+- `mean()`函数用于计算向量或数组的平均值，`colMeans()`函数用于计算矩阵或数据框的每一列的平均值，`rowMeans()`函数用于计算矩阵或数据框的每一行的平均值<br>
 - 数据类型需为numeric<br>
-- starts_with()用于在数据框中选择列名以特定字符串开头的列
+- `starts_with()`用于在数据框中选择列名以特定字符串开头的列
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step4: 计算所需变量[mutate, case when]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[mutate, case when]</span></center><br>
+
 ```{r}
 # 将4, 12, 14, 16题反向计分，计算ALEX，保存为ALEX
 df1 <- mutate(df1,
@@ -250,21 +256,23 @@ df1 <- mutate(df1,
 
 #也可以写成 case_when(ALEX4 == '1' ~ '5',ALEX4 == '2' ~ '4', ALEX4 == '3' ~ '3', ALEX4 == '4' ~ '2', ALEX4 == '5' ~ '1',TRUE ~ as.character(ALEX4))
 ```
-- case_when()函数是一个强大的条件判断函数，通常用于根据不同的条件生成新的变量或对现有变量进行转换<br>
+
+- `case_when()`函数是一个强大的条件判断函数，通常用于根据不同的条件生成新的变量或对现有变量进行转换<br>
 - 运算逻辑：逐行评估每个条件，并根据条件的结果来确定新值，若条件为真，则用‘~’后的值替换原始值<br>
 - 有多个条件时，按照条件的顺序逐个进行判断，一旦有条件满足，则返回对应的值并停止继续判断其他条件<br>
-- 可以使用 TRUE ~ 或者 TRUE ~ NA来处理未匹配到任何条件的情况，这样可以确保即使所有条件都不满足时，函数也会返回一个默认值，避免产生错误
+- 使用 `TRUE ~` 或者 `TRUE ~ NA`处理未匹配到任何条件的情况，这样可以确保即使所有条件都不满足时，函数也会返回一个默认值，避免产生错误
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step4: 计算所需变量[mutate, case when]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[mutate, case when]</span></center><br>
 - **前后对比**：<br>
 <img src="./pic_new/chp6/contrast.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step4: 计算所需变量[mutate, case when]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[mutate, case when]</span></center><br>
 - 使用case when()要确保条件中使用的值与变量的数据类型匹配<br>
+
 ```{r, eval=FALSE}
 # age为num
 case_when(
@@ -283,7 +291,7 @@ case_when(
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step4: 计算所需变量[mutate, case when]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[mutate]</span></center><br>
 ```{r}
 # 计算ALEX
 df1 <- mutate(df1, 
@@ -295,7 +303,7 @@ df1
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step4: 计算所需变量[mutate, case when]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[bruceR]</span></center><br>
 - bruceR中的反向计分并计算变量的等效操作
 ```{r, eval=FALSE}
 # 创建一个包含需要反向计分的变量的列表
@@ -310,7 +318,7 @@ df1$ALEX <- bruceR::SUM(df1,
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | Step5: 分组描述[group_by, summarise]</span></center><br>
 ```{r}
 # 按Site计算Temperature的平均值
 df1 <- dplyr::group_by(df1, Site)
@@ -325,7 +333,7 @@ df1 <- dplyr::ungroup(df1)
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
-<span style="font-size: 30px;">6.2.2 操作步骤Step5: 分组求统计量 [group_by, summarise]</span></center><br>
+<span style="font-size: 30px;">6.2.2 操作步骤 | 完整的管道操作</span></center><br>
 ```{r}
 # 用管道操作符合并以上代码
 # 使用管道操作符时建议先单独查看变量的数据类型，转换完毕后在进行操作
@@ -360,7 +368,7 @@ _数据的预处理主要依赖`dplyr`包，常见函数总结如下_
 - case when() 重新编码变量<br>
 
 - group_by() 依据某些变量产生的条件，给数据分组 <br>
-  **如果你使用了 "group_by",** <br>
+  **如果使用 "group_by",** <br>
   **一定要在summarise后使用 "ungroup".** <br>
   
 - summarise() 进行某些加减乘除的运算 <br>  
@@ -385,9 +393,9 @@ _数据的预处理主要依赖`dplyr`包，常见函数总结如下_
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
 <span style="font-size: 30px;">6.3.1 研究问题 & 数据情况</span></center> <br>
-- 课程将重复Hu et al.,2020作为反应时数据分析的示例<br>
+- 课程将重复[Hu et al.,2020](https://doi.org/10.1525/collabra.301)作为反应时数据分析的示例<br>
 <br>
-- **研究问题**：探究人们对自我相关刺激的认知优先权存在的条件<br>
+- **研究问题**：探究人们对自我相关刺激的优先加工是否仅在某些条件下发生<br>
 - **研究假设**：无论参与何种任务，与积极概念（好我）建立联结的自我形状会在反应时间和准确性上表现更快更准确<br>
 <img src="./pic_new/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
 
@@ -427,17 +435,17 @@ DT::datatable(head(a1),
 <span style="font-size: 30px;">6.3.2 操作步骤</span></center><br>
 - 数据预处理目标：计算实验条件为Match-Moral时RT的SPE。<br>
 
-Step1: 批量读取并合并数据[for loop]<br>
+**Step1: 批量读取并合并数据[for loop]**<br>
 Step2: 选择变量[select]<br>
 Step3: 处理缺失值[drop_na, filter]<br>
 Step4: 分实验条件计算变量[group_by, summarise]<br>
-Step5: 拆分变量[extract, filter]<br>
-Step6: 将长数据转为宽数据[pivot_wide]<br>
-Step7: 计算实验条件为Match-Moral时RT的SPE[mutate, select]<br>
+**Step5: 拆分变量[extract, filter]**<br>
+**Step6: 将长数据转为宽数据[pivot_wide]**<br>
+Step7: 计算实验条件为Match-Moral时RT的自我优势效应[mutate, select]<br>
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 - 在选用读取数据的函数时要注意函数默认的分隔符（参数sep），如read.csv默认为",", read.table默认为" "<br>
 - .out文件是以空格或制表符分隔的文本文件
 ```{r}
@@ -451,7 +459,7 @@ p1
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 ```{r}
 # 将两个被试的数据合并
 df3 <- base::rbind(p1, p2)
@@ -463,57 +471,60 @@ df3 <- dplyr::bind_rows(p1, p2)
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 - 虽然可以通过逐个导入数据并逐个合并得到最终的数据，但这样费时费力，且代码冗余。<br>
 - 编程中常用迭代结构执行重复操作，如for loop。<br>
 - for loop的基本语法如下：for (variable in sequence) { # 在这里执行循环体操作 }
+
 ```{r}
 # 单个操作循环，打印i + 1
-for (i in 1:10) print(i + 1)
+for (i in 1:10) {
+  print(i + 1)
+}
 ```
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 <img src="./pic_new/chp6/loop.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 ```{r}
 # variable in sequence
 
-for (i in 1:5) print(i)
+for (i in 1:5) {print(i)}
 
-for (i in seq(1, 5)) print(i)
+for (i in seq(1, 5)) {print(i) }
 
 my_vector <- c(1, 2, 3, 4, 5)
-for (i in my_vector) print(i)
+for (i in my_vector) {print(i) }
 
-my_list <- list(a = 1, b = 2, c = 3)
-for (element in my_list) print(element)
+my_list <- list(a = 1, b = 2, c = 3) 
+for (element in my_list) {print(element) }
 
 my_string <- "world"
-for (i in 1:nchar(my_string)) print(substr(my_string, i, i))
+for (i in 1:nchar(my_string)) {print(substr(my_string, i, i)) }
 ```
 
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 ```{r}
 # variable in sequence
 
 my_list <- list(a = 1, b = 2, c = 3)
-for (element in my_list) print(element)
+for (element in my_list) {print(element)}
 
 my_string <- "world"
-for (i in 1:nchar(my_string)) print(substr(my_string, i, i))
+for (i in 1:nchar(my_string)) {print(substr(my_string, i, i))}
 ```
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 ```{r}
 # 加简单条件
 for (i in 1:10) {
@@ -527,12 +538,12 @@ for (i in 1:10) {
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 - 那么要如何利用for loop批量导入数据呢？<br>
 ```{r for loop list.files, error=FALSE}
 # 把所有符合某种标题的文件全部读取到一个list中
 # 使用 full.names 参数获取完整路径的文件列表
-files <- list.files("data/match", pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
+files <- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
 
 head(files, n = 10L)
 
@@ -542,7 +553,7 @@ str(files)
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 ```{r df.mt.out.fl}
 # 定义函数用于数据类型转换
 convert_data_types = function(df) {
@@ -569,7 +580,7 @@ convert_data_types = function(df) {
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 ```{r}
 # 创建一个空的数据框来存储读取的数据
 df3 <- data.frame()
@@ -598,11 +609,11 @@ rm(df, files, i)
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 - 使用lapply也能完成批量导入与合并。lapply思维难度更高，但代码更简洁。<br>
 ```{r error=FALSE}
 # 获取所有的.out文件名
-files <- list.files("data/match", pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
+files <- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
 
 # 读取每个.out文件，并进行数据清洗
 df3 <- lapply(files, function(file) {
@@ -622,17 +633,17 @@ rm(files)
 ```
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step1: 批量读取并合并数据[for loop]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
 - 保存合并的数据文件。<br>
 ```{r error=FALSE}
 #for loop 或 lapply的都可以
 write.csv(df3, 
-          file = "./data/match/match_raw.csv",
+          file = here::here("data", "match","match_raw.csv"),
           row.names = FALSE)
 ```
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step2: 选择变量[select]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step2: 选择变量[select]</span></center><br>
 ```{r example of total part1 rawdata_matchtask,message=FALSE}
 # 选择我们需要的变量
 df3 <- dplyr::select(df3,
@@ -648,7 +659,7 @@ DT::datatable(head(df3, 24),
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step3: 处理缺失值[drop_na, filter]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step3: 处理缺失值[drop_na, filter]</span></center><br>
 ```{r example of total part2 rawdata_matchtask,message=FALSE}
 # 删除缺失值，选择符合标准的被试
 df4 <- tidyr::drop_na(df3) # 删除含有缺失值的行
@@ -662,7 +673,7 @@ DT::datatable(head(df4, 24),
 ```
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step4: 分实验条件计算变量[group_by, summarise]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
 ```{r example of total part3 rawdata_matchtask,message=FALSE}
 # 分实验条件计算
 df4 <- dplyr::group_by(df4, Sub, Shape, Label, Match)
@@ -676,7 +687,7 @@ DT::datatable(head(df4, 24),
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step5: 拆分变量[extract, filter]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
 ```{r example of total part4 rawdata_matchtask}
 # 将Shape变量拆分
 df4 <- tidyr::extract(df4, Shape, into = c("Valence", "Identity"),
@@ -691,7 +702,7 @@ DT::datatable(head(df4, 24),
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.2 操作步骤Step6: 将长数据转为宽数据[pivot_wide]</span></center><br>
+<span style="font-size: 30px;">6.3.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
 ```{r example of total part5 rawdata_matchtask}
 # 将长数据转为宽数据
 df4 <- dplyr::select(df4, Sub, Identity, mean_RT)
@@ -808,9 +819,3 @@ Step5: 按Sub和Shape分组 <br>
 <br>
 Step6: 长转宽，得到每个Shape情况下的信号检测论d值 <br>
 
----
-# <h1 lang="en">6.3 反应时数据</h1>
-<span style="font-size: 30px;">6.3.3 小结</span></center><br>
-- **答案参考**<br>
-<br>
-<img src="./pic_new/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
