@@ -819,3 +819,10 @@ Step5: 按Sub和Shape分组 <br>
 <br>
 Step6: 长转宽，得到每个Shape情况下的信号检测论d值 <br>
 
+
+---
+# <h1 lang="en">6.3 反应时数据</h1>
+<span style="font-size: 30px;">6.3.3 小结</span></center><br>
+- **答案参考**<br>
+<br>
+<img src="./pic_new/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
