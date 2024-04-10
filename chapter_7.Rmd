@@ -116,8 +116,8 @@ files <- list.files(  #<<
 .panel[.panel-name[数据类型转换]
 
 ```{r}
-convert_data_types = function(df) {
-  df = df %>% 
+convert_data_types <- function(df) {
+  df <- df %>% 
     dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
                   Sub = as.numeric(Sub),Age = as.numeric(Age),
                   Sex = as.character(Sex),Hand = as.character(Hand),
@@ -132,15 +132,15 @@ convert_data_types = function(df) {
 
 .panel[.panel-name[批量合并]
 ```{r }
-df3 = data.frame() 
+df3 <- data.frame() 
 
 for (i in seq_along(files)) {
   # 读取
-  df = read.table(files[i], header = TRUE) %>%  
+  df <- read.table(files[i], header = TRUE) %>%  
     dplyr::filter(Date != "Date") %>%  
     convert_data_types() 
   # 合并
-  df3 = dplyr::bind_rows(df3, df) 
+  df3 <- dplyr::bind_rows(df3, df) 
 }
 # 删除临时变量
 rm(df, files, i)
@@ -207,11 +207,11 @@ arrange(value)
 ```{r eval=FALSE}
 ### 是不是更整洁一些
 iris %>%
-  group_by(Species) %>%
-  summarize_if(is.numeric, mean) %>%
-  ungroup() %>%
-  gather(measure, value, -Species) %>%
-  arrange(value)
+  dplyr::group_by(Species) %>%
+  dplyr::summarize_if(is.numeric, mean) %>%
+  dplyr::ungroup() %>%
+  tidyr::gather(measure, value, -Species) %>%
+  dplyr::arrange(value)
 ## 有没有自动挡…
 ```
 
@@ -228,7 +228,8 @@ iris %>%
 
 
 ```{r eval=FALSE}
-## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac)
+## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
+## 或者点击 Code --> Reformat Code (快捷键冲突)
 ## 自动增加空格与缩进
 ## 选中下面代码看看效果，尽管效果有限
 ## 还是平时养成书写习惯更好
@@ -383,23 +384,23 @@ colors = c('#FF5733','#00CED1','#FFD700',
            '#FF4500','#9400D3','#00FF00',
            '#FF1493','#8B0000','#FF69B4','#20B2AA')
 
-orders = data$dataset %>% unique()
-orders = c(orders[-1],orders[1])
+orders <- data$dataset %>% unique()
+orders <- c(orders[-1],orders[1])
 
-pic = list()
+pic <- list()
 for(i in 1:13) {
-    pic[[i]] = 
-  data %>% filter(dataset == orders[i]) %>%
-    ggplot(aes(x, y)) +
-    geom_point(color = colors[i]) +
-    geom_smooth(method = "lm", color = 'black')  +
-    labs(title = paste0('dataset:  ', orders[i])) +
-    bruceR::theme_bruce() +
-    theme(title = element_text(size = 20)) 
+  
+    pic[[i]] <- data %>% filter(dataset == orders[i]) %>%
+      ggplot(aes(x, y)) +
+      geom_point(color = colors[i]) +
+      geom_smooth(method = "lm", color = 'black')  +
+      labs(title = paste0('dataset:  ', orders[i])) +
+      bruceR::theme_bruce() +
+      theme(title = element_text(size = 20)) 
 }
 
 gg_record(
-  dir = file.path(tempdir(), "recording"), 
+  dir <- file.path(tempdir(), "recording"), 
   device = "png",
   width = 5,
   height = 5,
@@ -444,12 +445,12 @@ layout: true
 # 7.1  探索性数据分析
 
 ---
-## What is exploratory data analysis?
-.bigfont[在介绍描述性统计和可视化之前，我们先了解一个概念：  
+
+.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
 **探索性数据分析(Exploratory Data Analysis, EDA)**
 ]
 
-> In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their maincharacteristics, often with visual methods (Wikipedia).  
+> In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
 
 
 ```{r,echo=FALSE,out.width="50%",fig.align='center'}
@@ -459,8 +460,8 @@ knitr::include_graphics("https://blog.escueladedatosvivos.ai/content/images/2020
 
 
 ---
-## What is exploratory data analysis?
-.bigfont[要进行EDA，首先要了解自己的数据，并提出有质量的问题。但是提出有质量的问题前，我们可以先从几个基础的简单问题开始:]
+
+.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
 
 .pull-left[
 .bigfont[
@@ -476,10 +477,10 @@ knitr::include_graphics("https://blog.escueladedatosvivos.ai/content/images/2020
 
 ```{r eval = T}
 # 读取数据
-pg_raw = bruceR::import(here::here(
+pg_raw <- bruceR::import(here::here(
   "data", "penguin","penguin_rawdata.csv"))
 
-mt_raw = bruceR::import(here::here(
+mt_raw <- bruceR::import(here::here(
   "data", "match","match_raw.csv")) 
 ```
 
@@ -494,7 +495,8 @@ DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输
 
 .panel[.panel-name[`str`]
 ```{r}
-mt_raw %>% str() 
+mt_raw %>% 
+  str() 
 ```
 
 ]]]
@@ -505,31 +507,40 @@ mt_raw %>% str()
 .panelset[
 .panel[.panel-name[`summary`]
 ```{r,out.width="10%"}
-summary(mt_raw) %>% knitr::kable() # 注：kable函数只为了输出
+summary(mt_raw) %>% 
+  knitr::kable() # 注：kable函数只为了输出
 ```
 
 
 .panel[.panel-name[`skimr::skim()--1`]
 ```{r}
-skimr::skim(mt_raw) %>% capture.output() %>% .[1:12]
+skimr::skim(mt_raw) %>% 
+  capture.output() %>% 
+  .[1:12]
 ```
 
 .panel[.panel-name[`skimr::skim()--2`]
 
 ```{r}
-skimr::skim(mt_raw) %>% capture.output() %>% .[13:24]
+skimr::skim(mt_raw) %>% 
+  capture.output() %>% 
+  .[13:24]
 ```
 
 
 .panel[.panel-name[`skimr::skim()--3`]
 ```{r}
-skimr::skim(mt_raw) %>% capture.output() %>% .[25:41]
+skimr::skim(mt_raw) %>% 
+  capture.output() %>% 
+  .[25:41]
 ```
 
 .panel[.panel-name[`bruceR::Describe()`]
 
 ```{r,warning=FALSE}
-bruceR::Describe(mt_raw) %>% capture.output() %>% .[2:17] ## 可以使用 file参数输出 Word
+bruceR::Describe(mt_raw) %>% 
+  capture.output() %>% 
+  .[2:17] ## 可以使用 file参数输出 Word
 ```
 
 
@@ -678,7 +689,7 @@ knitr::include_graphics('https://psyteachr.github.io/data-skills-v1/images/layer
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
 # 以penguin问卷中前后体温为例
 
-p1 = pg_raw %>% 
+p1 <- pg_raw %>% 
   ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
              y = Temperature_t2)) 
 p1 ## 坐标轴名称已对应，虽然图片为空
@@ -697,8 +708,11 @@ p1 + geom_point() + geom_smooth(method = 'lm')
 
 .panel[.panel-name[改变映射]
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
-pg_raw %>% drop_na(Temperature_t1,Temperature_t2,sex) %>% 
-  ggplot(aes(x = Temperature_t1,y = Temperature_t2,color = factor(sex))) + #<<
+pg_raw %>% 
+  drop_na(Temperature_t1,Temperature_t2,sex) %>% 
+  ggplot(aes(x = Temperature_t1, 
+             y = Temperature_t2,
+             color = factor(sex))) +
   geom_point() + geom_smooth()  
 
 ```
@@ -750,7 +764,7 @@ layout: true
 
 .pull-left[
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
-pic_his = mt_raw %>% 
+pic_his <- mt_raw %>% 
   # 确定映射到x轴的变量
   ggplot(aes(x = RT)) + 
   geom_histogram(bins = 40) +
@@ -773,7 +787,7 @@ pic_his
 
 .pull-left[
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
-pic_dens = mt_raw %>% ggplot()+
+pic_dens <- mt_raw %>% ggplot()+
   # 绘制密度曲线
   geom_density(aes(x = RT)) +
   theme_classic()
@@ -820,7 +834,7 @@ mt_raw %>% ggplot(aes(x = RT))+
 ## 直方图 + 密度图
 .pull-left[
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%'}
-pic_mix = mt_raw %>% 
+pic_mix <- mt_raw %>% 
   ggplot(aes(x = RT,
   ## 直方图的统计结果通过after_stat(density)传递给了密度图
         y = after_stat(density))) +  #<<
@@ -845,7 +859,7 @@ pic_mix
 
 .pull-left[
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
-pic_box = mt_raw %>% ggplot(aes(
+pic_box <- mt_raw %>% ggplot(aes(
   x = Label,
   y = RT)) +
   geom_boxplot(staplewidth = 1) +
@@ -962,9 +976,11 @@ layout: false
 ]
 
 #探索
+.bigfont[
+1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
 
-.bigfont[在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？]
-
+2. 学会使用大语言模型进行学习，进行精准地提问。
+]
 
 ---
 # 参考阅读
