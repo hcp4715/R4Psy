@@ -507,6 +507,7 @@ mt_raw %>%
 .panelset[
 .panel[.panel-name[`summary`]
 ```{r,out.width="10%"}
+
 summary(mt_raw) %>% 
   knitr::kable() # 注：kable函数只为了输出
 ```
