@@ -3,745 +3,1127 @@
   <head>
     <title>chapter_7.knit</title>
     <meta charset="utf-8" />
-    <meta name="author" content="" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <meta name="author" content="Pac_B" />
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.27/datatables.js"></script>
+    <script src="libs/datatables-binding-0.32/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 
+
+
+
 class: center, middle
-&lt;span style="font-size: 60px;"&gt;第七章&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;如何进行基本的数据分析 (一) &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;*t*-test和ANOVA&lt;/span&gt; &lt;br&gt;
-&lt;br&gt;
-&lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2023/04/10&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-04-10&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+
+
+
+&lt;style type="text/css"&gt;
+/* ---- extra.css ---- */
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 20px;
+}
+.tit_font{
+font-size: 60px;
+}
+
+&lt;/style&gt;
+
+
+
 
 ---
-class: center, middle
-&lt;span style="font-size: 60px;"&gt;7.1  *t*-test&lt;/span&gt; &lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;回顾*t*检验基础知识&lt;/h1&gt;
-&lt;br&gt;
-&lt;center&gt;
-##  One sample *t*-test：单样本*t*检验
-&lt;/center&gt;
-&lt;br&gt;
-&lt;br&gt;
-### **Compare the sample mean against a fixed value.**
-&lt;br&gt;
-## The hypotheses:
-* `\(H_0\)`: The current sample is sampled from a population with μ of the current value.
-* `\(H_1\)`: The current sample is sampled from a population with μ that different from the current value.
-* The significance level: `\(\alpha\)` = 0.05
----
-# &lt;h1 lang="zh-CN"&gt;回顾*t*检验基础知识 &lt;/h1&gt;
-
-&lt;br&gt;
-## Typical research questions are:与某一特定值比较的三种情况（大于/小于或等于)
-&lt;br&gt;
-
-* whether the mean (m) of the sample is equal to the theoretical mean, `\(\mu\)`?
-* whether the mean (m) of the sample is less than the theoretical mean, `\(\mu\)`?
-* whether the mean (m) of the sample is greater than the theoretical mean, `\(\mu\)`?
-
----
-# &lt;h1 lang="zh-CN"&gt;回顾*t*检验基础知识&lt;/h1&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;In statistics, we can define the corresponding null hypothesis ($H_0$) as follow:&lt;/h2&gt;
-&lt;br&gt;
-
-* `\(H_0\)`: m = μ
-* `\(H_0\)`: m &lt;= μ
-* `\(H_0\)`: m =&gt; μ
-
-&lt;br&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;The corresponding alternative hypotheses (H1) are as follow:&lt;/h2&gt;
-&lt;br&gt;
-&lt;h3 lang="en"&gt;H1:m ≠ μ (not equal to)&lt;/h3&gt;
-&lt;h3 lang="en"&gt;H1:m &gt; μ (greater than)&lt;/h3&gt;
-&lt;h3 lang="en"&gt;H1:m &lt; μ (less than)&lt;/h3&gt;
----
-# &lt;h1 lang="zh-CN"&gt;回顾*t*检验基础知识&lt;/h1&gt;
-&lt;br&gt;
-&lt;center&gt;
-&lt;h2 lang="en"&gt;Two-sample *t*-test ：双样本*t*检验&lt;/h2&gt;
-&lt;/center&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;Dependent(paried) *t*-test&lt;/h2&gt;
-&lt;h3 lang="en"&gt;Population of difference scores has a normal distribution [population normality]&lt;/h3&gt;
-&lt;h3 lang="en"&gt;Correlation between pairs of scores [dependent data]&lt;/h3&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;Independent *t*-test&lt;/h2&gt;
-&lt;br&gt;
-&lt;h3 lang="en"&gt;Population of difference scores has a normal distribution [population normality]&lt;/h3&gt;
-&lt;h3 lang="en"&gt;The variances in two populations are similar [homogeneity of variance]&lt;/h3&gt;
----
-# &lt;h1 lang="zh-CN"&gt;回顾*t*检验基础知识&lt;/h1&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;Dependent (Paired) *t*-test：配对样本*t*检验&lt;/h2&gt;
-&lt;h3 lang="en"&gt;The paired *t*-test is used to compare the means between two related groups of samples. In this case, you have two values (i.e., pair of values) for the same samples.&lt;/h3&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;Independent *t*-test:独立样本*t*检验&lt;/h2&gt;
-&lt;h2 lang="en"&gt;The independent samples *t*-test is used to compare the mean of two independent groups.&lt;/h2&gt;
-&lt;br&gt;
-&lt;h2 lang="en"&gt;Typical research questions are:&lt;/h2&gt;
-&lt;h2 lang="en"&gt;whether the mean of group A (μ) is equal to the mean of group B (μ)?&lt;/h2&gt;
-&lt;h2 lang="en"&gt;whether the mean of group A (μ) is less than the mean of group B (μ)?&lt;/h2&gt;
-&lt;h2 lang="en"&gt;whether the mean of group A (μ) is greater than the mean of group B (μ)?&lt;/h2&gt;
----
-class: center, middle
-&lt;span style="font-size: 60px;"&gt;7.2 *t*-test in R&lt;/span&gt; &lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;几个假想的问题&lt;/h1&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;h3 lang="zh-CN"&gt;1. “在penguin数据中，参与者对于家的依恋水平是否小于/等于/大于均值水平(假设在总体水平上，人们对家庭的依恋水平(HOME)均值为3.5)？”&lt;/h3&gt;
-&lt;br&gt;
-&lt;h3 lang="zh-CN"&gt;2. “在penguin数据中，男女生在亲密关系经验(ECR)中的得分是否存在显著差异？”&lt;/h3&gt;
-&lt;br&gt;
-&lt;h3 lang="zh-CN"&gt;3. “在penguin数据中，参与者在不同时间的温度差异是否具有显著性？”&lt;/h3&gt;
-
----
-
-# &lt;h1 lang="zh-CN"&gt;载入包 - 设置工作路径 - 导入原始数据&lt;/h1&gt;
+# Packages
 
 ```r
-# 检查是否已安装 pacman
-if (!requireNamespace("pacman", quietly = TRUE)) {
-  install.packages("pacman") }   # 如果未安装，则安装包
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
 
-# 使用p_load来载入需要的包
-pacman::p_load("tidyverse", "bruceR")
+
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
+  # 生成课件
+  xaringan,xaringanthemer,xaringanExtra)
+```
+
+
+---
+class: inverse center middle
+.tit_font[
+回顾
+]
+
+???
+-   回顾
+
+-   数据探索与描述统计
+
+-   为什么可视化
+
+-   为什么用 ggplot 画图
+
+-   ggplot 绘图的原理
+
+-   基本图形简介
+  -   散点图
+  -   柱状图
+  -   密度图
+  -   
+
+
+---
+## 7.0.1  批量导入数据
+
+
+
+.panelset[
+.panel[.panel-name[获取地址]
+
+```r
+# 所有数据路径
+*files &lt;- list.files(
+  ## &lt;- &amp; =
+  here::here("data", "match"), 
+  pattern = "data_exp7_rep_match_.*\\.out$", 
+  full.names = TRUE)
+```
+
+
+
+.panel[.panel-name[数据类型转换]
+
+
+```r
+convert_data_types &lt;- function(df) {
+  df &lt;- df %&gt;% 
+    dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),Age = as.numeric(Age),
+                  Sex = as.character(Sex),Hand = as.character(Hand),
+                  Block = as.numeric(Block),Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),Shape = as.character(Shape),
+                  Label = as.character(Label),Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),RT = as.numeric(RT))
+  return(df)
+}
+```
+
+.panel[.panel-name[批量合并]
+
+```r
+df3 &lt;- data.frame() 
+
+for (i in seq_along(files)) {
+  # 读取
+  df &lt;- read.table(files[i], header = TRUE) %&gt;%  
+    dplyr::filter(Date != "Date") %&gt;%  
+    convert_data_types() 
+  # 合并
+  df3 &lt;- dplyr::bind_rows(df3, df) 
+}
+# 删除临时变量
+rm(df, files, i)
+```
+
+.panel[.panel-name[保存数据]
+
+
+```r
+## NOT RUN
+## 上节课介绍了write.csv,也可使用bruceR::export
+bruceR::export(
+  df3, 
+  file = here::here("data", "match","match_raw.csv"))
+
+## 当然，export 不仅可以保存数据，也可以输出模型结果
+```
+
+.panel[.panel-name[修改列名-rename]
+
+```r
+## 修改第一列列名 Date 为小写 date
+df3 %&gt;% dplyr::rename(  ## new_name = old_name
+  date = Date
+) %&gt;% colnames()  
 ```
 
 ```
+##  [1] "date"     "Prac"     "Sub"      "Age"      "Sex"      "Hand"    
+##  [7] "Block"    "Bin"      "Trial"    "Shape"    "Label"    "Match"   
+## [13] "CorrResp" "Resp"     "ACC"      "RT"
+```
+
+```r
+## 将全部列名都变成小写
+df3 %&gt;% dplyr::rename_with(
+  ## 将字符向量全部变成小写； ~ 声明这是一个函数，.代表前面的数据(df3)传到.所在的位置
+* ~tolower(.)
+  ## 即使用 tolower()对所有列名进行批量处理
+  ##
+) %&gt;% colnames()
+```
+
+```
+##  [1] "date"     "prac"     "sub"      "age"      "sex"      "hand"    
+##  [7] "block"    "bin"      "trial"    "shape"    "label"    "match"   
+## [13] "corrresp" "resp"     "acc"      "rt"
+```
+
+
+
+]
+]
+]
+]
+]
+]
+
+???
+-   解释 变量赋值与参数接受符号差别
+
+-   代码规范性，R 对缩进换行不敏感
+
+-   export 函数
+
+
+---
+## 7.0.2  代码书写规范
+
+
+```r
+## 看起来如何？
+iris %&gt;% group_by(Species) %&gt;% summarize_all(mean) %&gt;%
+ungroup %&gt;% gather(measure, value, -Species) %&gt;%
+arrange(value)
+```
+
+--
+
+```r
+### 是不是更整洁一些
+iris %&gt;%
+  dplyr::group_by(Species) %&gt;%
+  dplyr::summarize_if(is.numeric, mean) %&gt;%
+  dplyr::ungroup() %&gt;%
+  tidyr::gather(measure, value, -Species) %&gt;%
+  dplyr::arrange(value)
+## 有没有自动挡…
+```
+
+
+.footnote[
+-----
+参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
+]
+
+
+
+---
+## 7.0.2  代码书写规范
+
+
+
+```r
+## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
+## 或者点击 Code --&gt; Reformat Code (快捷键冲突)
+## 自动增加空格与缩进
+## 选中下面代码看看效果，尽管效果有限
+## 还是平时养成书写习惯更好
+
+files&lt;-list.files(
+here::here("data","match"), 
+pattern="data_exp7_rep_match_.*\\.out$", 
+full.names=TRUE)
+```
+
+
+
+.footnote[
+-----
+参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
+]
+
+
+---
+## 7.0.3  数据清洗
+.pull-left[
+### 列操作
+-   增加、修改、删除(mutate)
+-   列筛选(select &amp; tidyseletion)
+
+### 行操作
+
+-   条件过滤(filter)
+-   行索引(slice)
+
+### 数据框
+-   列/行合并：
+    bind_cols &amp; bind_rows
+
+-   匹配合并：
+    left_join, right_join, full_join
+
+-   修改列名：
+    rownames or dplyr::rename
+    
+-   长/宽数据转换：
+    pivot_longer, pivot_wider
+]
+
+
+.pull-right[
+
+### 分组计算
+
+-   group_by/ungroup
+
+-   summarise
+
+-   rowMeans or bruceR::MEAN(or SUM)
+
+-   case_when()
+
+-   多列选取：across()
+
+&lt;br&gt;
+### 字符串(stringr package)
+-   str_xxx()系列  
+
+&lt;br&gt;
+### 函数式编程(purrr package)
+
+-   map()系列，类似 apply() 系列  
+
+]
+
+
+
+---
+class: center,middle
+
+
+&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
+
+
+---
+class: inverse,center,middle
+
+.bigfont[
+数据已经清洗完成，下面应该做的是……]
+--
+.bigfont[
+&lt;br&gt;
+查看数据内容？
+&lt;br&gt;
+建模分析？
+&lt;br&gt;
+......
+]
+
+
+--
+.bigfont[
+先看一个数据(quartets::datasaurus_dozen)
+]
+
+
+
+---
+
+.panelset[
+.panel[.panel-name[view]
+
+```r
+quartets::datasaurus_dozen %&gt;%  ## 包中的数据
+  head(10)
+```
+
+```
+## # A tibble: 10 × 3
+##    dataset     x     y
+##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+##  1 dino     55.4  97.2
+##  2 dino     51.5  96.0
+##  3 dino     46.2  94.5
+##  4 dino     42.8  91.4
+##  5 dino     40.8  88.3
+##  6 dino     38.7  84.9
+##  7 dino     35.6  79.9
+##  8 dino     33.1  77.6
+##  9 dino     29.0  74.5
+## 10 dino     26.2  71.4
+```
+
+.panel[.panel-name[`str()`]
+
+```r
+quartets::datasaurus_dozen %&gt;%  ## 包中的数据
+  str()
+```
+
+```
+## tibble [1,846 × 3] (S3: tbl_df/tbl/data.frame)
+##  $ dataset: chr [1:1846] "dino" "dino" "dino" "dino" ...
+##  $ x      : num [1:1846] 55.4 51.5 46.2 42.8 40.8 ...
+##  $ y      : num [1:1846] 97.2 96 94.5 91.4 88.3 ...
+##  - attr(*, "spec")=
+##   .. cols(
+##   ..   dataset = col_character(),
+##   ..   x = col_double(),
+##   ..   y = col_double()
+##   .. )
+```
+
+
+.panel[.panel-name[`summary()`]
+
+```r
+summary(datasaurus_dozen)
+```
+
+```
+##    dataset                x               y           
+##  Length:1846        Min.   :15.56   Min.   : 0.01512  
+##  Class :character   1st Qu.:41.07   1st Qu.:22.56107  
+##  Mode  :character   Median :52.59   Median :47.59445  
+##                     Mean   :54.27   Mean   :47.83510  
+##                     3rd Qu.:67.28   3rd Qu.:71.81078  
+##                     Max.   :98.29   Max.   :99.69468
+```
+
+
+]]]]
+
+
+---
+class: middle,center
+.tit_font[
+好像没什么问题…  
+
+]
+
+--
+.tit_font[
+&lt;br&gt;
+作图看看呢
+]
+
+---
 ## 
-## bruceR (version 0.8.9)
-## BRoadly Useful Convenient and Efficient R functions
-## 
-## Packages also loaded:
-## √ dplyr     	√ emmeans     	√ ggplot2
-## √ tidyr     	√ effectsize  	√ ggtext
-## √ stringr   	√ performance 	√ cowplot
-## √ forcats   	√ lmerTest    	√ see
-## √ data.table
-## 
-## Main functions of `bruceR`:
-## cc()          	Describe() 	TTEST()
-## add()         	Freq()     	MANOVA()
-## .mean()       	Corr()     	EMMEANS()
-## set.wd()      	Alpha()    	PROCESS()
-## import()      	EFA()      	model_summary()
-## print_table() 	CFA()      	lavaan_summary()
-## 
-## https://psychbruce.github.io/bruceR/
-## 
-## NEWS: A new version of bruceR (0.8.10) is available on 2023-03-03!
-## ***** Please Update *****
-## install.packages("bruceR", dep=TRUE)
-## 
-## These R packages are dependencies of `bruceR` but not installed:
-## lmtest, vars, phia, GGally, GPArotation
-## ***** Please Install All Dependencies *****
-## install.packages("bruceR", dep=TRUE)
-```
+
+
+&lt;img src="pic_new/chp7/dino.gif" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+
+
 
 ---
-# &lt;h1 lang="zh-CN"&gt;载入包 - 设置工作路径 - 导入原始数据&lt;/h1&gt;
-
-```r
-# WD &lt;-  here::here()
-df.pg.raw &lt;-  read.csv('./data/penguin/penguin_rawdata.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE)
-```
-
-<div id="htmlwidget-6dfbbe551d46ce48a332" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6dfbbe551d46ce48a332">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[1975,1995,1995,1988,1991,1995,1996,1973,1996,1996],[1,2,4,2,2,2,1,3,2,3],[1,2,1,3,1,3,1,3,3,3],[1,2,1,4,1,1,1,2,1,1],[2,2,2,5,5,3,1,3,3,2],[2,2,4,3,2,2,4,4,2,4],[1,2,1,4,2,1,1,4,2,1],[2,2,4,2,3,1,2,4,2,2],[2,2,1,4,4,2,1,4,2,4],[4,4,1,4,1,1,4,4,2,4],[1,2,2,3,1,2,2,5,2,1],[1,2,1,2,2,1,1,3,1,4],[2,2,1,2,1,2,2,2,2,1],[4,2,2,4,2,3,4,2,2,2],[3,2,1,2,4,4,3,3,4,3],[4,3,1,4,4,5,5,4,3,5],[2,2,1,3,2,4,5,1,2,4],[3.72222222222222,4.05555555555556,1.44444444444444,4.72222222222222,2.11111111111111,2,2.55555555555556,3.05555555555556,3.55555555555556,4.38888888888889],[6,0,0,2,0,0,null,0,0,0],[3.11111111111111,4.88888888888889,1.33333333333333,3.88888888888889,4.66666666666667,3.33333333333333,3.11111111111111,3.55555555555556,3.33333333333333,3.22222222222222],[3.44444444444444,2,2,3,1.77777777777778,2.44444444444444,3.77777777777778,3.33333333333333,1.88888888888889,4.22222222222222],[89,89,89,89,89,89,89,89,89,89],[3.27777777777778,3,1.61111111111111,3.94444444444444,4.94444444444444,3.77777777777778,6.44444444444444,3.22222222222222,4,5.27777777777778],[15,null,null,null,null,null,null,10,null,1],[1.63636363636364,2.18181818181818,2,3.27272727272727,2.18181818181818,1.72727272727273,1.72727272727273,3.54545454545455,2,2.63636363636364],[1,1,1,2,1,1,1,1,1,1],[5,6,1,3,1,1,2,3,4,5],[5,4,1,6,1,1,1,2,4,6],[3,2,1,6,1,1,4,3,4,6],[5,5,1,5,1,2,1,2,4,5],[5,5,1,4,1,2,4,3,4,4],[3,2,1,4,5,1,1,3,1,3],[1,3,1,3,2,1,2,3,4,5],[6,5,1,3,1,2,7,3,4,7],[5,2,1,4,7,6,1,3,4,3],[2,3,1,4,1,2,4,1,4,3],[6,7,1,6,6,2,2,5,2,6],[3,4,1,5,1,2,1,2,4,4],[3,3,1,6,2,4,2,5,4,4],[2,3,7,5,1,1,1,4,1,2],[3,4,1,5,2,2,1,5,4,1],[3,5,3,5,1,1,2,3,4,4],[6,5,1,6,2,3,6,3,4,7],[1,5,1,5,2,2,4,2,4,4],[2,3,2,5,1,5,7,3,4,5],[2,4,2,5,7,5,1,2,4,7],[5,3,2,5,2,4,6,4,4,5],[3,2,2,4,5,4,7,3,4,5],[3,2,2,3,2,3,7,3,4,6],[2,3,1,4,4,4,7,3,4,5],[5,3,1,6,2,3,7,4,4,6],[5,4,1,3,6,3,7,4,4,7],[3,5,1,3,7,1,7,4,4,7],[2,3,1,4,6,3,6,3,4,4],[4,2,2,5,6,6,6,3,4,4],[2,2,2,3,6,5,7,2,4,5],[3,4,1,4,7,4,7,2,4,3],[3,2,2,5,2,3,7,3,4,6],[4,3,3,3,7,4,6,3,4,5],[5,3,1,2,6,5,7,4,4,6],[4,3,1,3,6,3,7,6,4,5],[2,3,2,4,7,3,7,2,4,4],["9:23:38","9:23:26","8:57:08","8:55:14","8:54:35","8:39:12","8:32:08","8:28:57","8:28:03","8:25:57"],[3,2.2,1.2,3,2.6,3.6,3.8,2.4,2.6,3],[2,2,2,2,2,2,2,2,2,2],[0,0,12,0,5,0,null,1,0,2],[4,4,4,3,4,4,4,1,3,3],[4,5,1,5,5,4,5,3,3,4],[3,5,1,4,5,4,2,3,3,5],[4,5,4,5,5,4,4,2,4,3],[3,5,1,5,5,4,5,4,5,3],[3,5,1,4,4,4,2,3,4,4],[2,4,1,2,5,2,1,4,3,2],[4,5,1,2,4,2,5,5,2,2],[3,5,1,4,4,3,1,4,3,3],[2,5,1,4,5,3,3,4,3,3],[4,1,5,5,1,3,2,3,3,4],[4,2,6,4,1,3,2,3,3,5],[5,6,5,3,3,3,2,2,2,1],[4,2,4,1,2,2,2,2,1,3],[4,3,3,2,2,2,2,2,3,2],[1,2,1,2,2,4,2,3,3,3],[2,2,1,2,1,4,2,3,1,2],[17,28,24,19,29,33,53,17,17,19],[4.33333333333333,6.5,6.83333333333333,3.5,1.5,2,5.83333333333333,6.33333333333333,5.66666666666667,5.16666666666667],[2.27272727272727,2.63636363636364,2.18181818181818,2,1.90909090909091,2.45454545454545,2.81818181818182,2.54545454545455,1.81818181818182,3.90909090909091],[2,3,3,1,3,4,4,2,2,5],[2,2,4,1,2,4,4,3,3,4],[2,3,2,2,1,2,2,3,2,5],[4,3,4,3,4,4,2,2,2,4],[2,3,1,2,1,3,3,3,2,3],[2,2,1,2,1,1,2,2,1,3],[2,2,1,2,1,2,2,4,2,4],[2,3,3,1,1,1,2,3,2,3],[3,3,3,2,2,2,4,2,1,3],[2,3,1,4,2,1,2,1,1,4],[2,2,1,2,3,3,4,3,2,5],[4,2,1,2,2,3,3,3,3,4],[4,2,4,4,1,3,4,4,2,4],[2,2,1,3,1,2,5,3,1,2],[5,2,4,2,1,3,4,3,4,4],[2,2,1,3,1,2,1,2,3,5],[2,2,1,2,3,2,3,4,1,4],[4,2,1,3,2,2,5,3,1,5],[4,2,1,4,1,3,5,4,1,5],[4,2,4,4,4,2,4,4,1,5],[2,2,1,1,2,2,2,2,2,2],[2,4,2,4,3,5,2,1,3,3],[2,4,3,2,5,5,4,4,3,4],[2,4,3,1,5,5,2,5,5,5],[1,4,2,1,3,2,2,2,5,1],[1,4,4,2,5,3,1,2,5,2],[4,3,2,1,5,4,3,3,3,1],[2,4,4,2,5,3,2,3,4,2],[2,2,1,3,4,3,2,2,5,4],[5,4,3,4,4,5,4,4,3,3],[4,3,5,3,3,5,5,3,4,2],[3,4,4,2,4,5,3,2,2,5],[5,5,4,2,4,4,1,3,4,3],[4,4,4,2,4,3,2,2,2,2],[2.84615384615385,3.76923076923077,3.15384615384615,2.23076923076923,4.15384615384615,4,2.53846153846154,2.76923076923077,3.69230769230769,2.84615384615385],[1,1,1,2,1,1,2,1,1,2],[1,2,2,2,2,2,2,1,2,1],[2,1,1,1,2,2,2,4,2,2],[1,1,1,1,1,1,1,1,1,1],[null,null,null,null,null,null,null,null,null,null],[4,4,4,4,2,4,4,4,4,4],[4,4,4,4,2,4,4,2,4,4],[5,1,4,5,5,5,5,5,5,5],[null,null,4,null,null,null,null,null,null,null],[1,8,2,1,8,2,3,8,2,6],[null,6,2,null,5,1,2,3,2,3],[6,4,5,5,7,5,8,4,3,8],[3,1,5,1,3,5,8,4,2,8],[1,1,1,1,2,1,1,1,1,1],[null,null,null,null,8,null,null,null,null,null],[1,2,2,1,1,2,2,2,2,2],[null,8,8,null,null,8,8,8,8,8],[3,3,2,3,3,1,1,1,1,1],[2,8,1,8,1,null,null,null,null,null],[6,5,6,4,8,null,null,null,null,null],[1,3,1,1,1,8,6,4,1,3],[1,1,1,1,1,1,1,2,1,1],[null,null,null,null,null,null,null,2,null,null],[1,1,1,2,1,2,2,2,2,1],[" "," "," "," "," ","Rowing Club","University Friends","ODAA","Oxford Latin Speaking Society"," "],[" "," "," "," "," ","Rugby Club","Business Social"," ","Oxford Latin Conversation Society"," "],[" "," "," "," "," "," ","Lecturers/ Advisors"," ","Plato Reading Group"," "],[" "," "," "," "," "," ","Friends from home"," "," "," "],[" "," "," "," "," "," ","Neighbors"," "," "," "],[null,null,null,null,null,7,20,1,2,null],[null,null,null,null,null,7,15,null,4,null],[null,null,null,null,null,null,5,null,1,null],[null,null,null,null,null,null,9,null,null,null],[null,null,null,null,null,null,6,null,null,null],[6,6,7,2,1,1,6,6,7,7],[5,7,7,5,2,2,7,6,7,4],[5,6,7,3,2,3,5,7,6,5],[3,7,7,4,1,2,5,6,6,5],[2,6,7,5,2,2,6,7,5,5],[5,7,6,2,1,2,6,6,3,5],[4,6,6,4,1,2,5,6,3,4],[5,7,8,5,7,6,null,7,6,6],[1,2,3,1,2,4,null,2,2,3],[4,2,4,4,1,2,2,3,3,1],[4,4,5,2,1,4,4,2,5,4],[4,3,4,3,1,4,2,3,4,4],[5,3,4,3,4,4,4,4,2,4],[2,3,4,4,4,4,5,2,2,3],[2,4,4,3,1,3,4,3,1,3],[2,5,4,3,3,4,5,4,2,2],[2,2,4,3,4,3,5,3,2,4],[4,5,5,2,1,2,4,2,4,5],[2,3,2,2,1,4,1,4,4,5],[2,2,1,2,1,2,2,2,2,1],[1,2,2,2,4,4,4,2,2,2],[4,4,4,3,4,2,2,3,2,1],[5,4,2,3,2,4,3,4,4,4],[4,4,2,3,3,1,2,4,5,3],[2,3,4,4,4,5,5,4,4,4],[2,3,5,4,4,3,2,4,2,2],[4,3,4,2,4,3,4,3,3,2],[3,3,5,2,4,4,4,4,3,3],[2,3,1,3,5,4,1,3,2,4],[4,3,4,2,4,4,5,4,3,5],[3,3,5,4,4,3,2,2,3,3],[2,3,1,3,4,3,2,3,4,3],[3,3,1,4,1,2,2,2,3,3],[4,3,5,3,1,2,5,1,4,4],[3,3,3,2,1,3,3,2,3,3],[4,3,1,4,4,4,2,4,1,1],[4,5,4,2,1,3,1,4,4,5],[3,5,4,4,1,2,1,3,5,5],[3,2,2,4,4,2,5,2,2,4],[2,4,2,5,1,2,1,3,2,4],[4,3,1,2,4,2,5,1,1,4],[4,3,2,2,3,3,1,4,3,4],[1,4,3,4,4,2,1,3,2,2],[2,4,2,3,5,4,2,5,1,4],[2,4,2,4,5,4,4,4,2,4],[4,4,4,3,4,4,2,4,2,4],[3,4,2,4,4,4,4,5,5,1],[4,2,2,3,4,4,5,2,2,4],[5,3,3,2,4,2,2,2,2,4],[4,3,2,3,3,3,2,1,2,4],[4,3,5,2,4,4,4,4,4,4],[1,4,2,3,4,2,2,3,2,3],[1,2,2,4,4,2,1,2,1,2],[4,3,2,3,1,2,1,4,4,2],[4,4,4,2,1,4,1,4,3,3],[3,3,4,3,4,2,4,3,3,4],[1,2,5,4,4,2,1,2,1,2],[2,3,5,4,4,2,1,2,1,2],[4,3,5,4,4,4,3,3,3,4],[4,4,2,5,1,3,5,2,4,5],[2,4,5,3,1,2,5,4,2,4],[2,4,4,3,4,2,1,3,2,2],[4,3,4,3,5,2,4,4,2,4],[2,4,2,2,4,3,3,2,2,4],[2,4,1,2,4,2,2,2,2,2],[1,2,5,4,1,1,4,2,2,2],[3.07692307692308,2.46153846153846,2.38461538461538,2.84615384615385,2.53846153846154,2.07692307692308,1.53846153846154,3,2.61538461538462,3.15384615384615],[4,2,3,3,3,2,1,4,5,3],[2,3,3,3,4,2,2,3,2,4],[4,3,4,4,3,3,1,3,3,5],[4,3,1,2,2,2,2,3,2,4],[4,2,2,3,2,2,2,3,2,3],[3,2,1,2,1,2,2,3,2,1],[4,2,2,3,3,2,1,4,2,3],[3,2,2,2,2,2,1,4,3,4],[3,2,3,3,2,2,2,1,2,3],[2,3,3,3,3,2,1,3,4,3],[4,2,3,4,3,2,2,2,1,2],[3,4,4,3,5,4,4,4,5,4],[2,4,2,3,2,2,2,3,3,2],[1,2,2,2,3,2,1,3,3,4],[34.9,35.8,34,36.9,35.3,34.7,36,36.5,34.7,35.9],[35.9,36,36.2,37,36.1,36.4,36.3,36.6,36.3,36.3],[2,2,2,2,4,4,2,2,2,2],[35.4,35.9,35.1,36.95,35.7,35.55,36.15,36.55,35.5,36.1],[1,1,1,1,1,1,1,1,1,1],[-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667,-1.66666666666667],[5,5,5,5,5,5,5,5,5,5],[1,1,1,1,1,1,1,1,1,1],[0.186319647739787,0.472682850177291,-1.77049556891649,1.0454092550523,-1.19776916404149,-1.29322356485399,-0.815951560791479,-0.386406757135223,0.0431380465210342,0.759046052614796],[-0.00190690952064737,-0.249805147204807,-1.48929633562561,0.593048860921336,1.48548251658431,0.44430991831084,2.82413300007877,-0.0514865570574791,0.642628508458168,1.7829604018053],["Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford","Oxford"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>age<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>anxiety<\/th>\n      <th>artgluctot<\/th>\n      <th>attachhome<\/th>\n      <th>attachphone<\/th>\n      <th>AvgHumidity<\/th>\n      <th>avoidance<\/th>\n      <th>cigs<\/th>\n      <th>DIDF<\/th>\n      <th>eatdrink<\/th>\n      <th>ECR1<\/th>\n      <th>ECR2<\/th>\n      <th>ECR3<\/th>\n      <th>ECR4<\/th>\n      <th>ECR5<\/th>\n      <th>ECR6<\/th>\n      <th>ECR7<\/th>\n      <th>ECR8<\/th>\n      <th>ECR9<\/th>\n      <th>ECR10<\/th>\n      <th>ECR11<\/th>\n      <th>ECR12<\/th>\n      <th>ECR13<\/th>\n      <th>ECR14<\/th>\n      <th>ECR15<\/th>\n      <th>ECR16<\/th>\n      <th>ECR17<\/th>\n      <th>ECR18<\/th>\n      <th>ECR19<\/th>\n      <th>ECR20<\/th>\n      <th>ECR21<\/th>\n      <th>ECR22<\/th>\n      <th>ECR23<\/th>\n      <th>ECR24<\/th>\n      <th>ECR25<\/th>\n      <th>ECR26<\/th>\n      <th>ECR27<\/th>\n      <th>ECR28<\/th>\n      <th>ECR29<\/th>\n      <th>ECR30<\/th>\n      <th>ECR31<\/th>\n      <th>ECR32<\/th>\n      <th>ECR33<\/th>\n      <th>ECR34<\/th>\n      <th>ECR35<\/th>\n      <th>ECR36<\/th>\n      <th>endtime<\/th>\n      <th>EOT<\/th>\n      <th>exercise<\/th>\n      <th>gluctot<\/th>\n      <th>health<\/th>\n      <th>HOME1<\/th>\n      <th>HOME2<\/th>\n      <th>HOME3<\/th>\n      <th>HOME4<\/th>\n      <th>HOME5<\/th>\n      <th>HOME6<\/th>\n      <th>HOME7<\/th>\n      <th>HOME8<\/th>\n      <th>HOME9<\/th>\n      <th>KAMF1<\/th>\n      <th>KAMF2<\/th>\n      <th>KAMF3<\/th>\n      <th>KAMF4<\/th>\n      <th>KAMF5<\/th>\n      <th>KAMF6<\/th>\n      <th>KAMF7<\/th>\n      <th>networksize<\/th>\n      <th>nostalgia<\/th>\n      <th>onlineid<\/th>\n      <th>onlineid1<\/th>\n      <th>onlineid2<\/th>\n      <th>onlineid3<\/th>\n      <th>onlineid4<\/th>\n      <th>onlineid5<\/th>\n      <th>onlineid6<\/th>\n      <th>onlineid7<\/th>\n      <th>onlineid8<\/th>\n      <th>onlineid9<\/th>\n      <th>onlineid10<\/th>\n      <th>onlineide11<\/th>\n      <th>phone1<\/th>\n      <th>phone2<\/th>\n      <th>phone3<\/th>\n      <th>phone4<\/th>\n      <th>phone5<\/th>\n      <th>phone6<\/th>\n      <th>phone7<\/th>\n      <th>phone8<\/th>\n      <th>phone9<\/th>\n      <th>romantic<\/th>\n      <th>scontrol1<\/th>\n      <th>scontrol2<\/th>\n      <th>scontrol3<\/th>\n      <th>scontrol4<\/th>\n      <th>scontrol5<\/th>\n      <th>scontrol6<\/th>\n      <th>scontrol7<\/th>\n      <th>scontrol8<\/th>\n      <th>scontrol9<\/th>\n      <th>scontrol10<\/th>\n      <th>scontrol11<\/th>\n      <th>scontrol12<\/th>\n      <th>scontrol13<\/th>\n      <th>selfcontrol<\/th>\n      <th>sex<\/th>\n      <th>smoke<\/th>\n      <th>SNI1<\/th>\n      <th>SNI2<\/th>\n      <th>SNI3<\/th>\n      <th>SNI4<\/th>\n      <th>SNI5<\/th>\n      <th>SNI6<\/th>\n      <th>SNI7<\/th>\n      <th>SNI8<\/th>\n      <th>SNI9<\/th>\n      <th>SNI10<\/th>\n      <th>SNI11<\/th>\n      <th>SNI12<\/th>\n      <th>SNI13<\/th>\n      <th>SNI14<\/th>\n      <th>SNI15<\/th>\n      <th>SNI16<\/th>\n      <th>SNI17<\/th>\n      <th>SNI18<\/th>\n      <th>SNI19<\/th>\n      <th>SNI20<\/th>\n      <th>SNI21<\/th>\n      <th>SNI22<\/th>\n      <th>SNI23<\/th>\n      <th>SNI24<\/th>\n      <th>SNI25<\/th>\n      <th>SNI26<\/th>\n      <th>SNI27<\/th>\n      <th>SNI28<\/th>\n      <th>SNI29<\/th>\n      <th>SNI30<\/th>\n      <th>SNI31<\/th>\n      <th>SNI32<\/th>\n      <th>SNS1<\/th>\n      <th>SNS2<\/th>\n      <th>SNS3<\/th>\n      <th>SNS4<\/th>\n      <th>SNS5<\/th>\n      <th>SNS6<\/th>\n      <th>SNS7<\/th>\n      <th>socialdiversity<\/th>\n      <th>socialembedded<\/th>\n      <th>STRAQ_1<\/th>\n      <th>STRAQ_2<\/th>\n      <th>STRAQ_3<\/th>\n      <th>STRAQ_4<\/th>\n      <th>STRAQ_6<\/th>\n      <th>STRAQ_7<\/th>\n      <th>STRAQ_8<\/th>\n      <th>STRAQ_9<\/th>\n      <th>STRAQ_10<\/th>\n      <th>STRAQ_11<\/th>\n      <th>STRAQ_12<\/th>\n      <th>STRAQ_19<\/th>\n      <th>STRAQ_20<\/th>\n      <th>STRAQ_21<\/th>\n      <th>STRAQ_22<\/th>\n      <th>STRAQ_23<\/th>\n      <th>STRAQ_24<\/th>\n      <th>STRAQ_25<\/th>\n      <th>STRAQ_26<\/th>\n      <th>STRAQ_27<\/th>\n      <th>STRAQ_28<\/th>\n      <th>STRAQ_29<\/th>\n      <th>STRAQ_30<\/th>\n      <th>STRAQ_31<\/th>\n      <th>STRAQ_32<\/th>\n      <th>STRAQ_33<\/th>\n      <th>STRAQ_5<\/th>\n      <th>STRAQ_13<\/th>\n      <th>STRAQ_14<\/th>\n      <th>STRAQ_15<\/th>\n      <th>STRAQ_16<\/th>\n      <th>STRAQ_17<\/th>\n      <th>STRAQ_18<\/th>\n      <th>STRAQ_34<\/th>\n      <th>STRAQ_35<\/th>\n      <th>STRAQ_36<\/th>\n      <th>STRAQ_37<\/th>\n      <th>STRAQ_38<\/th>\n      <th>STRAQ_39<\/th>\n      <th>STRAQ_40<\/th>\n      <th>STRAQ_41<\/th>\n      <th>STRAQ_42<\/th>\n      <th>STRAQ_43<\/th>\n      <th>STRAQ_44<\/th>\n      <th>STRAQ_45<\/th>\n      <th>STRAQ_46<\/th>\n      <th>STRAQ_47<\/th>\n      <th>STRAQ_48<\/th>\n      <th>STRAQ_49<\/th>\n      <th>STRAQ_50<\/th>\n      <th>STRAQ_51<\/th>\n      <th>STRAQ_52<\/th>\n      <th>STRAQ_53<\/th>\n      <th>STRAQ_54<\/th>\n      <th>STRAQ_55<\/th>\n      <th>STRAQ_56<\/th>\n      <th>STRAQ_57<\/th>\n      <th>stress<\/th>\n      <th>stress1<\/th>\n      <th>stress2<\/th>\n      <th>stress3<\/th>\n      <th>stress4<\/th>\n      <th>stress5<\/th>\n      <th>stress6<\/th>\n      <th>stress7<\/th>\n      <th>stress8<\/th>\n      <th>stress9<\/th>\n      <th>stress10<\/th>\n      <th>stress11<\/th>\n      <th>stress12<\/th>\n      <th>stress13<\/th>\n      <th>stress14<\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>thermotype<\/th>\n      <th>avgtemp<\/th>\n      <th>filter_.<\/th>\n      <th>mintemp<\/th>\n      <th>language<\/th>\n      <th>langfamily<\/th>\n      <th>Zanxiety<\/th>\n      <th>Zavoidance<\/th>\n      <th>Site<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+layout: true
+# 7.1  探索性数据分析
 
 ---
-# &lt;h1 lang="zh-CN"&gt;准备数据&lt;/h1&gt;
-# &lt;h3 lang="zh-CN"&gt;对感兴趣问题所涉及题目求均值&lt;/h3&gt;
+
+.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
+**探索性数据分析(Exploratory Data Analysis, EDA)**
+]
+
+&gt; In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
+
+
+&lt;img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
+
+.pull-left[
+.bigfont[
+-   有哪些变量？
+-   变量的类型？
+-   变量的分布？
+-   变量间关系？
+]
+]
+
+
+.pull-right[
 
 
 ```r
-df.pg.mean &lt;- df.pg.raw %&gt;%
-  dplyr::filter(sex &gt; 0 &amp; sex &lt; 3) %&gt;% # 筛选出男性和女性的数据
-  dplyr::mutate(ECR_mean=rowMeans(select(., starts_with("ECR")), na.rm = T),
-                HOME_mean=rowMeans(select(., starts_with("HOME")), na.rm = T),
-                sex=as.factor(sex)
-                ) %&gt;%
-  dplyr::select(age, sex, romantic, ECR_mean, HOME_mean, Temperature_t1, Temperature_t2)
+# 读取数据
+pg_raw &lt;- bruceR::import(here::here(
+  "data", "penguin","penguin_rawdata.csv"))
+
+mt_raw &lt;- bruceR::import(here::here(
+  "data", "match","match_raw.csv")) 
 ```
 
-<div id="htmlwidget-ec9b6318d91b5cce956e" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ec9b6318d91b5cce956e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5"],[1975,1995,1995,1988,1991],["1","1","1","2","1"],[2,2,1,1,2],[3.5,3.52777777777778,1.52777777777778,4.33333333333333,3.52777777777778],[3.11111111111111,4.88888888888889,1.33333333333333,3.88888888888889,4.66666666666667],[34.9,35.8,34,36.9,35.3],[35.9,36,36.2,37,36.1]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>age<\/th>\n      <th>sex<\/th>\n      <th>romantic<\/th>\n      <th>ECR_mean<\/th>\n      <th>HOME_mean<\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+]
 
 ---
-# &lt;h1 lang="zh-CN"&gt;TTEST()：bruceR中*t*检验函数的参数&lt;/h1&gt;
-![](./picture/chp7/process_19.png)
----
-# &lt;h1 lang="en"&gt;bruceR::TTEST&lt;/h1&gt;
-## &lt;h2 lang="zh-CN"&gt;问题1: 单样本*t*检验&lt;/h2&gt;
+.panelset[
+.panel[.panel-name[`head`]
 
 ```r
-  # bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = "&gt;")
-  # bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = "&lt;")
-  result.ttest &lt;- capture.output({
-  bruceR::TTEST(data=df.pg.mean, 
-                y="HOME_mean", 
-                test.value = 3.5, 
-                test.sided = "=",
-                file = "./output/chp7/one_sample_t.doc")
-})
+DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
 ```
 
-```
-## t is large; approximation invoked.
-```
+<div class="datatables html-widget html-fill-item" id="htmlwidget-846f20e0056035bf3823" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-846f20e0056035bf3823">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10"],["Exp","Exp","Exp"],[7302,7302,7302],[22,22,22],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[1,2,3],["immoralSelf","moralOther","immoralOther"],["immoralOther","moralSelf","moralOther"],["mismatch","mismatch","mismatch"],["n","n","n"],["m","n","n"],[0,1,1],[0.7561,0.7043,0.9903]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Label","targets":11},{"name":"Match","targets":12},{"name":"CorrResp","targets":13},{"name":"Resp","targets":14},{"name":"ACC","targets":15},{"name":"RT","targets":16}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+.panel[.panel-name[`str`]
 
 ```r
-writeLines(result.ttest, "./output/chp7/single_t.md") # .md最整齐
+mt_raw %&gt;% 
+  str() 
 ```
 
----
-# &lt;h1 lang="en"&gt;bruceR::TTEST&lt;/h1&gt;
-## &lt;h2 lang="en"&gt;OUTPUT&lt;/h2&gt;
-![](./picture/chp7/process_1.png)
+```
+## 'data.frame':	25920 obs. of  16 variables:
+##  $ Date    : chr  "02-May-2018_14:23:06" "02-May-2018_14:23:08" "02-May-2018_14:23:10" "02-May-2018_14:23:13" ...
+##  $ Prac    : chr  "Exp" "Exp" "Exp" "Exp" ...
+##  $ Sub     : int  7302 7302 7302 7302 7302 7302 7302 7302 7302 7302 ...
+##  $ Age     : int  22 22 22 22 22 22 22 22 22 22 ...
+##  $ Sex     : chr  "female" "female" "female" "female" ...
+##  $ Hand    : chr  "R" "R" "R" "R" ...
+##  $ Block   : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Bin     : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Trial   : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Shape   : chr  "immoralSelf" "moralOther" "immoralOther" "moralSelf" ...
+##  $ Label   : chr  "immoralOther" "moralSelf" "moralOther" "immoralSelf" ...
+##  $ Match   : chr  "mismatch" "mismatch" "mismatch" "mismatch" ...
+##  $ CorrResp: chr  "n" "n" "n" "n" ...
+##  $ Resp    : chr  "m" "n" "n" NA ...
+##  $ ACC     : int  0 1 1 -1 1 1 1 1 1 1 ...
+##  $ RT      : num  0.756 0.704 0.99 1.042 0.821 ...
+```
+
+]]]
 
 ---
-# &lt;h1 lang="en"&gt;bruceR::TTEST&lt;/h1&gt;
-## &lt;h2 lang="zh-CN"&gt;问题2: 独立样本*t*检验&lt;/h2&gt;
+## 常用函数
+
+.panelset[
+.panel[.panel-name[`summary`]
 
 ```r
-    result.ttest &lt;- capture.output({   
-    bruceR::TTEST(data=df.pg.mean, 
-                y="ECR_mean",
-                x="sex")
-})
-
-writeLines(result.ttest, "./output/chp7/inde_t.md")
+summary(mt_raw) %&gt;% 
+  knitr::kable() # 注：kable函数只为了输出
 ```
 
----
-# &lt;h1 lang="en"&gt;bruceR::TTEST&lt;/h1&gt;
-## &lt;h2 lang="en"&gt;OUTPUT&lt;/h2&gt;
-![](./picture/chp7/process_2.png)
 
----
-# &lt;h1 lang="en"&gt;bruceR::TTEST&lt;/h1&gt;
-## &lt;h2 lang="zh-CN"&gt;问题3: 配对样本*t*检验&lt;/h2&gt;
+
+|   |    Date         |    Prac         |     Sub      |     Age      |    Sex          |    Hand         |    Block     |     Bin      |    Trial     |   Shape         |   Label         |   Match         |  CorrResp       |    Resp         |     ACC        |      RT       |
+|:--|:----------------|:----------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:----------------|:----------------|:----------------|:----------------|:----------------|:---------------|:--------------|
+|   |Length:25920     |Length:25920     |Min.   : 7302 |Min.   :18.00 |Length:25920     |Length:25920     |Min.   :1.000 |Min.   :1.000 |Min.   : 1.00 |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Min.   :-1.0000 |Min.   :0.1060 |
+|   |Class :character |Class :character |1st Qu.: 7313 |1st Qu.:19.00 |Class :character |Class :character |1st Qu.:1.000 |1st Qu.:1.000 |1st Qu.: 6.75 |Class :character |Class :character |Class :character |Class :character |Class :character |1st Qu.: 1.0000 |1st Qu.:0.6104 |
+|   |Mode  :character |Mode  :character |Median : 7324 |Median :20.00 |Mode  :character |Mode  :character |Median :1.000 |Median :2.000 |Median :12.50 |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Median : 1.0000 |Median :0.7019 |
+|   |NA               |NA               |Mean   : 8853 |Mean   :20.83 |NA               |NA               |Mean   :1.611 |Mean   :2.417 |Mean   :12.50 |NA               |NA               |NA               |NA               |NA               |Mean   : 0.7959 |Mean   :0.7150 |
+|   |NA               |NA               |3rd Qu.: 7336 |3rd Qu.:22.00 |NA               |NA               |3rd Qu.:2.000 |3rd Qu.:3.000 |3rd Qu.:18.25 |NA               |NA               |NA               |NA               |NA               |3rd Qu.: 1.0000 |3rd Qu.:0.8053 |
+|   |NA               |NA               |Max.   :73370 |Max.   :28.00 |NA               |NA               |Max.   :3.000 |Max.   :5.000 |Max.   :24.00 |NA               |NA               |NA               |NA               |NA               |Max.   : 2.0000 |Max.   :1.1831 |
+
+
+.panel[.panel-name[`skimr::skim()--1`]
 
 ```r
-   result.ttest &lt;- capture.output({
-   bruceR::TTEST(data=df.pg.mean, 
-                 y = c("Temperature_t1",              
-                       "Temperature_t2"),
-                 paired = T)  #是否为配对样本*t*检验？默认是FALSE
-})
+skimr::skim(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[1:12]
 ```
 
 ```
-## t is large; approximation invoked.
+##  [1] "── Data Summary ────────────────────────"
+##  [2] "                           Values"       
+##  [3] "Name                       mt_raw"       
+##  [4] "Number of rows             25920 "       
+##  [5] "Number of columns          16    "       
+##  [6] "_______________________          "       
+##  [7] "Column type frequency:           "       
+##  [8] "  character                9     "       
+##  [9] "  numeric                  7     "       
+## [10] "________________________         "       
+## [11] "Group variables            None  "       
+## [12] ""
 ```
 
-```r
-writeLines(result.ttest, "./output/chp7/pair_t.md")
-```
-
----
-# &lt;h1 lang="en"&gt;bruceR::TTEST&lt;/h1&gt;
-## &lt;h2 lang="en"&gt;OUTPUT&lt;/h2&gt;
-![](./picture/chp7/process_3.png)
-
----
-# &lt;h1 lang="en"&gt;Reporting *t*-test results in APA&lt;/h1&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;h3 lang="en"&gt;The basic format for reporting the result of a *t*-test is the same in each case:&lt;/h3&gt;
-&lt;h3 lang="en"&gt;*t*(degress of freedom) = the t-value , *p* = p-value, Cohen's *d* = effect size&lt;/h3&gt;
-&lt;br&gt;
-![](./picture/chp7/process_8.png)
-
-
-&lt;h4 lang="zh-CN"&gt;以上均与假想的问题无关，大家可结合自己的数据改写代码&lt;/h4&gt;
----
-class: center, middle
-&lt;span style="font-size: 60px;"&gt;7.3 anova&lt;/span&gt; &lt;br&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;回顾ANOVA的基础知识&lt;/h1&gt;
-![](./picture/chp7/process_4.png)
-
-&lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;回顾ANOVA的基础知识&lt;/h1&gt;
-![](./picture/chp7/process_5.png)
-
----
-# &lt;h1 lang="zh-CN"&gt;回顾ANOVA的基础知识&lt;/h1&gt;
-![](./picture/chp7/process_6.png)
-
-
----
-# &lt;h1 lang="zh-CN"&gt;回顾ANOVA的基础知识&lt;/h1&gt;
-&lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;多因素方差分析概述&lt;/h2&gt;
-&lt;br&gt;
-&lt;h3 lang="zh-CN"&gt;多因素方差分析原理与单因素方差分析基本一致，即利用方差比较的方法，通过假设检验的过程来判断多个因素是否对因变量产生显著性影响。当有两个及以上因素对因变量产生影响时，使用多因素方差分析。多因素方差分析不仅要考虑每个因素的主效应，往往还要考虑因素之间的交互效应。&lt;/h3&gt;
-&lt;br&gt;
-![](./picture/chp7/process_7.png)
-
----
-class: center, middle
-&lt;span style="font-size: 60px;"&gt;7.4 anova in R&lt;/span&gt; &lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;假想的问题&lt;/h1&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;1. “在match数据中，被试在匹配任务和不匹配任务上的反应时是否存在差异？”&lt;/h2&gt;
-&lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;2. “在match数据中，被试在不同身份(self vs other)与不同效价(moral vs immoral)的条件组合下反应时是否存在差异？”&lt;/h2&gt;
-&lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;载入包&lt;/h1&gt;
-
-```r
-pacman::p_load("tidyverse", "bruceR")
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;设置工作路径 - 导入数据与预处理&lt;/h1&gt;
-  
-
-```r
-df.match &lt;-  read.csv('./data/match/match_raw.csv',
-                      header = T, sep=",", stringsAsFactors = FALSE) %&gt;%
-  # 拆分单元格内字符串
-  tidyr::separate(col=Shape,
-                  into=c("Valence","Identity"),
-                  sep="(?&lt;=moral|immoral)(?=Self|Other)") %&gt;% 
-  dplyr::select(Sub, Valence, Identity, everything()) %&gt;%
-  dplyr::filter(ACC == 1) %&gt;%    # 只选择回答正确的数据
-  dplyr::filter(!is.na(RT)) %&gt;%  # 剔除缺失值
-  # remove outliers below and above 3rd sd
-  dplyr::filter(RT &gt; quantile(RT, 0.0015) &amp; RT &lt; quantile(RT, 0.9985)) %&gt;%
-  dplyr::mutate(RT = as.numeric(RT)) %&gt;%
-  dplyr::mutate(Valence = as.factor(Valence),
-                Identity = as.factor(Identity))
-```
-
----
-&lt;br&gt;
-&lt;br&gt;
+.panel[.panel-name[`skimr::skim()--2`]
 
 
 ```r
-DT::datatable(head(df.match, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
+skimr::skim(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[13:24]
 ```
 
-<div id="htmlwidget-2d599b408819a5a6ba11" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2d599b408819a5a6ba11">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],["moral","immoral","immoral","immoral","moral","moral","moral","immoral","moral","immoral"],["Other","Other","Self","Self","Other","Self","Other","Self","Other","Other"],["02-May-2018_14:23:08","02-May-2018_14:23:10","02-May-2018_14:23:15","02-May-2018_14:23:17","02-May-2018_14:23:19","02-May-2018_14:23:21","02-May-2018_14:23:24","02-May-2018_14:23:26","02-May-2018_14:23:28","02-May-2018_14:23:30"],["Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp","Exp"],[22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[2,3,5,6,7,8,9,10,11,12],["moralOther","immoralOther","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf","moralOther","immoralOther"],["mismatch","mismatch","match","match","match","match","mismatch","mismatch","mismatch","match"],["n","n","m","m","m","m","n","n","n","m"],["n","n","m","m","m","m","n","n","n","m"],[1,1,1,1,1,1,1,1,1,1],[0.7043,0.9903,0.8207,0.7547,0.5429,0.9009,0.9551,0.6952,0.7593,0.7135]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,6,9,10,11,16,17]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+```
+##  [1] "── Variable type: character ────────────────────────────────────────────────────"
+##  [2] "  skim_variable n_missing complete_rate min max empty n_unique whitespace"       
+##  [3] "1 Date                  0         1      20  20     0    24362          0"       
+##  [4] "2 Prac                  0         1       3   3     0        1          0"       
+##  [5] "3 Sex                   0         1       1   6     0        4          0"       
+##  [6] "4 Hand                  0         1       1   1     0        2          0"       
+##  [7] "5 Shape                 0         1       9  12     0        4          0"       
+##  [8] "6 Label                 0         1       9  12     0        4          0"       
+##  [9] "7 Match                 0         1       5   8     0        2          0"       
+## [10] "8 CorrResp              0         1       1   1     0        2          0"       
+## [11] "9 Resp                658         0.975   1   5     0        9          0"       
+## [12] ""
+```
 
----
-# &lt;h1 lang="zh-CN"&gt;CODE_问题1处理&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;计算被试匹配与不匹配任务上的平均反应时间及其标准差&lt;/h2&gt;
+
+.panel[.panel-name[`skimr::skim()--3`]
+
+```r
+skimr::skim(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[25:41]
+```
+
+```
+##  [1] "── Variable type: numeric ──────────────────────────────────────────────────────"
+##  [2] "  skim_variable n_missing complete_rate     mean       sd       p0      p25"     
+##  [3] "1 Sub                   0             1 8853.    9932.    7302     7313    "     
+##  [4] "2 Age                   0             1   20.8      2.48    18       19    "     
+##  [5] "3 Block                 0             1    1.61     0.803    1        1    "     
+##  [6] "4 Bin                   0             1    2.42     1.36     1        1    "     
+##  [7] "5 Trial                 0             1   12.5      6.92     1        6.75 "     
+##  [8] "6 ACC                   0             1    0.796    0.464   -1        1    "     
+##  [9] "7 RT                    0             1    0.715    0.151    0.106    0.610"     
+## [10] "       p50      p75     p100 hist "                                              
+## [11] "1 7324     7336     73370    ▇▁▁▁▁"                                              
+## [12] "2   20       22        28    ▇▂▁▁▁"                                              
+## [13] "3    1        2         3    ▇▁▃▁▃"                                              
+## [14] "4    2        3         5    ▇▇▃▃▃"                                              
+## [15] "5   12.5     18.2      24    ▇▇▆▇▇"                                              
+## [16] "6    1        1         2    ▁▂▁▇▁"                                              
+## [17] "7    0.702    0.805     1.18 ▁▂▇▅▁"
+```
+
+.panel[.panel-name[`bruceR::Describe()`]
 
 
 ```r
-df.match.mean &lt;- df.match %&gt;%
-    dplyr::group_by(Sub, Match) %&gt;%
-    dplyr::summarise(
-        n = n(),
-        rt_sd = sd(as.numeric(RT), na.rm = T),
-        rt_mean = mean(RT, na.rm = T), # 对于factor数据，先转成character，再变成numeric
-        ) %&gt;%
-    dplyr::ungroup()
+bruceR::Describe(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[2:17] ## 可以使用 file参数输出 Word
 ```
 
 ```
-## `summarise()` has grouped output by 'Sub'. You can override using the `.groups`
-## argument.
+##  [1] "────────────────────────────────────────────────────────────────────────────────────"
+##  [2] "               N (NA)     Mean      SD |   Median     Min      Max Skewness Kurtosis"
+##  [3] "────────────────────────────────────────────────────────────────────────────────────"
+##  [4] "Date*      25920      12218.64 6999.30 | 12220.50    1.00 24362.00     0.00    -1.19"
+##  [5] "Prac*      25920          1.00    0.00 |     1.00    1.00     1.00      NaN      NaN"
+##  [6] "Sub        25920       8852.59 9931.83 |  7324.00 7302.00 73370.00     6.34    38.22"
+##  [7] "Age        25920         20.83    2.48 |    20.00   18.00    28.00     1.09     0.35"
+##  [8] "Sex*       25920          3.27    0.65 |     3.00    1.00     4.00    -0.84     1.58"
+##  [9] "Hand*      25920          1.98    0.15 |     2.00    1.00     2.00    -6.34    38.22"
+## [10] "Block      25920          1.61    0.80 |     1.00    1.00     3.00     0.82    -0.97"
+## [11] "Bin        25920          2.42    1.36 |     2.00    1.00     5.00     0.67    -0.82"
+## [12] "Trial      25920         12.50    6.92 |    12.50    1.00    24.00     0.00    -1.20"
+## [13] "Shape*     25920          2.50    1.12 |     2.50    1.00     4.00     0.00    -1.36"
+## [14] "Label*     25920          2.49    1.11 |     2.00    1.00     4.00     0.02    -1.35"
+## [15] "Match*     25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
+## [16] "CorrResp*  25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
 ```
+
+
+]]]]]]
+
+
 
 ---
-&lt;br&gt;
-&lt;br&gt;
+layout: false
+class: inverse middle center
 
 
-```r
-DT::datatable(head(df.match.mean, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
-<div id="htmlwidget-9123a1bb6e93eaccd389" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9123a1bb6e93eaccd389">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[7302,7302,7303,7303,7304,7304,7305,7305,7306,7306],["match","mismatch","match","mismatch","match","mismatch","match","mismatch","match","mismatch"],[160,149,148,133,245,194,274,226,270,252],[0.106612719566056,0.0994899939093511,0.115424425115395,0.0881816560548197,0.137261728375444,0.106883820747074,0.128272398592039,0.121570749496483,0.135007585074087,0.109344555569399],[0.66311875,0.743634228187919,0.704106756756757,0.756554887218045,0.681796326530612,0.751001546391753,0.604401094890511,0.719050442477876,0.708901481481481,0.77705]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Match<\/th>\n      <th>n<\/th>\n      <th>rt_sd<\/th>\n      <th>rt_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,3,4,5]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+.tit_font[
+但是...&lt;br&gt;还不够
+]
 
 ---
-# &lt;h1 lang="zh-CN"&gt;CODE_问题1处理&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;单因素被试内设计&lt;/h2&gt;
+# 7.2  数据可视化
+## 7.2.1 可视化的重要性
 
+.pull-left[
+.size5[
+Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
 
-```r
-#比较被试在匹配任务和不匹配任务上的反应时是否存在差异
-#单因素被试内设计（长型数据）
-result.anova &lt;- capture.output({
-df_within &lt;- df.match.mean %&gt;%
-  bruceR::MANOVA(subID="Sub",    # 被试id
-                 dv="rt_mean",   # 因变量，因为是MANOVA，实际上因变量可以再后面设置很多个
-                 within="Match") # 设置条件，因素分析的条件
-})
-```
+-   A quick and easy way to check our data make sense, and to identify any unusual trends.
 
-```
-## 
-##     * Data are aggregated to mean (across items/trials)
-##     if there are &gt;=2 observations per subject and cell.
-##     You may use Linear Mixed Model to analyze the data,
-##     e.g., with subjects and items as level-2 clusters.
-```
+-   A way to honestly present the features of our data to anyone who reads our research.
+]
+]
 
-```r
-writeLines(result.anova, "./output/chp7/anova_1.md")
-# 若不符合球形假设要加上：sph.correction = "GG"
-```
+--
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-25-1.png" width="90%" /&gt;
 
----
-# &lt;h1 lang="en"&gt;bruceR::MANOVA&lt;/h1&gt;
-## &lt;h2 lang="en"&gt;OUTPUT&lt;/h2&gt;
-![](./picture/chp7/process_10.png)
-
----
-# &lt;h1 lang="zh-CN"&gt;ANOVA问题2&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;计算被试在不同身份和效价条件下的平均反应时间及其标准差&lt;/h2&gt;
-
-
-```r
-df.match.mean &lt;- df.match %&gt;%
-    dplyr::group_by(Sub,Sex, Valence,Identity) %&gt;%
-    dplyr::summarise(
-        n = n(),
-        rt_sd = sd(as.numeric(RT), na.rm = T),
-        rt_mean = mean(as.numeric(RT), na.rm = T)
-        ) %&gt;%
-    dplyr::ungroup()
-```
-
-```
-## `summarise()` has grouped output by 'Sub', 'Sex', 'Valence'. You can override
-## using the `.groups` argument.
-```
-
----
+]
 &lt;br&gt;
 &lt;br&gt;
 
-```r
-DT::datatable(head(df.match.mean, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
+.size5[
+绘图的方式有很多，如 Base graphics, grid, lattice,plotly...为什么使用&lt;span style="color: red;"&gt;ggplot2&lt;/span&gt;?
+]
 
-<div id="htmlwidget-f8aa113af01315c08456" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f8aa113af01315c08456">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[7302,7302,7302,7302,7303,7303,7303,7303,7304,7304],["female","female","female","female","male","male","male","male","female","female"],["immoral","immoral","moral","moral","immoral","immoral","moral","moral","immoral","immoral"],["Other","Self","Other","Self","Other","Self","Other","Self","Other","Self"],[78,76,84,71,75,67,69,70,95,114],[0.106546391467748,0.10670443377723,0.114524632384628,0.103786896685185,0.0914622051219287,0.0996700756728033,0.118901185681732,0.109463312146144,0.110340817703657,0.118828048280786],[0.705970512820513,0.724085526315789,0.661688095238095,0.721443661971831,0.741282666666667,0.753758208955224,0.720326086956522,0.700415714285714,0.756267368421053,0.729615789473684]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Sex<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>n<\/th>\n      <th>rt_sd<\/th>\n      <th>rt_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
 
 ---
-# &lt;h1 lang="zh-CN"&gt;MANOVA()：多因素被试间/被试内/混合设计方差分析ANOVA&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;主要参数&lt;/h2&gt;
-![](./picture/chp7/process_16.png)
-
----
-# &lt;h1 lang="zh-CN"&gt;问题2的R语法&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;长数据转换为宽数据&lt;/h2&gt;
-
-
-```r
-df.match.within &lt;- df.match.mean %&gt;%
-  dplyr::select(-c(n, rt_sd)) %&gt;%
-  dplyr::mutate(Valence = paste("A_", Valence, sep = ""),#将变量的名称进行修改转换，不生产新的变量
-                Identity = paste("B_", Identity, sep = "")) %&gt;%
-  # 将morality和identity组合名称起来生成一个新的变量"Conds"
-  tidyr::unite("Conds", Valence:Identity, sep = "&amp;",remove=TRUE) %&gt;% 
-  tidyr::pivot_wider(names_from = Conds,
-                     values_from = rt_mean)
-
-head(df.match.within)
-```
-
-```
-## # A tibble: 6 × 6
-##     Sub Sex    `A_immoral&amp;B_Other` `A_immoral&amp;B_Self` `A_moral&amp;B_Other` A_mora…¹
-##   &lt;int&gt; &lt;chr&gt;                &lt;dbl&gt;              &lt;dbl&gt;             &lt;dbl&gt;    &lt;dbl&gt;
-## 1  7302 female               0.706              0.724             0.662    0.721
-## 2  7303 male                 0.741              0.754             0.720    0.700
-## 3  7304 female               0.756              0.730             0.757    0.628
-## 4  7305 male                 0.685              0.659             0.641    0.638
-## 5  7306 male                 0.778              0.763             0.660    0.771
-## 6  7307 female               0.751              0.677             0.716    0.728
-## # … with abbreviated variable name ¹​`A_moral&amp;B_Self`
-```
-
-```r
-#str(df.match.within)
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;问题2的R语法&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;两因素被试内设计_宽数据&lt;/h2&gt;
-
-
-```r
-#被试在不同身份(self vs other)与不同效价(moral vs moral)的条件组合下反应时是否存在差异）
-  result.anova &lt;- capture.output({
-  res_rmANOVA_1 &lt;- bruceR::MANOVA(data=df.match.within,
-                   dvs="A_immoral&amp;B_Other:A_moral&amp;B_Self",
-                   dvs.pattern="A_(.+)B_(.+)",#正则表达式
-                   within=c("A_","B_"))#表示2个主条件
-  })
-```
-
-```
-## 
-## Note:
-## dvs="A_immoral&amp;B_Other:A_moral&amp;B_Self" is matched to variables:
-## A_immoral&amp;B_Other, A_immoral&amp;B_Self, A_moral&amp;B_Other, A_moral&amp;B_Self
-```
-
-```r
-writeLines(result.anova, "./output/chp7/anova_2.md")
-```
-
----
-# &lt;h1 lang="en"&gt;bruceR::MANOVA&lt;/h1&gt;
-## &lt;h2 lang="en"&gt;OUTPUT&lt;/h2&gt;
-![](./picture/chp7/process_17.png)
-
----
-# &lt;h1 lang="en"&gt;bruceR::MANOVA&lt;/h1&gt;
-## &lt;h2 lang="en"&gt;OUTPUT&lt;/h2&gt;
-![](./picture/chp7/process_18.png)
----
-# &lt;h1 lang="zh-CN"&gt;问题2的R语法&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;两因素被试内设计_长数据&lt;/h2&gt;
-
-
-```r
-#被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异）
-#head(df.match.mean)
-  result.anova &lt;- capture.output({
-  res_rmANOVA_2 &lt;- bruceR::MANOVA(data=df.match.mean,
-                   dv="rt_mean",
-                   within=c("Valence","Identity"),
-                   subID="Sub")
-  })
-```
-
-```
-## 
-##     * Data are aggregated to mean (across items/trials)
-##     if there are &gt;=2 observations per subject and cell.
-##     You may use Linear Mixed Model to analyze the data,
-##     e.g., with subjects and items as level-2 clusters.
-```
-
-```r
-writeLines(result.anova, "./output/chp7/anova_3.md")
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;简单效应检验与多重比较&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;主要参数&lt;/h2&gt;
-![](./picture/chp7/process_13.png)
-
----
-# &lt;h1 lang="zh-CN"&gt;简单效应检验与多重比较&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;问题2的简单效应比较&lt;/h2&gt;
-
-
-```r
-result.check &lt;- capture.output({
-sim_eff_1 &lt;- res_rmANOVA_1 %&gt;%
-  bruceR::EMMEANS("A_", by="B_")#简单效应分析
-})
-writeLines(result.check, "./output/chp7/check.md")
-
-#sim_eff_1 &lt;- res_rmANOVA_1 %&gt;%
-  #EMMEANS("B_", by="A_")   和上一个同理，只是转换了不同的形式
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;被试间设计的语法实现&lt;/h1&gt;
-# &lt;h2 lang="en"&gt;性别与亲密关系对ECR得分的效应&lt;/h2&gt;
-
-
-```r
-# MANOVA(data, dv="SCORE", between=c("A", "B"))
-# data 代表两因素的数据类型
-# dv 因变量
-# between 被试间因素的名称，此处表示两因素被试间设计，如果只有一个就是单因素被试间设计
-res_ANOVA_btw &lt;- df.pg.mean %&gt;%
-  bruceR::MANOVA(., 
-                 dv="ECR_mean",
-                 between = c("sex", "romantic"))
-```
-
-```
-## 
-## ====== ANOVA (Between-Subjects Design) ======
-## 
-## Descriptives:
-## ───────────────────────────────────
-##  "sex" "romantic"  Mean    S.D.   n
-## ───────────────────────────────────
-##   sex1  romantic1 3.006 (0.843) 236
-##   sex1  romantic2 3.686 (0.651) 206
-##   sex2  romantic1 2.867 (0.845) 594
-##   sex2  romantic2 3.747 (0.742) 454
-## ───────────────────────────────────
-## Total sample size: N = 1490
-## 
-## ANOVA Table:
-## Dependent variable(s):      ECR_mean
-## Between-subjects factor(s): sex, romantic
-## Within-subjects factor(s):  –
-## Covariate(s):               –
-## ─────────────────────────────────────────────────────────────────────────────────
-##                      MS   MSE df1  df2       F     p     η²p [90% CI of η²p]  η²G
-## ─────────────────────────────────────────────────────────────────────────────────
-## sex               0.457 0.623   1 1486   0.733  .392       .000 [.000, .004] .000
-## romantic        187.454 0.623   1 1486 300.682 &lt;.001 ***   .168 [.141, .228] .168
-## sex * romantic    3.091 0.623   1 1486   4.959  .026 *     .003 [.000, .010] .003
-## ─────────────────────────────────────────────────────────────────────────────────
-## MSE = mean square error (the residual variance of the linear model)
-## η²p = partial eta-squared = SS / (SS + SSE) = F * df1 / (F * df1 + df2)
-## ω²p = partial omega-squared = (F - 1) * df1 / (F * df1 + df2 + 1)
-## η²G = generalized eta-squared (see Olejnik &amp; Algina, 2003)
-## Cohen’s f² = η²p / (1 - η²p)
-## 
-## Levene’s Test for Homogeneity of Variance:
-## ───────────────────────────────────────────
-##               Levene’s F df1  df2     p    
-## ───────────────────────────────────────────
-## DV: ECR_mean      12.755   3 1486 &lt;.001 ***
-## ───────────────────────────────────────────
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;混合设计的语法实现&lt;/h1&gt;
-# &lt;h2 lang="en"&gt;CODE&lt;/h2&gt;
-&lt;h3 lang="zh-CN"&gt;以2个被试间1个被试内的混合设计形式为例&lt;/h3&gt;
-
-
-```r
-# 假设数据集是mixed.3_2b1w
-# A、C是被试间变量，B是被试内变量
-# MANOVA(mixed.3_2b1w, dvs="B1:B2", dvs.pattern="B(.)",
-       #between=c("A", "C"), within="B")
-res_ANOVA_mix &lt;- df.match.mean %&gt;%
-  dplyr::mutate(Sex = ifelse(Sex =="1", "male",
-                             ifelse(Sex == "2", "female", Sex))) %&gt;%
-  bruceR::MANOVA(., 
-                 subID = "Sub",
-                 dv="rt_mean",
-                 between = c("Sex"),
-                 within = c("Valence", "Identity"))
-```
-
-```
-## 
-##     * Data are aggregated to mean (across items/trials)
-##     if there are &gt;=2 observations per subject and cell.
-##     You may use Linear Mixed Model to analyze the data,
-##     e.g., with subjects and items as level-2 clusters.
-```
-
-```
-## 
-## ====== ANOVA (Mixed Design) ======
-## 
-## Descriptives:
-## ─────────────────────────────────────────────
-##   "Sex" "Valence" "Identity"  Mean    S.D.  n
-## ─────────────────────────────────────────────
-##  female   immoral      Other 0.717 (0.065) 27
-##  female   immoral      Self  0.733 (0.073) 27
-##  female   moral        Other 0.709 (0.077) 27
-##  female   moral        Self  0.677 (0.063) 27
-##  male     immoral      Other 0.721 (0.050) 17
-##  male     immoral      Self  0.736 (0.043) 17
-##  male     moral        Other 0.704 (0.049) 17
-##  male     moral        Self  0.689 (0.044) 17
-## ─────────────────────────────────────────────
-## Total sample size: N = 44
-## 
-## ANOVA Table:
-## Dependent variable(s):      rt_mean
-## Between-subjects factor(s): Sex
-## Within-subjects factor(s):  Valence, Identity
-## Covariate(s):               –
-## ───────────────────────────────────────────────────────────────────────────────────────
-##                              MS   MSE df1 df2      F     p     η²p [90% CI of η²p]  η²G
-## ───────────────────────────────────────────────────────────────────────────────────────
-## Sex                       0.000 0.012   1  42  0.042  .839       .001 [.000, .053] .001
-## Valence                   0.042 0.001   1  42 46.148 &lt;.001 ***   .524 [.346, .649] .062
-## Sex * Valence             0.000 0.001   1  42  0.000  .990       .000 [.000, .000] .000
-## Identity                  0.001 0.001   1  42  0.626  .433       .015 [.000, .123] .001
-## Sex * Identity            0.001 0.001   1  42  0.459  .502       .011 [.000, .113] .001
-## Valence * Identity        0.015 0.001   1  42 12.169  .001 **    .225 [.065, .394] .023
-## Sex * Valence * Identity  0.001 0.001   1  42  0.605  .441       .014 [.000, .122] .001
-## ───────────────────────────────────────────────────────────────────────────────────────
-## MSE = mean square error (the residual variance of the linear model)
-## η²p = partial eta-squared = SS / (SS + SSE) = F * df1 / (F * df1 + df2)
-## ω²p = partial omega-squared = (F - 1) * df1 / (F * df1 + df2 + 1)
-## η²G = generalized eta-squared (see Olejnik &amp; Algina, 2003)
-## Cohen’s f² = η²p / (1 - η²p)
-## 
-## Levene’s Test for Homogeneity of Variance:
-## ───────────────────────────────────────────────
-##                    Levene’s F df1 df2     p    
-## ───────────────────────────────────────────────
-## DV: immoral_Other       0.691   1  42  .410    
-## DV: immoral_Self        1.866   1  42  .179    
-## DV: moral_Other         2.753   1  42  .105    
-## DV: moral_Self          1.679   1  42  .202    
-## ───────────────────────────────────────────────
-## 
-## Mauchly’s Test of Sphericity:
-## The repeated measures have only two levels. The assumption of sphericity is always met.
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;课堂练习&lt;/h1&gt;
+# 7.2  数据可视化
+## 7.2.2 为何使用 ggplot2?
 &lt;br&gt;
+.size5[
+* 化繁为简：大量的默认值
+
+* 精准定制：所有元素均可控
+
+* 易于叠加：丰富的信息
+
+* 日益丰富的生态系统 [https://r-graph-gallery.com/](https://r-graph-gallery.com/)
+
+]
+
+
+.bigfont[
+总之，好看、业界标杆，举个例子:
+]
+
+---
+## 7.2.2 为何使用 ggplot?
+
+&lt;img src="pic_new/chp7/exmp2.png" width="63%" style="display: block; margin: auto;" /&gt;
+
+
+---
+## 7.2.2 为何使用 ggplot?
+
+&lt;img src="pic_new/chp7/exmp1.png" width="63%" style="display: block; margin: auto;" /&gt;
+
+
+.footnote[
+-----
+Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker circulation over the past millennium. Nature 622, 93–100 (2023). https://doi.org/10.1038/s41586-023-06447-0
+]
+
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+.left-column[
+.bigfont[
+-   数据映射
+]
+]
+
+.right-column[
+&lt;img src="pic_new/chp7/mapping.jpg" width="75%" /&gt;
+]
+
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+
+.left-column[
+.bigfont[
+-   数据映射
+
+-   图层叠加
+]
+]
+
+.right-column[
+&lt;img src="https://psyteachr.github.io/data-skills-v1/images/layers.png" width="70%" /&gt;
+]
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+
+.left-column[
+.bigfont[
+-   数据映射
+
+-   图层叠加
+
+-   Code展示
+]]
+
+.right-column[
+.panelset[
+.panel[.panel-name[数据映射]
+
+```r
+# 以penguin问卷中前后体温为例
+
+p1 &lt;- pg_raw %&gt;% 
+  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
+             y = Temperature_t2)) 
+p1 ## 坐标轴名称已对应，虽然图片为空
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-30-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[添加图层-散点]
+
+```r
+p1 + geom_point()
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-31-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+.panel[.panel-name[添加图层-拟合曲线]
+
+```r
+p1 + geom_point() + geom_smooth(method = 'lm')
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[改变映射]
+
+```r
+pg_raw %&gt;% 
+  drop_na(Temperature_t1,Temperature_t2,sex) %&gt;% 
+  ggplot(aes(x = Temperature_t1, 
+             y = Temperature_t2,
+             color = factor(sex))) +
+  geom_point() + geom_smooth()  
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-33-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+]]]]]]
+
+
+???
+-   映射与添加图层是两个概念，映射后可以不进行绘图
+
+-   图层的添加使用 + 
+
+-   除了 x 和 y，仍然有其他变量进行映射，如 color
+
+---
+## 7.2.4 单个图片的组成
+
+&lt;img src="pic_new/chp7/comps1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+## 7.2.4 单个图片的组成
+
+&lt;img src="pic_new/chp7/comps2.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+layout: true
+# 7.3 常用图形
+
+
+---
+## 直方图
+&lt;font size=5&gt;
+对于连续变量，我们可以使用直方图进行可视化。
+以认知实验中被试的反应时数据为例。
+&lt;/font&gt;
 &lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;1. “在Penguin数据中，不同站点(“Site”)的被试在主观压力上是否有差异？”&lt;/h2&gt;
-&lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;2. “在match数据中，如何分析 *d'*”&lt;/h2&gt;
-&lt;br&gt;
+
+.pull-left[
+
+```r
+pic_his &lt;- mt_raw %&gt;% 
+  # 确定映射到x轴的变量
+  ggplot(aes(x = RT)) + 
+  geom_histogram(bins = 40) +
+  theme_classic()
+```
+]
+
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-37-1.png" width="100%" /&gt;
+]
+
+
+---
+## 密度图
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;同样的我们可以使用密度图来描述反应时的分布情况。
+&lt;/font&gt;
+
+.pull-left[
+
+```r
+pic_dens &lt;- mt_raw %&gt;% ggplot()+
+  # 绘制密度曲线
+  geom_density(aes(x = RT)) +
+  theme_classic()
+```
+]
+
+.pull-right[
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
+]
+
+---
+## 直方图 + 密度图
+
+.pull-left[
+
+```r
+## 尝试将两个图层叠加在一起
+mt_raw %&gt;% ggplot(aes(x = RT))+
+  geom_histogram(bins = 40) + 
+  geom_density() +
+  theme_classic()
+```
+]
+
+
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-41-1.png" width="100%" /&gt;
+似乎密度曲线没有显示…
+原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
+如果仔细观察 x 坐标轴还是能看到细微差异的。
+]
+
+
+
+---
+## 直方图 + 密度图
+.pull-left[
+
+```r
+pic_mix &lt;- mt_raw %&gt;% 
+  ggplot(aes(x = RT,
+  ## 直方图的统计结果通过after_stat(density)传递给了密度图
+*       y = after_stat(density))) +
+  geom_histogram() +
+  geom_density() +
+  theme_classic()
+# 设定绘图风格
+```
+]
+
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-43-1.png" width="100%" /&gt;
+]
+
+---
+## 箱线图
+
+除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。这里我们利用箱线图看看不同Label的RT如何。
+
+
+.pull-left[
+
+```r
+pic_box &lt;- mt_raw %&gt;% ggplot(aes(
+  x = Label,
+  y = RT)) +
+  geom_boxplot(staplewidth = 1) +
+  # 绘制箱线图并添加上下边缘线
+  theme_classic()
+```
+
+
+]
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-45-1.png" width="100%" /&gt;
+]
+
+.footnote[
+----
+矩形中间线为中位数，上下两条线分别为上四分位数和下四分位数；
+1.5个四分位距(Q3-Q1)以外的值为离群值；geom_boxplot默认使用1.5IQR
+]
+---
+layout: true
+# 7.4 Explore data with DataExplorer
+
+---
+
+
+
+```r
+ DataExplorer::plot_str(mt_raw)
+```
+
+&lt;img src="pic_new/chp7/plotstr.png" width="65%" /&gt;
+
+---
+
+
+```r
+DataExplorer::plot_intro(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-48-1.png" width="70%" /&gt;
+
+
+---
+
+
+```r
+ DataExplorer::plot_missing(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-49-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+ DataExplorer::plot_bar(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-50-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+ DataExplorer::plot_bar(mt_raw, by="Match")
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-51-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+DataExplorer::plot_histogram(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-52-1.png" width="70%" /&gt;
+
+
+---
+
+
+```r
+ DataExplorer::plot_qq(pg_raw[,2:10])
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-53-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-54-1.png" width="70%" /&gt;
+
+---
+## 使用ggpairs
+
+.panelset[
+.panel[.panel-name[Code]
+
+```r
+## 以 penguin project 数据中 ALEX, stress和 ECR 为例
+pg_raw %&gt;% 
+  mutate(
+    # 计算均值
+    m_ALEX = bruceR::MEAN(.,
+      var = 'ALEX',items = 1:16,rev = c(4,12,14,16)),
+    m_stress = bruceR::MEAN(.,
+      var = 'stress',items = 1:14,rev = c(4:7,9,10,13)
+    ),
+    m_ECR = bruceR::MEAN(.,
+      var = 'ECR',items = 1:36
+    )
+  ) %&gt;% 
+  select(contains('m_')) %&gt;% 
+  GGally::ggpairs()
+```
+
+
+
+]
+
+.panel[.panel-name[Output]
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-55-1.png" width="100%" /&gt;
+
+]
+
+]
+
+---
+layout: false
+#练习
+.bigfont[
+1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
+
+2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
+
+3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
+ 
+]
+
+#探索
+.bigfont[
+1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
+
+2. 学会使用大语言模型进行学习，进行精准地提问。
+]
+
+---
+# 参考阅读
+.bigfont[
+-   [R Graphics Cookbook](https://r-graphics.org/)
+
+-   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"highlightStyle": "github",
+"countIncrementalSlides": false,
+"seal": true,
+"ratio": "16:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

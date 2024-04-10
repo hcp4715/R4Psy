@@ -1,509 +1,991 @@
 ---
 title: ""
-subtitle: ""
-author: ""
-institute: ""
+author: "Pac_B"
 date: ""
 output:
   xaringan::moon_reader:
-    css: [default, css/Custumed_Style.css, css/zh-CN.css]
+    css: [default, css/Custumed_Style.css,css/zh-CN.css]
     lib_dir: libs
     nature:
-      highlightStyle: github
       highlightLines: true
+      highlightStyle: github
       countIncrementalSlides: false
+      seal: true
+      ratio: 16:9
+params:
+  output_dir: "../output"
 ---
+
+
+
 class: center, middle
-<span style="font-size: 60px;">第七章</span> <br>
-<span style="font-size: 50px;">如何进行基本的数据分析 (一) </span> <br>
-<span style="font-size: 50px;">*t*-test和ANOVA</span> <br>
-<br>
-<br>
+<span style="font-size: 50px;">**第七章**</span> <br>
+<span style="font-size: 50px;">__如何探索数据: __</span> <br>
+<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
-<span style="font-size: 30px;">2023/04/10</span> <br>
+<span style="font-size: 20px;"> </span> <br>
+<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
 
----
-class: center, middle
-<span style="font-size: 60px;">7.1  *t*-test</span> <br>
----
-# <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
-<br>
-<center>
-##  One sample *t*-test：单样本*t*检验
-</center>
-<br>
-<br>
-### **Compare the sample mean against a fixed value.**
-<br>
-## The hypotheses:
-* $H_0$: The current sample is sampled from a population with μ of the current value.
-* $H_1$: The current sample is sampled from a population with μ that different from the current value.
-* The significance level: $\alpha$ = 0.05
----
-# <h1 lang="zh-CN">回顾*t*检验基础知识 </h1>
-
-<br>
-## Typical research questions are:
-
-  与某一特定值比较的三种情况（大于/小于或等于)
-<br>
-
-* whether the mean (m) of the sample is equal to the theoretical mean, $\mu$?
-* whether the mean (m) of the sample is less than the theoretical mean, $\mu$?
-* whether the mean (m) of the sample is greater than the theoretical mean, $\mu$?
-
----
-# <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
-<br>
-<h2 lang="en">In statistics, we can define the corresponding null hypothesis ($H_0$) as follow:</h2>
-<br>
-
-* $H_0$: m = μ
-* $H_0$: m <= μ
-* $H_0$: m => μ
-
-<br>
-<br>
-<h2 lang="en">The corresponding alternative hypotheses (H1) are as follow:</h2>
-<br>
-<h3 lang="en">H1:m ≠ μ (not equal to)</h3>
-<h3 lang="en">H1:m > μ (greater than)</h3>
-<h3 lang="en">H1:m < μ (less than)</h3>
----
-# <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
-<br>
-<center>
-<h2 lang="en">Two-sample *t*-test ：双样本*t*检验</h2>
-</center>
-<br>
-<h2 lang="en">Dependent(paried) *t*-test</h2>
-<h3 lang="en">Population of difference scores has a normal distribution [population normality]</h3>
-<h3 lang="en">Correlation between pairs of scores [dependent data]</h3>
-<br>
-<br>
-<h2 lang="en">Independent *t*-test</h2>
-<br>
-<h3 lang="en">Population of difference scores has a normal distribution [population normality]</h3>
-<h3 lang="en">The variances in two populations are similar [homogeneity of variance]</h3>
----
-# <h1 lang="zh-CN">回顾*t*检验基础知识</h1>
-<br>
-<h2 lang="en">Dependent (Paired) *t*-test：配对样本*t*检验</h2>
-<h3 lang="en">The paired *t*-test is used to compare the means between two related groups of samples. In this case, you have two values (i.e., pair of values) for the same samples.</h3>
-<br>
-<br>
-<br>
-<h2 lang="en">Independent *t*-test:独立样本*t*检验</h2>
-<h2 lang="en">The independent samples *t*-test is used to compare the mean of two independent groups.</h2>
-<br>
-<h2 lang="en">Typical research questions are:</h2>
-<h2 lang="en">whether the mean of group A (μ) is equal to the mean of group B (μ)?</h2>
-<h2 lang="en">whether the mean of group A (μ) is less than the mean of group B (μ)?</h2>
-<h2 lang="en">whether the mean of group A (μ) is greater than the mean of group B (μ)?</h2>
----
-class: center, middle
-<span style="font-size: 60px;">7.2 *t*-test in R</span> <br>
----
-# <h1 lang="zh-CN">几个假想的问题</h1>
-<br>
-<br>
-<h3 lang="zh-CN">1. “在penguin数据中，参与者对于家的依恋水平是否小于/等于/大于均值水平(假设在总体水平上，人们对家庭的依恋水平(HOME)均值为3.5)？”</h3>
-<br>
-<h3 lang="zh-CN">2. “在penguin数据中，男女生在亲密关系经验(ECR)中的得分是否存在显著差异？”</h3>
-<br>
-<h3 lang="zh-CN">3. “在penguin数据中，参与者在不同时间的温度差异是否具有显著性？”</h3>
-
----
-
-# <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
-```{r pacakge, message=FALSE}
-# 检查是否已安装 pacman
-if (!requireNamespace("pacman", quietly = TRUE)) {
-  install.packages("pacman") }   # 如果未安装，则安装包
-
-# 使用p_load来载入需要的包
-pacman::p_load("tidyverse", "bruceR")
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=4, fig.retina=2, 
+  out.width="100%",
+  message = FALSE,
+  warning = F
+)
 ```
 
----
-# <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
-```{r WD & df.pg.raw}
-# WD <-  here::here()
-df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE)
+```{css extra.css, echo=FALSE}
+/* ---- extra.css ---- */
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 20px;
+}
+.tit_font{
+font-size: 60px;
+}
+
 ```
 
-```{r df.pg.raw DT, echo=FALSE}
-DT::datatable(head(df.pg.raw, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
+
+
 
 ---
-# <h1 lang="zh-CN">准备数据</h1>
-# <h3 lang="zh-CN">对感兴趣问题所涉及题目求均值</h3>
-
-```{r df.pg.mean, message = FALSE}
-df.pg.mean <- df.pg.raw %>%
-  dplyr::filter(sex > 0 & sex < 3) %>% # 筛选出男性和女性的数据
-  dplyr::mutate(ECR_mean=rowMeans(select(., starts_with("ECR")), na.rm = T),
-                HOME_mean=rowMeans(select(., starts_with("HOME")), na.rm = T),
-                sex=as.factor(sex)
-                ) %>%
-  dplyr::select(age, sex, romantic, ECR_mean, HOME_mean, Temperature_t1, Temperature_t2)
-
-```  
-
-```{r df.pg.mean DT, echo=FALSE}
-# check 5st five rows 
-# head(df.pg.mean, 5)
-DT::datatable(head(df.pg.mean, 5),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-# <h1 lang="zh-CN">TTEST()：bruceR中*t*检验函数的参数</h1>
-![](./picture/chp7/process_19.png)
----
-# <h1 lang="en">bruceR::TTEST</h1>
-## <h2 lang="zh-CN">问题1: 单样本*t*检验</h2>
+# Packages
 ```{r}
-  # bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = ">")
-  # bruceR::TTEST(df.pg.mean, "HOME_mean", test.value = 3.5, test.sided = "<")
-  result.ttest <- capture.output({
-  bruceR::TTEST(data=df.pg.mean, 
-                y="HOME_mean", 
-                test.value = 3.5, 
-                test.sided = "=",
-                file = "./output/chp7/one_sample_t.doc")
-})
-writeLines(result.ttest, "./output/chp7/single_t.md") # .md最整齐
-                
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
+  # 生成课件
+  xaringan,xaringanthemer,xaringanExtra)
 ```
 
----
-# <h1 lang="en">bruceR::TTEST</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp7/process_1.png)
 
 ---
-# <h1 lang="en">bruceR::TTEST</h1>
-## <h2 lang="zh-CN">问题2: 独立样本*t*检验</h2>
+class: inverse center middle
+.tit_font[
+回顾
+]
+
+???
+-   回顾
+
+-   数据探索与描述统计
+
+-   为什么可视化
+
+-   为什么用 ggplot 画图
+
+-   ggplot 绘图的原理
+
+-   基本图形简介
+  -   散点图
+  -   柱状图
+  -   密度图
+  -   
+
+
+---
+## 7.0.1  批量导入数据
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+
+.panelset[
+.panel[.panel-name[获取地址]
+```{r }
+# 所有数据路径
+files <- list.files(  #<<
+  ## <- & =
+  here::here("data", "match"), 
+  pattern = "data_exp7_rep_match_.*\\.out$", 
+  full.names = TRUE)
+```
+
+
+
+.panel[.panel-name[数据类型转换]
+
 ```{r}
-    result.ttest <- capture.output({   
-    bruceR::TTEST(data=df.pg.mean, 
-                y="ECR_mean",
-                x="sex")
-})
-
-writeLines(result.ttest, "./output/chp7/inde_t.md")
-                
+convert_data_types <- function(df) {
+  df <- df %>% 
+    dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),Age = as.numeric(Age),
+                  Sex = as.character(Sex),Hand = as.character(Hand),
+                  Block = as.numeric(Block),Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),Shape = as.character(Shape),
+                  Label = as.character(Label),Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),RT = as.numeric(RT))
+  return(df)
+}
 ```
 
----
-# <h1 lang="en">bruceR::TTEST</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp7/process_2.png)
+.panel[.panel-name[批量合并]
+```{r }
+df3 <- data.frame() 
 
----
-# <h1 lang="en">bruceR::TTEST</h1>
-## <h2 lang="zh-CN">问题3: 配对样本*t*检验</h2>
+for (i in seq_along(files)) {
+  # 读取
+  df <- read.table(files[i], header = TRUE) %>%  
+    dplyr::filter(Date != "Date") %>%  
+    convert_data_types() 
+  # 合并
+  df3 <- dplyr::bind_rows(df3, df) 
+}
+# 删除临时变量
+rm(df, files, i)
+```
+
+.panel[.panel-name[保存数据]
+
+```{r eval=FALSE}
+## NOT RUN
+## 上节课介绍了write.csv,也可使用bruceR::export
+bruceR::export(
+  df3, 
+  file = here::here("data", "match","match_raw.csv"))
+
+## 当然，export 不仅可以保存数据，也可以输出模型结果
+
+```
+
+.panel[.panel-name[修改列名-rename]
 ```{r}
-   result.ttest <- capture.output({
-   bruceR::TTEST(data=df.pg.mean, 
-                 y = c("Temperature_t1",              
-                       "Temperature_t2"),
-                 paired = T)  #是否为配对样本*t*检验？默认是FALSE
-})
+## 修改第一列列名 Date 为小写 date
+df3 %>% dplyr::rename(  ## new_name = old_name
+  date = Date
+) %>% colnames()  
 
-writeLines(result.ttest, "./output/chp7/pair_t.md")
-                
+## 将全部列名都变成小写
+df3 %>% dplyr::rename_with(
+  ## 将字符向量全部变成小写； ~ 声明这是一个函数，.代表前面的数据(df3)传到.所在的位置
+  ~tolower(.)   #<<
+  ## 即使用 tolower()对所有列名进行批量处理
+  ##
+) %>% colnames()
+
 ```
 
----
-# <h1 lang="en">bruceR::TTEST</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp7/process_3.png)
-
----
-# <h1 lang="en">Reporting *t*-test results in APA</h1>
-<br>
-<br>
-<h3 lang="en">The basic format for reporting the result of a *t*-test is the same in each case:</h3>
-<h3 lang="en">*t*(degress of freedom) = the t-value , *p* = p-value, Cohen's *d* = effect size</h3>
-<br>
-![](./picture/chp7/process_8.png)
 
 
-<h4 lang="zh-CN">以上均与假想的问题无关，大家可结合自己的数据改写代码</h4>
----
-class: center, middle
-<span style="font-size: 60px;">7.3 anova</span> <br>
+]
+]
+]
+]
+]
+]
 
----
-# <h1 lang="zh-CN">回顾ANOVA的基础知识</h1>
-![](./picture/chp7/process_4.png)
+???
+-   解释 变量赋值与参数接受符号差别
 
-<br>
----
-# <h1 lang="zh-CN">回顾ANOVA的基础知识</h1>
-![](./picture/chp7/process_5.png)
+-   代码规范性，R 对缩进换行不敏感
 
----
-# <h1 lang="zh-CN">回顾ANOVA的基础知识</h1>
-![](./picture/chp7/process_6.png)
+-   export 函数
 
 
 ---
-# <h1 lang="zh-CN">回顾ANOVA的基础知识</h1>
-<br>
-<h2 lang="zh-CN">多因素方差分析概述</h2>
-<br>
-<h3 lang="zh-CN">多因素方差分析原理与单因素方差分析基本一致，即利用方差比较的方法，通过假设检验的过程来判断多个因素是否对因变量产生显著性影响。当有两个及以上因素对因变量产生影响时，使用多因素方差分析。多因素方差分析不仅要考虑每个因素的主效应，往往还要考虑因素之间的交互效应。</h3>
-<br>
-![](./picture/chp7/process_7.png)
+## 7.0.2  代码书写规范
+
+```{r eval=FALSE}
+## 看起来如何？
+iris %>% group_by(Species) %>% summarize_all(mean) %>%
+ungroup %>% gather(measure, value, -Species) %>%
+arrange(value)
+```
+
+--
+```{r eval=FALSE}
+### 是不是更整洁一些
+iris %>%
+  dplyr::group_by(Species) %>%
+  dplyr::summarize_if(is.numeric, mean) %>%
+  dplyr::ungroup() %>%
+  tidyr::gather(measure, value, -Species) %>%
+  dplyr::arrange(value)
+## 有没有自动挡…
+```
+
+
+.footnote[
+-----
+参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
+]
+
+
 
 ---
-class: center, middle
-<span style="font-size: 60px;">7.4 anova in R</span> <br>
+## 7.0.2  代码书写规范
+
+
+```{r eval=FALSE}
+## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
+## 或者点击 Code --> Reformat Code (快捷键冲突)
+## 自动增加空格与缩进
+## 选中下面代码看看效果，尽管效果有限
+## 还是平时养成书写习惯更好
+
+files<-list.files(
+here::here("data","match"), 
+pattern="data_exp7_rep_match_.*\\.out$", 
+full.names=TRUE)
+```
+
+
+
+.footnote[
+-----
+参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
+]
+
+
 ---
-# <h1 lang="zh-CN">假想的问题</h1>
+## 7.0.3  数据清洗
+.pull-left[
+### 列操作
+-   增加、修改、删除(mutate)
+-   列筛选(select & tidyseletion)
+
+### 行操作
+
+-   条件过滤(filter)
+-   行索引(slice)
+
+### 数据框
+-   列/行合并：
+    bind_cols & bind_rows
+
+-   匹配合并：
+    left_join, right_join, full_join
+
+-   修改列名：
+    rownames or dplyr::rename
+    
+-   长/宽数据转换：
+    pivot_longer, pivot_wider
+]
+
+
+.pull-right[
+
+### 分组计算
+
+-   group_by/ungroup
+
+-   summarise
+
+-   rowMeans or bruceR::MEAN(or SUM)
+
+-   case_when()
+
+-   多列选取：across()
+
 <br>
+### 字符串(stringr package)
+-   str_xxx()系列  
+
 <br>
-<h2 lang="zh-CN">1. “在match数据中，被试在匹配任务和不匹配任务上的反应时是否存在差异？”</h2>
-<br>
-<h2 lang="zh-CN">2. “在match数据中，被试在不同身份(self vs other)与不同效价(moral vs immoral)的条件组合下反应时是否存在差异？”</h2>
-<br>
+### 函数式编程(purrr package)
+
+-   map()系列，类似 apply() 系列  
+
+]
+
+
+
 ---
-# <h1 lang="zh-CN">载入包</h1>
+class: center,middle
+
+
+<span style="font-size: 50px;">**第七章**</span> <br>
+<span style="font-size: 50px;">__如何探索数据: __</span> <br>
+<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
+
+
+---
+class: inverse,center,middle
+
+.bigfont[
+数据已经清洗完成，下面应该做的是……]
+--
+.bigfont[
+<br>
+查看数据内容？
+<br>
+建模分析？
+<br>
+......
+]
+
+
+--
+.bigfont[
+先看一个数据(quartets::datasaurus_dozen)
+]
+
+
+
+---
+
+.panelset[
+.panel[.panel-name[view]
 ```{r}
-pacman::p_load("tidyverse", "bruceR")
+quartets::datasaurus_dozen %>%  ## 包中的数据
+  head(10)
 ```
 
+.panel[.panel-name[`str()`]
+```{r}
+quartets::datasaurus_dozen %>%  ## 包中的数据
+  str()
+```
+
+
+.panel[.panel-name[`summary()`]
+```{r}
+summary(datasaurus_dozen)
+```
+
+
+]]]]
+
+
 ---
-# <h1 lang="zh-CN">设置工作路径 - 导入数据与预处理</h1>
+class: middle,center
+.tit_font[
+好像没什么问题…  
+
+]
+
+--
+.tit_font[
+<br>
+作图看看呢
+]
+
+---
+## 
+```{r echo=FALSE,eval=FALSE}
+## NOT SHOW
+## PLOT GIF
+pacman::p_load(camcorder,tidyverse,bruceR)
+data = quartets::datasaurus_dozen
+colors = c('#FF5733','#00CED1','#FFD700',
+           '#8A2BE2','#32CD32','#4682B4',
+           '#FF4500','#9400D3','#00FF00',
+           '#FF1493','#8B0000','#FF69B4','#20B2AA')
+
+orders <- data$dataset %>% unique()
+orders <- c(orders[-1],orders[1])
+
+pic <- list()
+for(i in 1:13) {
   
+    pic[[i]] <- data %>% filter(dataset == orders[i]) %>%
+      ggplot(aes(x, y)) +
+      geom_point(color = colors[i]) +
+      geom_smooth(method = "lm", color = 'black')  +
+      labs(title = paste0('dataset:  ', orders[i])) +
+      bruceR::theme_bruce() +
+      theme(title = element_text(size = 20)) 
+}
+
+gg_record(
+  dir <- file.path(tempdir(), "recording"), 
+  device = "png",
+  width = 5,
+  height = 5,
+  units = "in",
+  dpi = 500
+)
+
+for(i in 1:13){
+  pic[[i]] %>% print()
+}
+
+gg_playback(name = file.path(paste0(getwd(),'/pic_new/chp7/'), "dino.gif"),
+            first_image_duration = 1,
+            last_image_duration = 3,
+            frame_duration = 1,loop = F,
+            playback = T,last_as_first = F,
+)
+gg_stop_recording()
+```
+
+```{r echo=FALSE,fig.align='center',out.width='50%'}
+knitr::include_graphics('pic_new/chp7/dino.gif')
+```
+
+
+```{r echo=FALSE,fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center',eval = FALSE}
+
+### NOT RUN
+quartets::datasaurus_dozen %>% 
+  ggplot(aes(x, y, color = dataset)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ dataset)
+```
+
+
+
+
+
+---
+layout: true
+# 7.1  探索性数据分析
+
+---
+
+.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
+**探索性数据分析(Exploratory Data Analysis, EDA)**
+]
+
+> In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
+
+
+```{r,echo=FALSE,out.width="50%",fig.align='center'}
+knitr::include_graphics("https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png")
+```
+
+
+
+---
+
+.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
+
+.pull-left[
+.bigfont[
+-   有哪些变量？
+-   变量的类型？
+-   变量的分布？
+-   变量间关系？
+]
+]
+
+
+.pull-right[
+
+```{r eval = T}
+# 读取数据
+pg_raw <- bruceR::import(here::here(
+  "data", "penguin","penguin_rawdata.csv"))
+
+mt_raw <- bruceR::import(here::here(
+  "data", "match","match_raw.csv")) 
+```
+
+]
+
+---
+.panelset[
+.panel[.panel-name[`head`]
+```{r, out.width = "10px"}
+DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
+```
+
+.panel[.panel-name[`str`]
 ```{r}
-df.match <-  read.csv('./data/match/match_raw.csv',
-                      header = T, sep=",", stringsAsFactors = FALSE) %>%
-  # 拆分单元格内字符串
-  tidyr::separate(col=Shape,
-                  into=c("Valence","Identity"),
-                  sep="(?<=moral|immoral)(?=Self|Other)") %>% 
-  dplyr::select(Sub, Valence, Identity, everything()) %>%
-  dplyr::filter(ACC == 1) %>%    # 只选择回答正确的数据
-  dplyr::filter(!is.na(RT)) %>%  # 剔除缺失值
-  # remove outliers below and above 3rd sd
-  dplyr::filter(RT > quantile(RT, 0.0015) & RT < quantile(RT, 0.9985)) %>%
-  dplyr::mutate(RT = as.numeric(RT)) %>%
-  dplyr::mutate(Valence = as.factor(Valence),
-                Identity = as.factor(Identity))
+mt_raw %>% 
+  str() 
+```
+
+]]]
+
+---
+## 常用函数
+
+.panelset[
+.panel[.panel-name[`summary`]
+```{r,out.width="10%"}
+summary(mt_raw) %>% 
+  knitr::kable() # 注：kable函数只为了输出
+```
+
+
+.panel[.panel-name[`skimr::skim()--1`]
+```{r}
+skimr::skim(mt_raw) %>% 
+  capture.output() %>% 
+  .[1:12]
+```
+
+.panel[.panel-name[`skimr::skim()--2`]
+
+```{r}
+skimr::skim(mt_raw) %>% 
+  capture.output() %>% 
+  .[13:24]
+```
+
+
+.panel[.panel-name[`skimr::skim()--3`]
+```{r}
+skimr::skim(mt_raw) %>% 
+  capture.output() %>% 
+  .[25:41]
+```
+
+.panel[.panel-name[`bruceR::Describe()`]
+
+```{r,warning=FALSE}
+bruceR::Describe(mt_raw) %>% 
+  capture.output() %>% 
+  .[2:17] ## 可以使用 file参数输出 Word
+```
+
+
+]]]]]]
+
+
+
+---
+layout: false
+class: inverse middle center
+
+
+.tit_font[
+但是...<br>还不够
+]
+
+---
+# 7.2  数据可视化
+## 7.2.1 可视化的重要性
+
+.pull-left[
+.size5[
+Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
+
+-   A quick and easy way to check our data make sense, and to identify any unusual trends.
+
+-   A way to honestly present the features of our data to anyone who reads our research.
+]
+]
+
+--
+.pull-right[
+```{r echo=FALSE,fig.width=5,out.width='90%',fig.align='default'}
+library(showtext)
+showtext::showtext_auto(enable = T)
+quartets::datasaurus_dozen %>% 
+  filter(dataset == 'dino') %>% 
+  ggplot(aes(x,y)) + geom_point(color ='#20B2AA') + 
+  theme_bruce() + 
+  labs(title = '请记住这只 DINO !!!') + 
+  theme(plot.title = element_text(size = 20)) 
+```
+
+]
+<br>
+<br>
+
+.size5[
+绘图的方式有很多，如 Base graphics, grid, lattice,plotly...为什么使用<span style="color: red;">ggplot2</span>?
+]
+
+
+
+---
+# 7.2  数据可视化
+## 7.2.2 为何使用 ggplot2?
+<br>
+.size5[
+* 化繁为简：大量的默认值
+
+* 精准定制：所有元素均可控
+
+* 易于叠加：丰富的信息
+
+* 日益丰富的生态系统 [https://r-graph-gallery.com/](https://r-graph-gallery.com/)
+
+]
+
+
+.bigfont[
+总之，好看、业界标杆，举个例子:
+]
+
+---
+## 7.2.2 为何使用 ggplot?
+
+```{r echo=FALSE,out.width='63%',fig.align='center'}
+knitr::include_graphics('pic_new/chp7/exmp2.png')
+```
+
+
+---
+## 7.2.2 为何使用 ggplot?
+
+```{r echo=FALSE,out.width='63%',fig.align='center'}
+knitr::include_graphics('pic_new/chp7/exmp1.png')
+```
+
+
+.footnote[
+-----
+Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker circulation over the past millennium. Nature 622, 93–100 (2023). https://doi.org/10.1038/s41586-023-06447-0
+]
+
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+.left-column[
+.bigfont[
+-   数据映射
+]
+]
+
+.right-column[
+```{r echo=FALSE,out.width='75%'}
+knitr::include_graphics('pic_new/chp7/mapping.jpg')
+```
+]
+
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+
+.left-column[
+.bigfont[
+-   数据映射
+
+-   图层叠加
+]
+]
+
+.right-column[
+```{r echo=FALSE,out.width='70%'}
+knitr::include_graphics('https://psyteachr.github.io/data-skills-v1/images/layers.png')
+```
+]
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+
+.left-column[
+.bigfont[
+-   数据映射
+
+-   图层叠加
+
+-   Code展示
+]]
+
+.right-column[
+.panelset[
+.panel[.panel-name[数据映射]
+```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
+# 以penguin问卷中前后体温为例
+
+p1 <- pg_raw %>% 
+  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
+             y = Temperature_t2)) 
+p1 ## 坐标轴名称已对应，虽然图片为空
   
 ```
 
+
+.panel[.panel-name[添加图层-散点]
+```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center'}
+p1 + geom_point()
+```
+.panel[.panel-name[添加图层-拟合曲线]
+```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center'}
+p1 + geom_point() + geom_smooth(method = 'lm')
+```
+
+.panel[.panel-name[改变映射]
+```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
+pg_raw %>% 
+  drop_na(Temperature_t1,Temperature_t2,sex) %>% 
+  ggplot(aes(x = Temperature_t1, 
+             y = Temperature_t2,
+             color = factor(sex))) +
+  geom_point() + geom_smooth()  
+
+```
+
+
+
+]]]]]]
+
+
+???
+-   映射与添加图层是两个概念，映射后可以不进行绘图
+
+-   图层的添加使用 + 
+
+-   除了 x 和 y，仍然有其他变量进行映射，如 color
+
 ---
+## 7.2.4 单个图片的组成
+
+```{r echo=FALSE,out.width='70%',fig.align='center'}
+knitr::include_graphics('pic_new/chp7/comps1.png')
+
+```
+
+
+
+---
+## 7.2.4 单个图片的组成
+
+```{r echo=FALSE,out.width='75%',fig.align='center'}
+knitr::include_graphics('pic_new/chp7/comps2.png')
+
+```
+
+
+
+---
+layout: true
+# 7.3 常用图形
+
+
+---
+## 直方图
+<font size=5>
+对于连续变量，我们可以使用直方图进行可视化。
+以认知实验中被试的反应时数据为例。
+</font>
 <br>
-<br>
 
-```{r}
-DT::datatable(head(df.match, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
+.pull-left[
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+pic_his <- mt_raw %>% 
+  # 确定映射到x轴的变量
+  ggplot(aes(x = RT)) + 
+  geom_histogram(bins = 40) +
+  theme_classic()
+```
+]
+
+.pull-right[
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
+pic_his 
+```
+]
+
+
+---
+## 密度图
+<font size=5>
+&emsp;&emsp;同样的我们可以使用密度图来描述反应时的分布情况。
+</font>
+
+.pull-left[
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
+pic_dens <- mt_raw %>% ggplot()+
+  # 绘制密度曲线
+  geom_density(aes(x = RT)) +
+  theme_classic()
+```
+]
+
+.pull-right[
+
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
+pic_dens
+```
+]
+
+---
+## 直方图 + 密度图
+
+.pull-left[
+```{r eval=FALSE}
+## 尝试将两个图层叠加在一起
+mt_raw %>% ggplot(aes(x = RT))+
+  geom_histogram(bins = 40) + 
+  geom_density() +
+  theme_classic()
+```
+]
+
+
+.pull-right[
+```{r echo=FALSE,fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
+
+mt_raw %>% ggplot(aes(x = RT))+
+  geom_histogram(bins = 40) + 
+  geom_density() +
+  theme_classic()
+```
+似乎密度曲线没有显示…
+原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
+如果仔细观察 x 坐标轴还是能看到细微差异的。
+]
+
+
+
+---
+## 直方图 + 密度图
+.pull-left[
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%'}
+pic_mix <- mt_raw %>% 
+  ggplot(aes(x = RT,
+  ## 直方图的统计结果通过after_stat(density)传递给了密度图
+        y = after_stat(density))) +  #<<
+  geom_histogram() +
+  geom_density() +
+  theme_classic()
+# 设定绘图风格
+```
+]
+
+.pull-right[
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
+pic_mix
+```
+]
+
+---
+## 箱线图
+
+除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。这里我们利用箱线图看看不同Label的RT如何。
+
+
+.pull-left[
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
+pic_box <- mt_raw %>% ggplot(aes(
+  x = Label,
+  y = RT)) +
+  geom_boxplot(staplewidth = 1) +
+  # 绘制箱线图并添加上下边缘线
+  theme_classic()
+```
+
+
+]
+.pull-right[
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
+pic_box
+```
+]
+
+.footnote[
+----
+矩形中间线为中位数，上下两条线分别为上四分位数和下四分位数；
+1.5个四分位距(Q3-Q1)以外的值为离群值；geom_boxplot默认使用1.5IQR
+]
+---
+layout: true
+# 7.4 Explore data with DataExplorer
+
+---
+
+
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='80%',eval=FALSE}
+ DataExplorer::plot_str(mt_raw)
+```
+
+```{r echo=FALSE,out.width='65%'}
+knitr::include_graphics('pic_new/chp7/plotstr.png')
 ```
 
 ---
-# <h1 lang="zh-CN">CODE_问题1处理</h1>
-# <h2 lang="zh-CN">计算被试匹配与不匹配任务上的平均反应时间及其标准差</h2>
 
-```{r}
-df.match.mean <- df.match %>%
-    dplyr::group_by(Sub, Match) %>%
-    dplyr::summarise(
-        n = n(),
-        rt_sd = sd(as.numeric(RT), na.rm = T),
-        rt_mean = mean(RT, na.rm = T), # 对于factor数据，先转成character，再变成numeric
-        ) %>%
-    dplyr::ungroup()
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+DataExplorer::plot_intro(mt_raw)
+```
+
+
+---
+
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+ DataExplorer::plot_missing(mt_raw)
 ```
 
 ---
-<br>
-<br>
 
-```{r}
-DT::datatable(head(df.match.mean, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+ DataExplorer::plot_bar(mt_raw)
 ```
 
 ---
-# <h1 lang="zh-CN">CODE_问题1处理</h1>
-# <h2 lang="zh-CN">单因素被试内设计</h2>
 
-```{r}
-#比较被试在匹配任务和不匹配任务上的反应时是否存在差异
-#单因素被试内设计（长型数据）
-result.anova <- capture.output({
-df_within <- df.match.mean %>%
-  bruceR::MANOVA(subID="Sub",    # 被试id
-                 dv="rt_mean",   # 因变量，因为是MANOVA，实际上因变量可以再后面设置很多个
-                 within="Match") # 设置条件，因素分析的条件
-})
-
-writeLines(result.anova, "./output/chp7/anova_1.md")
-# 若不符合球形假设要加上：sph.correction = "GG"
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+ DataExplorer::plot_bar(mt_raw, by="Match")
 ```
 
 ---
-# <h1 lang="en">bruceR::MANOVA</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp7/process_10.png)
+
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+DataExplorer::plot_histogram(mt_raw)
+```
+
 
 ---
-# <h1 lang="zh-CN">ANOVA问题2</h1>
-# <h2 lang="zh-CN">计算被试在不同身份和效价条件下的平均反应时间及其标准差</h2>
 
-```{r}
-df.match.mean <- df.match %>%
-    dplyr::group_by(Sub,Sex, Valence,Identity) %>%
-    dplyr::summarise(
-        n = n(),
-        rt_sd = sd(as.numeric(RT), na.rm = T),
-        rt_mean = mean(as.numeric(RT), na.rm = T)
-        ) %>%
-    dplyr::ungroup()
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+ DataExplorer::plot_qq(pg_raw[,2:10])
 ```
 
 ---
-<br>
-<br>
-```{r}
-DT::datatable(head(df.match.mean, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
+
+```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
+DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
 ```
 
 ---
-# <h1 lang="zh-CN">MANOVA()：多因素被试间/被试内/混合设计方差分析ANOVA</h1>
-# <h2 lang="zh-CN">主要参数</h2>
-![](./picture/chp7/process_16.png)
+## 使用ggpairs
 
----
-# <h1 lang="zh-CN">问题2的R语法</h1>
-# <h2 lang="zh-CN">长数据转换为宽数据</h2>
-
-```{r}
-df.match.within <- df.match.mean %>%
-  dplyr::select(-c(n, rt_sd)) %>%
-  dplyr::mutate(Valence = paste("A_", Valence, sep = ""),#将变量的名称进行修改转换，不生产新的变量
-                Identity = paste("B_", Identity, sep = "")) %>%
-  # 将morality和identity组合名称起来生成一个新的变量"Conds"
-  tidyr::unite("Conds", Valence:Identity, sep = "&",remove=TRUE) %>% 
-  tidyr::pivot_wider(names_from = Conds,
-                     values_from = rt_mean)
-
-head(df.match.within)
-#str(df.match.within)
+.panelset[
+```{r panelset=TRUE}
+## 以 penguin project 数据中 ALEX, stress和 ECR 为例
+pg_raw %>% 
+  mutate(
+    # 计算均值
+    m_ALEX = bruceR::MEAN(.,
+      var = 'ALEX',items = 1:16,rev = c(4,12,14,16)),
+    m_stress = bruceR::MEAN(.,
+      var = 'stress',items = 1:14,rev = c(4:7,9,10,13)
+    ),
+    m_ECR = bruceR::MEAN(.,
+      var = 'ECR',items = 1:36
+    )
+  ) %>% 
+  select(contains('m_')) %>% 
+  GGally::ggpairs()
 ```
 
----
-# <h1 lang="zh-CN">问题2的R语法</h1>
-# <h2 lang="zh-CN">两因素被试内设计_宽数据</h2>
-
-```{r}
-#被试在不同身份(self vs other)与不同效价(moral vs moral)的条件组合下反应时是否存在差异）
-  result.anova <- capture.output({
-  res_rmANOVA_1 <- bruceR::MANOVA(data=df.match.within,
-                   dvs="A_immoral&B_Other:A_moral&B_Self",
-                   dvs.pattern="A_(.+)B_(.+)",#正则表达式
-                   within=c("A_","B_"))#表示2个主条件
-  })
-
-writeLines(result.anova, "./output/chp7/anova_2.md")
-```
+]
 
 ---
-# <h1 lang="en">bruceR::MANOVA</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp7/process_17.png)
+layout: false
+#练习
+.bigfont[
+1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
+
+2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
+
+3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
+ 
+]
+
+#探索
+.bigfont[
+1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
+
+2. 学会使用大语言模型进行学习，进行精准地提问。
+]
 
 ---
-# <h1 lang="en">bruceR::MANOVA</h1>
-## <h2 lang="en">OUTPUT</h2>
-![](./picture/chp7/process_18.png)
----
-# <h1 lang="zh-CN">问题2的R语法</h1>
-# <h2 lang="zh-CN">两因素被试内设计_长数据</h2>
+# 参考阅读
+.bigfont[
+-   [R Graphics Cookbook](https://r-graphics.org/)
 
-```{r}
-#被试在不同身份(self vs other)与不同效价(good vs bad)的条件组合下反应时是否存在差异）
-#head(df.match.mean)
-  result.anova <- capture.output({
-  res_rmANOVA_2 <- bruceR::MANOVA(data=df.match.mean,
-                   dv="rt_mean",
-                   within=c("Valence","Identity"),
-                   subID="Sub")
-  })
-
-writeLines(result.anova, "./output/chp7/anova_3.md")
-```
-
----
-# <h1 lang="zh-CN">简单效应检验与多重比较</h1>
-# <h2 lang="zh-CN">主要参数</h2>
-![](./picture/chp7/process_13.png)
-
----
-# <h1 lang="zh-CN">简单效应检验与多重比较</h1>
-# <h2 lang="zh-CN">问题2的简单效应比较</h2>
-
-```{r}
-result.check <- capture.output({
-sim_eff_1 <- res_rmANOVA_1 %>%
-  bruceR::EMMEANS("A_", by="B_")#简单效应分析
-})
-writeLines(result.check, "./output/chp7/check.md")
-
-#sim_eff_1 <- res_rmANOVA_1 %>%
-  #EMMEANS("B_", by="A_")   和上一个同理，只是转换了不同的形式
-```
-
----
-# <h1 lang="zh-CN">被试间设计的语法实现</h1>
-# <h2 lang="en">性别与亲密关系对ECR得分的效应</h2>
-
-```{r}
-# MANOVA(data, dv="SCORE", between=c("A", "B"))
-# data 代表两因素的数据类型
-# dv 因变量
-# between 被试间因素的名称，此处表示两因素被试间设计，如果只有一个就是单因素被试间设计
-res_ANOVA_btw <- df.pg.mean %>%
-  bruceR::MANOVA(., 
-                 dv="ECR_mean",
-                 between = c("sex", "romantic"))
-```
-
----
-# <h1 lang="zh-CN">混合设计的语法实现</h1>
-# <h2 lang="en">CODE</h2>
-<h3 lang="zh-CN">以2个被试间1个被试内的混合设计形式为例</h3>
-
-```{r}
-# 假设数据集是mixed.3_2b1w
-# A、C是被试间变量，B是被试内变量
-# MANOVA(mixed.3_2b1w, dvs="B1:B2", dvs.pattern="B(.)",
-       #between=c("A", "C"), within="B")
-res_ANOVA_mix <- df.match.mean %>%
-  dplyr::mutate(Sex = ifelse(Sex =="1", "male",
-                             ifelse(Sex == "2", "female", Sex))) %>%
-  bruceR::MANOVA(., 
-                 subID = "Sub",
-                 dv="rt_mean",
-                 between = c("Sex"),
-                 within = c("Valence", "Identity"))
-```
-
----
-# <h1 lang="zh-CN">课堂练习</h1>
-<br>
-<br>
-<h2 lang="zh-CN">1. “在Penguin数据中，不同站点(“Site”)的被试在主观压力上是否有差异？”</h2>
-<br>
-<h2 lang="zh-CN">2. “在match数据中，如何分析 *d'*”</h2>
-<br>
+-   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
+]
