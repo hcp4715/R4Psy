@@ -810,15 +810,13 @@ dplyr::summarise(
 <br>
 Step1: 选择需要的变量 <br>
 <br>
-Step2: 基于Sub，Block，Bin和Shape分组 <br>
+Step2: 基于Sub, Shape分组 <br>
 <br>
 Step3: 使用计算公式 <br>
 <br>
 Step4: 删除击中、虚报、误报、正确拒绝 <br>
 <br>
-Step5: 按Sub和Shape分组 <br>
-<br>
-Step6: 长转宽，得到每个Shape情况下的信号检测论d值 <br>
+Step5: 长转宽，得到每个Shape情况下的信号检测论d值 <br>
 
 
 ---
