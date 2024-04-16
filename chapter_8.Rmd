@@ -19,20 +19,12 @@ params:
 
 class: center, middle
 <span style="font-size: 50px;">**第八章**</span> <br>
-<span style="font-size: 50px;">基本统计分析</span> <br>
+<span style="font-size: 50px;">回归模型(一)</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
 <span style="font-size: 30px;">`r Sys.Date()`</span> <br>
 <span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  fig.width=9, fig.height=4, fig.retina=2, 
-  out.width="100%",
-  message = FALSE,
-  warning = F
-)
-```
 
 ```{css extra.css, echo=FALSE}
 /* ---- extra.css ---- */
@@ -48,7 +40,6 @@ font-size: 60px;
 
 ```
 
-
 ---
 <br>
 <br>
@@ -57,111 +48,22 @@ knitr::include_graphics('pic_new/chp8/group.png')
 ```
 
 ---
-<h1 lang="en" style="font-size: 60px;">Contents</h1>
+#课堂目标
 <br>
-<span style="font-size: 45px;">8.1 课程思路</span></center> <br>
 <br>
-<span style="font-size: 45px;">8.2 *t*-test</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.2.1 *t*-test基础知识</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.2.2 bruceR::TTEST</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.2.3 代码实操</span></center> <br>
+## 纯粹的代码学习 → 统计知识和代码的结合 <br>
 <br>
-<span style="font-size: 45px;">8.3 ANOVA</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.1 ANOVA基础知识</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.2 bruceR::MANOVA</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.3 代码实操</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.4 ANOVA与线性回归</span></center> <br>
-
-
----
-# 8.1  课程思路
-## 8.1.1 总体思路
-```{r, echo = FALSE, fig.width = 4.5, fig.height = 3}
-knitr::include_graphics('pic_new/chp8/route.png')
-```
-
----
-# 8.1  课程思路
-## 8.1.2 bruceR
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
-```
-
-.panelset[
-.panel[.panel-name[概述]
-```{r, echo=FALSE}
-knitr::include_graphics('pic_new/chp8/zhihu1.png')
-```
-
-来源：https://zhuanlan.zhihu.com/p/281150493
-
-.panel[.panel-name[功能概览]
-```{r, echo=FALSE}
-knitr::include_graphics('pic_new/chp8/zhihu2.png')
-```
-来源：https://zhuanlan.zhihu.com/p/281150493
-.panel[.panel-name[主要函数功能简介]
-
-**set.wd()或set_wd()**：自动获取并设置到当前打开文件（R脚本）的路径<br>
-**import() / export()**：一站式导入/导出任意存储格式的数据表<br>
-**RECODE()**：数值重新编码<br>
-**Alpha()**：内部一致性信度（输出Cronbach's α、McDonald's ω）<br>
-**EFA()与PCA()**：探索性因素分析与主成分分析<br>
-**CFA()**：验证性因素分析<br>
-**MEAN()**：多变量的横向计算系列函数——求多题平均值（无需额外手动反向计分）<br>
-**Describe()**：描述统计（输出样本量、平均值、标准差、中位数、偏度、峰度）<br>
-**Corr()**：相关分析（输出相关系数及其95%置信区间）<br>
-**TTEST()**：单样本/独立样本/配对样本t检验（输出效应量Cohen's d及其95%置信区间、贝叶斯因子BF10）<br>
-**MANOVA()**：多因素被试间/被试内/混合设计方差分析ANOVA（输出效应量partial η²、generalized η²）<br>
-**EMMEANS()**：简单效应检验与多重比较（输出效应量Cohen's d及其95%置信区间）<br>
-**model_summary()**：回归模型结果汇总输出（输出到R Console或Word文档）<br>
-**PROCESS()**：普通与多水平的中介效应、调节效应、有调节的中介效应分析<br>
-
-来源：https://zhuanlan.zhihu.com/p/281150493
-]]]]
-
----
-# 8.1  课程思路
-## 8.1.3 stats：R自带的包
+## R：更灵活的统计分析方法，与统计知识结合更加紧密<br>
 <br>
-**数据清理**：如na.omit（删除含有缺失值的观测）、na.action（设置缺失值处理方式）等。<br>
-**描述性统计**：如mean（计算均值）、var（计算方差）、sd（计算标准差）等。<br>
-**概率分布**：提供了各种概率分布的密度函数、分布函数、分位数函数和随机数生成函数，例如dnorm、pnorm、qnorm、rnorm等。<br>
-**统计检验**：包括t检验（t.test）、ANOVA（aov）、回归分析（lm）、卡方检验（chisq.test）等。<br>
-**线性模型**：lm函数用于拟合线性模型，anova用于分析模型方差，summary用于提取模型的摘要信息。<br>
-**预测和区间**：predict函数用于模型的预测，confint用于计算置信区间。<br>
-**统计图形**：如plot、hist、qqnorm等，用于数据可视化。<br>
-**时间序列分析**：包括时间序列对象的创建（ts）、时间序列模型的拟合（如arima）、预测（如forecast）等。<br>
-**非线性最小二乘法和最大似然估计**：如nls和optim函数。<br>
-**聚类分析**：如kmeans和hclust函数。<br>
+## 回归模型在数据分析中的重要占比<br>
 
 ---
-# 8.1  课程思路
-## 8.1.4 线性回归
 
-.panelset[
-.panel[.panel-name[回归分析]
-
-&nbsp;&nbsp;&nbsp;&nbsp;回归分析用于研究一个或多个自变量（预测变量）与一个因变量（响应变量）之间的关系。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;其目的是找到最佳拟合线的方程，这条线尽可能地接近所有的数据点。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;可以初步分为线性回归和非线性回归。<br>
-
-![](./pic_new/chp8/regressi.png)
-
-.panel[.panel-name[线性回归]
-
-&nbsp;&nbsp;&nbsp;&nbsp;线性回归的基本思想是通过数据拟合一条直线，使得这条直线尽可能地接近所有的数据点，从而实现对新数据点的预测。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;线性回归模型可以表示为：
-$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
-&nbsp;&nbsp;&nbsp;&nbsp;其中，y是因变量，x是自变量， $β_i$  是模型参数，表示截距和斜率，ε是误差项，表示模型未能解释的随机误差。<br>
-]]]
----
-<h1 lang="en" style="font-size: 60px;">Packages</h1>
-```{r}
+```{r,echo=FALSE}
+#导入包
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
-
 
 pacman::p_load(
   # 本节课需要用到的 packages
@@ -174,71 +76,20 @@ pacman::p_load(
 ```{r}
 # 改变R在显示大数字和小数字时是选择常规格式还是科学计数法的倾向
 options(scipen=999)
-
 # 还原设置 options(scipen = 0)
 ```
 
-
 ---
-class: center, middle
-<span style="font-size: 60px;">8.2  *t*-test</span> <br>
+# 需要解决的问题
 
-
----
-# <h1 lang="zh-CN">8.2.1 *t*检验基础知识</h1>
-
-.panelset[
-.panel[.panel-name[单样本(One sample)t检验]
-## 比较单个样本的平均值(m)与已知的总体平均值(μ)之间是否存在显著差异
-<br>
-## 前提条件
-* 正态性（Normality）：样本数据应来自正态分布的总体。样本量足够大时，即使不严格服从正态分布，结果也是稳健的。
-* 独立性（Independence）：样本中的观测值必须是独立的，即一个观测值不应影响另一个观测值。
-
-## 假设
-* $H_0$: 样本的均值(m)与给定的总体均值或假设的总体均值(μ)之间没有显著差异。
-* $H_1$: 样本的均值(m)与给定的总体均值或假设的总体均值(μ)之间有显著差异。
-<br>
-
-$$t = \frac{\bar{X} - \mu}{s / \sqrt{n}}$$
-.panel[.panel-name[配对样本(Dependent/Paired)t检验]
-## 比较两个相关的样本组（例如，同一组受试者在不同条件下的测量）的平均值是否存在显著差异。
-<br>
-## 前提条件
-* 正态性（Normality）：每对差异值（即两次测量之间的差值）应来自正态分布的总体。
-* 独立性（Independence）：配对样本中的观测值必须是独立的，即每一对观测值不应影响其他对的观测值。
-* 同方差性（Homoscedasticity）：配对差异值的方差应该是恒定的，即差异值的方差不应随着均值的变化而变化。
-* 配对设计（Paired Design）：数据必须是以配对形式收集的。
-
-## 假设
-* $H_0$: 配对样本的总体平均差与零没有显著差异，即μ_d = 0（两个配对样本的均值没有显著差异）。
-* $H_1$: 配对样本的总体平均差与零有显著差异，即μ_d ≠ 0（两个配对样本的均值存在显著差异）。
-<br>
-$$t = \frac{\bar{D}}{s / \sqrt{n}}$$
-.panel[.panel-name[独立样本(Indpendent)t检验]
-## 比较两个独立样本群体的均值是否有显著差异。
-<br>
-## 前提条件
-* 正态性：两个样本数据都应该来自正态分布的总体。
-* 同方差性：两个样本的方差应该是相等的。
-* 独立性：两个样本应该是独立的，即一个样本的观测值不应影响另一个样本的观测值。
-
-## 假设
-* $H_0$: 两个独立样本群体的均值没有显著差异，即 μ_1 = μ_2
-* $H_1$: 两个独立样本群体的均值有显著差异，即 μ_1 ≠ μ_2
-<br>
-$$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
-]]]]
----
-# <h1 lang="zh-CN">8.2.2 bruceR::TTEST</h1>
-```{r, echo = FALSE, fig.width=4.5, fig.height=2}
-knitr::include_graphics('pic_new/chp8/TTEST.png')
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
 ```
----
-# <h1 lang="zh-CN">8.2.3 代码实操</h1>
+
 
 .panelset[
-.panel[.panel-name[tidy data]
+.panel[.panel-name[清理数据]
+
 ```{r prepare}
 # 导入数据
 df1 <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
@@ -254,179 +105,393 @@ df.penguin <- df1 %>%
                 ALEX = rowSums(select(., starts_with("ALEX"))))#反向计分后计算总分
 ```
 
-.panel[.panel-name[查看数据]
+.panel[.panel-name[具体问题]
 
-```{r}
+<br>
+* 在penguin数据中，是否处于恋爱关系中(romantic)对核心体温(Temperature)有无影响？
+* 在penguin数据中，是否处于恋爱关系中(romantic)与离赤道的距离(DEQ)是否共同影响核心体温(Temperature)？
+<br>
+<br>
+
+```{r, echo=FALSE}
 DT::datatable(head(df.penguin),
               fillContainer = TRUE, options = list(pageLength = 4))
 ```
 
-.panel[.panel-name[具体问题]
-<br>
-<h3 lang="zh-CN">1. “在penguin数据中，全体被试的核心体温(Temperature)是否等于36.6？”</h3>
-<br>
-<h3 lang="zh-CN">2. “在penguin数据中，被试报告的两个核心温度(Temperature_t1,Temperature_t2)是否有显著差异？”</h3>
-<br>
-<h3 lang="zh-CN">3. “在penguin数据中，是否处于恋爱关系中(romantic)对核心体温(Temperature)有无影响？”</h3>
-]]]]
+]]]
 
 ---
-# <h1 lang="zh-CN">8.2.3 代码实操|单样本*t*检验</h1>
+<h1 lang="en" style="font-size: 60px;">Contents</h1>
 <br>
-全体被试的核心体温(Temperature)是否等于36.6
+<span style="font-size: 45px;">8.1 *t*-test & linear regression</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.1 独立样本*t*检验</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.2 线性回归</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.3 单样本*t*检验</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.4 配对样本*t*检验</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.5 bruceR::TTEST</span></center> <br>
+<br>
+<span style="font-size: 45px;">8.2 ANOVA & linear regression</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.3.1 ANOVA基础知识</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.3.2 bruceR::MANOVA</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.3.3 代码实操</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.3.4 ANOVA与线性回归</span></center> <br>
 
+---
+class: center, middle
+<span style="font-size: 60px;">8.1  8.1 *t*-test & linear regression</span> <br>
+
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.1 独立样本*t*检验(independent *t*-test)
 
 .panelset[
-.panel[.panel-name[bruceR::TTEST]
+.panel[.panel-name[基础知识]
+
+<br>
+**比较两个独立样本群体的均值是否有显著差异。**
+<br>
+**前提条件**
+* 正态性：两个样本数据都应该来自正态分布的总体。样本量足够大时，即使不严格服从正态分布，结果也是稳健的。
+* 同方差性：两个样本的方差应该是相等的。
+* 独立性：两个样本应该是独立的，即一个样本的观测值不应影响另一个样本的观测值。<br>
+<br>
+
+**假设**
+* $H_0$: 两个独立样本群体的均值没有显著差异，即 $μ_1$ = $μ_2$
+* $H_1$: 两个独立样本群体的均值有显著差异，即 $μ_1$ ≠ $μ_2$
+<br>
+$$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+
+.panel[.panel-name[代码实操]
+
 ```{r}
-bruceR::TTEST(data = df.penguin, #数据
-                y = "Temperature", #确定变量
-                test.value = 36.6, #固定值
-                test.sided = "=")  #根据研究目的，可更改为“<”或“>”
+stats::t.test(data = df.penguin, #数据框
+              Temperature ~ romantic,#因变量~自变量
+              var.equal = TRUE) %>%
+  capture.output() #capture.output仅为输出整齐
 ```
 
-.panel[.panel-name[stats::t.test]
-```{r}
-stats::t.test(x = df.penguin$Temperature, #核心体温均值
-              mu = 36.6) #固定值
-```
 
-.panel[.panel-name[stats::lm]
-
-```{r}
-model.single <- lm(data = df.penguin, #数据
-                   formula = Temperature-36.6 ~ 1) #公式：只有截距，没有自变量
-summary(model.single)
-```
-]]]]
+]]]
 
 ---
-# <h1 lang="zh-CN">8.2.3 代码实操|单样本*t*检验</h1>
+# 8.1 *t*-test & linear regression
+## 8.1.2 线性回归(linear regression)
 <br>
-全体被试的核心体温(Temperature)是否等于36.6?
+**回归分析**
+* 回归分析用于研究一个或多个自变量（预测变量）与一个因变量（响应变量）之间的关系。<br>
+* 其目的是找到最佳拟合线的方程，这条线尽可能地接近所有的数据点。<br>
+<br>
+<br>
+--
+<br>
+**线性回归**
+* 线性回归的基本思想是通过数据拟合一条直线，使得这条直线尽可能地接近所有的数据点，从而实现对新数据点的预测。<br>
+* 线性回归模型可以表示为：
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
+* 其中，y是因变量，x是自变量， $β_i$  是模型参数，表示截距和斜率，ε是误差项，表示模型未能解释的随机误差。
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.2 线性回归(linear regression)
+<br>
+* 独立样本t检验是线性模型的特殊形式(自变量为二分变量）
+--
+<p align="center">
+  <img src="./pic_new/chp8/indet-lm.png" width="55%">
+</p>
+
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.2 线性回归(linear regression)
+.pull-left[
+```{r,results='hide'}
+#t检验
+stats::t.test(data = df.penguin, #数据框
+              Temperature ~ romantic,#因变量~自变量
+              var.equal = TRUE) %>%
+  capture.output() #capture.output仅为输出整齐
+```
+
+<p align="center">
+  <img src="./pic_new/chp8/compare1.1.png" width="100%">
+</p>
+]
+
+.pull-right[
+```{r,results='hide'}
+#线性回归
+model.inde <- stats::lm(data = df.penguin,#数据框
+                   formula = Temperature ~ romantic #因变量~自变量
+                   
+)
+
+```
+
+<p align="center">
+  <img src="./pic_new/chp8/compare1.2.png" width="100%">
+</p>
+
+]
+
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.3 单样本*t*检验(one sample *t*-test)
+* 在penguin数据中，全体被试的核心体温(Temperature)是否等于36.6？<br>
+<br>
+--
+<br>
+**比较单个样本的平均值(m)与已知的总体平均值(μ)之间是否存在显著差异**<br>
+<br>
+
+**前提条件**
+* 正态性：样本数据应来自正态分布的总体。样本量足够大时，即使不严格服从正态分布，结果也是稳健的。
+* 独立性：样本中的观测值必须是独立的，即一个观测值不应影响另一个观测值。<br>
+<br>
+
+**假设**
+* $H_0$: 样本的均值(m)与给定的总体均值或假设的总体均值(μ)之间没有显著差异。
+* $H_1$: 样本的均值(m)与给定的总体均值或假设的总体均值(μ)之间有显著差异。
+<br>
+
+$$t = \frac{\bar{X} - \mu}{s / \sqrt{n}}$$
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.3 单样本*t*检验(one sample *t*-test)
+.pull-left[
+<br>
+<br>
 
 $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
 
-此时，仅截距不为0。<br>
+单样本t检验中，仅截距不为0。此时公式为：<br>
 --
 $$y = \beta_0$$
 $$H_0: \beta_0 = 0$$
-
----
-# <h1 lang="zh-CN">8.2.3 代码实操|单样本*t*检验</h1>
-<br>
-全体被试的核心体温(Temperature)是否等于36.6
-
+]
+.pull-right[
 <p align="center">
-  <img src="./pic_new/chp8/singlet-lm.png" width="40%">
+  <img src="./pic_new/chp8/singlet-lm.png" width="75%">
+</p>
+]
+---
+# 8.1 *t*-test & linear regression
+## 8.1.3 单样本*t*检验(one sample *t*-test)
+
+.pull-left[
+```{r,results='hide'}
+stats::t.test(x = df.penguin$Temperature, #核心体温均值
+              mu = 36.6) 
+  
+```
+
+<br>
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/compare2.1.png" width="100%">
 </p>
 
----
-# <h1 lang="zh-CN">8.2.3 代码实操|配对样本*t*检验</h1>
+]
+.pull-right[
+```{r,results='hide'}
+model.single <- lm(data = df.penguin, #数据
+                   formula = Temperature-36.6 ~ 1) #公式：只有截距，没有自变量
+summary(model.single) 
+```
+
 <br>
-被试报告的两个核心温度(Temperature_t1,Temperature_t2)是否有显著差异
-
-.panelset[
-.panel[.panel-name[bruceR::TTEST]
-```{r}
-bruceR::TTEST(data = df.penguin, #数据
-                 y = c("Temperature_t1",              
-                       "Temperature_t2"), #变量为两次核心体温
-                 paired = T)  #是否为配对样本*t*检验？默认是FALSE
-```
-
-.panel[.panel-name[stats::t.test]
-```{r}
-stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
-              y = df.penguin$Temperature_t2, #第2次核心体温
-              paired = TRUE) #配对
-```
-
-.panel[.panel-name[stats::lm]
-```{r}
-model.paired <- lm(data = df.penguin,
-                   formula = Temperature_t1 - Temperature_t2 ~ 1)
-summary(model.paired)#查看模型拟合情况
-```
-]]]]
----
-# <h1 lang="zh-CN">8.2.3 代码实操|配对样本*t*检验</h1>
 <br>
-被试报告的两个核心温度(Temperature_t1,Temperature_t2)是否有显著差异
- 
+<p align="center">
+  <img src="./pic_new/chp8/compare2.2.png" width="100%">
+</p>
+
+]
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.4 配对样本*t*检验(paired *t*-test)
+* 在penguin数据中，被试报告的两次核心温度(Temperature_t1,Temperature_t2)是否有显著差异？<br>
+<br>
+--
+**比较两个相关的样本组（例如，同一组受试者在不同条件下的测量）的平均值是否存在显著差异。**<br>
+<br>
+**前提条件**
+* 正态性：样本数据应来自正态分布的总体。样本量足够大时，即使不严格服从正态分布，结果也是稳健的。
+* 独立性：配对样本中的观测值必须是独立的，即每一对观测值不应影响其他对的观测值。
+* 配对设计：数据必须是以配对形式收集的。<br>
+<br>
+**假设**
+* $H_0$: 配对样本的总体平均差与零没有显著差异（两个配对样本的均值没有显著差异）。
+* $H_1$: 配对样本的总体平均差与零有显著差异（两个配对样本的均值存在显著差异）。
+<br>
+
+$$t = \frac{\bar{X} - \mu}{s / \sqrt{n}}$$
+---
+# 8.1 *t*-test & linear regression
+## 8.1.4 配对样本*t*检验(paired *t*-test)
+
 $$y_1 - y_2 = \beta_0 $$
 $$H_0: \beta_0 = 0 $$
+--
 可以将配对样本*t*检验理解为对差值进行的单样本*t*检验，即单独用一个数字来预测对应的差值（见图的右半部分）。<br>
 也可以认为这些组间之差是斜率（见图的左半部分）。<br>
 
 <p align="center">
   <img src="./pic_new/chp8/pairt-lm.png" width="70%">
 </p>
----
-# <h1 lang="zh-CN">8.2.3 代码实操|独立样本*t*检验</h1>
-<br>
-是否处于恋爱关系中对核心体温有无影响
 
+---
+# 8.1 *t*-test & linear regression
+## 8.1.4 配对样本*t*检验(paired *t*-test)
+.pull-left[
+```{r,results='hide'}
+stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
+              y = df.penguin$Temperature_t2, #第2次核心体温
+              paired = TRUE)
+```
+
+<br>
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/compare3.1.png" width="100%">
+</p>
+
+]
+.pull-right[
+```{r,results='hide'}
+model.paired <- lm(data = df.penguin,
+                   formula = Temperature_t1 - Temperature_t2 ~ 1)
+summary(model.paired)
+```
+
+<br>
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/compare3.2.png" width="70%">
+</p>
+
+]
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.5 bruceR::TTEST
+* 如果偏好使用t检验，推荐bruceR::TTEST函数
+
+<p align="center">
+  <img src="./pic_new/chp8/TTEST.png" width="70%">
+</p>
+
+中文帮助文档：https://zhuanlan.zhihu.com/p/281150493
+---
+# 8.1 *t*-test & linear regression
+## 8.1.5 bruceR::TTEST
 .panelset[
-.panel[.panel-name[bruceR::TTEST]
-```{r, results='hide'}
+.panel[.panel-name[独立样本t检验]
+.pull-left[
+```{r,results='hide'}
+stats::t.test(data = df.penguin, #数据框
+              Temperature ~ romantic,#因变量~自变量
+              var.equal = TRUE) %>%
+  capture.output() #capture.output仅为输出整齐 
+```
+
+
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/compare1.1.png" width="100%">
+</p>
+]
+.pull-right[
+```{r,results='hide'}
 bruceR::TTEST(data = df.penguin, #数据
                 y = "Temperature", #因变量：核心体温均值
                 x = "romantic" #自变量：是否在恋爱关系中
-) %>%
-  capture.output() %>%
-  .[c(14:20,24:29)]#使用capture.output只是为了在课件中呈现
+) 
 ```
 
-
-.panel[.panel-name[stats::t.test]
-```{r}
-stats::t.test(data = df.penguin, #数据框
-              Temperature ~ romantic) #因变量~自变量
-```
-
-.panel[.panel-name[stats::lm]
-```{r}
-model.inde <- lm(data = df.penguin,
-                   formula = Temperature ~ romantic)
-summary(model.inde)
-```
-]]]]
-
----
-# <h1 lang="zh-CN">8.2.3 代码实操|独立样本*t*检验</h1>
-## <h2 lang="zh-CN">是否处于恋爱关系中对核心体温有无影响？</h2>
-两个均值来预测y。<br>
---
-$$y_i = \beta_0 + \beta_1 x_i$$ 
-$$H_0: \beta_1 = 0 $$
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/leven.png" width="100%">
+</p>
 
 <p align="center">
-  <img src="./pic_new/chp8/indet-lm.png" width="55%">
+  <img src="./pic_new/chp8/bruceRTTEST.png" width="100%">
 </p>
----
-# <h1 lang="zh-CN">8.2.3 代码实操|独立样本*t*检验</h1>
-<br>
-是否处于恋爱关系中对核心体温有无影响？
+]
+.panel[.panel-name[单样本t检验]
+.pull-left[
+```{r, results='hide'}
+stats::t.test(x = df.penguin$Temperature, #核心体温均值
+              mu = 36.6)
 
-<br>
-<h3 lang="en">The basic format for reporting the result of a *t*-test is the same in each case:</h3>
-<h3 lang="en">*t*(degress of freedom) = the t-value , *p* = p-value, Cohen's *d* = effect size</h3>
-
-```{r, echo = FALSE, fig.width=6, fig.height=4}
-knitr::include_graphics('pic_new/chp8/example.png')
 ```
 
 
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/compare2.1.png" width="100%">
+</p>
+]
+.pull-right[
+```{r,results='hide'}
+bruceR::TTEST(data = df.penguin, #数据
+                y = "Temperature", #确定变量
+                test.value = 36.6, #固定值
+                test.sided = "=")  #根据研究目的，可更改为“<”或“>”
+
+```
+
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/sample.png" width="100%">
+</p>
+
+]
+.panel[.panel-name[配对样本t检验]
+
+.pull-left[
+```{r,results='hide'}
+stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
+              y = df.penguin$Temperature_t2, #第2次核心体温
+              paired = TRUE) 
+  
+```
+
+
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/compare3.1.png" width="100%">
+</p>
+]
+.pull-right[
+```{r, results='hide'}
+bruceR::TTEST(data = df.penguin, #数据
+                 y = c("Temperature_t1",              
+                       "Temperature_t2"), #变量为两次核心体温
+                 paired = T)  #是否为配对样本*t*检验？默认是FALSE
+```
+
+<br>
+<p align="center">
+  <img src="./pic_new/chp8/pair.png" width="100%">
+</p>
+]
+]]]]
 ---
-# <h1 lang="zh-CN">课堂练习1</h1>
+# 8.1 *t*-test & linear regression
 <br>
 <br>
-## 尝试用t检验以及线性回归解决以下问题，对比结果是否一致
-<h2 lang="zh-CN">1. “在Penguin数据中，被试社交复杂度(socialdiversity)的分数是否显著高于6？”</h2>
-<br>
-<h2 lang="zh-CN">2. “在Penguin数据中，处在不同恋爱关系中(romantic)的被试在社交复杂度(socialdiversity)上是否有显著差异？”</h2>
-<br>
+![](./pic_new/chp8/table1.png)
+
+参考：https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis
+
+
+
+
 
 
 ---
