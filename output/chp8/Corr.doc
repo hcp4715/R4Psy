@@ -21,8 +21,8 @@ table th, table td {padding-left: 5px; padding-right: 5px; height: 19px;}
 <tr> <th align='left'>Variable</th> <th align='center'><i>M</i></th> <th align='center'><i>SD</i></th> <th align='center' style='width:49px'>1</th> </tr>
 </thead>
 <tbody>
-<tr> <td align='left'>1. stress_mean</td> <td align='right'>3.24</td> <td align='right'>0.37</td> <td align='left'>&ensp;&nbsp;—</td> </tr>
-<tr> <td align='left'>2. scontrol_mean</td> <td align='right'>2.76</td> <td align='right'>0.33</td> <td align='left'>&ensp;.05<sup>&ensp;&ensp;&ensp;</sup></td> </tr>
+<tr> <td align='left'>1. stress_mean</td> <td align='right'>3.27</td> <td align='right'>0.38</td> <td align='left'>&ensp;&nbsp;—</td> </tr>
+<tr> <td align='left'>2. scontrol_mean</td> <td align='right'>3.08</td> <td align='right'>1.25</td> <td align='left'>&ensp;.03<sup>&ensp;&ensp;&ensp;</sup></td> </tr>
 </tbody>
 </table>
 <p><i>Note</i>. * <i>p</i> < .05. ** <i>p</i> < .01. *** <i>p</i> < .001.</p><p><br/><br/></p><p><b>Table 2. Correlations and 95% Confidence Intervals.</b></p>
@@ -31,7 +31,7 @@ table th, table td {padding-left: 5px; padding-right: 5px; height: 19px;}
 <tr> <th align='left'>Pairs</th> <th align='center'><i>r</i> [95% CI]</th> <th align='center'><i>p</i></th> <th align='center'><i>N</i></th> </tr>
 </thead>
 <tbody>
-<tr> <td align='left'>stress_mean-scontrol_mean</td> <td align='left'>.05 [–.00, .10]</td> <td align='right'>.050</td> <td align='right'>1490</td> </tr>
+<tr> <td align='left'>stress_mean-scontrol_mean</td> <td align='left'>.03 [–.02, .08]</td> <td align='right'>.217</td> <td align='right'>1484</td> </tr>
 </tbody>
 </table>
 <p><i>Note</i>.</p>
