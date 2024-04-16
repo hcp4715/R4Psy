@@ -1,0 +1,313 @@
+---
+title: ""
+subtitle: ""
+author: ""
+institute: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [default, css/Custumed_Style.css, css/zh-CN.css]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle
+<span style="font-size: 60px;">第八章</span> <br>
+<span style="font-size: 50px;">如何进行基本的数据分析 (二) </span> <br>
+<span style="font-size: 50px;">相关和回归</span> <br>
+<br>
+<br>
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 30px;">2023/04/10</span> <br>
+
+---
+class: center, middle
+<span style="font-size: 60px;">8.1 相关分析</span> <br>
+---
+# <h1 lang="zh-CN">回顾相关分析基础知识</h1>
+<br>
+<center>
+##  What is correlation?
+</center>
+<br>
+
+## 
+Correlation analysis is a statistical technique used to measure the strength and direction of the linear relationship between two variables.It involves calculating the correlation coefficient, which is a value that ranges from -1 to 1, where -1 indicates a perfect negative correlation, 0 indicates no correlation, and 1 indicates a perfect positive correlation.
+
+
+---
+# <h1 lang="zh-CN">常用的相关方法 </h1>
+
+<br>
+# Pearson(皮尔逊)相关
+<br>
+## Pearson相关系数是最常用的方法之一，用于衡量两个变量之间的线性相关程度，取值范围为-1到1之间，其值越接近于1或-1表示两个变量之间的线性相关程度越强，而越接近于0则表示两个变量之间线性相关程度越弱或不存在线性相关性。
+<br>
+
+---
+
+# <h1 lang="zh-CN">常用的相关方法 </h1>
+
+<br>
+# Spearman(斯皮尔曼)相关
+<br>
+## Spearman等级相关系数用于衡量两个变量之间的关联程度，但不要求变量呈现线性关系，而是通过对变量的等级进行比较来计算它们之间的相关性。
+<br>
+
+---
+
+# <h1 lang="zh-CN">常用的相关方法 </h1>
+
+<br>
+# Kendall(肯德尔)相关
+<br>
+## Kendall秩相关系数也用于衡量两个变量之间的关联程度，其计算方式与Spearman等级相关系数类似，但它是基于每个变量的秩的比较来计算它们之间的相关性。
+<br>
+
+
+---
+class: center, middle
+<span style="font-size: 60px;">8.2 Correlation in R</span> <br>
+---
+# <h1 lang="zh-CN">假想问题</h1>
+<br>
+<br>
+<h2 lang="zh-CN"> “在penguin数据中，参与者压力和自律水平的相关水平？”</h2>
+<br>
+
+
+---
+
+# <h1 lang="zh-CN">载入包</h1>
+```{r pacakge, message=FALSE}
+# 检查是否已安装 pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # 如果未安装，则安装包
+
+# 使用p_load来载入需要的包
+pacman::p_load("tidyverse", "bruceR", "performance")
+
+# 或者直接使用 easystats这个系列
+
+pacman::p_load("tidyverse", "bruceR", "easystats")
+```
+
+---
+# <h1 lang="zh-CN">检查工作路径 - 导入原始数据</h1>
+```{r WD & df.mt.raw}
+# 检查工作路径
+getwd()
+
+#读取数据
+df.pg.raw <- read.csv('./data/penguin/penguin_rawdata.csv',
+                      header = T, 
+                      sep=",", 
+                      stringsAsFactors = FALSE)
+```
+
+---
+# <h1 lang="zh-CN">准备数据</h1>
+# <h3 lang="zh-CN">数据预处理</h3>
+
+```{r df.pg.mean}
+df.pg.corr <- df.pg.raw %>%
+  dplyr::filter(sex > 0 & sex < 3) %>% # 筛选出男性和女性的数据
+  dplyr::select(sex, 
+                starts_with("scontrol"), 
+                starts_with("stress")) %>% # 筛选出需要的变量
+  dplyr::mutate(across(c(scontrol2, scontrol3,scontrol4, 
+                         scontrol5,scontrol7, scontrol9,
+                         scontrol10,scontrol12,scontrol13,
+                         stress4, stress5, stress6,stress7, 
+                         stress9, stress10,stress13), 
+                     ~ case_when(. == '1' ~ '5',
+                                 . == '2' ~ '4',
+                                 . == '3' ~ '3',
+                                 . == '4' ~ '2',
+                                 . == '5' ~ '1',
+                                 TRUE ~ as.character(.)))
+                ) %>% # 反向计分修正
+  dplyr::mutate(across(starts_with("scontrol") 
+                       | starts_with("stress"), 
+                       ~ as.numeric(.))
+                ) %>% # 将数据类型转化为numeric
+  dplyr::mutate(stress_mean = 
+                  rowMeans(select(.,starts_with("stress")),
+                           na.rm = T),
+                scontrol_mean = 
+                  rowMeans(select(., starts_with("scontrol")), 
+                           na.rm = T)
+                ) %>% # 根据子项目求综合平均
+  dplyr::select(sex, stress_mean, scontrol_mean)
+
+```
+
+---
+# <h1 lang="zh-CN">准备数据</h1>
+# <h3 lang="zh-CN">数据预处理</h3>
+```{r df.pg.mean DT, echo=FALSE}
+# check 5st five rows 
+# head(df.pg.mean, 5)
+DT::datatable(head(df.pg.corr, 5),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="zh-CN">bruceR::Corr()相关分析函数的参数</h1>
+![](./picture/chp8/corr.png)
+---
+# <h1 lang="en">bruceR::Corr()</h1>
+## <h2 lang="zh-CN">问题解决</h2>
+```{r result.Corr}
+results.Corr <- capture.output({
+  bruceR::Corr(data = df.pg.corr[,c(2,3)], 
+               file = "./output/chp8/Corr.doc")
+})
+writeLines(results.Corr, "./output/chp8/Corr.md") # .md最整齐
+
+```
+
+---
+# <h1 lang="en">bruceR::Corr()</h1>
+## <h2 lang="zh-CN">更直观的查看相关性</h2>
+```{r corr2}
+#绘制相关散点图
+pairs(df.pg.corr[,c(2,3)])
+```
+
+---
+
+# <h1 lang="en">bruceR::Corr()</h1>
+## <h2 lang="zh-CN">95% Confidence Intervals</h2>
+![](./picture/chp8/corr_result.png)
+
+<h4 lang="zh-CN">很好，毫不相关，大家可以用代码自己探索些相关关系了</h4>
+---
+class: center, middle
+<span style="font-size: 60px;">8.3 回归分析</span> <br>
+
+---
+# <h1 lang="zh-CN">回顾回归分析基础知识</h1>
+<br>
+<center>
+##  What is regression?
+</center>
+<br>
+- Regression models are used to describe relationships between variables by fitting a line to the observed data. 
+- Regression allows you to estimate how a dependent variable changes as the independent variable(s) change.
+---
+
+# <h1 lang="zh-CN">回顾回归分析基础知识</h1>
+<br>
+<center>
+##  Multiple linear regression formula
+</center>
+<br>
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
+
+
+
+---
+
+# <h1 lang="zh-CN">回顾回归分析基础知识</h1>
+<br>
+<center>
+##  How to perform a multiple linear regression
+</center>
+<br>
+### Multiple linear regression is used to estimate the relationship between two or more independent variables and one dependent variable.
+<br>
+When can we use it?
+<br>
+- How strong the relationship is between two or more independent variables and one dependent variable?
+- The value of the dependent variable at a certain value of the independent variables.
+<br>
+## 使用lm()函数构建回归模型，步骤将在下文体现
+
+
+---
+# <h1 lang="zh-CN">bruceR::model_summary()的运用</h1>
+<br>
+## <h2 lang="zh-CN"> 灵活使用model_summary()函数汇总回归模型结果
+![](./picture/chp8/lm.png)
+
+---
+# <h1 lang="zh-CN">假想的问题</h1>
+<br>
+<br>
+<h2 lang="zh-CN"> “在penguin数据中，我们希望找到参与者压力和自律水平关于性别的回归？”</h2>
+<br>
+
+---
+# <h1 lang="zh-CN">CODE_问题处理</h1>
+# <h2 lang="zh-CN">数据预处理</h2>
+
+```{r df.pg.lm}
+# 数据预处理
+df.pg.lm <- df.pg.corr %>%
+# 将sex变量转化为factor类型
+  mutate(sex = as.factor(sex)) %>%
+# 自变量为scontrol和sex
+  group_by(scontrol_mean,sex) %>%
+# 根据分组获得stress的平均值，。groups属性保留了之前的group_by
+  summarise(stress_Mean = mean(stress_mean),.groups = 'keep')
+
+```
+
+---
+
+# <h1 lang="zh-CN">CODE_问题处理</h1>
+# <h2 lang="zh-CN">绘制散点图，检查是否存在回归关系</h2>
+
+```{r plot.lm}
+# 使用ggplot()画图
+ggplot(df.pg.lm, aes(x = scontrol_mean, y = stress_Mean, color = sex)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  scale_color_discrete(name = "Gender",
+                       labels = c("Female", "Male")) +
+  theme_minimal()
+```
+
+---
+# <h1 lang="zh-CN">CODE_问题处理</h1>
+# <h2 lang="zh-CN">建立回归模型</h2>
+
+```{r mod}
+# 建立回归模型
+mod <- lm(stress_Mean ~ scontrol_mean + sex + scontrol_mean:sex, df.pg.lm)
+# 使用bruceR::model_summary()输出结果
+result.lm <- capture.output({
+  model_summary(mod,
+                std = T,
+                file = "./output/chp8/Lm.doc")
+  })
+writeLines(result.lm, "./output/chp8/Lm.md") 
+
+```
+
+---
+
+# <h1 lang="en">bruceR::lm()</h1>
+## <h2 lang="zh-CN">显著性检验</h2>
+![](./picture/chp8/lm_result.png)
+---
+# <h1 lang="en">CODE_问题处理</h1>
+## <h2 lang="zh-CN">进一步检查模型</h2>
+```{r check.model}
+# 检查安装performance包
+performance::check_model(mod)
+```
+
+---
+
+# <h1 lang="zh-CN">课堂练习</h1>
+<br>
+<br>
+<h2 lang="zh-CN">1. “在Penguin数据中，被试的依恋水平（ECR）和压力程度（stress）以及在线情况（onlineid）是否相关？”</h2>
+<br>
+<h2 lang="zh-CN">2. “对上述数据建立可靠的回归模型”</h2>
+<br>
