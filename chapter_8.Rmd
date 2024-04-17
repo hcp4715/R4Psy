@@ -91,6 +91,7 @@ knitr::include_graphics('pic_new/chp8/group.png')
 
 ---
 <h1 lang="zh-CN" style="font-size: 60px;">研究问题</h1>
+<<<<<<< HEAD
 
 .panelset[
 .panel[.panel-name[具体问题]
@@ -102,12 +103,80 @@ knitr::include_graphics('pic_new/chp8/group.png')
 <br>
 
 .panel[.panel-name[清理数据]
+=======
+
+
+
+<br>
+## 在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响
+<br>
+<br>
+## 在penguin数据中，距赤道距离(DEQ)和恋爱状态(romantic)对于被试核心体温(Temperature)的影响
+<br>
+<br>
+
+
+---
+<h1 lang="en" style="font-size: 60px;">Contents</h1>
+<br>
+<span style="font-size: 45px;">8.1 *t*-test & linear regression</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.1 独立样本*t*检验</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.2 线性回归</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.3 单样本*t*检验</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.4 配对样本*t*检验</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.1.5 bruceR::TTEST</span></center> <br>
+<br>
+<span style="font-size: 45px;">8.2 ANOVA & linear regression</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.1 研究问题</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.2 代码实操</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.3 线性回归</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.4 知识延申</span></center> <br>
+
+
+---
+class: center, middle
+<span style="font-size: 60px;">8.1 *t*-test & linear regression</span> <br>
+
+---
+class: center, middle
+<span style="font-size: 60px;">8.1  研究问题</span> <br>
+<br>
+<span style="font-size: 45px;">在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响</span> <br>
+<br>
+<span style="font-size: 45px;">独立样本*t*检验</span> <br>
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.1 独立样本*t*检验(independent *t*-test)
+
+.panelset[
+.panel[.panel-name[基础知识]
+
+<br>
+**比较两个独立样本群体的均值是否有显著差异。**
+<br>
+**前提条件**
+* 正态性：两个样本数据都应该来自正态分布的总体。样本量足够大时，即使不严格服从正态分布，结果也是稳健的。
+* 同方差性：两个样本的方差应该是相等的。
+* 独立性：两个样本应该是独立的，即一个样本的观测值不应影响另一个样本的观测值。<br>
+<br>
+
+**假设**
+* $H_0$: 两个独立样本群体的均值没有显著差异，即 $μ_1$ = $μ_2$
+* $H_1$: 两个独立样本群体的均值有显著差异，即 $μ_1$ ≠ $μ_2$
+<br>
+$$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+
+.panel[.panel-name[数据清理]
+
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 ```{r prepare}
 df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%
   dplyr::select(Temperature_t1, Temperature_t2, socialdiversity, Site, DEQ, romantic, ALEX1:ALEX16) %>% #选择变量
   dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2) & !is.na(DEQ)) %>% #处理缺失值
-  dplyr::mutate(Temperature = rowMeans(select(., starts_with("Temperature"))),#计算两次核心温度的均值
+  dplyr::mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")),#转化为因子
+                Temperature = rowMeans(select(., starts_with("Temperature"))),#计算两次核心温度的均值
                 ALEX4 = case_when(TRUE ~ 6 - ALEX4),
                 ALEX12 = case_when(TRUE ~ 6 - ALEX12),
                 ALEX14 = case_when(TRUE ~ 6 - ALEX14),
@@ -120,6 +189,7 @@ DT::datatable(head(df.penguin),
 ```
 
 
+<<<<<<< HEAD
 ]]]
 
 
@@ -178,6 +248,18 @@ stats::t.test(data = df.penguin, #数据框
 
 
 ]]]
+=======
+.panel[.panel-name[代码实操]
+
+```{r}
+stats::t.test(data = df.penguin, #数据框
+              Temperature ~ romantic,#因变量~自变量
+              var.equal = TRUE) %>%
+  capture.output() #capture.output仅为输出整齐
+```
+
+
+]]]]
 
 ---
 # 8.1 *t*-test & linear regression
@@ -195,11 +277,32 @@ stats::t.test(data = df.penguin, #数据框
 * 线性回归模型可以表示为：
 $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
 * 其中，y是因变量，x是自变量， $β_i$  是模型参数，表示截距和斜率，ε是误差项，表示模型未能解释的随机误差。
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 ---
 # 8.1 *t*-test & linear regression
 ## 8.1.2 线性回归(linear regression)
 <br>
+<<<<<<< HEAD
+**回归分析**
+* 回归分析用于研究一个或多个自变量（预测变量）与一个因变量（响应变量）之间的关系。<br>
+* 其目的是找到最佳拟合线的方程，这条线尽可能地接近所有的数据点。<br>
+<br>
+<br>
+--
+<br>
+**线性回归**
+* 线性回归的基本思想是通过数据拟合一条直线，使得这条直线尽可能地接近所有的数据点，从而实现对新数据点的预测。<br>
+* 线性回归模型可以表示为：
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
+* 其中，y是因变量，x是自变量， $β_i$  是模型参数，表示截距和斜率，ε是误差项，表示模型未能解释的随机误差。
+
+---
+# 8.1 *t*-test & linear regression
+## 8.1.2 线性回归(linear regression)
+<br>
+=======
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 * 独立样本t检验是线性模型的特殊形式(自变量为二分变量）
 --
 <p align="center">
@@ -231,7 +334,11 @@ model.inde <- stats::lm(data = df.penguin,#数据框
                    formula = Temperature ~ romantic #因变量~自变量
                    
 )
+<<<<<<< HEAD
 
+=======
+summary(model.inde)
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ```
 
 <p align="center">
@@ -375,7 +482,11 @@ summary(model.paired)
 <br>
 <br>
 <p align="center">
+<<<<<<< HEAD
   <img src="./pic_new/chp8/compare3.2.png" width="70%">
+=======
+  <img src="./pic_new/chp8/compare3.2.png" width="100%">
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 </p>
 
 ]
@@ -399,8 +510,12 @@ summary(model.paired)
 ```{r,results='hide'}
 stats::t.test(data = df.penguin, #数据框
               Temperature ~ romantic,#因变量~自变量
+<<<<<<< HEAD
               var.equal = TRUE) %>%
   capture.output() #capture.output仅为输出整齐 
+=======
+              var.equal = TRUE) 
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ```
 
 
@@ -422,9 +537,13 @@ bruceR::TTEST(data = df.penguin, #数据
   <img src="./pic_new/chp8/leven.png" width="100%">
 </p>
 
+<<<<<<< HEAD
 <p align="center">
   <img src="./pic_new/chp8/bruceRTTEST.png" width="100%">
 </p>
+=======
+
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ]
 .panel[.panel-name[单样本t检验]
 .pull-left[
@@ -496,7 +615,11 @@ bruceR::TTEST(data = df.penguin, #数据
 
 ---
 class: center, middle
+<<<<<<< HEAD
 <span style="font-size: 60px;">8.2  ANOVA</span> <br>
+=======
+<span style="font-size: 60px;">8.2  ANOVA & linear regression</span> <br>
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 
 ---
@@ -509,7 +632,11 @@ class: center, middle
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|知识回顾
 .pull-left[
 <br>
@@ -541,7 +668,11 @@ class: center, middle
 ]
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|数据预处理
 .panelset[
 .panel[.panel-name[vars]
@@ -565,8 +696,13 @@ summary(df.penguin$climate)
 .panel[.panel-name[tidy data]
 ```{r}
 df <- df.penguin %>% 
+<<<<<<< HEAD
   select(climate, romantic, Temperature)  %>%
   mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")))
+=======
+  select(climate, romantic, Temperature) 
+  
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ```
 ```{r example of df, echo=FALSE}
 DT::datatable(head(df), fillContainer = TRUE)
@@ -576,7 +712,11 @@ DT::datatable(head(df), fillContainer = TRUE)
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|正态性检验
 .panelset[
 .panel[.panel-name[KS检验]
@@ -610,7 +750,11 @@ ggplot(df, aes(Temperature)) +
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|双因素被试间方差分析
 .panelset[
 .panel[.panel-name[stats::aov()]
@@ -633,7 +777,11 @@ class: center, middle
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|平方和(SS)的计算
 <br>
 在平衡设计中，三种类型的平方和的结果会很清晰，并且方差分析的结果独立于平方和的类型；<br>
@@ -671,7 +819,11 @@ class: center, middle
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|双因素被试间方差分析
 .panelset[
 .panel[.panel-name[car::Anova()]
@@ -699,7 +851,11 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 ]]]
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.3 线性回归
 
 .pull-left[
@@ -722,7 +878,9 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 ```{r, echo = FALSE, fig.width = 3.5, fig.height = 2}
 knitr::include_graphics('pic_new/chp8/aovLM.png')
 ```
+]
 
+<<<<<<< HEAD
 ]
 
 
@@ -774,6 +932,60 @@ res1 <- bruceR::MANOVA(data = df,
                        dv = "Temperature", 
                        between = c("climate", "romantic"))
 ```
+=======
+---
+# 8.2  ANOVA & linear regression
+## 8.2.3 线性回归
+.pull-left[
+
+```{r,results='hide'}
+aov1 <- car::Anova(aov(Temperature ~ climate * romantic, data = df), type = 3)
+aov1
+```
+<br>
+![](./pic_new/chp8/compare8231.png)
+]
+
+
+
+.pull-right[
+
+```{r,results='hide'}
+lm1 <- car::Anova(lm(Temperature ~ climate * romantic, data = df), type = 3)
+lm1
+```
+<br>
+![](./pic_new/chp8/compare8232.png)
+
+]
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR
+* 使用bruceR可以更简单地实现上述操作，但要注意数据格式
+<p align="center">
+  <img src="./pic_new/chp8/ANOVA data.png" width="65%">
+</p>
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR::MANOVA
+<p align="center">
+  <img src="./pic_new/chp8/MANOVA.png" width="70%">
+</p>
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR::MANOVA
+```{r,results='hide'}
+res1 <- bruceR::MANOVA(data = df, 
+                       dv = "Temperature", 
+                       between = c("climate", "romantic"))
+```
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ```{r,echo=FALSE}
 res1 %>%
   capture.output()
@@ -781,7 +993,11 @@ res1 %>%
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR::EMMEANS
 更进一步进行简单效应分析与多重比较
 <p align="center">
@@ -790,7 +1006,11 @@ res1 %>%
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR::EMMEANS
 ```{r, results='asis'}
 sim_eff <- res1 %>% 
@@ -799,7 +1019,11 @@ sim_eff <- res1 %>%
 ```
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.4 知识延申|单因素方差分析示例
 ```{r}
 # DEQ对Temperature的影响
@@ -810,7 +1034,11 @@ res2 <- bruceR::MANOVA(data = df,
 
 
 ---
+<<<<<<< HEAD
 # 8.2  ANOVA
+=======
+# 8.2  ANOVA & linear regression
+>>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.4 知识延申|总结
 <br>
 <br>
