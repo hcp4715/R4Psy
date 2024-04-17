@@ -16,7 +16,6 @@ params:
   output_dir: "../output"
 ---
 
-
 class: center, middle
 <span style="font-size: 50px;">**第八章**</span> <br>
 <span style="font-size: 50px;">回归模型(一)</span> <br>
@@ -25,6 +24,12 @@ class: center, middle
 <span style="font-size: 30px;">`r Sys.Date()`</span> <br>
 <span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = F
+)
+```
 
 ```{css extra.css, echo=FALSE}
 /* ---- extra.css ---- */
@@ -40,15 +45,41 @@ font-size: 60px;
 
 ```
 
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r, echo=FALSE}
+# Packages
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here, tidyverse, bruceR, DT, car,
+  # 生成课件
+  xaringan, xaringanthemer, xaringanExtra)
+```
+
+```{r, echo=FALSE}
+# 改变R在显示大数字和小数字时是选择常规格式还是科学计数法的倾向
+options(scipen=999)
+
+# 还原设置 options(scipen = 0)
+```
+
+
 ---
-<br>
-<br>
+class: center, middle
 ```{r, echo = FALSE, fig.width = 4.5, fig.height = 3}
 knitr::include_graphics('pic_new/chp8/group.png')
 ```
 
+
 ---
-#课堂目标
+<h1 lang="zh-CN" style="font-size: 60px;">课堂目标</h1>
 <br>
 <br>
 ## 纯粹的代码学习 → 统计知识和代码的结合 <br>
@@ -57,68 +88,20 @@ knitr::include_graphics('pic_new/chp8/group.png')
 <br>
 ## 回归模型在数据分析中的重要占比<br>
 
----
-
-```{r,echo=FALSE}
-#导入包
-if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
-}
-
-pacman::p_load(
-  # 本节课需要用到的 packages
-  here, tidyverse, bruceR,
-  # 生成课件
-  xaringan, xaringanthemer, xaringanExtra)
-```
-<br>
-<h1 lang="zh-CN" style="font-size: 60px;">如果你的输出中常出现科学计数法</h1>
-```{r}
-# 改变R在显示大数字和小数字时是选择常规格式还是科学计数法的倾向
-options(scipen=999)
-# 还原设置 options(scipen = 0)
-```
 
 ---
-# 需要解决的问题
-
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
-```
+<h1 lang="zh-CN" style="font-size: 60px;">研究问题</h1>
 
 
-.panelset[
-.panel[.panel-name[清理数据]
-
-```{r prepare}
-# 导入数据
-df1 <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
-#清理数据
-df.penguin <- df1 %>%
-  dplyr::select(Temperature_t1, Temperature_t2, socialdiversity, Site, DEQ, romantic, ALEX1:ALEX16) %>% #选择变量
-  dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2) & !is.na(DEQ)) %>% #处理缺失值
-  dplyr::mutate(Temperature = rowMeans(select(., starts_with("Temperature"))),#计算两次核心温度的均值
-                ALEX4 = case_when(TRUE ~ 6 - ALEX4),
-                ALEX12 = case_when(TRUE ~ 6 - ALEX12),
-                ALEX14 = case_when(TRUE ~ 6 - ALEX14),
-                ALEX16 = case_when(TRUE ~ 6 - ALEX16),
-                ALEX = rowSums(select(., starts_with("ALEX"))))#反向计分后计算总分
-```
-
-.panel[.panel-name[具体问题]
 
 <br>
-* 在penguin数据中，是否处于恋爱关系中(romantic)对核心体温(Temperature)有无影响？
-* 在penguin数据中，是否处于恋爱关系中(romantic)与离赤道的距离(DEQ)是否共同影响核心体温(Temperature)？
+## 在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响
+<br>
+<br>
+## 在penguin数据中，距赤道距离(DEQ)和恋爱状态(romantic)对于被试核心体温(Temperature)的影响
 <br>
 <br>
 
-```{r, echo=FALSE}
-DT::datatable(head(df.penguin),
-              fillContainer = TRUE, options = list(pageLength = 4))
-```
-
-]]]
 
 ---
 <h1 lang="en" style="font-size: 60px;">Contents</h1>
@@ -131,15 +114,23 @@ DT::datatable(head(df.penguin),
 <span style="font-size: 30px;">&emsp;8.1.5 bruceR::TTEST</span></center> <br>
 <br>
 <span style="font-size: 45px;">8.2 ANOVA & linear regression</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.1 ANOVA基础知识</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.2 bruceR::MANOVA</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.3 代码实操</span></center> <br>
-<span style="font-size: 30px;">&emsp;8.3.4 ANOVA与线性回归</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.1 研究问题</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.2 代码实操</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.3 线性回归</span></center> <br>
+<span style="font-size: 30px;">&emsp;8.2.4 知识延申</span></center> <br>
+
 
 ---
 class: center, middle
-<span style="font-size: 60px;">8.1  8.1 *t*-test & linear regression</span> <br>
+<span style="font-size: 60px;">8.1 *t*-test & linear regression</span> <br>
 
+---
+class: center, middle
+<span style="font-size: 60px;">8.1  研究问题</span> <br>
+<br>
+<span style="font-size: 45px;">在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响</span> <br>
+<br>
+<span style="font-size: 45px;">独立样本*t*检验</span> <br>
 
 ---
 # 8.1 *t*-test & linear regression
@@ -163,6 +154,27 @@ class: center, middle
 <br>
 $$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
 
+.panel[.panel-name[数据清理]
+
+
+```{r prepare}
+df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%
+  dplyr::select(Temperature_t1, Temperature_t2, socialdiversity, Site, DEQ, romantic, ALEX1:ALEX16) %>% #选择变量
+  dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2) & !is.na(DEQ)) %>% #处理缺失值
+  dplyr::mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")),#转化为因子
+                Temperature = rowMeans(select(., starts_with("Temperature"))),#计算两次核心温度的均值
+                ALEX4 = case_when(TRUE ~ 6 - ALEX4),
+                ALEX12 = case_when(TRUE ~ 6 - ALEX12),
+                ALEX14 = case_when(TRUE ~ 6 - ALEX14),
+                ALEX16 = case_when(TRUE ~ 6 - ALEX16),
+                ALEX = rowSums(select(., starts_with("ALEX"))))#反向计分后计算总分
+```
+```{r, echo=FALSE}
+DT::datatable(head(df.penguin),
+              fillContainer = TRUE, options = list(pageLength = 4))
+```
+
+
 .panel[.panel-name[代码实操]
 
 ```{r}
@@ -173,7 +185,7 @@ stats::t.test(data = df.penguin, #数据框
 ```
 
 
-]]]
+]]]]
 
 ---
 # 8.1 *t*-test & linear regression
@@ -227,7 +239,7 @@ model.inde <- stats::lm(data = df.penguin,#数据框
                    formula = Temperature ~ romantic #因变量~自变量
                    
 )
-
+summary(model.inde)
 ```
 
 <p align="center">
@@ -371,7 +383,7 @@ summary(model.paired)
 <br>
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare3.2.png" width="70%">
+  <img src="./pic_new/chp8/compare3.2.png" width="100%">
 </p>
 
 ]
@@ -395,8 +407,7 @@ summary(model.paired)
 ```{r,results='hide'}
 stats::t.test(data = df.penguin, #数据框
               Temperature ~ romantic,#因变量~自变量
-              var.equal = TRUE) %>%
-  capture.output() #capture.output仅为输出整齐 
+              var.equal = TRUE) 
 ```
 
 
@@ -418,9 +429,7 @@ bruceR::TTEST(data = df.penguin, #数据
   <img src="./pic_new/chp8/leven.png" width="100%">
 </p>
 
-<p align="center">
-  <img src="./pic_new/chp8/bruceRTTEST.png" width="100%">
-</p>
+
 ]
 .panel[.panel-name[单样本t检验]
 .pull-left[
@@ -481,531 +490,370 @@ bruceR::TTEST(data = df.penguin, #数据
 </p>
 ]
 ]]]]
+
 ---
 # 8.1 *t*-test & linear regression
 <br>
 <br>
-![](./pic_new/chp8/table1.png)
-
-参考：https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis
-
-
-
+![](./pic_new/chp8/summary1.png)
 
 
 
 ---
 class: center, middle
-<span style="font-size: 60px;">8.3  方差分析</span> <br>
+<span style="font-size: 60px;">8.2  ANOVA & linear regression</span> <br>
 
 
 ---
-# 8.3  ANOVA
-## 8.3.1 基础知识
+class: center, middle
+<span style="font-size: 60px;">8.2.1  研究问题</span> <br>
+<br>
+<span style="font-size: 45px;">在penguin数据中，距赤道距离(DEQ)和恋爱状态(romantic)对于被试体温的影响</span> <br>
+<br>
+<span style="font-size: 45px;">双因素被试间方差分析</span> <br>
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|知识回顾
 .pull-left[
-<img src="./pic_new/chp8/ANOVA process.png" width="100%">
+<br>
+**方法简介：**
+
+当研究者想要比较两个或多个组之间的均值差异时，可使用方差分析(Analysis of Variance，简称ANOVA)。<br>
+<br>
+它由英国统计学家R.A.Fisher提出，基本思想是将测量数据的总变异（即总方差）按照变异来源分为处理（组间）效应和误差（组内）效应，并作出其数量估计，从而确定实验处理对研究结果影响力的大小。
+
+**假设：**
+* $H_0$: 各因素的各个水平下，因变量的均值无显著差异
+* $H_1$: 各因素的各个水平下，因变量的均值不完全相同
 ]
 
 .pull-right[
 <br>
 <br>
 <br>
-当研究者想要比较两个或多个组之间的均值差异时，可使用方差分析(Analysis of Variance，简称ANOVA)。<br>
 <br>
-它由英国统计学家R.A.Fisher提出，基本思想是将测量数据的总变异（即总方差）按照变异来源分为处理（组间）效应和误差（组内）效应，并作出其数量估计，从而确定实验处理对研究结果影响力的大小。
+**前提条件：**
+
+* 可加性：各效应可加，即观测值是由各主效应，交互作用以及误差通过相加得到的<br>
+* 随机性：各样本（观测值）是随机样本<br>
+* 正态性：各样本来自于正态分布的总体<br>
+* 独立性：各样本观测值互相独立<br>
+* 方差齐性：各样本来自的总体方差相同<br>
+* 因变量应为连续变量<br>
+
 ]
 
 ---
-# 8.3  ANOVA
-## 8.3.1 基础知识
-<br>
-<br>
-**基本假设：**
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|数据预处理
+.panelset[
+.panel[.panel-name[vars]
+```{r}
+summary(df.penguin$DEQ)
+```
 
-1.正态性<br>
-实验中的观测值应来自正态分布的总体。当观测值不是正态分布时需要对观测值做合适的转换。<br>
+```{r}
+# 设定分割点
+# [0-23.5 热带， 23.5-35 亚热带]， [35-40 暖温带， 40-50 中温带]， [50-66.5 寒温带]
+breaks <- c(0, 35, 50, 66.5)
 
-2.独立性<br>
-每个因素的影响被看作是独立的，不受其他因素的影响。在理想情况下，如果将一个因素的效应加到总效应中去，它应该增加（或者减少）平均响应一个固定的数量，而不依赖于其他任何因素。<br>
+# 设定相应的标签
+labels <- c('热带', '温带', '寒温带')
 
-3.方差齐性<br>
-当被试随机分配给K个处理水平时，K个处理组被试的观测值的变异是同质的，即各个组的变异是相等的。<br>
+# 创建新的变量
+df.penguin$climate <- cut(df.penguin$DEQ, breaks = breaks, labels = labels)
+summary(df.penguin$climate)
+```
+
+.panel[.panel-name[tidy data]
+```{r}
+df <- df.penguin %>% 
+  select(climate, romantic, Temperature) 
+  
+```
+```{r example of df, echo=FALSE}
+DT::datatable(head(df), fillContainer = TRUE)
+```
+
+]]]
+
 
 ---
-# 8.3  ANOVA
-## 8.3.1 基础知识
-<p align="center">
-  <img src="./pic_new/chp8/ANOVA es.png" width="70%">
-</p>
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|正态性检验
+.panelset[
+.panel[.panel-name[KS检验]
+```{r}
+# 正态性检验-Kolmogorov-Smirnov检验
+# 若p >.05，不能拒绝数据符合正态分布的零假设
+ks.test(df$Temperature, 'pnorm')
+```
+
+```{r}
+# 进行数据转换，转换后仍非正态分布
+df$Temperature_log <- log(df$Temperature)
+ks.test(df$Temperature_log, 'pnorm')
+```
+
+.panel[.panel-name[qq图]
+```{r, fig.width=7, fig.height=5}
+# 正态性检验-qq图
+qqnorm(df$Temperature)
+qqline(df$Temperature, col = "red") # 添加理论正态分布线
+```
+
+.panel[.panel-name[直方图]
+```{r, fig.width=7, fig.height=5}
+ggplot(df, aes(Temperature)) +
+    geom_histogram(aes(y =..density..), color='black', fill='white', bins=30) +
+    geom_density(alpha=.5, fill='red')
+```
+
+]]]]
+
 
 ---
-# 8.3  ANOVA
-## 8.3.1 基础知识
-平方和(SS)的计算
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|双因素被试间方差分析
+.panelset[
+.panel[.panel-name[stats::aov()]
+```{r}
+aov1 <- stats::aov(Temperature ~ climate * romantic, data = df)
+aov1
+```
+
+.panel[.panel-name[SPSS]
+```{r, echo = FALSE, fig.width = 4.5, fig.height = 3}
+knitr::include_graphics('pic_new/chp8/SPSS.png')
+```
+
+]]]
+
+
+---
+class: center, middle
+<span style="font-size: 60px;">结果为什么不相同？</span> <br>
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|平方和(SS)的计算
+<br>
+在平衡设计中，三种类型的平方和的结果会很清晰，并且方差分析的结果独立于平方和的类型；<br>
+而在非平衡设计中，尤其是当各组样本量差距较大时，三种类型的平方和计算结果可能会不同，此时需要根据具体研究设计和问题来选择使用哪一种类型的平方和。<br>
+<br>
+对于 Y ~ A + B + A * B<br>
 <br>
 .panelset[
 .panel[.panel-name[Type I SS]
 <br>
-通常用于顺序重要的模型。也就是说，解释变量的顺序会影响到类型I平方和的计算结果。<br>
+解释变量的顺序会影响到类型I平方和的计算结果，通常用于顺序重要的模型。<br>
+效应根据表达式中先出现的效应做调整。A不做调整，B根据A调整，A:B交互项根据A和B调整。<br>
 <br>
 **stats::aov()函数默认采用的就是Type I SS，它逐步将每一个因子引入模型进行计算。**<br>
 
 .panel[.panel-name[Type II SS]
 <br>
-适用于所有主效应不涉及交互效应的情况。也就是说，它忽略了因子之间可能存在的交互作用。<br>
+忽略了因子之间可能存在的交互作用，适用于所有主效应不涉及交互效应的情况。<br>
 假定所有的因子都是同时进入模型的，并且它们都是等价的。<br>
+效应根据同水平或低水平的效应做调整。A根据B调整，B依据A调整，A:B交互项同时根据A和B调整。<br>
 <br>
 **car::Anova()函数默认计算Type II SS，可以通过type = 3调整为Type III SS。**<br>
 
 .panel[.panel-name[Type III SS]
 <br>
-类型III平方和是一个更全面的模型，涉及所有的主效应以及交互效应。<br>
-它假定所有因子（以及它们的交互项）都是重要的，并考虑所有因素。<br>
+更全面，假定所有因子（以及它们的交互项）都是重要的，并考虑所有因素。<br>
+每个效应根据模型其他各效应做相应调整。A根据B和A:B做调整，A:B交互项根据A和B调整。<br>
 <br>
-**bruceR::MANOVA*()函数默认采用Type III SS，可以通过ss.type = 2调整为Type II SS。**<br>
+**SPSS默认采用Type III SS。**<br>
+**bruceR::MANOVA*()函数也默认采用Type III SS，可以通过ss.type = 2调整为Type II SS。**<br>
 
 ]]]]
 
+
+
+
 ---
-# 8.3  ANOVA
-## 8.3.1 基础知识
-按照自变量个数，可以分为单因素方差分析、双因素方差分析、以及多因素方差分析。
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|双因素被试间方差分析
 .panelset[
-.panel[.panel-name[单因素方差分析]
-最基本的方差分析形式，用于检验一个变量不同水平之间是否有显著差异。<br>
-例如，比较三种不同的教学方法对学生学习成绩的影响。在这种情况下，自变量是“教学方法”，因变量是学生学习成绩。<br>
-<br>
-<br>
-```{r, echo = FALSE, fig.width=4.5, fig.height=2.5}
-knitr::include_graphics('pic_new/chp8/oneway.png')
-```
-
-.panel[.panel-name[双因素方差分析]
-双因素方差分析用于检验两个分类变量和它们的交互效应对因变量的影响。<br>
-例如，要检察两种不同的教学方法和两种不同的课程难度对学生学习成绩的影响。<br>
-<br>
-<br>
-```{r, echo = FALSE, fig.width=4.5, fig.height=2.5}
-knitr::include_graphics('pic_new/chp8/mway.png')
-```
-
-.panel[.panel-name[多因素方差分析]
-最复杂的ANOVA类型，用于检验多个分类变量和它们的交互效应对响应变量的影响。<br>
-例如，要检验课程类型，教学方法，学生性别等多个因素对学习成绩的影响。<br>
-<br>
-<br>
-```{r, echo = FALSE, fig.width=4.5, fig.height=2.5}
-knitr::include_graphics('pic_new/chp8/mway.png')
-```
-
-]]]]
-
----
-# 8.3  ANOVA
-## 8.3.2 bruceR::MANOVA
-<p align="center">
-  <img src="./pic_new/chp8/ANOVA data.png" width="70%">
-</p>
-
----
-# 8.3  ANOVA
-## 8.3.2 bruceR::MANOVA
-<p align="center">
-  <img src="./pic_new/chp8/MANOVA.png" width="70%">
-</p>
-
----
-class: center, middle
-<span style="font-size: 60px;">问题1</span> <br>
-<span style="font-size: 60px;">在match数据中，被试在匹配(match)条件和不匹配(mismatch)条件下的反应时是否存在差异？</span> <br>
-<br>
-<span style="font-size: 45px;">完成这一分析需要什么方法与数据格式？</span> <br>
-
----
-# 8.3  ANOVA
-## 8.3.3 代码实操|单因素方差分析
-.panelset[
-.panel[.panel-name[`tidy data`]
+.panel[.panel-name[car::Anova()]
 ```{r}
-df.match <- read.csv(here::here("data", "match","match_raw.csv"),
-                     header = T, sep=",", stringsAsFactors = FALSE) %>%
-  # 拆分单元格内字符串
-  tidyr::separate(col=Shape,
-                  into=c("Valence","Identity"),
-                  sep="(?<=moral|immoral)(?=Self|Other)") %>% 
-  dplyr::select(Sub, Match, Valence, Identity, everything()) %>%
-  dplyr::filter(ACC == 1) %>%    # 只选择回答正确的数据
-  dplyr::filter(!is.na(RT)) %>%  # 剔除缺失值
-  # remove outliers below and above 3rd sd
-  dplyr::filter(RT > quantile(RT, 0.0015) & RT < quantile(RT, 0.9985)) %>%
-  dplyr::mutate(RT = as.numeric(RT)) %>%
-  dplyr::mutate(Valence = as.factor(Valence),
-                Identity = as.factor(Identity))
-```
-```{r example of match data, echo=FALSE}
-DT::datatable(head(df.match, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
+# 结果不一致
+aov1 <- car::Anova(aov(Temperature ~ climate * romantic, data = df), type = 3)
+aov1
 ```
 
-.panel[.panel-name[`preprocessing`]
+.panel[.panel-name[debug]
 ```{r}
-df.match.long1 <- df.match %>%
-  dplyr::group_by(Sub, Match) %>%
-  dplyr::summarise(
-    n = n(),
-    rt_sd = sd(as.numeric(RT), na.rm = T),
-    rt_mean = mean(as.numeric(RT), na.rm = T)
-    ) %>%
-  dplyr::ungroup()
+df$ID <- seq_len(nrow(df))
+
+# bruceR::MANOVA基于aov_ez，能够得到同样的结果，但它其实也是基于car::Anova的
+afex::aov_ez(id = "ID", dv = "Temperature", data = df, between = c("climate", "romantic"), type = 3)
 ```
-```{r example of long match data1, echo=FALSE}
-DT::datatable(head(df.match.long1, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
+
+```{r,results='hide'}
+# afex中的其他函数可以得到同样的结果
+afex::aov_car(Temperature ~ climate * romantic + Error(ID), data = df, type = 3)
+afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 ```
+
 
 ]]]
 
 ---
-# 8.3  ANOVA
-## 8.3.3 代码实操|单因素方差分析
-```{r}
-# 正态性检验-Shapiro-Wilk测试
-# 若p >.05，不能拒绝数据符合正态分布的零假设
+# 8.2  ANOVA & linear regression
+## 8.2.3 线性回归
 
-shapiro.test(df.match.long1$rt_mean)
+.pull-left[
 
+<br>
+<br>
+<br>
+线性回归采用最小二乘法使得残差平方和最小。<br>
+方差分析中的组内平方和是一个类似的概念——也即是尽量让各组内的数据点尽可能接近各自组的均值。<br>
+<br>
+实际上，线性回归模型中如果使用分类变量（dummy coding）作为预测变量，得到的结果和ANOVA是一样的。组间效应（组间平方和）就被视为线性模型中的斜率效应。<br>
+<br>
+**双因素方差分析可以看作是一种特殊的线性回归模型，自变量为两个分类变量。**<br>
+
+]
+
+.pull-right[
+<br>
+<br>
+```{r, echo = FALSE, fig.width = 3.5, fig.height = 2}
+knitr::include_graphics('pic_new/chp8/aovLM.png')
 ```
+]
 
 ---
-# 8.3  ANOVA
-## 8.3.3 代码实操|单因素方差分析
-```{r}
-# 正态性检验-qq图
-qqnorm(df.match.long1$rt_mean)
-qqline(df.match.long1$rt_mean, col = "red") # 添加理论正态分布线
-```
+# 8.2  ANOVA & linear regression
+## 8.2.3 线性回归
+.pull-left[
 
-
----
-# 8.3  ANOVA
-## 8.3.3 代码实操|单因素方差分析
-.panelset[
-.panel[.panel-name[`bruceR::MANOVA`]
 ```{r,results='hide'}
-res1 <- bruceR::MANOVA(data = df.match.long1,
-                       subID = "Sub",    # 被试id
-                       dv = "rt_mean",   # 因变量，因为是MANOVA，实际上因变量可以再后面设置很多个
-                       within = "Match" # 设置条件，因素分析的条件
-) 
+aov1 <- car::Anova(aov(Temperature ~ climate * romantic, data = df), type = 3)
+aov1
 ```
+<br>
+![](./pic_new/chp8/compare8231.png)
+]
 
+
+
+.pull-right[
+
+```{r,results='hide'}
+lm1 <- car::Anova(lm(Temperature ~ climate * romantic, data = df), type = 3)
+lm1
+```
+<br>
+![](./pic_new/chp8/compare8232.png)
+
+]
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR
+* 使用bruceR可以更简单地实现上述操作，但要注意数据格式
+<p align="center">
+  <img src="./pic_new/chp8/ANOVA data.png" width="65%">
+</p>
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR::MANOVA
+<p align="center">
+  <img src="./pic_new/chp8/MANOVA.png" width="70%">
+</p>
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR::MANOVA
+```{r,results='hide'}
+res1 <- bruceR::MANOVA(data = df, 
+                       dv = "Temperature", 
+                       between = c("climate", "romantic"))
+```
 ```{r,echo=FALSE}
 res1 %>%
   capture.output()
 ```
 
-.panel[.panel-name[`stats::aov()`]
-```{r}
-aov1 <- aov(rt_mean ~ Match, data = df.match.long1)
-summary(aov1)
-```
-
-.panel[.panel-name[`stats::lm()`]
-```{r}
-lm1 <- lm(rt_mean ~ Match, data = df.match.long1)
-summary(lm1)
-```
-
-]]]]
 
 ---
-# 8.3  ANOVA
-## 8.3.4 ANOVA与线性回归
-<br>
-线性回归采用最小二乘法使得残差平方和最小。<br>
-方差分析中的组内平方和是一个类似的概念——也即是尽量让各组内的数据点尽可能接近各自组的均值。<br>
-<br>
-单因素方差分析可以看作是一种特殊的线性回归模型，自变量是分类数据。<br>
-实际上，线性回归模型中如果使用分类变量（dummy coding）作为预测变量，得到的结果和ANOVA是一样的。组间效应（组间平方和）就被视为线性模型中的斜率效应。<br>
-<br>
-同理，双因素方差分析也可以看作是一种特殊的线性回归模型，自变量为两个分类变量。<br>
-
-
----
-# 8.3  ANOVA
-## 8.3.4 ANOVA与线性回归
-```{r, echo=FALSE}
-# Figure
-N = 15
-
-# Generate normal data with known parameters
-rnorm_fixed = function(N, mu = 0, sd = 1)
-  scale(rnorm(N)) * sd + mu
-
-# Plot style.
-theme_axis = function(P,
-                      jitter = FALSE,
-                      xlim = c(-0.5, 2),
-                      ylim = c(-0.5, 2),
-                      legend.position = c(0,0)) {
-  P = P + theme_bw(15) +
-    geom_segment(
-      x = -1000, xend = 1000,
-      y = 0, yend = 0,
-      lty = 2, color = 'dark gray', lwd = 0.5
-    ) +
-    geom_segment(
-      x = 0, xend = 0,
-      y = -1000, yend = 1000,
-      lty = 2, color = 'dark gray', lwd = 0.5
-    ) +
-    coord_cartesian(xlim = xlim, ylim = ylim) +
-    theme(
-      axis.title = element_blank(),
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      panel.border = element_blank(),
-      panel.grid = element_blank(),
-      legend.position = legend.position
-    )
-  
-  # Return jittered or non-jittered plot?
-  if (jitter) {
-    P + geom_jitter(width = 0.1, size = 2)
-  }
-  else {
-    P + geom_point(size = 2)
-  }
-}
-
-D_anova1 = data.frame(
-  y = c(
-    rnorm_fixed(N, 0.5, 0.3),
-    rnorm_fixed(N, 0, 0.3),
-    rnorm_fixed(N, 1, 0.3),
-    rnorm_fixed(N, 0.8, 0.3)
-  ),
-  x = rep(0:3, each = 15)
-)
-ymeans = aggregate(y~x, D_anova1, mean)$y
-P_anova1 = ggplot(D_anova1, aes(x=x, y=y)) + 
-  stat_summary(fun.y=mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y.., color='intercepts'), lwd=2) + 
-  geom_segment(x = -10, xend = 100, y = 0.5, yend = 0.5, lwd = 2, aes(color = 'beta_0')) +
-  geom_segment(x = 0, xend = 1, y = ymeans[1], yend = ymeans[2], lwd = 2, aes(color = 'betas')) +
-  geom_segment(x = 1, xend = 2, y = ymeans[1], yend = ymeans[3], lwd = 2, aes(color = 'betas')) +
-  geom_segment(x = 2, xend = 3, y = ymeans[1], yend = ymeans[4], lwd = 2, aes(color = 'betas')) +
-  
-  scale_color_manual(
-    name = NULL, values = c("blue", "red", "darkblue"), 
-    labels=c(
-      bquote(beta[0]*" (group 1 mean)"), 
-      bquote(beta[1]*", "*beta[2]*",  etc. (slopes/differences to "*beta[0]*")"),
-      bquote(beta[0]*"+"*beta[1]*", "*beta[0]*"+"*beta[2]*", etc. (group 2, 3, ... means)")
-    )
-  )
-  
-#theme_axis(P_anova1, xlim = c(-0.5, 4), legend.position = c(0.7, 0.1))
-```
-
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR::EMMEANS
+更进一步进行简单效应分析与多重比较
 <p align="center">
-  <img src="./pic_new/chp8/anoLM.png" width="70%">
+  <img src="./pic_new/chp8/EMMEANS.png" width="70%">
 </p>
 
 
 ---
-# 8.3  ANOVA
-## 单因素方差分析|思考
-假如数据是宽数据可以完成分析吗？它和上面学习的t检验有什么区别？
-```{r}
-df.match.wide1 <- df.match.long1 %>%
-  dplyr::select(Sub, Match, rt_mean) %>%
-  tidyr::pivot_wider(names_from = Match,
-                     values_from = rt_mean)
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操|bruceR::EMMEANS
+```{r, results='asis'}
+sim_eff <- res1 %>% 
+  bruceR::EMMEANS("climate", by = "romantic") %>%
+  bruceR::EMMEANS("romantic", by = "climate")
 ```
-```{r example of wide match data1, echo=FALSE}
-DT::datatable(head(df.match.wide1, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.4 知识延申|单因素方差分析示例
+```{r}
+# DEQ对Temperature的影响
+res2 <- bruceR::MANOVA(data = df,
+                       dv = "Temperature",   
+                       between = "climate") 
 ```
 
 
 ---
-class: center, middle
-<span style="font-size: 60px;">问题2</span> <br>
-<span style="font-size: 60px;">在match数据中，被试在不同身份与不同效价的条件组合下反应时是否存在差异？</span> <br>
+# 8.2  ANOVA & linear regression
+## 8.2.4 知识延申|总结
 <br>
-<span style="font-size: 45px;">2(self vs other) * 2(moral vs immoral) 的被试内设计</span> <br>
+<br>
+![](./pic_new/chp8/summary2.png)
 
 
 ---
-# 8.3  ANOVA
-## 8.3.3 代码实操|双因素方差分析
-.panelset[
-.panel[.panel-name[`long data`]
-```{r}
-df.match.long2 <- df.match %>%
-    dplyr::filter(Match == "match") %>%
-  dplyr::group_by(Sub, Valence, Identity) %>%
-  dplyr::summarise(
-    n = n(),
-    rt_sd = sd(as.numeric(RT), na.rm = T),
-    rt_mean = mean(as.numeric(RT), na.rm = T)
-    ) %>%
-  dplyr::ungroup()
-```
-```{r example of long match data2, echo=FALSE}
-DT::datatable(head(df.match.long2, 24),
-              fillContainer = TRUE, options = list(pageLength = 6))
-```
+<h1 lang="zh-CN" style="font-size: 60px;">课堂总结</h1>
 
-.panel[.panel-name[`wide data`]
-```{r}
-df.match.wide2 <- df.match.long2 %>%
-  dplyr::select(Sub, Valence, Identity, rt_mean) %>%
-  dplyr::mutate(Valence = paste("A_", Valence, sep = ""),#将变量的名称进行修改转换，不生产新的变量
-                Identity = paste("B_", Identity, sep = "")) %>%
-  # 将morality和identity组合名称起来生成一个新的变量"Condition"
-  unite("Condition", Valence, Identity, sep = "&") %>%
-  tidyr::pivot_wider(names_from = Condition,
-                     values_from = rt_mean)
-```
-```{r example of wide match data2, echo=FALSE}
-DT::datatable(head(df.match.wide2, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
-]]]
+![](./pic_new/chp8/route.png)
 
 
 ---
-# 8.3  ANOVA
-## 8.3.3 代码实操|双因素方差分析
-```{r}
-# 正态性检验-Shapiro-Wilk测试
-# 若p >.05，不能拒绝数据符合正态分布的零假设
+<h1 lang="zh-CN" style="font-size: 60px;">课堂总结</h1>
 
-shapiro.test(df.match.long1$rt_mean)
+![](./pic_new/chp8/summary.png)
 
-```
+参考：https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis
 
 
----
-# 8.3  ANOVA
-## 8.3.3 代码实操|双因素方差分析
-```{r}
-# 正态性检验-qq图
-qqnorm(df.match.long1$rt_mean)
-qqline(df.match.long1$rt_mean, col = "red") # 添加理论正态分布线
-```
-
-
----
-# 8.3  ANOVA
-## 8.3.3 代码实操|双因素方差分析
-.panelset[
-.panel[.panel-name[`bruceR::MANOVA()`]
-```{r,results='hide'}
-res2 <- bruceR::MANOVA(data=df.match.long2,
-                            dv="rt_mean",
-                            within=c("Valence","Identity"),
-                            subID="Sub")
-```
-```{r,echo=FALSE}
-res2 %>%
-  capture.output()
-```
-
-
-.panel[.panel-name[`car::Anova()`]
-```{r}
-aov2 <- car::Anova(aov(rt_mean ~ Valence * Identity, data = df.match.long2), type = 3)
-aov2
-```
-
-.panel[.panel-name[`stats::lm()`]
-```{r}
-lm2 <- lm(rt_mean ~ Valence * Identity, data = df.match.long2)
-summary(lm2)
-```
-
-]]]]
-
-
----
-# 8.3  ANOVA
-## 8.3.3 代码实操|双因素方差分析
-```{r,results='hide'}
-# 宽数据
-res2_wide <- bruceR::MANOVA(data = df.match.wide2,
-                            dvs = "A_immoral&B_Other:A_moral&B_Self",
-                            dvs.pattern = "A_(.+)B_(.+)",#正则表达式
-                            within = c("A_","B_"))
-```
-```{r,echo=FALSE}
-res2_wide %>%
-  capture.output()
-```
-
-
-
----
-# 8.3  ANOVA
-## 8.3.2 bruceR::EMMEANS
-<p align="center">
-  <img src="./pic_new/chp8/EMMEANS.png" width="80%">
-</p>
-
----
-# 8.3  ANOVA
-## 8.3.3 代码实操|双因素方差分析
-简单效应分析
-.panelset[
-.panel[.panel-name[`长数据`]
-```{r,results='hide'}
-sim_eff_long <- res2 %>% 
-  bruceR::EMMEANS("Identity", by = "Valence")
-```
-
-```{r,echo=FALSE}
-sim_eff_long %>%
-  capture.output()
-```
-
-
-.panel[.panel-name[`宽数据`]
-```{r,results='hide'}
-sim_eff_wide <- res2_wide %>%
-  bruceR::EMMEANS("A_", by = "B_") 
-```
-
-```{r,echo=FALSE}
-sim_eff_wide %>%
-  capture.output()
-```
-
-
-]]]
-
-
----
-# 8.3  ANOVA
-## 8.3.4 ANOVA与线性回归
-<p align="center">
-  <img src="./pic_new/chp8/LM2.png" width="80%">
-</p>
-
-![](./pic_new/chp8/LM2.png)
 
 
 ---
 class: center, middle
 <span style="font-size: 60px;">思考</span> <br>
-<span style="font-size: 60px;">如何从线性回归的角度理解重复测量方差分析呢？</span> <br>
+<span style="font-size: 60px;">如何从回归模型的角度理解重复测量方差分析呢？</span> <br>
 
 
 ---
-# <h1 lang="zh-CN">课堂练习2</h1>
+<h1 lang="zh-CN" style="font-size: 60px;">课堂练习</h1>
 <br>
 <br>
 <br>
-<h2 lang="zh-CN">在match数据中，以性别，身份为自变量，反应时为因变量进行方差分析</h2>
+<h2 lang="zh-CN">1.在Penguin数据中，处在不同恋爱状态下(romantic)的被试在社交复杂度(socialdiversity)上是否有显著差异？</h2>
+<br>
+<br>
+<h2 lang="zh-CN">2.在Penguin数据中，不同气候带(DEQ)与恋爱状态(romantic)对被试社交复杂度(socialdiversity)的影响.</h2>
+
 
