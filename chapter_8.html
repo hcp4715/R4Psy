@@ -4,17 +4,17 @@
     <title>chapter_8.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.27/datatables.js"></script>
+    <script src="libs/datatables-binding-0.30/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
+    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
     <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
     <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -56,25 +56,21 @@ font-size: 60px;
 
 
 ---
-class: center, middle
-&lt;img src="pic_new/chp8/group.png" width="1440" /&gt;
+## 每个小组均有对应的助教同学负责
 
 
 ---
-&lt;h1 lang="zh-CN" style="font-size: 60px;"&gt;课堂目标&lt;/h1&gt;
+&lt;h1 lang="zh-CN" style="font-size: 60px;"&gt; &lt;/h1&gt;
 &lt;br&gt;
 &lt;br&gt;
-## 纯粹的代码学习 → 统计知识和代码的结合 &lt;br&gt;
+## 纯粹的R代码学习 → 使用R语言来实现**统计知识** &lt;br&gt;
 &lt;br&gt;
-## R：更灵活的统计分析方法，与统计知识结合更加紧密&lt;br&gt;
+## (1) R: 更灵活的统计分析方法，与统计知识结合更加紧密&lt;br&gt;
 &lt;br&gt;
-## 回归模型在数据分析中的重要占比&lt;br&gt;
-
+## (2) 心理学/社会科学中常用的统计检验均是回归模型&lt;br&gt;
 
 ---
 &lt;h1 lang="zh-CN" style="font-size: 60px;"&gt;研究问题&lt;/h1&gt;
-
-
 
 &lt;br&gt;
 ## 在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响
@@ -107,15 +103,19 @@ class: center, middle
 &lt;span style="font-size: 60px;"&gt;8.1 *t*-test &amp; linear regression&lt;/span&gt; &lt;br&gt;
 
 ---
-class: center, middle
+class: left, middle
 &lt;span style="font-size: 60px;"&gt;8.1  研究问题&lt;/span&gt; &lt;br&gt;
+
+&lt;img src="pic_new/chp8/IJzerman2018fig.png" width="2303" /&gt;
+(引自[IJzerman et al., 2018](https://doi.org/10.1525/collabra.165))
+
 &lt;br&gt;
-&lt;span style="font-size: 45px;"&gt;在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 35px;"&gt;Q: 如何检查恋爱状态(romantic)对核心体温(Temperature)的影响？&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
-&lt;span style="font-size: 45px;"&gt;独立样本*t*检验&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;A:独立样本*t*检验&lt;/span&gt; &lt;br&gt;
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test
 ## 8.1.1 独立样本*t*检验(independent *t*-test)
 
 .panelset[
@@ -139,31 +139,32 @@ class: center, middle
 .panel[.panel-name[数据清理]
 
 
-
 ```r
 df.penguin &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %&gt;%
-  dplyr::select(Temperature_t1, Temperature_t2, socialdiversity, Site, DEQ, romantic, ALEX1:ALEX16) %&gt;% #选择变量
-  dplyr::filter(!is.na(Temperature_t1) &amp; !is.na(Temperature_t2) &amp; !is.na(DEQ)) %&gt;% #处理缺失值
-  dplyr::mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")),#转化为因子
-                Temperature = rowMeans(select(., starts_with("Temperature"))),#计算两次核心温度的均值
-                ALEX4 = case_when(TRUE ~ 6 - ALEX4),
+  dplyr::mutate(subjID = row_number()) %&gt;%
+  dplyr::select(subjID,Temperature_t1, Temperature_t2, socialdiversity, 
+                Site, DEQ, romantic, ALEX1:ALEX16) %&gt;%                                     # 选择变量
+  dplyr::filter(!is.na(Temperature_t1) &amp; !is.na(Temperature_t2) &amp; !is.na(DEQ)) %&gt;%         # 处理缺失值
+  dplyr::mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")),  # 转化为因子
+                Temperature = rowMeans(select(., starts_with("Temperature"))),             # 计算两次核心温度的均值
+                ALEX4  = case_when(TRUE ~ 6 - ALEX4),
                 ALEX12 = case_when(TRUE ~ 6 - ALEX12),
                 ALEX14 = case_when(TRUE ~ 6 - ALEX14),
                 ALEX16 = case_when(TRUE ~ 6 - ALEX16),
-                ALEX = rowSums(select(., starts_with("ALEX"))))#反向计分后计算总分
+                ALEX   = rowSums(select(., starts_with("ALEX")))) # 反向计分后计算总分
 ```
-<div id="htmlwidget-47ff9216e8ed29a38de1" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-47ff9216e8ed29a38de1">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[36.8,34.2,35,36.1,35.72222222,35.3],[36.7,36.6,35.2,35.8,36.44444444,35.9],[8,6,5,7,5,7],["Tsinghua","Oxford","Oxford","Oxford","Chile","Bamberg"],[26.88780212,51.75,51.75,51.75,42.07719421,51.65660095],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[2,1,2,3,1,1],[2,1,2,4,1,2],[2,1,4,1,1,1],[4,5,4,4,5,4],[2,1,2,4,1,1],[2,1,2,2,1,3],[2,1,2,3,2,4],[2,1,2,4,1,2],[2,1,2,2,2,4],[1,1,1,1,1,2],[2,1,2,2,1,2],[4,4,3,4,4,2],[2,3,2,2,2,4],[4,4,4,4,4,5],[2,3,2,4,1,1],[4,4,4,4,2,5],[36.75,35.4,35.1,35.95,36.08333333,35.6],[31,23,34,40,24,35]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>socialdiversity<\/th>\n      <th>Site<\/th>\n      <th>DEQ<\/th>\n      <th>romantic<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>Temperature<\/th>\n      <th>ALEX<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[1,2,3,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-f20d404084eecc3b18f6" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f20d404084eecc3b18f6">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],[36.8,34.2,35,36.1,35.72222222,35.3],[36.7,36.6,35.2,35.8,36.44444444,35.9],[8,6,5,7,5,7],["Tsinghua","Oxford","Oxford","Oxford","Chile","Bamberg"],[26.88780212,51.75,51.75,51.75,42.07719421,51.65660095],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[2,1,2,3,1,1],[2,1,2,4,1,2],[2,1,4,1,1,1],[4,5,4,4,5,4],[2,1,2,4,1,1],[2,1,2,2,1,3],[2,1,2,3,2,4],[2,1,2,4,1,2],[2,1,2,2,2,4],[1,1,1,1,1,2],[2,1,2,2,1,2],[4,4,3,4,4,2],[2,3,2,2,2,4],[4,4,4,4,4,5],[2,3,2,4,1,1],[4,4,4,4,2,5],[36.75,35.40000000000001,35.1,35.95,36.08333333,35.6],[31,23,34,40,24,35]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>subjID<\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>socialdiversity<\/th>\n      <th>Site<\/th>\n      <th>DEQ<\/th>\n      <th>romantic<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>Temperature<\/th>\n      <th>ALEX<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,6,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[代码实操]
 
 
 ```r
-stats::t.test(data = df.penguin, #数据框
-              Temperature ~ romantic,#因变量~自变量
+stats::t.test(data = df.penguin,      # 数据框
+              Temperature ~ romantic, # 因变量~自变量
               var.equal = TRUE) %&gt;%
-  capture.output() #capture.output仅为输出整齐
+  capture.output()                    # 将输出变整齐
 ```
 
 ```
@@ -185,27 +186,27 @@ stats::t.test(data = df.penguin, #数据框
 ]]]]
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test作为回归模型的特例
 ## 8.1.2 线性回归(linear regression)
 &lt;br&gt;
 **回归分析**
 * 回归分析用于研究一个或多个自变量（预测变量）与一个因变量（响应变量）之间的关系。&lt;br&gt;
-* 其目的是找到最佳拟合线的方程，这条线尽可能地接近所有的数据点。&lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 --
-&lt;br&gt;
+
 **线性回归**
 * 线性回归的基本思想是通过数据拟合一条直线，使得这条直线尽可能地接近所有的数据点，从而实现对新数据点的预测。&lt;br&gt;
 * 线性回归模型可以表示为：
 `$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$`
-* 其中，y是因变量，x是自变量， `\(β_i\)`  是模型参数，表示截距和斜率，ε是误差项，表示模型未能解释的随机误差。
+
+* 其中，$y$是因变量，x是自变量， `\(\beta_i\)`  是模型参数，表示截距和斜率，$\epsilon$是误差项，表示模型未能解释的随机误差。
 
 ---
 # 8.1 *t*-test &amp; linear regression
 ## 8.1.2 线性回归(linear regression)
 &lt;br&gt;
-* 独立样本t检验是线性模型的特殊形式(自变量为二分变量）
+* 独立样本*t*检验是线性模型的特殊形式(自变量为二分变量）
 --
 &lt;p align="center"&gt;
   &lt;img src="./pic_new/chp8/indet-lm.png" width="55%"&gt;
@@ -214,15 +215,16 @@ stats::t.test(data = df.penguin, #数据框
 
 ---
 # 8.1 *t*-test &amp; linear regression
-## 8.1.2 线性回归(linear regression)
+
 .pull-left[
 
 ```r
-#t检验
-stats::t.test(data = df.penguin, #数据框
-              Temperature ~ romantic,#因变量~自变量
-              var.equal = TRUE) %&gt;%
-  capture.output() #capture.output仅为输出整齐
+# t检验
+stats::t.test(
+  data = df.penguin,
+  Temperature ~ romantic,
+  var.equal = TRUE) %&gt;%
+  capture.output() # 将输出变整齐
 ```
 
 &lt;p align="center"&gt;
@@ -233,11 +235,11 @@ stats::t.test(data = df.penguin, #数据框
 .pull-right[
 
 ```r
-#线性回归
-model.inde &lt;- stats::lm(data = df.penguin,#数据框
-                   formula = Temperature ~ romantic #因变量~自变量
-                   
-)
+# 线性回归
+model.inde &lt;- stats::lm(
+  data = df.penguin,
+  formula = Temperature ~ 1 + romantic
+  )
 summary(model.inde)
 ```
 
@@ -249,9 +251,9 @@ summary(model.inde)
 
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 ## 8.1.3 单样本*t*检验(one sample *t*-test)
-* 在penguin数据中，全体被试的核心体温(Temperature)是否等于36.6？&lt;br&gt;
+* 例如：在penguin数据中，全体被试的核心体温(Temperature)是否等于36.6？&lt;br&gt;
 &lt;br&gt;
 --
 &lt;br&gt;
@@ -271,7 +273,7 @@ summary(model.inde)
 `$$t = \frac{\bar{X} - \mu}{s / \sqrt{n}}$$`
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 ## 8.1.3 单样本*t*检验(one sample *t*-test)
 .pull-left[
 &lt;br&gt;
@@ -279,7 +281,7 @@ summary(model.inde)
 
 `$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$`
 
-单样本t检验中，仅截距不为0。此时公式为：&lt;br&gt;
+单样本*t*检验中，仅截距不为0。此时公式为：&lt;br&gt;
 --
 `$$y = \beta_0$$`
 `$$H_0: \beta_0 = 0$$`
@@ -290,14 +292,15 @@ summary(model.inde)
 &lt;/p&gt;
 ]
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 ## 8.1.3 单样本*t*检验(one sample *t*-test)
 
 .pull-left[
 
 ```r
-stats::t.test(x = df.penguin$Temperature, #核心体温均值
-              mu = 36.6) 
+stats::t.test(
+  x = df.penguin$Temperature, # 核心体温均值
+  mu = 36.6) 
 ```
 
 &lt;br&gt;
@@ -310,8 +313,10 @@ stats::t.test(x = df.penguin$Temperature, #核心体温均值
 .pull-right[
 
 ```r
-model.single &lt;- lm(data = df.penguin, #数据
-                   formula = Temperature-36.6 ~ 1) #公式：只有截距，没有自变量
+model.single &lt;- lm(
+  data = df.penguin,
+  formula = Temperature - 36.6 ~ 1
+  ) 
 summary(model.single) 
 ```
 
@@ -324,9 +329,9 @@ summary(model.single)
 ]
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 ## 8.1.4 配对样本*t*检验(paired *t*-test)
-* 在penguin数据中，被试报告的两次核心温度(Temperature_t1,Temperature_t2)是否有显著差异？&lt;br&gt;
+* 例如，在penguin数据中，被试报告的两次核心温度(Temperature_t1, Temperature_t2)是否有显著差异？&lt;br&gt;
 &lt;br&gt;
 --
 **比较两个相关的样本组（例如，同一组受试者在不同条件下的测量）的平均值是否存在显著差异。**&lt;br&gt;
@@ -343,7 +348,7 @@ summary(model.single)
 
 `$$t = \frac{\bar{X} - \mu}{s / \sqrt{n}}$$`
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 ## 8.1.4 配对样本*t*检验(paired *t*-test)
 
 $$y_1 - y_2 = \beta_0 $$
@@ -357,14 +362,17 @@ $$H_0: \beta_0 = 0 $$
 &lt;/p&gt;
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 ## 8.1.4 配对样本*t*检验(paired *t*-test)
 .pull-left[
 
+
 ```r
-stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
-              y = df.penguin$Temperature_t2, #第2次核心体温
-              paired = TRUE)
+stats::t.test(
+  x = df.penguin$Temperature_t1, 
+  y = df.penguin$Temperature_t2, 
+  paired = TRUE
+  )
 ```
 
 &lt;br&gt;
@@ -376,9 +384,12 @@ stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
 ]
 .pull-right[
 
+
 ```r
-model.paired &lt;- lm(data = df.penguin,
-                   formula = Temperature_t1 - Temperature_t2 ~ 1)
+model.paired &lt;- lm(
+  Temperature_t1 - Temperature_t2 ~ 1,
+  data = df.penguin
+  )
 summary(model.paired)
 ```
 
@@ -391,9 +402,9 @@ summary(model.paired)
 ]
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test
 ## 8.1.5 bruceR::TTEST
-* 如果偏好使用t检验，推荐bruceR::TTEST函数
+* 如果偏好按传统方式使用*t*检验，推荐`bruceR::TTEST`函数
 
 &lt;p align="center"&gt;
   &lt;img src="./pic_new/chp8/TTEST.png" width="70%"&gt;
@@ -401,16 +412,19 @@ summary(model.paired)
 
 中文帮助文档：https://zhuanlan.zhihu.com/p/281150493
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test
 ## 8.1.5 bruceR::TTEST
 .panelset[
 .panel[.panel-name[独立样本t检验]
 .pull-left[
 
+
 ```r
-stats::t.test(data = df.penguin, #数据框
-              Temperature ~ romantic,#因变量~自变量
-              var.equal = TRUE) 
+stats::t.test(
+  data = df.penguin, 
+  Temperature ~ romantic,
+  var.equal = TRUE
+  ) 
 ```
 
 
@@ -421,10 +435,12 @@ stats::t.test(data = df.penguin, #数据框
 ]
 .pull-right[
 
+
 ```r
-bruceR::TTEST(data = df.penguin, #数据
-                y = "Temperature", #因变量：核心体温均值
-                x = "romantic" #自变量：是否在恋爱关系中
+bruceR::TTEST(
+  data = df.penguin, # 数据
+  y = "Temperature", # 因变量
+  x = "romantic"     # 自变量
 ) 
 ```
 
@@ -438,9 +454,12 @@ bruceR::TTEST(data = df.penguin, #数据
 .panel[.panel-name[单样本t检验]
 .pull-left[
 
+
 ```r
-stats::t.test(x = df.penguin$Temperature, #核心体温均值
-              mu = 36.6)
+stats::t.test(
+  x = df.penguin$Temperature, 
+  mu = 36.6
+  )
 ```
 
 
@@ -451,11 +470,13 @@ stats::t.test(x = df.penguin$Temperature, #核心体温均值
 ]
 .pull-right[
 
+
 ```r
-bruceR::TTEST(data = df.penguin, #数据
-                y = "Temperature", #确定变量
-                test.value = 36.6, #固定值
-                test.sided = "=")  #根据研究目的，可更改为“&lt;”或“&gt;”
+bruceR::TTEST(
+  data = df.penguin, # 数据
+  y = "Temperature", # 确定变量
+  test.value = 36.6, # 固定值
+  test.sided = "=")  # 假设的方向
 ```
 
 &lt;br&gt;
@@ -468,10 +489,12 @@ bruceR::TTEST(data = df.penguin, #数据
 
 .pull-left[
 
+
 ```r
-stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
-              y = df.penguin$Temperature_t2, #第2次核心体温
-              paired = TRUE) 
+stats::t.test(
+  x = df.penguin$Temperature_t1, #第1次
+  y = df.penguin$Temperature_t2, #第2次
+  paired = TRUE) 
 ```
 
 
@@ -482,11 +505,13 @@ stats::t.test(x = df.penguin$Temperature_t1, #第1次核心体温
 ]
 .pull-right[
 
+
 ```r
-bruceR::TTEST(data = df.penguin, #数据
-                 y = c("Temperature_t1",              
-                       "Temperature_t2"), #变量为两次核心体温
-                 paired = T)  #是否为配对样本*t*检验？默认是FALSE
+bruceR::TTEST(
+  data = df.penguin, # 数据
+  y = c("Temperature_t1",  
+        "Temperature_t2"), # 变量为两次核心体温
+  paired = T)  # 配对数据，默认是FALSE
 ```
 
 &lt;br&gt;
@@ -497,11 +522,15 @@ bruceR::TTEST(data = df.penguin, #数据
 ]]]]
 
 ---
-# 8.1 *t*-test &amp; linear regression
+# 8.1 *t*-test系列均为回归模型的特例
 &lt;br&gt;
 &lt;br&gt;
-![](./pic_new/chp8/summary1.png)
 
+|       | R自带函数 | 线性模型 | 解释 |
+|-------|-------|-------|-------|
+| 单样本*t* | t.test(y, mu = 0) | lm(y ~ 1)| 仅有截距的回归模型 |
+| 独立样本*t* | t.test($y_1$, `\(y_2\)`) | lm(y ~ 1 + `\(G_2\)`)| 自变量为二分变量的回归模型 |
+| 配对样本*t* | t.test($y_1$, `\(y_2\)`, paired=T)  | lm($y_1$ - `\(y_2\)` ~ 1)| 仅有截距的回归模型)|
 
 
 ---
@@ -510,17 +539,18 @@ class: center, middle
 
 
 ---
-class: center, middle
+class: left, middle
 &lt;span style="font-size: 60px;"&gt;8.2.1  研究问题&lt;/span&gt; &lt;br&gt;
+
 &lt;br&gt;
-&lt;span style="font-size: 45px;"&gt;在penguin数据中，距赤道距离(DEQ)和恋爱状态(romantic)对于被试体温的影响&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 35px;"&gt;Q: 如何同时检验距赤道距离(DEQ)和恋爱状态(romantic)对于被试体温的影响&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
-&lt;span style="font-size: 45px;"&gt;双因素被试间方差分析&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;A:双因素被试间方差分析&lt;/span&gt; &lt;br&gt;
 
 
 ---
 # 8.2  ANOVA &amp; linear regression
-## 8.2.2 代码实操|知识回顾
+## 8.2.2 代码实操 &amp; 知识回顾
 .pull-left[
 &lt;br&gt;
 **方法简介：**
@@ -530,8 +560,8 @@ class: center, middle
 它由英国统计学家R.A.Fisher提出，基本思想是将测量数据的总变异（即总方差）按照变异来源分为处理（组间）效应和误差（组内）效应，并作出其数量估计，从而确定实验处理对研究结果影响力的大小。
 
 **假设：**
-* `\(H_0\)`: 各因素的各个水平下，因变量的均值无显著差异
-* `\(H_1\)`: 各因素的各个水平下，因变量的均值不完全相同
+* `\(H_0\)`: 各因素各个水平下，因变量的均值完全相同
+* `\(H_1\)`: 各因素各个水平下，因变量的均值不完全相同
 ]
 
 .pull-right[
@@ -551,10 +581,11 @@ class: center, middle
 ]
 
 ---
-# 8.2  ANOVA &amp; linear regression
+# 8.2  ANOVA 
 ## 8.2.2 代码实操|数据预处理
 .panelset[
 .panel[.panel-name[vars]
+
 
 ```r
 summary(df.penguin$DEQ)
@@ -575,7 +606,9 @@ breaks &lt;- c(0, 35, 50, 66.5)
 labels &lt;- c('热带', '温带', '寒温带')
 
 # 创建新的变量
-df.penguin$climate &lt;- cut(df.penguin$DEQ, breaks = breaks, labels = labels)
+df.penguin$climate &lt;- cut(df.penguin$DEQ, 
+                          breaks = breaks, 
+                          labels = labels)
 summary(df.penguin$climate)
 ```
 
@@ -586,12 +619,14 @@ summary(df.penguin$climate)
 
 .panel[.panel-name[tidy data]
 
+
 ```r
 df &lt;- df.penguin %&gt;% 
-  select(climate, romantic, Temperature) 
+  select(subjID, climate, romantic, Temperature) 
 ```
-<div id="htmlwidget-514f10faaa2139f67850" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-514f10faaa2139f67850">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["热带","寒温带","寒温带","寒温带","温带","寒温带"],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[36.75,35.4,35.1,35.95,36.08333333,35.6]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>climate<\/th>\n      <th>romantic<\/th>\n      <th>Temperature<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-1f36cdb2b3c61f131696" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-1f36cdb2b3c61f131696">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["热带","寒温带","寒温带","寒温带","温带","寒温带"],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[36.75,35.40000000000001,35.1,35.95,36.08333333,35.6]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>subjID<\/th>\n      <th>climate<\/th>\n      <th>romantic<\/th>\n      <th>Temperature<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 
@@ -601,6 +636,7 @@ df &lt;- df.penguin %&gt;%
 ## 8.2.2 代码实操|正态性检验
 .panelset[
 .panel[.panel-name[KS检验]
+
 
 ```r
 # 正态性检验-Kolmogorov-Smirnov检验
@@ -641,7 +677,7 @@ qqnorm(df$Temperature)
 qqline(df$Temperature, col = "red") # 添加理论正态分布线
 ```
 
-![](chapter_8_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+![](chapter_8_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;
 
 .panel[.panel-name[直方图]
 
@@ -651,7 +687,7 @@ ggplot(df, aes(Temperature)) +
     geom_density(alpha=.5, fill='red')
 ```
 
-![](chapter_8_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+![](chapter_8_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
 
 ]]]]
 
@@ -662,22 +698,20 @@ ggplot(df, aes(Temperature)) +
 .panelset[
 .panel[.panel-name[stats::aov()]
 
+
 ```r
 aov1 &lt;- stats::aov(Temperature ~ climate * romantic, data = df)
-aov1
+summary(aov1)
 ```
 
 ```
-## Call:
-##    stats::aov(formula = Temperature ~ climate * romantic, data = df)
-## 
-## Terms:
-##                   climate  romantic climate:romantic Residuals
-## Sum of Squares   18.81527   0.24382          1.90986 270.65361
-## Deg. of Freedom         2         1                2      1421
-## 
-## Residual standard error: 0.4364253
-## Estimated effects may be unbalanced
+##                    Df Sum Sq Mean Sq F value               Pr(&gt;F)    
+## climate             2  18.82   9.408  49.392 &lt; 0.0000000000000002 ***
+## romantic            1   0.24   0.244   1.280              0.25807    
+## climate:romantic    2   1.91   0.955   5.014              0.00676 ** 
+## Residuals        1421 270.65   0.190                                 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 .panel[.panel-name[SPSS]
@@ -737,31 +771,31 @@ class: center, middle
 
 ```r
 # 结果不一致
-aov1 &lt;- car::Anova(aov(Temperature ~ climate * romantic, data = df), type = 3)
+aov1 &lt;- stats::anova(stats::aov(Temperature ~ climate * romantic, data = df))
 aov1
 ```
 
 ```
-## Anova Table (Type III tests)
+## Analysis of Variance Table
 ## 
 ## Response: Temperature
-##                  Sum Sq   Df      F value                Pr(&gt;F)    
-## (Intercept)      235941    1 1238751.5204 &lt; 0.00000000000000022 ***
-## climate               5    2      13.1650           0.000002162 ***
-## romantic              1    1       3.2866              0.070060 .  
-## climate:romantic      2    2       5.0136              0.006765 ** 
-## Residuals           271 1421                                       
+##                    Df  Sum Sq Mean Sq F value                Pr(&gt;F)    
+## climate             2  18.815  9.4076 49.3925 &lt; 0.00000000000000022 ***
+## romantic            1   0.244  0.2438  1.2801              0.258072    
+## climate:romantic    2   1.910  0.9549  5.0136              0.006765 ** 
+## Residuals        1421 270.654  0.1905                                  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-.panel[.panel-name[debug]
+.panel[.panel-name[get results same as SPSS]
 
 ```r
-df$ID &lt;- seq_len(nrow(df))
-
-# bruceR::MANOVA基于aov_ez，能够得到同样的结果，但它其实也是基于car::Anova的
-afex::aov_ez(id = "ID", dv = "Temperature", data = df, between = c("climate", "romantic"), type = 3)
+afex::aov_ez(id = "subjID", 
+             dv = "Temperature", 
+             data = df, 
+             between = c("climate", "romantic"), 
+             type = 3)
 ```
 
 ```
@@ -779,8 +813,8 @@ afex::aov_ez(id = "ID", dv = "Temperature", data = df, between = c("climate", "r
 
 ```r
 # afex中的其他函数可以得到同样的结果
-afex::aov_car(Temperature ~ climate * romantic + Error(ID), data = df, type = 3)
-afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
+afex::aov_car(Temperature ~ climate * romantic + Error(subjID), data = df, type = 3)
+afex::aov_4(Temperature ~ climate * romantic + (1|subjID), data = df)
 ```
 
 
@@ -795,10 +829,9 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
-线性回归采用最小二乘法使得残差平方和最小。&lt;br&gt;
-方差分析中的组内平方和是一个类似的概念——也即是尽量让各组内的数据点尽可能接近各自组的均值。&lt;br&gt;
+这里的ANOVA仍然是线性回归模型的特例，即自变量是离散变量的情况。
 &lt;br&gt;
-实际上，线性回归模型中如果使用分类变量（dummy coding）作为预测变量，得到的结果和ANOVA是一样的。组间效应（组间平方和）就被视为线性模型中的斜率效应。&lt;br&gt;
+如果使用哑变量（dummy coding）对自变量进行编码后进入回归方程，线性模型中的斜率即是对组间差异的估计。&lt;br&gt;
 &lt;br&gt;
 **双因素方差分析可以看作是一种特殊的线性回归模型，自变量为两个分类变量。**&lt;br&gt;
 
@@ -817,7 +850,11 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 
 
 ```r
-aov1 &lt;- car::Anova(aov(Temperature ~ climate * romantic, data = df), type = 3)
+aov1 &lt;- car::Anova(
+  aov(Temperature ~ climate * romantic, 
+      data = df), 
+  type = 3
+  )
 aov1
 ```
 &lt;br&gt;
@@ -830,7 +867,11 @@ aov1
 
 
 ```r
-lm1 &lt;- car::Anova(lm(Temperature ~ climate * romantic, data = df), type = 3)
+lm1 &lt;- car::Anova(
+  lm(Temperature ~ climate * romantic, 
+     data = df), 
+  type = 3
+  )
 lm1
 ```
 &lt;br&gt;
@@ -841,8 +882,8 @@ lm1
 
 ---
 # 8.2  ANOVA &amp; linear regression
-## 8.2.2 代码实操|bruceR
-* 使用bruceR可以更简单地实现上述操作，但要注意数据格式
+## 8.2.2 代码实操: `bruceR`
+* 使用`bruceR`可以更简单地实现心理学中习惯的ANOVA，但要注意数据格式
 &lt;p align="center"&gt;
   &lt;img src="./pic_new/chp8/ANOVA data.png" width="65%"&gt;
 &lt;/p&gt;
@@ -850,7 +891,7 @@ lm1
 
 ---
 # 8.2  ANOVA &amp; linear regression
-## 8.2.2 代码实操|bruceR::MANOVA
+## 8.2.2 代码实操: `bruceR::MANOVA`
 &lt;p align="center"&gt;
   &lt;img src="./pic_new/chp8/MANOVA.png" width="70%"&gt;
 &lt;/p&gt;
@@ -858,7 +899,7 @@ lm1
 
 ---
 # 8.2  ANOVA &amp; linear regression
-## 8.2.2 代码实操|bruceR::MANOVA
+## 8.2.2 代码实操: `bruceR::MANOVA`
 
 ```r
 res1 &lt;- bruceR::MANOVA(data = df, 
@@ -881,7 +922,7 @@ res1 &lt;- bruceR::MANOVA(data = df,
 
 ---
 # 8.2  ANOVA &amp; linear regression
-## 8.2.2 代码实操|bruceR::EMMEANS
+## 8.2.2 代码实操: `bruceR::EMMEANS`
 更进一步进行简单效应分析与多重比较
 &lt;p align="center"&gt;
   &lt;img src="./pic_new/chp8/EMMEANS.png" width="70%"&gt;
@@ -890,7 +931,7 @@ res1 &lt;- bruceR::MANOVA(data = df,
 
 ---
 # 8.2  ANOVA &amp; linear regression
-## 8.2.2 代码实操|bruceR::EMMEANS
+## 8.2.2 代码实操: `bruceR::EMMEANS`
 
 ```r
 sim_eff &lt;- res1 %&gt;% 
@@ -990,9 +1031,10 @@ You might also use `effectsize::t_to_d()` to compute d.
 
 ```r
 # DEQ对Temperature的影响
-res2 &lt;- bruceR::MANOVA(data = df,
-                       dv = "Temperature",   
-                       between = "climate") 
+res2 &lt;- bruceR::MANOVA(
+  data = df,
+  dv = "Temperature",
+  between = "climate") 
 ```
 
 ```
@@ -1039,7 +1081,11 @@ res2 &lt;- bruceR::MANOVA(data = df,
 ## 8.2.4 知识延申|总结
 &lt;br&gt;
 &lt;br&gt;
-![](./pic_new/chp8/summary2.png)
+
+|       | R自带函数 | 线性模型 | 解释 |
+|-------|-------|-------|-------|
+| 单因素ANOVA | aov(y ~ G) | lm(y ~ 1 + `\(G_1\)` + `\(G_2\)` + ...)| 一个离散自变量的回归模型 |
+| 多因素ANOVA | aovt(y ~ G * S) | lm(y ~ `\(G_1\)` + `\(G_2\)` + ... + `\(S_1\)` + `\(S_2\)` + ...)| 多个离散自变量的回归模型 |
 
 
 ---
@@ -1051,17 +1097,21 @@ res2 &lt;- bruceR::MANOVA(data = df,
 ---
 &lt;h1 lang="zh-CN" style="font-size: 60px;"&gt;课堂总结&lt;/h1&gt;
 
-![](./pic_new/chp8/summary.png)
+|       | R自带函数 | 线性模型 | 解释 |
+|-------|-------|-------|-------|
+| 单样本*t* | t.test(y, mu = 0) | lm(y ~ 1)| 仅有截距的回归模型 |
+| 独立样本*t* | t.test($y_1$, `\(y_2\)`) | lm(y ~ 1 + `\(G_2\)`)| 自变量为二分变量的回归模型 |
+| 配对样本*t* | t.test($y_1$, `\(y_2\)`, paired=T)  | lm($y_1$ - `\(y_2\)` ~ 1)| 仅有截距的回归模型)|
+| 单因素ANOVA | aov(y ~ G) | lm(y ~ 1 + `\(G_1\)` + `\(G_2\)` + ...)| 一个离散自变量的回归模型 |
+| 多因素ANOVA | aovt(y ~ G * S) | lm(y ~ `\(G_1\)` + `\(G_2\)` + ... + `\(S_1\)` + `\(S_2\)` + ...)| 多个离散自变量的回归模型 |
 
 参考：https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis
-
-
 
 
 ---
 class: center, middle
 &lt;span style="font-size: 60px;"&gt;思考&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 60px;"&gt;如何从回归模型的角度理解重复测量方差分析呢？&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 55px;"&gt;如何从回归模型的角度理解重复测量方差分析呢？&lt;/span&gt; &lt;br&gt;
 
 
 ---
@@ -1069,10 +1119,10 @@ class: center, middle
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;1.在Penguin数据中，处在不同恋爱状态下(romantic)的被试在社交复杂度(socialdiversity)上是否有显著差异？&lt;/h2&gt;
+&lt;h2 lang="zh-CN"&gt;1. 在Penguin数据中，处在不同恋爱状态下(romantic)的被试在社交复杂度(socialdiversity)上是否有显著差异？&lt;/h2&gt;
 &lt;br&gt;
 &lt;br&gt;
-&lt;h2 lang="zh-CN"&gt;2.在Penguin数据中，不同气候带(DEQ)与恋爱状态(romantic)对被试社交复杂度(socialdiversity)的影响.&lt;/h2&gt;
+&lt;h2 lang="zh-CN"&gt;2. 在Penguin数据中，不同气候带(DEQ)与恋爱状态(romantic)对被试社交复杂度(socialdiversity)的影响.&lt;/h2&gt;
 
 
     </textarea>
