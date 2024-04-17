@@ -57,11 +57,7 @@ font-size: 60px;
 
 ---
 class: center, middle
-<<<<<<< HEAD
 ![](pic_new/chp8/group.png)&lt;!-- --&gt;
-=======
-&lt;img src="pic_new/chp8/group.png" width="1440" /&gt;
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 
 ---
@@ -77,19 +73,6 @@ class: center, middle
 
 ---
 &lt;h1 lang="zh-CN" style="font-size: 60px;"&gt;研究问题&lt;/h1&gt;
-<<<<<<< HEAD
-
-.panelset[
-.panel[.panel-name[具体问题]
-
-&lt;br&gt;
-* 在penguin数据中，恋爱状态(romantic)对被试核心体温(Temperature)的影响
-* 在penguin数据中，距赤道距离(DEQ)和恋爱状态(romantic)对于被试核心体温(Temperature)的影响
-&lt;br&gt;
-&lt;br&gt;
-
-.panel[.panel-name[清理数据]
-=======
 
 
 
@@ -155,7 +138,6 @@ class: center, middle
 
 .panel[.panel-name[数据清理]
 
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 
 ```r
@@ -170,64 +152,10 @@ df.penguin &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.c
                 ALEX16 = case_when(TRUE ~ 6 - ALEX16),
                 ALEX = rowSums(select(., starts_with("ALEX"))))#反向计分后计算总分
 ```
-<<<<<<< HEAD
-<div class="datatables html-widget html-fill-item" id="htmlwidget-ba398ee93a5da3102e88" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ba398ee93a5da3102e88">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[36.8,34.2,35,36.1,35.72222222,35.3],[36.7,36.6,35.2,35.8,36.44444444,35.9],[8,6,5,7,5,7],["Tsinghua","Oxford","Oxford","Oxford","Chile","Bamberg"],[26.88780212,51.75,51.75,51.75,42.07719421,51.65660095],[2,1,1,1,1,1],[2,1,2,3,1,1],[2,1,2,4,1,2],[2,1,4,1,1,1],[4,5,4,4,5,4],[2,1,2,4,1,1],[2,1,2,2,1,3],[2,1,2,3,2,4],[2,1,2,4,1,2],[2,1,2,2,2,4],[1,1,1,1,1,2],[2,1,2,2,1,2],[4,4,3,4,4,2],[2,3,2,2,2,4],[4,4,4,4,4,5],[2,3,2,4,1,1],[4,4,4,4,2,5],[36.75,35.40000000000001,35.1,35.95,36.08333333,35.59999999999999],[31,23,34,40,24,35]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>socialdiversity<\/th>\n      <th>Site<\/th>\n      <th>DEQ<\/th>\n      <th>romantic<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>Temperature<\/th>\n      <th>ALEX<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Temperature_t1","targets":1},{"name":"Temperature_t2","targets":2},{"name":"socialdiversity","targets":3},{"name":"Site","targets":4},{"name":"DEQ","targets":5},{"name":"romantic","targets":6},{"name":"ALEX1","targets":7},{"name":"ALEX2","targets":8},{"name":"ALEX3","targets":9},{"name":"ALEX4","targets":10},{"name":"ALEX5","targets":11},{"name":"ALEX6","targets":12},{"name":"ALEX7","targets":13},{"name":"ALEX8","targets":14},{"name":"ALEX9","targets":15},{"name":"ALEX10","targets":16},{"name":"ALEX11","targets":17},{"name":"ALEX12","targets":18},{"name":"ALEX13","targets":19},{"name":"ALEX14","targets":20},{"name":"ALEX15","targets":21},{"name":"ALEX16","targets":22},{"name":"Temperature","targets":23},{"name":"ALEX","targets":24}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-167e15a49bca256b1459" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-167e15a49bca256b1459">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[36.8,34.2,35,36.1,35.72222222,35.3],[36.7,36.6,35.2,35.8,36.44444444,35.9],[8,6,5,7,5,7],["Tsinghua","Oxford","Oxford","Oxford","Chile","Bamberg"],[26.88780212,51.75,51.75,51.75,42.07719421,51.65660095],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[2,1,2,3,1,1],[2,1,2,4,1,2],[2,1,4,1,1,1],[4,5,4,4,5,4],[2,1,2,4,1,1],[2,1,2,2,1,3],[2,1,2,3,2,4],[2,1,2,4,1,2],[2,1,2,2,2,4],[1,1,1,1,1,2],[2,1,2,2,1,2],[4,4,3,4,4,2],[2,3,2,2,2,4],[4,4,4,4,4,5],[2,3,2,4,1,1],[4,4,4,4,2,5],[36.75,35.40000000000001,35.1,35.95,36.08333333,35.59999999999999],[31,23,34,40,24,35]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>socialdiversity<\/th>\n      <th>Site<\/th>\n      <th>DEQ<\/th>\n      <th>romantic<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>Temperature<\/th>\n      <th>ALEX<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[1,2,3,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Temperature_t1","targets":1},{"name":"Temperature_t2","targets":2},{"name":"socialdiversity","targets":3},{"name":"Site","targets":4},{"name":"DEQ","targets":5},{"name":"romantic","targets":6},{"name":"ALEX1","targets":7},{"name":"ALEX2","targets":8},{"name":"ALEX3","targets":9},{"name":"ALEX4","targets":10},{"name":"ALEX5","targets":11},{"name":"ALEX6","targets":12},{"name":"ALEX7","targets":13},{"name":"ALEX8","targets":14},{"name":"ALEX9","targets":15},{"name":"ALEX10","targets":16},{"name":"ALEX11","targets":17},{"name":"ALEX12","targets":18},{"name":"ALEX13","targets":19},{"name":"ALEX14","targets":20},{"name":"ALEX15","targets":21},{"name":"ALEX16","targets":22},{"name":"Temperature","targets":23},{"name":"ALEX","targets":24}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 
-]]]
-
-
----
-&lt;h1 lang="en" style="font-size: 60px;"&gt;Contents&lt;/h1&gt;
-&lt;br&gt;
-&lt;span style="font-size: 45px;"&gt;8.1 *t*-test &amp; linear regression&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.1.1 独立样本*t*检验&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.1.2 线性回归&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.1.3 单样本*t*检验&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.1.4 配对样本*t*检验&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.1.5 bruceR::TTEST&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;br&gt;
-&lt;span style="font-size: 45px;"&gt;8.2 ANOVA&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.2.1 研究问题&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.2.2 代码实操&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.2.3 线性回归&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;8.2.4 知识延申&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-
-
----
-class: center, middle
-&lt;span style="font-size: 60px;"&gt;8.1 *t*-test &amp; linear regression&lt;/span&gt; &lt;br&gt;
-
-
----
-# 8.1 *t*-test &amp; linear regression
-## 8.1.1 独立样本*t*检验(independent *t*-test)
-
-.panelset[
-.panel[.panel-name[基础知识]
-
-&lt;br&gt;
-**比较两个独立样本群体的均值是否有显著差异。**
-&lt;br&gt;
-**前提条件**
-* 正态性：两个样本数据都应该来自正态分布的总体。样本量足够大时，即使不严格服从正态分布，结果也是稳健的。
-* 同方差性：两个样本的方差应该是相等的。
-* 独立性：两个样本应该是独立的，即一个样本的观测值不应影响另一个样本的观测值。&lt;br&gt;
-&lt;br&gt;
-
-**假设**
-* `\(H_0\)`: 两个独立样本群体的均值没有显著差异，即 `\(μ_1\)` = `\(μ_2\)`
-* `\(H_1\)`: 两个独立样本群体的均值有显著差异，即 `\(μ_1\)` ≠ `\(μ_2\)`
-&lt;br&gt;
-`$$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$`
-
-=======
-<div id="htmlwidget-47ff9216e8ed29a38de1" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-47ff9216e8ed29a38de1">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[36.8,34.2,35,36.1,35.72222222,35.3],[36.7,36.6,35.2,35.8,36.44444444,35.9],[8,6,5,7,5,7],["Tsinghua","Oxford","Oxford","Oxford","Chile","Bamberg"],[26.88780212,51.75,51.75,51.75,42.07719421,51.65660095],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[2,1,2,3,1,1],[2,1,2,4,1,2],[2,1,4,1,1,1],[4,5,4,4,5,4],[2,1,2,4,1,1],[2,1,2,2,1,3],[2,1,2,3,2,4],[2,1,2,4,1,2],[2,1,2,2,2,4],[1,1,1,1,1,2],[2,1,2,2,1,2],[4,4,3,4,4,2],[2,3,2,2,2,4],[4,4,4,4,4,5],[2,3,2,4,1,1],[4,4,4,4,2,5],[36.75,35.4,35.1,35.95,36.08333333,35.6],[31,23,34,40,24,35]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Temperature_t1<\/th>\n      <th>Temperature_t2<\/th>\n      <th>socialdiversity<\/th>\n      <th>Site<\/th>\n      <th>DEQ<\/th>\n      <th>romantic<\/th>\n      <th>ALEX1<\/th>\n      <th>ALEX2<\/th>\n      <th>ALEX3<\/th>\n      <th>ALEX4<\/th>\n      <th>ALEX5<\/th>\n      <th>ALEX6<\/th>\n      <th>ALEX7<\/th>\n      <th>ALEX8<\/th>\n      <th>ALEX9<\/th>\n      <th>ALEX10<\/th>\n      <th>ALEX11<\/th>\n      <th>ALEX12<\/th>\n      <th>ALEX13<\/th>\n      <th>ALEX14<\/th>\n      <th>ALEX15<\/th>\n      <th>ALEX16<\/th>\n      <th>Temperature<\/th>\n      <th>ALEX<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[1,2,3,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
-
-
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 .panel[.panel-name[代码实操]
 
 
@@ -236,27 +164,6 @@ stats::t.test(data = df.penguin, #数据框
               Temperature ~ romantic,#因变量~自变量
               var.equal = TRUE) %&gt;%
   capture.output() #capture.output仅为输出整齐
-<<<<<<< HEAD
-```
-
-```
-##  [1] ""                                                                                              
-##  [2] "\tTwo Sample t-test"                                                                           
-##  [3] ""                                                                                              
-##  [4] "data:  Temperature by romantic"                                                                
-##  [5] "t = -0.34664, df = 1425, p-value = 0.7289"                                                     
-##  [6] "alternative hypothesis: true difference in means between group 1 and group 2 is not equal to 0"
-##  [7] "95 percent confidence interval:"                                                               
-##  [8] " -0.0555949  0.0388971"                                                                        
-##  [9] "sample estimates:"                                                                             
-## [10] "mean in group 1 mean in group 2 "                                                              
-## [11] "       36.38498        36.39333 "                                                              
-## [12] ""
-```
-
-
-]]]
-=======
 ```
 
 ```
@@ -276,7 +183,6 @@ stats::t.test(data = df.penguin, #数据框
 
 
 ]]]]
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 ---
 # 8.1 *t*-test &amp; linear regression
@@ -332,10 +238,7 @@ model.inde &lt;- stats::lm(data = df.penguin,#数据框
                    formula = Temperature ~ romantic #因变量~自变量
                    
 )
-<<<<<<< HEAD
-=======
 summary(model.inde)
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ```
 
 &lt;p align="center"&gt;
@@ -482,11 +385,7 @@ summary(model.paired)
 &lt;br&gt;
 &lt;br&gt;
 &lt;p align="center"&gt;
-<<<<<<< HEAD
-  &lt;img src="./pic_new/chp8/compare3.2.png" width="70%"&gt;
-=======
   &lt;img src="./pic_new/chp8/compare3.2.png" width="100%"&gt;
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 &lt;/p&gt;
 
 ]
@@ -511,12 +410,7 @@ summary(model.paired)
 ```r
 stats::t.test(data = df.penguin, #数据框
               Temperature ~ romantic,#因变量~自变量
-<<<<<<< HEAD
-              var.equal = TRUE) %&gt;%
-  capture.output() #capture.output仅为输出整齐 
-=======
               var.equal = TRUE) 
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ```
 
 
@@ -539,13 +433,7 @@ bruceR::TTEST(data = df.penguin, #数据
   &lt;img src="./pic_new/chp8/leven.png" width="100%"&gt;
 &lt;/p&gt;
 
-<<<<<<< HEAD
-&lt;p align="center"&gt;
-  &lt;img src="./pic_new/chp8/bruceRTTEST.png" width="100%"&gt;
-&lt;/p&gt;
-=======
 
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ]
 .panel[.panel-name[单样本t检验]
 .pull-left[
@@ -618,11 +506,7 @@ bruceR::TTEST(data = df.penguin, #数据
 
 ---
 class: center, middle
-<<<<<<< HEAD
-&lt;span style="font-size: 60px;"&gt;8.2  ANOVA&lt;/span&gt; &lt;br&gt;
-=======
 &lt;span style="font-size: 60px;"&gt;8.2  ANOVA &amp; linear regression&lt;/span&gt; &lt;br&gt;
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 
 ---
@@ -635,11 +519,7 @@ class: center, middle
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|知识回顾
 .pull-left[
 &lt;br&gt;
@@ -671,11 +551,7 @@ class: center, middle
 ]
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|数据预处理
 .panelset[
 .panel[.panel-name[vars]
@@ -712,28 +588,16 @@ summary(df.penguin$climate)
 
 ```r
 df &lt;- df.penguin %&gt;% 
-<<<<<<< HEAD
-  select(climate, romantic, Temperature)  %&gt;%
-  mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")))
-```
-<div class="datatables html-widget html-fill-item" id="htmlwidget-59824e39736109f4106c" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-59824e39736109f4106c">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["热带","寒温带","寒温带","寒温带","温带","寒温带"],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[36.75,35.40000000000001,35.1,35.95,36.08333333,35.59999999999999]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>climate<\/th>\n      <th>romantic<\/th>\n      <th>Temperature<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":3},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"climate","targets":1},{"name":"romantic","targets":2},{"name":"Temperature","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-=======
   select(climate, romantic, Temperature) 
 ```
-<div id="htmlwidget-514f10faaa2139f67850" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-514f10faaa2139f67850">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["热带","寒温带","寒温带","寒温带","温带","寒温带"],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[36.75,35.4,35.1,35.95,36.08333333,35.6]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>climate<\/th>\n      <th>romantic<\/th>\n      <th>Temperature<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
+<div class="datatables html-widget html-fill-item" id="htmlwidget-1bf9313d43c3b7eeaf13" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-1bf9313d43c3b7eeaf13">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["热带","寒温带","寒温带","寒温带","温带","寒温带"],["单身","恋爱","恋爱","恋爱","恋爱","恋爱"],[36.75,35.40000000000001,35.1,35.95,36.08333333,35.59999999999999]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>climate<\/th>\n      <th>romantic<\/th>\n      <th>Temperature<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":3},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"climate","targets":1},{"name":"romantic","targets":2},{"name":"Temperature","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|正态性检验
 .panelset[
 .panel[.panel-name[KS检验]
@@ -793,11 +657,7 @@ ggplot(df, aes(Temperature)) +
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|双因素被试间方差分析
 .panelset[
 .panel[.panel-name[stats::aov()]
@@ -821,11 +681,7 @@ aov1
 ```
 
 .panel[.panel-name[SPSS]
-<<<<<<< HEAD
 ![](pic_new/chp8/SPSS.png)&lt;!-- --&gt;
-=======
-&lt;img src="pic_new/chp8/SPSS.png" width="1627" /&gt;
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 ]]]
 
@@ -836,11 +692,7 @@ class: center, middle
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|平方和(SS)的计算
 &lt;br&gt;
 在平衡设计中，三种类型的平方和的结果会很清晰，并且方差分析的结果独立于平方和的类型；&lt;br&gt;
@@ -878,11 +730,7 @@ class: center, middle
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|双因素被试间方差分析
 .panelset[
 .panel[.panel-name[car::Anova()]
@@ -939,11 +787,7 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 ]]]
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.3 线性回归
 
 .pull-left[
@@ -963,22 +807,11 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 .pull-right[
 &lt;br&gt;
 &lt;br&gt;
-<<<<<<< HEAD
 ![](pic_new/chp8/aovLM.png)&lt;!-- --&gt;
-
-]
-
-
-
----
-# 8.2  ANOVA
-=======
-&lt;img src="pic_new/chp8/aovLM.png" width="1765" /&gt;
 ]
 
 ---
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.3 线性回归
 .pull-left[
 
@@ -987,32 +820,12 @@ afex::aov_4(Temperature ~ climate * romantic + (1|ID), data = df)
 aov1 &lt;- car::Anova(aov(Temperature ~ climate * romantic, data = df), type = 3)
 aov1
 ```
-<<<<<<< HEAD
-
-```
-## Anova Table (Type III tests)
-## 
-## Response: Temperature
-##                  Sum Sq   Df      F value                Pr(&gt;F)    
-## (Intercept)      235941    1 1238751.5204 &lt; 0.00000000000000022 ***
-## climate               5    2      13.1650           0.000002162 ***
-## romantic              1    1       3.2866              0.070060 .  
-## climate:romantic      2    2       5.0136              0.006765 ** 
-## Residuals           271 1421                                       
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-]
-
-=======
 &lt;br&gt;
 ![](./pic_new/chp8/compare8231.png)
 ]
 
 
 
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 .pull-right[
 
 
@@ -1020,35 +833,14 @@ aov1
 lm1 &lt;- car::Anova(lm(Temperature ~ climate * romantic, data = df), type = 3)
 lm1
 ```
-<<<<<<< HEAD
-
-```
-## Anova Table (Type III tests)
-## 
-## Response: Temperature
-##                  Sum Sq   Df      F value                Pr(&gt;F)    
-## (Intercept)      235941    1 1238751.5204 &lt; 0.00000000000000022 ***
-## climate               5    2      13.1650           0.000002162 ***
-## romantic              1    1       3.2866              0.070060 .  
-## climate:romantic      2    2       5.0136              0.006765 ** 
-## Residuals           271 1421                                       
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-=======
 &lt;br&gt;
 ![](./pic_new/chp8/compare8232.png)
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 
 ]
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR
 * 使用bruceR可以更简单地实现上述操作，但要注意数据格式
 &lt;p align="center"&gt;
@@ -1057,11 +849,7 @@ lm1
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR::MANOVA
 &lt;p align="center"&gt;
   &lt;img src="./pic_new/chp8/MANOVA.png" width="70%"&gt;
@@ -1069,11 +857,7 @@ lm1
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR::MANOVA
 
 ```r
@@ -1096,11 +880,7 @@ res1 &lt;- bruceR::MANOVA(data = df,
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR::EMMEANS
 更进一步进行简单效应分析与多重比较
 &lt;p align="center"&gt;
@@ -1109,11 +889,7 @@ res1 &lt;- bruceR::MANOVA(data = df,
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.2 代码实操|bruceR::EMMEANS
 
 ```r
@@ -1209,11 +985,7 @@ You are completely responsible for setting `sd.pooled`.
 You might also use `effectsize::t_to_d()` to compute d.
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.4 知识延申|单因素方差分析示例
 
 ```r
@@ -1263,11 +1035,7 @@ res2 &lt;- bruceR::MANOVA(data = df,
 
 
 ---
-<<<<<<< HEAD
-# 8.2  ANOVA
-=======
 # 8.2  ANOVA &amp; linear regression
->>>>>>> 7fcb3dffd5de9f45539881aa4e97270889d2016b
 ## 8.2.4 知识延申|总结
 &lt;br&gt;
 &lt;br&gt;
