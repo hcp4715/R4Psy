@@ -53,7 +53,7 @@ layout: true
 # 4.0 回顾与问题
 ---
 
-![process](pic_new/chp4/process.png)
+![process](picture/chp4/process.png)
 
 --
 - # <font size = 5.5> 问卷数据：Human Penguin Project </font> 
@@ -88,7 +88,7 @@ layout: false
 </font>
 
 <br>
-![path](pic_new/chp4/path1.jpg)
+![path](picture/chp4/path1.jpg)
 --
 
 <br><br>
@@ -105,7 +105,7 @@ layout: false
 <br>
 但实际上，在 R4Psy 之前还存在文件夹(父文件夹)，如果一直追溯的话：  
 <br><br>
-![path2](pic_new/chp4/path2.jpg)
+![path2](picture/chp4/path2.jpg)
 <br><br>
 因而对于数据penguin_rawdata.csv来说，完整路径就变得莫名其妙的长：
 --
@@ -115,7 +115,7 @@ layout: false
 </font>
 
 <div class="center">
-    <img src="pic_new/chp4/emj1.jpg" alt="emj1" style="zoom:50%;"/>
+    <img src="picture/chp4/emj1.jpg" alt="emj1" style="zoom:50%;"/>
 </div>
 
 ---
@@ -161,7 +161,7 @@ layout: false
 -   在 global options 中可以设置默认的工作目录  
 <br>
 <div class="center">
-    <img src="pic_new/chp4/wd1.png" alt="def_wd" style="zoom:30%;"/>
+    <img src="picture/chp4/wd1.png" alt="def_wd" style="zoom:30%;"/>
 </div>
 
 <br><br>
@@ -181,7 +181,7 @@ getwd()
 </font>
 <br>
 <div class="center">
-    <img src="pic_new/chp4/abspath.jpg" alt="abs_path" style="zoom:50%;"/>
+    <img src="picture/chp4/abspath.jpg" alt="abs_path" style="zoom:50%;"/>
 </div>
 <br><br>
 <font size=5.5>
@@ -262,7 +262,7 @@ bruceR::set_wd(ask = T)
 
 -   <font size=5.5>全自动档</font>
 <br><br>
-![](pic_new/chp4/wd2.jpg)
+![](picture/chp4/wd2.jpg)
 
 
 
@@ -311,19 +311,19 @@ nrow(penguin_data)
 在设置好当前工作目录后，直接在 Files 窗口中点点点：
 
 
-![imp1](pic_new/chp4/imp1.png)
+![imp1](picture/chp4/imp1.png)
 
 ---
 ## 4.2 读取数据——自动挡
 <br>
-![imp1](pic_new/chp4/imp2.png)
+![imp1](picture/chp4/imp2.png)
 
 ---
 ## 4.3 数据类型
 <br><br>
 使用自动档读取penguin_rawdata.csv数据时，可以发现列名底下带有斜体字：
 
-![imp3](pic_new/chp4/imp3.png)
+![imp3](picture/chp4/imp3.png)
 
 似乎：  *double*指的是数字，*character* 指的是字母
 
@@ -333,7 +333,7 @@ nrow(penguin_data)
 
 
 <div class="center">
-    <img src="pic_new/chp4/datatype.png" alt="emj1" style="zoom:45%;"/>
+    <img src="picture/chp4/datatype.png" alt="emj1" style="zoom:45%;"/>
 </div>
 
 
@@ -343,7 +343,7 @@ nrow(penguin_data)
 
 
 <div class="center">
-    <img src="pic_new/chp4/datatype1.png" alt="datatype" style="zoom:45%;"/>
+    <img src="picture/chp4/datatype1.png" alt="datatype" style="zoom:45%;"/>
 </div>
 
 
@@ -409,11 +409,11 @@ class(penguin_data)
 <br>
 
 .pull-left[
-![datatype](pic_new/chp4/vector1.png)
+![datatype](picture/chp4/vector1.png)
 
 ]
 .pull-right[
-![datatype](pic_new/chp4/vector2.png)
+![datatype](picture/chp4/vector2.png)
 ]
 
 

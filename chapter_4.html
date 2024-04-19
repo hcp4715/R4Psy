@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
     <meta name="date" content="2024-03-20" />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -44,8 +44,8 @@ class: center, middle
 
 ---
 # Tips
-## 使r语言的报错变为英文
-- &lt;font size = 5.5&gt;在自己代码的开头输入如下命令，可以让当前的session报错为英文。
+## 将`Rstudio`中报错语言变为英文
+- &lt;font size = 5.5&gt;打开Rstudio后，输入如下命令，可以让当前的session报错为英文。
 
 ```r
 # set local encoding to English
@@ -74,7 +74,7 @@ layout: true
 # 4.0 回顾与问题
 ---
 
-![process](pic_new/chp4/process.png)
+![process](picture/chp4/process.png)
 
 --
 - # &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
@@ -109,7 +109,7 @@ layout: false
 &lt;/font&gt;
 
 &lt;br&gt;
-![path](pic_new/chp4/path1.jpg)
+![path](picture/chp4/path1.jpg)
 --
 
 &lt;br&gt;&lt;br&gt;
@@ -126,7 +126,7 @@ layout: false
 &lt;br&gt;
 但实际上，在 R4Psy 之前还存在文件夹(父文件夹)，如果一直追溯的话：  
 &lt;br&gt;&lt;br&gt;
-![path2](pic_new/chp4/path2.jpg)
+![path2](picture/chp4/path2.jpg)
 &lt;br&gt;&lt;br&gt;
 因而对于数据penguin_rawdata.csv来说，完整路径就变得莫名其妙的长：
 --
@@ -136,7 +136,7 @@ layout: false
 &lt;/font&gt;
 
 &lt;div class="center"&gt;
-    &lt;img src="pic_new/chp4/emj1.jpg" alt="emj1" style="zoom:50%;"/&gt;
+    &lt;img src="picture/chp4/emj1.jpg" alt="emj1" style="zoom:50%;"/&gt;
 &lt;/div&gt;
 
 ---
@@ -182,7 +182,7 @@ layout: false
 -   在 global options 中可以设置默认的工作目录  
 &lt;br&gt;
 &lt;div class="center"&gt;
-    &lt;img src="pic_new/chp4/wd1.png" alt="def_wd" style="zoom:30%;"/&gt;
+    &lt;img src="picture/chp4/wd1.png" alt="def_wd" style="zoom:30%;"/&gt;
 &lt;/div&gt;
 
 &lt;br&gt;&lt;br&gt;
@@ -194,7 +194,7 @@ getwd()
 ```
 
 ```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/Grad_R_course/R4Psy"
+## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
 ```
 
 
@@ -207,7 +207,7 @@ getwd()
 &lt;/font&gt;
 &lt;br&gt;
 &lt;div class="center"&gt;
-    &lt;img src="pic_new/chp4/abspath.jpg" alt="abs_path" style="zoom:50%;"/&gt;
+    &lt;img src="picture/chp4/abspath.jpg" alt="abs_path" style="zoom:50%;"/&gt;
 &lt;/div&gt;
 &lt;br&gt;&lt;br&gt;
 &lt;font size=5.5&gt;
@@ -292,7 +292,7 @@ bruceR::set_wd(ask = T)
 
 -   &lt;font size=5.5&gt;全自动档&lt;/font&gt;
 &lt;br&gt;&lt;br&gt;
-![](pic_new/chp4/wd2.jpg)
+![](picture/chp4/wd2.jpg)
 
 
 
@@ -327,7 +327,7 @@ ncol(penguin_data)
 ```
 
 ```
-## [1] 247
+## [1] 232
 ```
 
 ```r
@@ -335,7 +335,7 @@ nrow(penguin_data)
 ```
 
 ```
-## [1] 1523
+## [1] 1517
 ```
 --
 
@@ -353,19 +353,19 @@ nrow(penguin_data)
 在设置好当前工作目录后，直接在 Files 窗口中点点点：
 
 
-![imp1](pic_new/chp4/imp1.png)
+![imp1](picture/chp4/imp1.png)
 
 ---
 ## 4.2 读取数据——自动挡
 &lt;br&gt;
-![imp1](pic_new/chp4/imp2.png)
+![imp1](picture/chp4/imp2.png)
 
 ---
 ## 4.3 数据类型
 &lt;br&gt;&lt;br&gt;
 使用自动档读取penguin_rawdata.csv数据时，可以发现列名底下带有斜体字：
 
-![imp3](pic_new/chp4/imp3.png)
+![imp3](picture/chp4/imp3.png)
 
 似乎：  *double*指的是数字，*character* 指的是字母
 
@@ -375,7 +375,7 @@ nrow(penguin_data)
 
 
 &lt;div class="center"&gt;
-    &lt;img src="pic_new/chp4/datatype.png" alt="emj1" style="zoom:45%;"/&gt;
+    &lt;img src="picture/chp4/datatype.png" alt="emj1" style="zoom:45%;"/&gt;
 &lt;/div&gt;
 
 
@@ -385,7 +385,7 @@ nrow(penguin_data)
 
 
 &lt;div class="center"&gt;
-    &lt;img src="pic_new/chp4/datatype1.png" alt="datatype" style="zoom:45%;"/&gt;
+    &lt;img src="picture/chp4/datatype1.png" alt="datatype" style="zoom:45%;"/&gt;
 &lt;/div&gt;
 
 
@@ -470,11 +470,11 @@ class(penguin_data)
 &lt;br&gt;
 
 .pull-left[
-![datatype](pic_new/chp4/vector1.png)
+![datatype](picture/chp4/vector1.png)
 
 ]
 .pull-right[
-![datatype](pic_new/chp4/vector2.png)
+![datatype](picture/chp4/vector2.png)
 ]
 
 
@@ -498,9 +498,9 @@ penguin_data[1:2,1:3]
 ```
 
 ```
-##    age ALEX1 ALEX2
-## 1 1975     1     1
-## 2 1995     2     2
+##       Site  age sex
+## 1 Tsinghua 1922   2
+## 2   Oxford 1940   1
 ```
 
 ```r
@@ -509,9 +509,9 @@ penguin_data[1:2,-c(4:ncol(penguin_data))]
 ```
 
 ```
-##    age ALEX1 ALEX2
-## 1 1975     1     1
-## 2 1995     2     2
+##       Site  age sex
+## 1 Tsinghua 1922   2
+## 2   Oxford 1940   1
 ```
 
 ---
@@ -527,8 +527,8 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 
 ```
 ##    age ALEX1 ALEX2
-## 1 1975     1     1
-## 2 1995     2     2
+## 1 1922     2     2
+## 2 1940     1     1
 ```
 TIP：输入字符串每次都要打很多引号会非常麻烦，因此可以使用bruceR::cc()，只需在首尾写冒号：
 
@@ -551,7 +551,7 @@ head(penguin_data$age)
 ```
 
 ```
-## [1] 1975 1995 1995 1988 1991 1995
+## [1] 1922 1940 1945 1948 1948 1951
 ```
 
 ```r
@@ -570,7 +570,7 @@ class(penguin_data[,1])
 ```
 
 ```
-## [1] "integer"
+## [1] "character"
 ```
 
 ```r
@@ -590,7 +590,7 @@ head(penguin_data$age &gt;1980)
 ```
 
 ```
-## [1] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE
+## [1] FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
 ```r
@@ -602,7 +602,7 @@ unique(agedata$age)
 ```
 
 ```
-##  [1] 1988 1985 1981 1987 1986 1989 1982 1984   NA 1983
+##  [1] 1981 1982 1983 1984 1985 1986 1987 1988 1989   NA
 ```
 
 ```r
@@ -771,7 +771,7 @@ unique(penguin_data$ALEX1)
 ```
 
 ```
-## [1]  1  2  4  3  5 NA
+## [1]  2  1  3  4  5  7 NA
 ```
 
 ```r
@@ -789,7 +789,7 @@ mean(penguin_data$ALEX1,na.rm = T)
 ```
 
 ```
-## [1] 2.509947
+## [1] 2.508655
 ```
     
 -   NULL表示空值，没有任何数据或内容，比如penguin_data$ALEX1 = NULL 会直接删除 ALEX1 这一列（注意：该操作不可逆）
@@ -869,7 +869,7 @@ address(x)
 ```
 
 ```
-## [1] "0x14e335d40"
+## [1] "0000026e56600198"
 ```
 
 ```r
@@ -877,7 +877,7 @@ address(y)
 ```
 
 ```
-## [1] "0x14e335d40"
+## [1] "0000026e56600198"
 ```
 
 ```r
@@ -886,7 +886,7 @@ address(y)
 ```
 
 ```
-## [1] "0x14e335c28"
+## [1] "0000026e56614020"
 ```
 
 
