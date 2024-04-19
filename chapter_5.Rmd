@@ -65,7 +65,7 @@ pacman::p_load(bruceR,tidyverse)
 penguin_data = bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))#当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
 ```
 --
-<br><img src="./pic_new/chp5/env.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<br><img src="./picture/chp5/env.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 ---
 # <h1 lang="zh-CN">5.2 赋值与变量</h1>
 
@@ -88,14 +88,14 @@ object
 ```
 ---
 # <h1 lang="zh-CN">5.2 赋值与变量</h1>
-![error1](pic_new/chp5/error1.png)
+![error1](picture/chp5/error1.png)
 <font size=5> 为什么会报错？<br>
 <br>
 --
 <font size=5> R中变量名是区分大小写的<br>
 --
 <br>
-![error2](pic_new/chp5/error2.png)
+![error2](picture/chp5/error2.png)
 <br>
 <br>
 <font size=5>  变量名可以由字母、数字、_和.组成。并且变量名的第一个字符不能为数字或者特殊符号，比如 +, -, *, /, ^, !, @, &。</font> <br>  
@@ -176,7 +176,7 @@ d1
 ```
 
 --
-![error3](pic_new/chp5/error3.png)
+![error3](picture/chp5/error3.png)
 --
 <font size = 5> 
 数据框每一列的元素数目要相同 <br>
@@ -263,7 +263,7 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ## 小练习
 <font size = 5>
 尝试把以下表格中的内容创建为数据框，并把第一列改为因子
-![dataframe](pic_new/chp5/dataframe.png)
+![dataframe](picture/chp5/dataframe.png)
 
 ```{r 5.4 exercise}
 # gender <- c(***)
@@ -317,7 +317,7 @@ F ^ 2
 复数型可以进行数学运算
 --
 
-![error5](pic_new/chp5/error5.png)
+![error5](picture/chp5/error5.png)
 ---
 
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
@@ -330,11 +330,11 @@ c(T,F) / c(T,T)
 c(8+6i,7+4i) + c(3+2i,4+4i)
 ```
 
-![error6](pic_new/chp5/error6.png)
+![error6](picture/chp5/error6.png)
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!= 
-![bijiao](./pic_new/chp5/bijiao.png)
+![bijiao](./picture/chp5/bijiao.png)
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 比较运算:>、<、>=、<=、==、!= 
@@ -356,7 +356,7 @@ T > F
 (1+1i) == (1+3i) 
 ```
 
-![errorCom](./pic_new/chp5/errorCom.png)
+![errorCom](./picture/chp5/errorCom.png)
 复数型仅可以进行“==、!=”的比较运算
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
@@ -429,7 +429,7 @@ R中常使用的通配符包括"*""?"和"[]"。<br>
 
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
-![table](pic_new/chp5/table.png)
+![table](picture/chp5/table.png)
 ---
 # <h1 lang="zh-CN">5.5 对数据的操纵</h1>
 ## 逻辑运算：| & ! (或、与、非)等
@@ -531,21 +531,21 @@ unique(sex1)
 &emsp;&emsp;如果我们不知道一个函数是什么，有什么用处。在R中，我们可以在Console中使用“?函数名”来打开帮助文档。
 --
 </font><br>
-![help](./pic_new/chp5/help.png)
+![help](./picture/chp5/help.png)
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 函数示例
-![help](./pic_new/chp5/help2.png)
+![help](./picture/chp5/help2.png)
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 函数示例
-![help](./pic_new/chp5/help3.png)
+![help](./picture/chp5/help3.png)
 <font size = 5>
 参数可以分为形式参数和实际参数。这里给出的是形式参数，实际运行中输入的值为实际参数。（举例：求函数y(x)在x=2时的值，x为形式参数，2为实际参数。）
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 函数示例
-![help](./pic_new/chp5/help4.png)
+![help](./picture/chp5/help4.png)
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 函数调用
@@ -560,7 +560,7 @@ unique(sex1)
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 函数调用
-![error4](./pic_new/chp5/error4.png)
+![error4](./picture/chp5/error4.png)
 <font size = 5>
 未加载时不能直接调用函数
 --
@@ -660,7 +660,7 @@ mysum(y=1,x=2)
 <font size = 5>
 <br>我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
 --
-![error7](./pic_new/chp5/error7.png)
+![error7](./picture/chp5/error7.png)
 --
 <font size = 5>
 <br>在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
@@ -699,14 +699,14 @@ mysum2(5)
 <font size = 5>
 在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算<br>
 --
-![error8](./pic_new/chp5/error8.png)
+![error8](./picture/chp5/error8.png)
 --
 <font size = 5>
 自定义函数时可以手动添加报错信息。<br>
 只有在输入的内容符合要求时才可以正常运行，否则报错。<br>
 此处判断是否符合要求本质上是一种逻辑判断。<br>
 --
-![if-else](./pic_new/chp5/if-else.png)
+![if-else](./picture/chp5/if-else.png)
 ---
 # <h1 lang="zh-CN">5.7 函数</h1>
 ## 自定义函数

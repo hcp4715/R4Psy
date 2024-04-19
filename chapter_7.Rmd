@@ -412,7 +412,7 @@ for(i in 1:13){
   pic[[i]] %>% print()
 }
 
-gg_playback(name = file.path(paste0(getwd(),'/pic_new/chp7/'), "dino.gif"),
+gg_playback(name = file.path(paste0(getwd(),'/picture/chp7/'), "dino.gif"),
             first_image_duration = 1,
             last_image_duration = 3,
             frame_duration = 1,loop = F,
@@ -422,7 +422,7 @@ gg_stop_recording()
 ```
 
 ```{r echo=FALSE,fig.align='center',out.width='50%'}
-knitr::include_graphics('pic_new/chp7/dino.gif')
+knitr::include_graphics('picture/chp7/dino.gif')
 ```
 
 
@@ -619,7 +619,7 @@ quartets::datasaurus_dozen %>%
 ## 7.2.2 为何使用 ggplot?
 
 ```{r echo=FALSE,out.width='63%',fig.align='center'}
-knitr::include_graphics('pic_new/chp7/exmp2.png')
+knitr::include_graphics('picture/chp7/exmp2.png')
 ```
 
 
@@ -627,7 +627,7 @@ knitr::include_graphics('pic_new/chp7/exmp2.png')
 ## 7.2.2 为何使用 ggplot?
 
 ```{r echo=FALSE,out.width='63%',fig.align='center'}
-knitr::include_graphics('pic_new/chp7/exmp1.png')
+knitr::include_graphics('picture/chp7/exmp1.png')
 ```
 
 
@@ -648,7 +648,7 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 
 .right-column[
 ```{r echo=FALSE,out.width='75%'}
-knitr::include_graphics('pic_new/chp7/mapping.jpg')
+knitr::include_graphics('picture/chp7/mapping.jpg')
 ```
 ]
 
@@ -734,7 +734,7 @@ pg_raw %>%
 ## 7.2.4 单个图片的组成
 
 ```{r echo=FALSE,out.width='70%',fig.align='center'}
-knitr::include_graphics('pic_new/chp7/comps1.png')
+knitr::include_graphics('picture/chp7/comps1.png')
 
 ```
 
@@ -744,7 +744,7 @@ knitr::include_graphics('pic_new/chp7/comps1.png')
 ## 7.2.4 单个图片的组成
 
 ```{r echo=FALSE,out.width='75%',fig.align='center'}
-knitr::include_graphics('pic_new/chp7/comps2.png')
+knitr::include_graphics('picture/chp7/comps2.png')
 
 ```
 
@@ -893,7 +893,7 @@ layout: true
 ```
 
 ```{r echo=FALSE,out.width='65%'}
-knitr::include_graphics('pic_new/chp7/plotstr.png')
+knitr::include_graphics('picture/chp7/plotstr.png')
 ```
 
 ---

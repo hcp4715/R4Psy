@@ -41,13 +41,13 @@ class: center, middle
 <span style="font-size: 30px;">&emsp;6.3.3 小结</span></center> <br>
 ---
 # <h1 lang="en">6.1 Tidyverse</h1>
-<img src="./pic_new/chp6/workflow.png" width="85%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/workflow.png" width="85%" style="display: block; margin-left: auto; margin-right: auto;">
 - 本课程的数据预处理将基于tidyverse( https://www.tidyverse.org/ )，它是目前最流行的预处理工具，是由8个多功能R包组成的连贯的系统<br>
 - 核心包的具体功能与工作流如图所示
 
 ---
 # <h1 lang="en">6.1 Tidyverse</h1>
-<img src="./pic_new/chp6/cheatsheet.png" width="85%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/cheatsheet.png" width="85%" style="display: block; margin-left: auto; margin-right: auto;">
 - 可以通过搜索包的cheatsheet快速了解包的使用<br>
 - 官方cheatsheet: https://rstudio.github.io/cheatsheets/
 
@@ -75,7 +75,7 @@ filtered_sorted_data <- data %>%
 
 ---
 # <h1 lang="en">6.1 Tidyverse</h1>
-<br><img src="./pic_new/chp6/pipe.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<br><img src="./picture/chp6/pipe.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 - tidyverse常见的管道符如表所示，依赖于`magrittr`包<br>
 - R 4.1.0 以上版本加入了原生管道操作符`|>`<br>
 
@@ -97,21 +97,21 @@ filtered_sorted_data <- data %>%
 # <h1 lang="en">6.2 问卷数据</h1>
 <span style="font-size: 30px;">6.2.1 研究问题 & 数据情况</span></center> <br>
 - **研究结果**：<br>
-<img src="./pic_new/chp6/pr1.png" width="65%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/pr1.png" width="65%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
 <span style="font-size: 30px;">6.2.1 研究问题 & 数据情况</span></center> <br>
 <br>
 - **研究结果**：<br>
-<img src="./pic_new/chp6/pr2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/pr2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
 <span style="font-size: 30px;">6.2.1 研究问题 & 数据情况</span></center><br>
 - 数据情况(Hu et al., 2019)：<br>
 通过data/penguin文件夹下的penguin_full_codebook可以查看详细情况<br>
-<img src="./pic_new/chp6/penguin.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/penguin.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
@@ -267,7 +267,7 @@ df1 <- mutate(df1,
 # <h1 lang="en">6.2 问卷数据</h1>
 <span style="font-size: 30px;">6.2.2 操作步骤 | Step4: 计算所需变量[mutate, case when]</span></center><br>
 - **前后对比**：<br>
-<img src="./pic_new/chp6/contrast.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/contrast.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.2 问卷数据</h1>
@@ -398,14 +398,14 @@ _数据的预处理主要依赖`dplyr`包，常见函数总结如下_
 <br>
 - **研究问题**：探究人们对自我相关刺激的优先加工是否仅在某些条件下发生<br>
 - **研究假设**：无论参与何种任务，与积极概念（好我）建立联结的自我形状会在反应时间和准确性上表现更快更准确<br>
-<img src="./pic_new/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
 <span style="font-size: 30px;">6.3.1 研究问题 & 数据情况</span></center> <br>
 - **研究结果**：<br>
 <br>
-<img src="./pic_new/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
@@ -415,7 +415,7 @@ _数据的预处理主要依赖`dplyr`包，常见函数总结如下_
 N(被试) = 44, N(files) = 44<br>
 形状标签匹配任务数据命名为`data_exp7_rep_match_*.out`<br>
 <br>
-<img src="./pic_new/chp6/matchdata.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/matchdata.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
@@ -487,7 +487,7 @@ for (i in 1:10) {
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
 <span style="font-size: 30px;">6.3.2 操作步骤 | Step1: 批量读取并合并数据[for loop]</span></center><br>
-<img src="./pic_new/chp6/loop.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/loop.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
@@ -824,4 +824,4 @@ Step5: 长转宽，得到每个Shape情况下的信号检测论d值 <br>
 <span style="font-size: 30px;">6.3.3 小结</span></center><br>
 - **答案参考**<br>
 <br>
-<img src="./pic_new/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./picture/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">

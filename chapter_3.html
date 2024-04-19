@@ -4,7 +4,7 @@
     <title>Lecture 3: Git &amp; R Studio workflow</title>
     <meta charset="utf-8" />
     <meta name="author" content="Chuan-Peng" />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
   </head>
@@ -61,7 +61,7 @@ Vuorre, M., &amp; Curley, J. P. (2018). Curating research assets: A tutorial on 
 
 ---
 ## &lt;h1 lang="en"&gt;Goal of Chp 3&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/goal.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/goal.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 
 ---
@@ -78,12 +78,12 @@ Vuorre, M., &amp; Curley, J. P. (2018). Curating research assets: A tutorial on 
 
 ---
 ## &lt;h1 lang="en"&gt;3.1.1 Why&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/messy files.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/messy files.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
  
 ---
 ## &lt;h1 lang="en"&gt;3.1.2 How to improve&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/files contrast.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/files contrast.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 制定一定的命名规则；
 - 创建清晰的层级结构，并且使用文件夹分类；
 - 定期清理和维护；
@@ -111,7 +111,7 @@ Reference: &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;Reminder&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/false clean.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/false clean.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 不要让你的文件夹外部看起来非常整洁 &lt;br&gt;
 - 但当打开几个文件夹后，内部文件的存放毫无逻辑 &lt;br&gt;
@@ -130,28 +130,28 @@ Reference: &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.1 Version Control&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/version control.png" width="40%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/version control.png" width="40%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 版本控制(Version Control)是一种管理文件修改历史的系统，特别是用于源代码管理。通常可以分为本地版本控制与远程版本控制两大类。 &lt;br&gt;
 - 本地版本控制系统主要在用户的个人计算机上运行，管理和跟踪文件或项目的历史版本。它允许用户在自己的设备上回退到旧版本、比较文件改动、恢复丢失的文件等，而不依赖于网络连接。 &lt;br&gt;
 - 远程版本控制系统则侧重于团队协作和共享资源，通常依托于服务器或云服务。它允许多个用户或团队成员在共同的项目上工作，管理和合并彼此的贡献，同时保持项目的同步和一致性。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.2 Git&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/git.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/git.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - Git是目前最常用的免费开源的版本控制的工具。 &lt;br&gt;
 - 首先，我们要下载Git(https://git-scm.com/downloads)。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.2 Git&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/choice.png" width="25%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/choice.png" width="25%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - Git支持多种运行模式，主要通过两个途径：终端（Terminal）和图形用户界面（GUI Panel）。 &lt;br&gt;
 - 终端途径提供了全面的功能访问权限，适用于各种命令行界面，包括Git Bash、CMD、R Terminal等。这种方式允许用户执行复杂的Git命令和操作，适合需要深度控制和定制Git工作流的场景。&lt;br&gt;
 - 图形用户界面（GUI Panel）则提供了更为直观的操作方式，用户只需通过点击即可完成操作，但这种方式可能不支持某些高级功能。这类界面包括R Studio中的Git面板和GitHub Desktop等，它们适合那些偏好图形界面或不需要执行复杂Git命令的用户。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/github.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/github.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - GitHub是全球最大的开源的在线软件源代码托管服务平台，使用Git作为版本控制软件。 &lt;br&gt;
 - 在2018年，GitHub被微软公司收购。潜在的平替平台：Gitee, GitLab, Bitbucket。 &lt;br&gt;
 - 注册一个GitHub账号( https://github.com )。&lt;br&gt;
@@ -159,39 +159,39 @@ Reference: &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
- &lt;br&gt; &lt;br&gt;&lt;img src="./pic_new/chp3/new repo1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+ &lt;br&gt; &lt;br&gt;&lt;img src="./picture/chp3/new repo1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 以下将简单介绍GitHub的基本操作。&lt;br&gt;
 - 使用GitHub创建仓库：在自己的用户界面找到repository，点击new。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/new repo2.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/new repo2.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 设定一个repository的名字，创建README文件，然后点击create repository。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/readme.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/readme.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - README文件是位于项目根目录中的文本文件（通常为README.md、README.txt等），提供了关于项目的基本信息。 &lt;br&gt;
 - 基于Markdown语法，图中为常见的使用情况。 &lt;br&gt;
 - 本课的PPT由xaringan包生成，R Markdown，在Markdown的基础上进行扩展。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/first commit.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/first commit.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
  - Commit:向GitHub提交更改。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/history.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/history.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
  - History:查看历史版本。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/fork.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/fork.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - Fork:复制一个已存在的代码仓库到自己的账户下,允许在不影响原始仓库的情况下自由地开发和修改代码。&lt;br&gt;
 
@@ -199,7 +199,7 @@ Reference: &lt;br&gt;
 ## &lt;h1 lang="en"&gt;3.2.3 GitHub&lt;/h1&gt; 
 &lt;br&gt;
 &lt;br&gt;
-&lt;img src="./pic_new/chp3/pull request1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/pull request1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - Pull request:通知机制，告诉项目的维护者你已经完成了一段代码的修改并推送到了一个仓库。&lt;br&gt;
 
@@ -221,99 +221,99 @@ Reference: &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.1 Local Version Control&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/local.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/local.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.2 Creating Git repository for project&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/new project1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/new project1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 在R Studio中创建一个本地的新项目，并创建其Git repository。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.3 Adding files to Git&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/add files1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/add files1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 默认情况下，R Studio中Git位于右上角的子窗口。 &lt;br&gt;
 - 点击commit，会跳出Git面板。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.3 Adding files to Git&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/add files2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/add files2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 勾选更新的文件，向Git repository提交更改。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.3 Adding files to Git&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/add files3.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/add files3.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 提交更改时不要忘记填写commit message，否则会报错。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.3 Adding files to Git&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/add files4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/add files4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 正常提交更改后会弹出如图所示的窗口。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.3 Adding files to Git&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/add files5.png" width="90%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/add files5.png" width="90%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 在R Studio中创建一个readme.txt文件（File-&gt;New File-&gt;Text File），重复上述步骤。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.4 Keeping track of changes with Git&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/add files6.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/add files6.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 修改readme文件并提交，Git面板中会出现前后内容的比较。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.5 Accessing files’ past versions&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/add files7.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/add files7.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 点击Git面板中的History按钮，会弹出一个列出了所有的提交历史的窗口。 &lt;br&gt;
 - 点击任何一个提交，查看该提交的详细信息，包括具体的更改内容。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/gitignore1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/gitignore1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 在R Studio右下角的子窗口Files处点击‘.gitignore’。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/gitignore2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/gitignore2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 修改‘.gitignore’，向Git repository提交修改。 &lt;br&gt;
 - 图中的修改分别表示忽略test1整个文件夹、忽略test2文件夹中所有.txt文件、忽略test3文件夹中的secret.txt。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/gitignore3.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/gitignore3.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 上面的表格总结了修改.gitignore的常用语法，供参考。 &lt;br&gt;
 - 在.gitignore文件中规则按顺序执行，后面的规则可以覆盖前面的规则。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/gitignore4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/gitignore4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 关闭R Studio，在test文件夹中创建3个子文件夹，test1、test2、test3。 &lt;br&gt;
 - 每个子文件夹中都包括‘test.txt’,‘secret.txt’两个文件。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
- &lt;br&gt;&lt;img src="./pic_new/chp3/gitignore5.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+ &lt;br&gt;&lt;img src="./picture/chp3/gitignore5.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - R Studio右上角的子窗口应该只存在如图所示的更改，其他修改都被Git忽略。 &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
- &lt;br&gt;&lt;img src="./pic_new/chp3/bug.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+ &lt;br&gt;&lt;img src="./picture/chp3/bug.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 但有时候事情并不会那么顺利，如图所示，Git并没有如预期那样忽略指定的文件。 &lt;br&gt;
 - 出现了bug。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.3.6 Telling Git to ignore files&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/debug.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/debug.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 请保持冷静，跟随以下步骤来进行debug： &lt;br&gt;
 - 是不是先添加的文件后修改的gitignore？那么文件可能已被Git跟踪，存在缓存，仅修改gitignore是不够的。可以尝试在左下角子窗口的Terminal下输入git rm --cached -r &lt;目录名&gt;/git rm --cached &lt;文件名&gt;这个命令。&lt;br&gt;
 - 不存在缓存问题？请检查一下.gitignore中是否存在语法错误。&lt;br&gt;
@@ -337,75 +337,75 @@ Reference: &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.1 Remote Version Control&lt;/h1&gt; 
- &lt;br&gt;&lt;img src="./pic_new/chp3/remote.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+ &lt;br&gt;&lt;img src="./picture/chp3/remote.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 linking GitHub repository with a local Git repository&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/link.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/link.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 有两种方法，将现有本地Git repository连接到新创建的远程GitHub repository(Method 1);&lt;br&gt;
 - 或从远程GitHub repository创建新的本地Git repository(Method 2, clone)。&lt;br&gt;
 
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 Method 1&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/new repo3.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/new repo3.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 请先在GitHub创建一个新的仓库。 &lt;br&gt;
 - 请跳过创建 README、.gitignore 和许可证文件，因为这些文件已在本地Git repository中创建。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 Method 1&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/new project2.png" width="75%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/new project2.png" width="75%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 目前，RStudio的Git面板 仅允许**在创建新项目时**将本地 Git repository链接到远程存储库，无法将本地现有的 Git repository连接到 GitHub。&lt;br&gt;
 - 按图所示创建本地仓库。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 Method 1&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/new repo4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/new repo4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 在新建的GitHub仓库中获取URL。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 Method 1&lt;/h1&gt; 
-&lt;img src="./pic_new/chp3/new project3.png" width="75%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/new project3.png" width="75%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 - 粘贴URL后仓库名字将自动生成，选择本地Git仓库创建的位置。&lt;br&gt;
 - 创建后连接成功建立，需要复制旧文件夹的内容并将其粘贴到新的本地仓库中。注意，请先复制.gitignore文件。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.3 Fork GitHub repository&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/fork.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/fork.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 合作时推荐大家先将中央仓库fork到自己的仓库,最终通过pull request推送到中央仓库。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 Method 2&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/new repo5.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/new repo5.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 从已有的GitHub仓库中获取URL。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.2 Method 2&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/new project4.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/new project4.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 在R Studio中创建新的版本控制仓库，选择合适的储存路径。&lt;br&gt;
 - 创建后连接成功建立，已将已有的仓库克隆到本地。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.4 Push changes to GitHub repository&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/git push.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/git push.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 向自己fork的远端GitHub repository推送更新。&lt;br&gt;
 - push前不要忘记先commit你的修改！&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.4 Push changes to GitHub repository&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/git push success.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt; &lt;br&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/git push success.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt; &lt;br&gt;
 - 推送成功。&lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.5 Pull changes from GitHub repository&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/git pull.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/git pull.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 从远端GitHub repository下拉更新。&lt;br&gt;
 - 注意fork的仓库与中央远端GitHub repository保持一致。&lt;br&gt;
@@ -415,24 +415,24 @@ Reference: &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
-&lt;img src="./pic_new/chp3/pull request1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/pull request1.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 
 ---
 ## &lt;h1 lang="en"&gt;3.4.6 Pull request to central GitHub repository&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/pull request2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/pull request2.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
  
 ---
 ## &lt;h1 lang="en"&gt;Advanced&lt;/h1&gt; 
-&lt;br&gt;&lt;img src="./pic_new/chp3/get good.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/get good.png" width="60%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 - 使用R Studio中的Terminal输入代码也可以实现操作。常用操作代码请搜索git cheatsheet（R Package也有cheatsheet）。&lt;br&gt;
 - 可以通过在Terminal输入git clone https://github.com/example/repo.git 将远程仓库克隆到本地。&lt;br&gt;
 - 也可以通过在Terminal输入git remote add origin https://github.com/username/reponame.git 与git push -u origin master实现将本地已有的Git repository与远程的GitHub repository建立连接，不需要移动文件位置。&lt;br&gt;
 
 ---
-&lt;br&gt;&lt;img src="./pic_new/chp3/youTurn.gif" width="35%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;br&gt;&lt;img src="./picture/chp3/youTurn.gif" width="35%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
  &lt;br&gt;
 &lt;div style="text-align: center;"&gt;
     &lt;span style="font-size: 60px;"&gt;Now It's Your Turn!&lt;/span&gt;
@@ -449,7 +449,7 @@ Reference: &lt;br&gt;
 
 ## Homework 
 - ddl:下次上课前
-&lt;img src="./pic_new/chp3/homework.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+&lt;img src="./picture/chp3/homework.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
