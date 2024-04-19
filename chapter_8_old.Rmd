@@ -156,7 +156,7 @@ DT::datatable(head(df.pg.corr, 5),
 
 ---
 # <h1 lang="zh-CN">bruceR::Corr()相关分析函数的参数</h1>
-![](./picture/chp8/corr.png)
+![](./picture/chp8_old/corr.png)
 ---
 # <h1 lang="en">bruceR::Corr()</h1>
 ## <h2 lang="zh-CN">问题解决</h2>
@@ -181,7 +181,7 @@ pairs(df.pg.corr[,c(2,3)])
 
 # <h1 lang="en">bruceR::Corr()</h1>
 ## <h2 lang="zh-CN">95% Confidence Intervals</h2>
-![](./picture/chp8/corr_result.png)
+![](./picture/chp8_old/corr_result.png)
 
 <h4 lang="zh-CN">很好，毫不相关，大家可以用代码自己探索些相关关系了</h4>
 ---
@@ -232,7 +232,7 @@ When can we use it?
 # <h1 lang="zh-CN">bruceR::model_summary()的运用</h1>
 <br>
 ## <h2 lang="zh-CN"> 灵活使用model_summary()函数汇总回归模型结果
-![](./picture/chp8/lm.png)
+![](./picture/chp8_old/lm.png)
 
 ---
 # <h1 lang="zh-CN">假想的问题</h1>
@@ -293,7 +293,7 @@ writeLines(result.lm, "./output/chp8/Lm.md")
 
 # <h1 lang="en">bruceR::lm()</h1>
 ## <h2 lang="zh-CN">显著性检验</h2>
-![](./picture/chp8/lm_result.png)
+![](./picture/chp8_old/lm_result.png)
 ---
 # <h1 lang="en">CODE_问题处理</h1>
 ## <h2 lang="zh-CN">进一步检查模型</h2>
