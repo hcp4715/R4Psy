@@ -1,6 +1,6 @@
 ---
-title: "Lecture 2.1"
-subtitle: "Objects in R"
+title: "Lecture 4"
+subtitle: "Supplement: Objects in R"
 author: "Hu Chuan-Peng et al."
 institute: "Nanjing Normal University"
 date: "2024-03-06"
@@ -18,7 +18,7 @@ output:
 ---
 
 class: center, middle
-<span style="font-size: 60px;">第二章(续)</span> <br>
+<span style="font-size: 60px;">第四章(补充)</span> <br>
 <span style="font-size: 50px;">初识R中的对象及数据类型</span> <br>
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
