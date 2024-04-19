@@ -1,7 +1,0 @@
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-
-\centering
-\includegraphics{chapter_12_files/figure-latex/plot1-1.pdf}
-\caption{\label{fig:plot1}Interaction between identity and valence for (A) sensitivity and (B) reaction times.}
-\end{figure*}
