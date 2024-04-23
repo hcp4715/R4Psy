@@ -2,7 +2,7 @@
 
 ## 关于(About)
 
-This is a repo for the coming R course for graduate students, School of Psychology, Nanjing Normal University, Nanjing, China.
+This is a repo for the R course for graduate students, School of Psychology, Nanjing Normal University, Nanjing, China.
 
 Instructor: Prof. Hu Chuan-Peng
 
@@ -10,7 +10,7 @@ Teaching assistants (2024 Spring): Yiqun Chen; Jiahui Wen; Tingting Wu
 
 Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
-此仓库为南京师范大学心理学研究生课程，授课内容转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook)。
+此仓库为南京师范大学心理学研究生课程，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook)。
 
 教师：胡传鹏(hcp4715 AT hotmail DOT com)
 
@@ -90,7 +90,7 @@ root_dir
 
 2.4 和鲸平台
 
-#### 第三讲：Git、Github与代码的规范化
+#### 第三讲: 如何更好地使用本课程材料 -- Git、Github与代码规范化
 
 3.1. Git与GitHub
 
@@ -104,7 +104,7 @@ root_dir
 
 4.3 初步了解R里的数据 （R语言中的对象）
 
-#### 第五讲：如何清理数据一 R语言编程基础
+#### 第五讲：如何清理数据(一) -- R语言编程基础
 
 5.1 R对象的操控
 
@@ -112,7 +112,7 @@ root_dir
 
 5.3 函数
 
-#### 第六讲：如何清理数据二 数据的预处理
+#### 第六讲：如何清理数据(二) -- 数据的预处理
 
 6.1 Tidyverse简介
 
@@ -120,7 +120,7 @@ root_dir
 
 6.3 数据预处理的进阶操作
 
-#### 第七讲：如何探索数据 描述性统计与数据可视化基础
+#### 第七讲：如何探索数据 -- 描述性统计与数据可视化基础
 
 7.1 描述性统计
 
@@ -128,30 +128,30 @@ root_dir
 
 7.3 ggplot2的基本语法
 
-#### 第八章：R语言中实现回归模型一(*t*-test/ANOVA)
+#### 第八章：R语言中实现回归模型(一)  -- *t*-test/ANOVA
 
 8.1 语法实现
 
 8.2 分析的流程
 
-#### 第九章：R语言中实现回归模型二(混合线性模型)
+#### 第九章：R语言中实现回归模型(二)  -- 层级线性模型
 
 9.1 语法实现
 
 9.2 分析的流程
 
-#### 第十章：R语言中实现回归模型三(广义线性模型)
+#### 第十章：R语言中实现回归模型(三) -- 广义线性模型
 
 10.1 语法实现
 
 10.2 分析的流程
 
-#### 第十一章: R语言中实现回归模型四(中介分析)
+#### 第十一章: R语言中实现回归模型(四) -- 中介分析
 
-#### 第十二章：如何得到可发表的图像: 数据可视化进阶（2学时）
+#### 第十二章：如何得到可发表的图像 -- 数据可视化进阶
 
-#### 第十三章：待定（2学时）
+#### 第十三章：待定
 
-#### 第十四章：待定（2学时）
+#### 第十四章：待定
 
-#### 第十五章：大作业（2学时）
+#### 第十五章：大作业
