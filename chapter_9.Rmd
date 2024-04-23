@@ -830,7 +830,7 @@ include_graphics('picture/chp9/meta1.jpg')
 ```
 
 .panel[.panel-name[元分析2]
-```{r echo=FALSE, out.width="85%"}
+```{r echo=FALSE, out.width="75%"}
 include_graphics('picture/chp9/meta2.jpg')
 ```
 
