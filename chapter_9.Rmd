@@ -61,9 +61,9 @@ pacman::p_load(
   # 本节课需要用到的 packages
   here, tidyverse, 
   # ANOVA & HLM
-  bruceR, lmerTest, lme4, broom, afex,interactions,
+  bruceR, lmerTest, lme4, broom, afex, interactions,
   # 生成课件
-  xaringan, xaringanthemer, xaringanExtra,knitr)
+  xaringan, xaringanthemer, xaringanExtra, knitr)
 
 options(scipen=99999,digits = 5)
 ```
@@ -129,13 +129,13 @@ df.penguin$climate <- cut(df.penguin$DEQ,
 ```{r}
 # 比较不同气候条件下个体的体温是否存在差异：
 ## 虚拟编码
-contrasts(df.penguin$climate) = contr.treatment(unique(df.penguin$climate))
+contrasts(df.penguin$climate) <- stats::contr.treatment(unique(df.penguin$climate))
 ### contr.treatment本质上创建了一个矩阵
 ### 由于3个分组，所以矩阵为2列
 
 
 ## 建立回归模型
-lm_temp = lm(Temperature ~ climate,data = df.penguin)
+lm_temp <- stats::lm(Temperature ~ climate,data = df.penguin)
 
 ```
 
@@ -145,9 +145,11 @@ lm_temp = lm(Temperature ~ climate,data = df.penguin)
 
 ```{r}
 ## 输出回归系数
-lm_temp %>% tidy() %>% 
+lm_temp %>% 
+  tidy() %>% 
   select(1:3) %>% 
-  mutate(across(where(is.numeric),~round(.,3)))
+  mutate(across(where(is.numeric),
+                ~round(., 3)))
 ```
 
 ]
@@ -156,9 +158,10 @@ lm_temp %>% tidy() %>%
 
 ```{r}
 ## 可以看到回归的结果以热带为基准，系数则为均值之差
-df.penguin %>% group_by(climate) %>% 
-  summarise(mean = mean(Temperature) %>% 
-              round(3))
+df.penguin %>% 
+  group_by(climate) %>% 
+  summarise(mean = round(mean(Temperature), 
+                         3))
 ```
 ]
 
@@ -190,13 +193,13 @@ class: center, middle, inverse
 .panelset[
 .panel[.panel-name[预处理]
 ```{r}
-mt_raw = bruceR::import(here::here('data','match','match_raw.csv'))
+mt_raw <- bruceR::import(here::here('data','match','match_raw.csv'))
 
-mt_raw = mt_raw %>% 
+mt_raw <- mt_raw %>% 
   tidyr::extract(Shape, 
                  into = c("Valence", "Identity"),
-               regex = "(moral|immoral)(Self|Other)",
-               remove = FALSE)
+                 regex = "(moral|immoral)(Self|Other)",
+                 remove = FALSE)
 ```
 
 .panel[.panel-name[数据展示]
@@ -210,8 +213,8 @@ head(mt_raw[3:12],5) %>% DT::datatable()
 ---
 ## 1.2 数据结构
 
-```{r echo=FALSE,out.width='70%'}
-include_graphics('picture/chp9/data.png')
+```{r echo=FALSE, out.width='70%'}
+knitr::include_graphics('picture/chp9/data.png')
 ```
 
 <br>
@@ -231,13 +234,20 @@ include_graphics('picture/chp9/data.png')
 .panelset[
 .panel[.panel-name[ANOVA-bruceR]
 ```{r warning=FALSE}
+
+mt_mean <- mt_raw %>%
+  dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
+  dplyr::group_by(Sub,Identity,Valence) %>%
+  dplyr::summarise(RT = mean(RT)) %>%
+  dplyr::ungroup()
+
 ##  本例为长数据
 ##  RUN IN CONSOLE!
 ##  球形检验输出：
-MANOVA(data = mt_raw,
+bruceR::MANOVA(data = mt_mean,
        subID = 'Sub', # 被试编号
        dv= 'RT', # dependent variable
-       within = cc("Identity,Valence")) %>% capture.output() %>% .[c(33:37)]
+       within = c('Identity', 'Valence')) %>% capture.output() %>% .[c(33:37)]
 
 
 ```
@@ -245,19 +255,23 @@ MANOVA(data = mt_raw,
 
 .panel[.panel-name[ANOVA-bruceR(输出)]
 ```{r warning=FALSE}
-MANOVA(data = mt_raw,subID = 'Sub',dv= 'RT',
-       within = cc("Identity,Valence")) %>% capture.output() %>% .[c(15:31)]
+bruceR::MANOVA(data = mt_mean,
+               subID = 'Sub',
+               dv = 'RT',
+               within = c('Identity', 'Valence')) %>%
+  capture.output() %>% .[c(15:31)]
 ```
 
 
 .panel[.panel-name[ANOVA-afex]
 ```{r }
 ## bruceR::MANOVA 是对afex的封装
-m_aov = afex::aov_ez(
-  data = mt_raw,
-  id = 'Sub',dv = 'RT',
-  within = cc('Identity,Valence'),
-  fun_aggregate = mean)
+m_aov <- afex::aov_ez(
+  data = mt_mean,
+  id = 'Sub',
+  dv = 'RT',
+  within = c('Identity', 'Valence'))
+
 m_aov
 ```
 
@@ -275,7 +289,7 @@ m_aov
 --
 <br>
 .bigfont[
--   同组间方差分析一样，只能提供显著性而没有给出关于差异大小的信息（个体间差异同样无法估计）；
+-   个体间差异同样无法估计；
 ]
 
 .bigfont[
@@ -308,7 +322,7 @@ m_aov
 .size5[
 分层线性模型/多层线性模型(HLM): 用于处理"多层嵌套数据"，在一个以上层次上变化参数的线性模型。但多层线性模型的名字非常多，不同学科称呼不同，有许多“近义词”：]
 
-    -   层级模型（Hierarchical Model，HM）  
+    -   层级/分层模型（Hierarchical Model，HM）  
     
     -   多水平模型（Multilevel Model，MLM）
     
@@ -323,16 +337,18 @@ m_aov
 
 .size5[
 
-但在注意与分层回归(Hierarchical regression)进行区分，即逐步引入自变量到回归模型中，以检验每个自变量对因变量的影响是否独立于其他自变量
+但在注意与多元回归(multiple regression)进行区分，即逐步引入自变量到回归模型中，以检验每个自变量对因变量的影响是否独立于其他自变量
 ]
 
 ---
 layout: true
-# 2.1 多层线性模型(HLM)的例子
+# 2.1 多层线性模型(HLM)的关键概念：固定效应与随机效应
 
 ---
 .size5[
-统计中经常谈及**固定效应**和**随机效应**，但在HLM中一般会在截距和斜率上分别讨论这两种效应。下面以一个例子来认识一下HLM与两种效应：我们希望研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系，因而在学校中随机抽取了5个学院后，在每个学院中随机抽取部分教师信息，具体数据如下表所示：]
+在回归模型中一般会在截距和斜率上分别讨论**固定效应**和**随机效应**。
+
+例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院后，在每个学院中随机抽取部分教师信息，具体数据如下表所示：]
 <br>
 
 ```{r echo=FALSE}
@@ -367,19 +383,24 @@ df %>% mutate(across(where(is.numeric),~round(.,3))) %>% head(6) %>% DT::datatab
 ```{r echo=FALSE}
 
 # Model without respect to grouping
-m0 <- lm(salary ~ experience, data=df)
+m0 <- stats::lm(salary ~ experience, data=df)
 df$simple.model <- predict(m0)
 
 # Model with varying intercept
-m1 <- lmer(salary ~ experience + (1|department), data = df)
+m1 <- lme4::lmer(salary ~ experience + (1|department), data = df)
 df$random.intercpet.preds <- predict(m1)
 
+# 可能会碰到错误
+# remove.packages("Matrix")
+# remove.packages("lme4")
+# install.packages("lme4", type = "source")
+
 # Model with varying slope
-m2 <- lmer(salary ~ experience + (0 + experience|department), data=df)
+m2 <- lme4::lmer(salary ~ experience + (0 + experience|department), data=df)
 df$random.slope.preds <- predict(m2)
 
 # Model with varying slope and intercept
-m3 <- lmer(salary ~ experience + (1 + experience|department), data=df)
+m3 <- lme4::lmer(salary ~ experience + (1 + experience|department), data=df)
 df$random.slope.int.preds <- predict(m3)
 ```
 
@@ -420,7 +441,7 @@ df %>%
   geom_smooth(method = 'lm',color = 'black',se=F)  + 
   labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
   scale_colour_discrete('Department') +
-  theme_bruce()
+  bruceR::theme_bruce()
 ```
 
 
@@ -430,11 +451,11 @@ df %>%
 ---
 
 .size[
-似乎可以。但有两个问题值得考虑：
+似乎可以。但有两个问题：
 
 -   不同学院的底薪有可能存在差异（存在/不存在）
 
--   不同学院间每一年工资涨幅可能存在差异（存在/不存在）
+-   不同学院间间，工资与工龄的关系存在差异（存在/不存在）
 
 这意味有可能会出现四种情况
 ]
@@ -472,7 +493,7 @@ df %>%
   labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
   scale_colour_discrete('Department') +
   ggtitle("Fixed Slope and Intercept") +
-  theme_bruce()
+  bruceR::theme_bruce()
 ```
 
 
@@ -517,7 +538,7 @@ df %>%
     geom_point(size = 5,alpha = 0.4) + 
     geom_smooth(method = 'lm',se = F) +
     ggtitle("Varying Slope and Intercept") +
-    theme_bruce() 
+    bruceR::theme_bruce() 
 ```
 
 
@@ -561,7 +582,7 @@ include_graphics('picture/chp9/nest.png')
 
 -   不同被试总体上会不会存在反应时上的差异：有些个体普遍反应速度更快，而有些反应速度普遍更慢（随机斜率）
 
--   反应时会不会在Identity和Valence两种条件下出现个体差异？（随机斜率）
+-   在自我条件下，两种Valence的差异是否完全相同？还是会有个体差异？（随机斜率）
 
 
 画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
@@ -569,14 +590,20 @@ include_graphics('picture/chp9/nest.png')
 
 .pull-left[
 ```{r echo=FALSE}
-subs = mt_raw %>% group_by(Sub) %>% 
-  summarise(mean = mean(RT)) %>% 
-  .[c(1:3,40:44),] %>% pull(Sub)
- mt_raw %>% 
-  filter(Sub %in% subs) %>% 
-  ggplot(aes(x = as.factor(Sub),color = Match,y = RT))  + 
-  geom_point(position = position_jitter(0.2),alpha = 0.2)+
-  geom_boxplot(outlier.colour = 'grey') + bruceR::theme_bruce() 
+mt_sample_df <- mt_raw %>% 
+  dplyr::filter(Match == 'match' & ACC == 1) %>% 
+  dplyr::filter(Sub %in% c(7311,7313, 7307, 7324)) %>%
+  dplyr::mutate(Sub = factor(Sub),
+                Identity = factor(Identity, levels = c("Self", "Other")),
+                Valence = factor(Valence, levels = c("moral", "immoral")))
+
+mt_sample_df %>%
+  dplyr::filter(Identity == 'Self') %>%
+   ggplot(aes(x = Valence, color = Valence, y = RT))  + 
+   geom_point(position = position_jitter(0.2),alpha = 0.2) +
+   geom_boxplot(outlier.colour = 'grey') + 
+   facet_wrap(~Sub, nrow = 1) +
+   bruceR::theme_bruce() 
 ```
 
 ]
@@ -585,15 +612,17 @@ subs = mt_raw %>% group_by(Sub) %>%
 .pull-right[
 
 ```{r echo=FALSE}
-subs = mt_raw %>% group_by(Sub) %>% 
+subs <- mt_raw %>% group_by(Sub) %>% 
   summarise(mean = mean(RT)) %>% 
-  .[c(1:3,40:44),] %>% pull(Sub)
+  .[c(1:3,40:44),] %>% 
+  dplyr::pull(Sub)
 
 mt_raw %>% 
   filter(Sub %in% subs) %>% 
   ggplot(aes(x = as.factor(Sub),color = Shape,y = RT))  + 
   # geom_point(position = position_jitter(0.2),alpha = 0.2)+
-  geom_boxplot(outlier.colour = 'grey') + bruceR::theme_bruce() 
+  geom_boxplot(outlier.colour = 'grey') + 
+  bruceR::theme_bruce() 
 ```
 
 ]
@@ -628,8 +657,8 @@ $$fit = lme4::lmer(data = , formula = DV ~ Fixed\_Factor + (Random\_intercept + 
 .panel[.panel-name[ranI]
 ```{r}
 ## 随机截距 固定斜率
-model = lme4::lmer(data = mt_raw,
-                   RT~ Identity * Valence + (1|Sub))
+model <- lme4::lmer(data = mt_raw,
+                    RT ~ Identity * Valence + (1|Sub))
 
 ## 还有没有别的可能
 ```
@@ -638,15 +667,15 @@ model = lme4::lmer(data = mt_raw,
 
 ```{r }
 ## 随机截距 随机斜率
-model_full = lme4::lmer(data = mt_raw,
-                   RT~ Identity*Valence + (1 + Identity*Valence|Sub)) 
+model_full <- lme4::lmer(data = mt_raw,
+                         RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
 ```
          
 
 .panel[.panel-name[模型比较]
 ```{r}
 ## 模型比较，p值如果
-stats::anova(model,model_full)
+stats::anova(model, model_full)
 ```
 
 
@@ -668,10 +697,11 @@ stats::anova(model,model_full)
 .panel[.panel-name[anova]
 ```{r}
 # 建立没有固定效应的“空模型”
-model_null = lme4::lmer(data = mt_raw,
-                   RT~ (1 + Identity*Valence|Sub))
+model_null <- lme4::lmer(data = mt_raw,
+                   RT ~ (1 + Identity*Valence|Sub))
+
 ## 根据似然比进行模型比较
-stats::anova(model_full,model_null)
+stats::anova(model_full, model_null)
 
 ```
 
@@ -683,7 +713,7 @@ stats::anova(model_full,model_null)
 
 ```{r highlight=TRUE}
 afex::mixed(data = mt_raw,
-            RT~ Identity * Valence + (1 + Identity*Valence|Sub),
+            RT ~ Identity * Valence + (1 + Identity*Valence|Sub),
             method = 'LRT') #<<
 ```
 
@@ -693,8 +723,8 @@ afex::mixed(data = mt_raw,
 lmerTest是一个与lme4包兼容的包，主要用于对线性混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
 
 ```{r}
-lmer_model = lmerTest::lmer(data = mt_raw,
-                   RT~ Identity * Valence + (1 + Identity*Valence|Sub))
+lmer_model <- lmerTest::lmer(data = mt_raw,
+                             RT ~ Identity * Valence + (1 + Identity * Valence|Sub))
 # summary(lmer_model)
 
 # 如果使用lmerTest包进行建模，可以使用bruceR::HLM_summary()进行输出
@@ -788,16 +818,15 @@ lmer_model %>% anova()
 ---
 
 ```{r }
-# 全模型：
-# model_full = lme4::lmer(data = mt_raw,
-                   # RT~ Identity * Valence + (1 + Identity*Valence|Sub))
+# http://www.dwoll.de/rexrepos/posts/anovaMixed.html#two-way-repeated-measures-anova-rbf-pq-design
 
-model_aov = 
- lmerTest::lmer(
-   data = mt_raw,
-   RT~Identity *Valence + (1|Sub) + (1|Sub:Identity) + (1|Sub:Valence) + 
-     (1|Sub:Identity:Valence)
+model_aov <- mt_mean %>%
+  # dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
+  lmerTest::lmer(
+   data = .,
+   RT ~ Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub)
  )
+
 model_aov %>% anova()
 ```
 
