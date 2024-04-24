@@ -1,466 +1,906 @@
 ---
 title: ""
-subtitle: ""
 author: ""
-institute: ""
 date: ""
 output:
   xaringan::moon_reader:
-    css: [default, css/Font_Style.css]
+    css: [default, css/zh-CN.css, css/Custumed_Style.css]
     lib_dir: libs
     nature:
-      highlightStyle: github
       highlightLines: true
+      highlightStyle: github
       countIncrementalSlides: false
+      seal: true
+      ratio: 16:9
+params:
+  output_dir: "../output"
 ---
+
 class: center, middle
-<span style="font-size: 60px;">第九章</span> <br>
-<span style="font-size: 50px;">如何进行基本的数据分析</span> <br>
-<span style="font-size: 50px;">中介和调节分析</span> <br>
-<br>
-<span style="font-size: 30px;">bruceR::PROCESS & lavaan</span> <br>
-<br>
-<br>
+<span style="font-size: 50px;">**第九章**</span> <br>
+<span style="font-size: 50px;">回归模型(二)：分层线性模型</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
-<span style="font-size: 30px;">2023/04/24</span> <br>
+<span style="font-size: 20px;"> </span> <br>
+<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = 'center',
+  fig.height=6, fig.width=7.5,
+  fig.retina=2
+)
+```
+
+
+```{css extra.css, echo=FALSE}
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 24px;
+}
+.tit_font{
+font-size: 60px;
+}
+
+```
+
+
+## 准备工作
+```{r }
+# Packages
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here, tidyverse, 
+  # ANOVA & HLM
+  bruceR, lmerTest, lme4, broom, afex, interactions,
+  # 生成课件
+  xaringan, xaringanthemer, xaringanExtra, knitr)
+
+options(scipen=99999,digits = 5)
+```
+
+
+
+---
+class: inverse, middle ,center
+
+
+#  一般线性模型回顾
+
+
+
+---
+# 0.1 线性模型与方差分析等价性
+
+<br>
+
+|       | R自带函数 | 线性模型 | 解释 |
+|-------|-------|-------|-------|
+| 单样本*t* | t.test(y, mu = 0) | lm(y ~ 1)| 仅有截距的回归模型 |
+| 独立样本*t* | t.test( $y_1$, $y_2$) | lm(y ~ 1 + $G_2$)| 自变量为二分变量的回归模型 |
+| 配对样本*t* | t.test( $y_1$, $y_2$, paired=T)  | lm( $y_1$ - $y_2$ ~ 1)| 仅有截距的回归模型)|
+| 单因素ANOVA | aov(y ~ G) | lm(y ~ 1 + $G_1$ + $G_2$ + ...)| 一个离散自变量的回归模型 |
+| 多因素ANOVA | aov(y ~ G * S) | lm(y ~ $G_1$ + $G_2$ + ... + $S_1$ + $S_2$ + ...)| 多个离散自变量的回归模型 |
+
+<br>
+<br>
+
+
+---
+# 0.2 虚拟编码
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+.panelset[
+.panel[.panel-name[预处理]
+```{r preprocessing}
+df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%
+  dplyr::mutate(subjID = row_number()) %>%
+  dplyr::select(subjID,Temperature_t1, Temperature_t2, socialdiversity, 
+                Site, DEQ, romantic, ALEX1:ALEX16) %>%
+  dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2) & !is.na(DEQ)) %>%
+  dplyr::mutate(romantic = factor(romantic, levels = c(1,2), 
+                                  labels = c("恋爱", "单身")),  # 转化为因子
+                Temperature = rowMeans(select(., starts_with("Temperature"))))
+
+# 设定相应的标签
+breaks <- c(0, 35, 50, 66.5)
+labels <- c('热带', '温带', '寒温带')
+# 创建新的变量
+df.penguin$climate <- cut(df.penguin$DEQ, 
+                          breaks = breaks, 
+                          labels = labels)
+```
+
+
+.panel[.panel-name[虚拟编码]
+
+```{r}
+# 比较不同气候条件下个体的体温是否存在差异：
+## 虚拟编码
+contrasts(df.penguin$climate) <- stats::contr.treatment(unique(df.penguin$climate))
+### contr.treatment本质上创建了一个矩阵
+### 由于3个分组，所以矩阵为2列
+
+
+## 建立回归模型
+lm_temp <- stats::lm(Temperature ~ climate,data = df.penguin)
+
+```
+
+.panel[.panel-name[结果]
+
+.pull-left[
+
+```{r}
+## 输出回归系数
+lm_temp %>% 
+  tidy() %>% 
+  select(1:3) %>% 
+  mutate(across(where(is.numeric),
+                ~round(., 3)))
+```
+
+]
+
+.pull-right[
+
+```{r}
+## 可以看到回归的结果以热带为基准，系数则为均值之差
+df.penguin %>% 
+  group_by(climate) %>% 
+  summarise(mean = mean(Temperature)) %>% 
+  as.data.frame() 
+```
+]
+
+
+]]]]
+
+
+.footnote[
+
+----------
+虚拟编码方式很多，可参考[这里](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/#ORTHOGONAL)
+]
+
+
+---
+class: center, middle, inverse
+<span style="font-size: 55px;">重复测量方差分析与回归模型 </span> 
+
+
+
+
+---
+# 1 重复测量方差分析
+## 1.1 数据与问题介绍
+
+.size5[
+以match_raw.csv为例，一个2x2的被试内实验设计（Identity: Self vs. Other) x Valence: Moral vs. Immoral)），我们希望知道这两种条件之下被试的反应时是否存在显著差异]
+
+.panelset[
+.panel[.panel-name[预处理]
+```{r}
+mt_raw <- bruceR::import(here::here('data','match','match_raw.csv'))
+
+mt_raw <- mt_raw %>% 
+  tidyr::extract(Shape, 
+                 into = c("Valence", "Identity"),
+                 regex = "(moral|immoral)(Self|Other)",
+                 remove = FALSE)
+```
+
+.panel[.panel-name[数据展示]
+```{r echo=FALSE}
+head(mt_raw[3:12],5) %>% DT::datatable()
+```
+
+]]]
+
+
+---
+## 1.2 数据结构
+
+```{r echo=FALSE, out.width='70%'}
+knitr::include_graphics('picture/chp9/data.png')
+```
+
+<br>
+.size5[
+-   将总变异分解为组间与组内
+
+-   组内变异是主要关注对象，组间变异则要被控制
+]
+
+
+
+
+
+---
+## 1.3 重复测量方差分析的实现
+
+.panelset[
+.panel[.panel-name[ANOVA-bruceR]
+```{r warning=FALSE}
+
+mt_mean <- mt_raw %>%
+  dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
+  dplyr::group_by(Sub,Identity,Valence) %>%
+  dplyr::summarise(RT = mean(RT)) %>%
+  dplyr::ungroup()
+
+##  本例为长数据
+##  RUN IN CONSOLE!
+##  球形检验输出：
+bruceR::MANOVA(data = mt_mean,
+       subID = 'Sub', # 被试编号
+       dv= 'RT', # dependent variable
+       within = c('Identity', 'Valence')) %>% capture.output() %>% .[c(33:37)]
+
+
+```
+
+
+.panel[.panel-name[ANOVA-bruceR(输出)]
+```{r warning=FALSE}
+bruceR::MANOVA(data = mt_mean,
+               subID = 'Sub',
+               dv = 'RT',
+               within = c('Identity', 'Valence')) %>%
+  capture.output() %>% .[c(15:31)]
+```
+
+
+.panel[.panel-name[ANOVA-afex]
+```{r }
+## bruceR::MANOVA 是对afex的封装
+m_aov <- afex::aov_ez(
+  data = mt_mean,
+  id = 'Sub',
+  dv = 'RT',
+  within = c('Identity', 'Valence'))
+
+m_aov
+```
+
+]]]]
+
+
+
+---
+# 1.4 重复测量方差分析的不足
+
+.bigfont[
+重复测量方差分析有没有局限性？
+]
+
+--
+<br>
+.bigfont[
+-   个体间差异同样无法估计；
+]
+
+.bigfont[
+-   处理缺失值只能将整行观测删除，会导致标准误增加、功效降低；
+]
+
+.bigfont[
+-   对因变量(连续)和自变量(分类)的类型有要求；
+]
+
+
+.bigfont[
+-   对每一个试次中数据利用率低，造成试次的浪费
+]
+
+
+<br>
+
+---
+# 1.4 重复测量方差分析的不足
+
+.bigfont[
+重复测量方差分析有没有局限性？
+]
+
+```{r echo=FALSE, out.width='45%'}
+knitr::include_graphics('picture/chp9/Neuron_LMM.png')
+```
+
+.bigfont[
+
+*因此，现在越来越多的期刊推荐使用多层线性回归(Hierarchical Linear Model) ，如[Neuron](https://www.sciencedirect.com/science/article/pii/S089662732100845X)。*
+]
+
+
+
+---
+# 2 多层线性模型(HLM)简介
+
+
+
+.size5[
+分层线性模型/多层线性模型(HLM): 用于处理"多层嵌套数据"，在一个以上层次上变化参数的线性模型。但多层线性模型的名字非常多，不同学科称呼不同，有许多“近义词”：]
+
+    -   层级/分层模型（Hierarchical Model，HM）  
+    
+    -   多水平模型（Multilevel Model，MLM）
+    
+    -   线性混合模型（Linear Mixed Model）
+    
+    -   混合效应模型（Mixed Effects Model）
+    
+    -   随机效应模型（Random Effects Model）
+    
+    -   随机系数模型（Random Coefficients Model）.....
+
+
+.size5[
+
+但在注意与多元回归(multiple regression)进行区分，即逐步引入自变量到回归模型中，以检验每个自变量对因变量的影响是否独立于其他自变量
+]
+
+---
+layout: true
+# 2.1 多层线性模型(HLM)的关键概念：固定效应与随机效应
+
+---
+.size5[
+在回归模型中一般会在截距和斜率上分别讨论**固定效应**和**随机效应**。
+
+例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院的教师信息，具体数据如下：]
+<br>
+
+```{r echo=FALSE}
+## 创建虚拟数据
+set.seed(999)
+departments <- c('sociology', 'biology', 'english', 'informatics', 'statistics')
+base.salaries <- c(40000, 50000, 60000, 70000, 80000)
+annual.raises <- c(2000, 500, 500, 1700, 500)
+faculty.per.dept <- 20
+total.faculty <- faculty.per.dept * length(departments)
+
+# Generate dataframe of faculty and (random) years of experience
+ids <- 1:total.faculty
+department <- rep(departments, faculty.per.dept)
+experience <- floor(runif(total.faculty, 0, 10))
+bases <- rep(base.salaries, faculty.per.dept) * runif(total.faculty, .9, 1.1) # noise
+raises <- rep(annual.raises, faculty.per.dept) * runif(total.faculty, .9, 1.1) # noise
+df <- data.frame(ids, department, bases, experience, raises)
+# Generate salaries (base + experience * raise)
+df <- df %>% mutate(
+    salary = bases + experience * raises
+)
+```
+
+
+```{r echo=FALSE}
+df %>% mutate(across(where(is.numeric),~round(.,3))) %>% head(6) %>% DT::datatable()
+```
+
+
+
+```{r echo=FALSE}
+
+# Model without respect to grouping
+m0 <- stats::lm(salary ~ experience, data=df)
+df$simple.model <- predict(m0)
+
+# Model with varying intercept
+m1 <- lme4::lmer(salary ~ experience + (1|department), data = df)
+df$random.intercpet.preds <- predict(m1)
+
+# 可能会碰到错误
+# remove.packages("Matrix")
+# remove.packages("lme4")
+# install.packages("lme4", type = "source")
+
+# Model with varying slope
+m2 <- lme4::lmer(salary ~ experience + (0 + experience|department), data=df)
+df$random.slope.preds <- predict(m2)
+
+# Model with varying slope and intercept
+m3 <- lme4::lmer(salary ~ experience + (1 + experience|department), data=df)
+df$random.slope.int.preds <- predict(m3)
+```
+
+
+
+.footnote[
+----------
+数据来源见[这里](https://github.com/mkfreeman/hierarchical-models/blob/master/generate-data.R)
+]
+
+
+
+
+---
+layout: true
+## 2.2 固定效应与随机效应
+
+---
+
+.size5[问题：是否可用工龄预测某个学校员工的工资？]
+
+.panelset[
+.panel[.panel-name[数据结构]
+```{r echo=FALSE,out.width='80%'}
+include_graphics('picture/chp9/nest.png')
+```
+
+
+.panel[.panel-name[OLS]
+
+```{r echo=FALSE}
+###  plot
+df %>% 
+  ggplot(aes(x = experience,y = salary)) + 
+  geom_point(aes(x = experience,
+                 y = salary,color = department),
+             size = 5,alpha = 0.5) + 
+  geom_smooth(method = 'lm',color = 'black',se=F,size = 0.5)  + 
+  labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
+  scale_colour_discrete('Department') +
+  bruceR::theme_bruce()
+```
+
+
+]]]
+
+
+---
+
+.size[
+似乎可以。但有两个问题：
+
+-   不同学院的底薪有可能存在差异（存在/不存在）
+
+-   不同学院间间，工资与工龄的关系存在差异（存在/不存在）
+
+这意味有可能会出现四种情况
+]
+
+--
+<br>
+.size[
+
+对应在图中，则会在截距与斜率之间出现差异：
+
+1.    不同学院的底薪相同，工资涨幅也相同；（固定截距，固定斜率）
+
+2.    不同学院间底薪不同，但工资涨幅相同；（随机截距，固定斜率）
+
+3.    不同学院间底薪相同，但工资涨幅不同；（固定截距，随机斜率）
+
+4.    不同学院间底薪和工资涨幅都不相同。（随机截距，随机斜率）
+
+画图看看.
+]
+
+
+---
+
+.panelset[
+.panel[.panel-name[fixI-fixS]
+```{r echo=FALSE}
+###  plot
+df %>% 
+  ggplot(aes(x = experience,y = salary)) + 
+  geom_point(aes(x = experience,
+                 y = salary,color = department),
+             size = 5,alpha = 0.5) + 
+  geom_smooth(method = 'lm',color = 'black',se=F)  + 
+  labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
+  scale_colour_discrete('Department') +
+  ggtitle("Fixed Slope and Intercept") +
+  bruceR::theme_bruce()
+```
+
+
+.panel[.panel-name[ranI-fixS]
+
+```{r echo=FALSE}
+df %>% 
+  ggplot() +
+  geom_point(data = df,aes(x = experience,y = salary,
+                           color = department),
+             size = 5,alpha = 0.4) + 
+  geom_line(aes(x=experience, y=random.intercpet.preds, 
+             group = department, colour = department)) + 
+  labs(x="Experience", y="Salary") +
+  ggtitle("Varying Intercept") + 
+  scale_colour_discrete('Department') +
+  bruceR::theme_bruce()
+```
+
+
+.panel[.panel-name[fixI-ranS]
+
+```{r echo=FALSE}
+df %>% 
+  ggplot() +
+    geom_point(data = df,aes(x = experience,y = salary,
+                             color = department),
+               size = 5,alpha = 0.4) + 
+    geom_line(aes(x=experience, y=random.slope.preds, 
+                  group = department, colour = department)) + 
+    labs(x="Experience", y="Salary") +
+    ggtitle("Varying Slope") + 
+    scale_colour_discrete('Department') + 
+  bruceR::theme_bruce()
+```
+
+.panel[.panel-name[ranI-ranS]
+
+```{r echo=FALSE}
+df %>% 
+    ggplot(aes(x = experience,y = salary,color = department)) + 
+    geom_point(size = 5,alpha = 0.4) + 
+    geom_smooth(method = 'lm',se = F,size = 0.5) +
+  labs(x="Experience", y="Salary") +
+    ggtitle("Varying Slope and Intercept") +
+    bruceR::theme_bruce() 
+```
+
+
+]]]]]
+
+
+---
+layout: false
+## 2.3 两种数据结构的比较
+.size5[
+无论在我们的数据中，还是刚才的数据中，其实都出现了层级或嵌套关系；只是对于match数据，每个变量都嵌套在一个被试中，而每个被试都可视为一条回归线。
+]
+
+.panelset[
+.panel[.panel-name[两种效应]
+
+.size5[
+-   固定效应代表了实验中稳定的、总体水平上的效应，即它们在不同个体、群体或条件之间的影响是一致的，如match数据中Identity和Valence的效应
+
+-   随机效应则表示了数据中的随机变异或个体间的差异的程度，以及这种变异程度如何随着特定分组因素的变化而变化。
+]
+
+
+
+.panel[.panel-name[match_data]
+```{r echo=FALSE,out.width='70%'}
+include_graphics('picture/chp9/data.png')
+```
+
+.panel[.panel-name[shcool]
+```{r echo=FALSE,out.width='80%'}
+include_graphics('picture/chp9/nest.png')
+```
+]]]]
+
+
+
+---
+.size5[
+对于match数据，类比与学校员工薪水数据，我们也可以设想：
+
+-   不同被试总体上会不会存在反应时上的差异：有些个体普遍反应速度更快，而有些反应速度普遍更慢（随机斜率）
+
+-   在自我条件下，两种Valence的差异是否完全相同？还是会有个体差异？（随机斜率）
+
+
+画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
+]
+
+```{r echo=FALSE,fig.height=5.8}
+mt_sample_df <- mt_raw %>% 
+  dplyr::filter(Match == 'match' & ACC == 1) %>% 
+  dplyr::filter(Sub %in% c(7311,7313, 7307, 7324)) %>%
+  dplyr::mutate(Sub = factor(Sub),
+                Identity = factor(Identity, levels = c("Self", "Other")),
+                Valence = factor(Valence, levels = c("moral", "immoral")))
+
+mt_sample_df %>%
+    dplyr::filter(Identity == 'Self') %>%
+    ggplot(aes(x = Valence, color = Valence, y = RT))  + 
+    geom_point(position = position_jitter(0.2),alpha = 1) +
+    stat_summary(fun.y = "mean", geom = "point", 
+                 shape = 18, size = 4, color = "darkred") +
+    stat_summary(fun.y = "mean", geom = "line", 
+                 aes(group = 1), color = "darkred") +
+    facet_wrap(~Sub, nrow = 1) +
+    scale_color_brewer(palette = 'Accent')+
+    theme_bw(base_size = 13)
+```
+
+
+
+
+
+---
+# 3 多层线性模型的应用
+## 3.1 基本形式
+
+.size5[
+我们使用lme4包对多层线性模型建模，具体语句形式如下：
+]
+
+<br>
+```{r eval=FALSE, highlight=TRUE}
+fit <- lme4::lmer(
+    data =   , 
+    formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor)) #<<
+```
+<br>
+--
+.size5[
+注：
+
+-   **但在建立模型之前，需要考虑好在我们的数据中，随机效应和固定效应分别是什么**。一般都会添加随机截距，而随机斜率的加入应当考虑是否有充足理由；
+
+-   另外，由于随机效应是从某些总体中抽样的离散单位，因而本质上是分类变量
+]
+
+
+---
+## 3.2 建立模型
+
+.panelset[
+.panel[.panel-name[ranI]
+```{r}
+## 随机截距 固定斜率
+model <- lme4::lmer(data = mt_raw,
+                    RT ~ Identity * Valence + (1|Sub))
+
+```
+
+
+.size5[
+-   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+]
+
+
+.panel[.panel-name[ranI ranS]
+
+```{r }
+## 随机截距 随机斜率
+model_full <- lme4::lmer(data = mt_raw,
+                         RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
+```
+
+
+.size5[
+-   Identity \* Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+]
+
+.panel[.panel-name[模型比较]
+```{r}
+## 模型比较
+stats::anova(model, model_full) %>% capture.output()
+```
+
+<br>
+<br>
+<br>
+
+------
+注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://chinaxiv.org/abs/202308.00658)
+
+]]]]
+
+---
+## 3.3 似然比检验(Likelihood-ratio tests)
+
+.panelset[
+.panel[.panel-name[问题]
+.size5[
+在建立模型后，我们希望知道固定效应大小是否显著，但由于多层线性模型中对于自由度的估计有多种方法，比较复杂，所以lme4::lmer()中没有提供显著性。
+]
+
+.panel[.panel-name[anova]
+```{r}
+# 建立没有固定效应的“空模型”
+model_null <- lme4::lmer(data = mt_raw,
+                   RT ~ (1 + Identity*Valence|Sub))
+
+## 根据似然比进行模型比较
+stats::anova(model_full, model_null)
+
+```
+
+
+
+.panel[.panel-name[mixed]
+
+在模型非常复杂时（多层嵌套），如果仅仅只想对固定效应进行检验，可以使用afex::mixed()，设置method 参数为 LRT(Likelihood-ratio tests)
+
+```{r highlight=TRUE}
+afex::mixed(data = mt_raw,
+            RT ~ Identity * Valence + (1 + Identity*Valence|Sub),
+            method = 'LRT') #<<
+```
+
+
+.panel[.panel-name[lmerTest]
+
+lmerTest是一个与lme4包兼容的包，主要用于对混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
+
+```{r}
+lmer_model <- lmerTest::lmer(data = mt_raw,
+                             RT ~ Identity * Valence + (1 + Identity * Valence|Sub))
+# summary(lmer_model)
+
+# 如果使用lmerTest包进行建模，可以使用bruceR::HLM_summary()进行输出
+##  RUN IN CONSOLE
+# HLM_summary(lmer_model)
+```
+
+]]]]]
+
+
+
+
+---
+## 3.4 模型解读
+
+.panelset[
+.panel[.panel-name[随机效应]
+注意：
+-   相关矩阵会体现自变量效应在个体上的差异，尤其是第一列(截距与斜率的相关)，而具体的解释也应考虑对应固定效应系数本身的正负；  
+
+-   有可能会提供天花板与地板效应的相关信息，如任务过于简单，数据变化较小，有可能出现截距与斜率为负相关。
+
+```{r echo=FALSE}
+summary(model_full) %>% capture.output() %>% .[c(11:18)]
+
+
+```
+
+
+.panel[.panel-name[固定效应]
+
+```{r echo=FALSE}
+## 使用lme4::lmer()并没有返回显著性
+## 其中也报告了交互效应
+summary(model_full) %>% capture.output() %>% .[c(20:25)]
+
+```
+
+
+.panel[.panel-name[交互效应的可视化]
+```{r fig.height=5,fig.width=6}
+## 一种快捷的方法
+interactions::cat_plot(model = model_full,
+                       pred = Identity,
+                       modx = Valence)
+```
+
+
+]]]]
+
+
+
+
+
+
+---
+## 3.5 模型等价性
+
+.size5[
+如果我们观察一下使用lme4::lmer()的结果与重复测量结果，可以发现存在差异：
+]
+
+
+
+.panelset[
+.panel[.panel-name[anova]
+
+
+```{r}
+m_aov
+```
+
+.panel[.panel-name[lme4]
+```{r}
+## 使用lme4建立的模型
+model_full %>% anova()
+```
+
+.panel[.panel-name[lmerTest]
+
+
+```{r}
+## 使用lmerTest建立的模型
+lmer_model %>% anova()
+```
+
+
+]]]]
+
+
+---
+
+```{r }
+# http://www.dwoll.de/rexrepos/posts/anovaMixed.html#two-way-repeated-measures-anova-rbf-pq-design
+
+model_aov <- mt_mean %>%
+  # dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
+  lmerTest::lmer(
+   data = .,
+   RT ~ Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub)
+ )
+
+model_aov %>% anova()
+```
+
+
+
+
+
+---
+#  4 HLM的应用
+
+
+.size5[
+HLM 非常复杂，本节课仅以重复测量为例，下面提供了一些其他的应用场景：
+]
+
+
+
+.panelset[
+.panel[.panel-name[嵌套数据]
+
+```{r echo=FALSE}
+include_graphics('picture/chp9/nestdesign.jpg')
+```
+.panel[.panel-name[元分析1]
+
+通过综合一组研究来评估效应量的大小。由于不同研究的结果之间往往涉及到不同质的群体或不同的实验条件。
+
+```{r echo=FALSE, out.width="85%"}
+include_graphics('picture/chp9/meta1.jpg')
+```
+
+.panel[.panel-name[元分析2]
+```{r echo=FALSE, out.width="60%"}
+include_graphics('picture/chp9/meta2.jpg')
+```
+
+]]]]
+
+
+
+---
+# 5 可能遇到的问题
+
+.size5[
+-   模型不收敛：[混合线性模型的实现](https://zhuanlan.zhihu.com/p/63092231)
+
+-   自由度问题：[多层线性模型（HLM）及其自由度问题](https://zhuanlan.zhihu.com/p/50048784)  
+
+-   [统计学中的固定效应 vs. 随机效应](https://zhuanlan.zhihu.com/p/60528092)
+
+-   [「固定效应、主效应、简单效应」概念辨析](https://zhuanlan.zhihu.com/p/513227882)
+]
 
 ---
 class: center, middle
-<span style="font-size: 60px;">9.1 事前准备</span> <br>
----
-# <h1 lang="zh-CN">相关知识点</h1>
+.tit_font[
+思考
+]
 <br>
-<center>
-<h2 lang="en">中介调节的鼻祖：Baron & Kenny (1986)</h2>
-</center>
-<br>
+<span style="font-size: 50px;">当因变量不服从正态分布(如ACC)时如何处理？</span> <br>
 
-<div style="display:flex; align-items:center;">
-  <img src="http://3.bp.blogspot.com/-6OBEhzon_Bk/VfHWHZXlSYI/AAAAAAAAd_Q/chk77Yk2Ohc/s1600/B%2526K%2Bmediator.png" style="width:50%; height: 50%;">
-  <img src="http://1.bp.blogspot.com/-LoVbz4fImR8/VfHWKAH073I/AAAAAAAAd_Y/gPJHy1moJFk/s1600/B%2526K%2Bmoderator.png" style="width:50%;">
-</div>
-<br>
-_<h5 lang="en">- Baron, R. M., & Kenny, D. A. (1986). The moderator–mediator variable distinction in social psychological research: Conceptual, strategic, and statistical considerations. Journal of personality and social psychology, 51(6), 1173. </h5>_
----
-# <h1 lang="zh-CN">相关知识点</h1>
-<br>
-<center>
-<h2 lang="en">PROCESS的作者：Andrew F. Hayes </h2>
-</center>
-<br>
-
-<div style="display:flex; align-items:center; justify-content:center;">
-  <img src="https://m.media-amazon.com/images/I/51h5ymu3dpL._SX348_BO1,204,203,200_.jpg" style="width:30%; height: 30%; margin-right: 20px;">
-  <img src="https://www.guilford.com/covers/large/9781462549030.jpg" style="width:30%; height: 30%;">
-</div>
-<br>
-_<h5 lang="en">- Hayes, A. F. (2017). Introduction to mediation, moderation, and conditional process analysis: A regression-based approach. Guilford publications. </h5>_
-
----
-# <h1 lang="zh-CN">相关的R包：</h1>
-<br>
-<center>
-<h2 lang="en">bruceR::PROCESS & lavaan </h2>
-</center>
-<br>
-
-<div style="display:flex; align-items:center; justify-content:center;">
-  <img src="https://raw.githubusercontent.com/psychbruce/bruceR/main/man/figures/logo.png" style="width:30%; height: 30%; margin-right: 40px;">
-  <img src="https://assets.datacamp.com/production/course_6419/shields/original/shield_image_course_6419_20180703-12-1hbh8vg?1530639951" style="width:30%; height: 30%;">
-</div>
-<br>
-_<h5 lang="en">- Bao, H.-W.-S. (2022). bruceR: Broadly useful convenient and efficient R functions. R package version 0.8.x. https://CRAN.R-project.org/package=bruceR </h5>_
-_<h5 lang="en">- Rosseel Y (2012). “lavaan: An R Package for Structural Equation Modeling.” Journal of Statistical Software, 48(2), 1–36. doi:10.18637/jss.v048.i02. </h5>_
----
-# <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
-```{r pacakge, echo=TRUE, message=FALSE}
-
-# 检查是否已安装 pacman
-if (!requireNamespace("pacman", quietly = TRUE)) {
-  install.packages("pacman") }   # 如果未安装，则安装包
-
-# 使用p_load来载入需要的包
-pacman::p_load("tidyverse", "bruceR", "performance", "lavaan", "lavaanPlot")
-```
-
----
-# <h1 lang="zh-CN">载入包 - 设置工作路径 - 导入原始数据</h1>
-
----
-```{r get socialdiversity, eval = FALSE, echo = FALSE}
-
-df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_full.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) 
-
-snDivNames  <- c("SNI3" , "SNI5", "SNI7" , "SNI9" , "SNI11"  , "SNI13",  "SNI15", "SNI17","SNI18","SNI19",
-                "SNI21")
-extrDivName <- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
-
-### get data for diversity
-snDivData <- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(df.pg.raw))), snDivNames)
-
-### recode spouse/partner Q10 (spouse): 1-> 1; else ->0
-snDivData$SNI1_r <- car::recode(df.pg.raw$SNI1,"1= 1; else = 0")
-
-### re-code Q12 ~ Q30: NA -> 0; 0 -> 0; 1~10 -> 1
-snDivData[,snDivNames] <- apply(df.pg.raw[,snDivNames],2,function(x) {x <- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
-colnames(snDivData[,snDivNames]) <- paste(snDivNames,"div",  sep = "_")   # add suffix to the colnames
-
-snDivData$SNIwork   <- snDivData$SNI17 + snDivData$SNI18                  # combine the diversity of work (SNI17, SNI18)
-snDivData$SNIwork_r <- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
-
-### re-code extra groups, 0/NA --> 0; more than 0 --> 1
-extrDivData <- df.pg.raw[,extrDivName]  # Get extra data
-
-### sum and recode the extra groups
-extrDivData$sum <- rowSums(extrDivData)
-snDivData$extrDiv_r <- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")
-
-### combine the recoded variables
-snDivNames_r <- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
-                  "SNI19","SNI21","extrDiv_r")
-
-### get the social diveristy score
-snDivData$SNdiversity   <- rowSums(snDivData[,snDivNames_r])
-
-### save the social diversity index
-df.pg.raw$socialdiversity <- snDivData$SNdiversity
-
-rm(extrDivData, snDivData, extrDiv_r, snDivNames, snDivNames_r, extrDivName)
-write.csv(df.pg.raw, "./data/penguin/penguin_rawdata_new.csv")
-```
-
-
-```{r WD & df.pg.raw}
-
-df.pg.raw <-  read.csv('./data/penguin/penguin_rawdata_new.csv',
-                       header = T, sep=",", stringsAsFactors = FALSE) %>%
-  dplyr::select(., age, language, avgtemp,socialdiversity, DEQ,
-                   starts_with("ALEX"),
-                   starts_with("ECR"),
-                   starts_with("HOME"),
-                   starts_with("KAMF"),
-                   starts_with("SNI"),
-                ) 
-# 这些包含原始题目的数据集，将在SEM lavaan中直接使用
-```
-
-```{r df.pg.raw DT, echo=FALSE}
-DT::datatable(head(df.pg.raw, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
-
----
-# <h1 lang="zh-CN">查找量表题目与维度的对应关系</h1>
-
-ALEX：16题(TAS-20)<br>    DIF 1,3,5,6,7,10,11; DDF 2,4,8,9; EOT 12,13,14,15,16 <br>
-_<h5 lang="en">- Taylor, G. J., Bagby, R. M., & Parker, J. D. (2003). The 20-Item Toronto Alexithymia Scale: IV. Reliability and factorial validity in different languages and cultures. Journal of psychosomatic research, 55(3), 277-283. </h5>_
-<br>
-ECR：36题   1-18为焦虑，19-36为回避 <br>
-_<h5 lang="en">- Fraley, R. C., Waller, N. G., & Brennan, K. A. (2000). An item response theory analysis of self-report measures of adult attachment. Journal of personality and social psychology, 78(2), 350. </h5>_
-<br>
-HOME：9题 <br>
-_<h5 lang="zh-CN">来源未知</h5>_
-<br>
-KAMF：7题 <br>
-_<h5 lang="zh-CN">来源未知</h5>_
-<br>
-在PROCESS中由于一个变量内的题目都会求平均分，所以是否知道题目与维度的对应并不重要<br>
-但在lavaan(SEM)中，必须知道题目与维度的对应关系，才可以构建模型
-
----
-# <h1 lang="zh-CN">清洗数据</h1>
-# <h2 lang="zh-CN">对模型涉及变量的题目求均值</h2>
-```{r df.pg.mean, message = FALSE}
-# 如果你需要探究某个维度对其他变量的影响，可以按照维度求和，做更复杂的模型
-df.pg.mean <- df.pg.raw %>%
-  dplyr::mutate(ALEX_mean = rowMeans(select(., starts_with("ALEX"))),
-                ECR_mean = rowMeans(select(., starts_with("ECR"))),
-                HOME_mean = rowMeans(select(., starts_with("HOME"))),
-                KAMF_mean = rowMeans(select(., starts_with("KAMF"))),) %>%
-  dplyr::select(age, language, avgtemp, 
-                ALEX_mean, ECR_mean, HOME_mean, KAMF_mean)
-```  
-```{r df.pg.mean DT, echo=FALSE}
-DT::datatable(head(df.pg.mean, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-class: center, middle
-<span style="font-size: 60px;">9.2 PROCESS in R</span> <br>
-
----
-# <h1 lang="en">Penguin Model 4</h1>
-<div style="display:flex; align-items:center;">
-  <img src="picture/chp9/model4_hayse.png" style="width:45%; height: 45%;margin-right: 90px;">
-  <font size=20> Model 4 </font> 
-</div>
-
----
-# <h1 lang="en">Penguin Model 4</h1>
-<br>
-<div style="display:flex; align-items:center;">
-  <img src="picture/chp9/model4.png" style="width:100%; height: 100%;"> <br>
-</div>
-
----
-
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">CODE</h2>
-
-```{r bruceR::PROCESS model 4, message=FALSE, eval=FALSE}
-result.PROCESS <- capture.output({
-# capture.output 可以将这段代码的结果存储进一个变量中
-  bruceR::PROCESS(df.pg.raw,
-                  x = "DEQ", #自变量
-                  y = "avgtemp", # 因变量
-                  meds = c("socialdiversity"), # 中介变量 
-                  #mods = c(), # 调节变量
-                  #covs = c(), # 控制变量（协变量）
-                  #clusters = c(), #类似调节变量 分组变量
-                  #hlm.re.m = "",hlm.re.y = "",hlm.type = c("1-1-1", "2-1-1", "2-2-1"),
-                  #med.type = c("parallel", "serial"), # 中介变量之间是并列还是连续
-                  #mod.type = c("2-way", "3-way"), # 两项交互还是三项交互
-                  #mod.path = c(), # 调节哪条路径
-                  cov.path = c("both"), # 控制变量进入几个方程，both意味着中介和因变量都会考虑控制变量
-                  #mod1.val = NULL,mod2.val = NULL, # 调节变量高低水平对应的值
-                  ci = c("boot"), # 置信区间使用bootstrap 或其他抽样方法
-                  nsim = 1000, # 抽样的次数
-                  #seed = NULL, # 设置seed可以让每次的抽样结果都一样
-                  center = FALSE, # 是否对自变量和调节变量中心化。非中心化在解释时更方便
-                  std = FALSE, # 是否在计算钱对所有变量进行标准化
-                  digits = 3, # 保留的小数位数
-                  #nsmall = digits,file = NULL
-                  ) 
-})
-writeLines(result.PROCESS, "./output/chp9/PROCESS_model_4.md") # .md最整齐
-```
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_4_1.png" width="90%">
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_4_2.png" width="100%">
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_4_3.png" width="100%">
-
----
-# <h1 lang="zh-CN">想~~编~~一个模型</h1>
-<div style="display:flex; align-items:center;">
-  <img src="picture/chp9/model7_hayse.png" style="width:45%; height: 45%;margin-right: 90px;">
-  <font size=20> Model 7 </font> 
-</div>
-
----
-# <h1 lang="zh-CN">想~~编~~一个模型</h1>
-<div style="display:flex; align-items:center;">
-  <img src="picture/chp9/model7.png" style="width:100%; height: 100%;"> <br>
-</div>
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">CODE</h2>
-
-```{r bruceR::PROCESS model 7, message=FALSE, eval=FALSE}
-result.PROCESS <- capture.output({
-# capture.output 可以将这段代码的结果存储进一个变量中
-  bruceR::PROCESS(df.pg.mean,
-                  x = "ALEX_mean", #自变量
-                  y = "HOME_mean", # 因变量
-                  meds = c("ECR_mean"), # 中介变量 
-                  mods = c("KAMF_mean"), # 调节变量
-                  covs = c("age", "language", "avgtemp"), # 控制变量（协变量）
-                  #clusters = c(), #类似调节变量 分组变量
-                  #hlm.re.m = "",hlm.re.y = "",hlm.type = c("1-1-1", "2-1-1", "2-2-1"),
-                  #med.type = c("parallel", "serial"), # 中介变量之间是并列还是连续
-                  #mod.type = c("2-way", "3-way"), # 两项交互还是三项交互
-                  mod.path = c("x-m"), # 调节哪条路径
-                  cov.path = c("both"), # 控制变量进入几个方程，both意味着中介和因变量都会考虑控制变量
-                  #mod1.val = NULL,mod2.val = NULL, # 调节变量高低水平对应的值
-                  ci = c("boot"), # 置信区间使用bootstrap 或其他抽样方法
-                  nsim = 100, # 抽样的次数
-                  #seed = NULL, # 设置seed可以让每次的抽样结果都一样
-                  center = FALSE, # 是否对自变量和调节变量中心化。非中心化在解释时更方便
-                  std = FALSE, # 是否在计算钱对所有变量进行标准化
-                  digits = 3, # 保留的小数位数
-                  #nsmall = digits,file = NULL
-                  ) 
-})
-writeLines(result.PROCESS, "./output/chp9/PROCESS_model_7.md") # .md最整齐
-```
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_7_1.png" width="100%">
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_7_2.png" width="80%">
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_7_3.png" width="100%">
-
----
-# <h1 lang="en">bruceR::PROCESS</h1>
-## <h2 lang="en">OUTPUT</h2>
-<img src="./picture/chp9/PROCESS_model_7_4.png" width="100%">
-
----
-class: center, middle
-<span style="font-size: 60px;">9.3 SEM in R (lavaan)</span> <br>
-
----
-# <h1 lang="en">lavaan::cfa</h1>
-# <h2 lang="en">CODE</h2>
-```{r CFA_total, eval=FALSE}
-result.CFA <- capture.output({
-CFA<- 'DIDF =~ ALEX1 + ALEX3 + ALEX5 + ALEX6 + ALEX7 + ALEX10 + ALEX11 + ALEX2 + ALEX4 + ALEX8 + ALEX9
-       EOF =~ ALEX12 + ALEX13 + ALEX14 + ALEX15 + ALEX16
-            
-       ANX =~ ECR1 + ECR2 + ECR3 + ECR4 + ECR5 + ECR6 + ECR7 + ECR8 + ECR9 + ECR10 + ECR11 + ECR12 + ECR13 + ECR14 + ECR15 + ECR16 + ECR17 + ECR18
-       AVO =~ ECR19 + ECR20 + ECR21 + ECR22 + ECR23 + ECR24 + ECR25 + ECR26 + ECR27 + ECR28 + ECR29 + ECR30 + ECR31 + ECR32 + ECR33 + ECR34 + ECR35 + ECR36
-            
-       HOME =~ HOME1 + HOME2 + HOME3 + HOME4 + HOME5 + HOME6 + HOME7 + HOME8 + HOME9
-            
-       KAMF =~ KAMF1 + KAMF2 + KAMF3 + KAMF4 + KAMF5 + KAMF6 + KAMF7' %>%
-       # ALEX =~ DIDF + EOF
-       # ECR =~ ANX + AVO
-       # 为了简化，这里没有做二阶
-  lavaan::cfa(.,data=df.pg.raw,estimator="ML") 
-  lavaan::summary(CFA,fit.measures=TRUE,standardized=TRUE)
-})
-writeLines(result.CFA, "./output/chp9/CFA.md")
-```
-_<h4 lang="zh-CN">- 这里并不是完全正确的做法，该论文penguin对原始量表做了一些修改</h4>_
-_<h4 lang="zh-CN">- 原始量表中ALEX是一个二阶潜变量，由三个一阶潜变量DIF, DDF, EOF构成</h4>_
-_<h4 lang="zh-CN">- 但是DIF和DDF被合并为DIDF了（penguin没有说这是为什么）</h4>_
-_<h4 lang="zh-CN">- 如果你每个维度单独做CFA，就能找到问题所在（是因为这两个维度共线性太高）</h4>_
-
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Model Fit</h2>
-<img src="./picture/chp9/CFA_1.png" width="100%">
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Model Fit</h2>
-<img src="./picture/chp9/CFA_2.png" width="60%">
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Factor Loading</h2>
-<img src="./picture/chp9/CFA_3.png" width="100%">
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Factor Loading</h2>
-<img src="./picture/chp9/CFA_4.png" width="100%">
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Factor Loading</h2>
-<img src="./picture/chp9/CFA_5.png" width="100%">
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Factor Loading</h2>
-<img src="./picture/chp9/CFA_6.png" width="100%">
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Covariances</h2>
-<img src="./picture/chp9/CFA_7.png" width="70%">
-<br>
-如果有两个变量之间协方差（相关）过高，则说明存在共线性，可以删除其中一个
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">OUTPUT: Variances</h2>
-<img src="./picture/chp9/CFA_8.png" width="70%">
-<br>
-残差和方差必须为正且显著，否则模型可能不收敛
-_<h5 lang="en">- Heywood Case</h3>_
-_<h5 lang="en">- Van Driel, O. P. (1978). On various causes of improper solutions in maximum likelihood factor analysis. Psychometrika, 43, 225-243.</h5>_
-
----
-# <h1 lang="en">lavaan::cfa</h1>
-## <h2 lang="en">Plot</h2>
-```{r CFA PLOT, eval=FALSE}
-lavaanPlot(model = CFA, edge_options = list(color = "grey"))
-```
-
-由于模型的题目比较多，这里的图片已经看不清了，就不打印在PPT上了<br>
-lavaan的画图比较鸡肋，AMOS在画图上会更好看一些(如下图) <br>
-有兴趣的同学可以跑一下试试看<br>
-<img src="./picture/chp9/AMOS.png" width="70%">
-
----
-# <h1 lang="en">lavaan::sem</h1>
-## <h2 lang="en">CODE</h2>
-```{r SEM, eval=FALSE}
-# 这里拿model 4举例
-# 因为lavaan的调节变量不能是潜变量. 如果是潜变量作为调节变量，需要手动与其他变量相乘
-result.SEM <- capture.output({
-SEM<- 'DIDF =~ ALEX1 + ALEX3 + ALEX5 + ALEX6 + ALEX7 + ALEX10 + ALEX11 + ALEX2 + ALEX4 + ALEX8 + ALEX9
-       EOF =~ ALEX12 + ALEX13 + ALEX14 + ALEX15 + ALEX16
-       ALEX =~ DIDF + EOF
-            
-       ANX =~ ECR1 + ECR2 + ECR3 + ECR4 + ECR5 + ECR6 + ECR7 + ECR8 + ECR9 + ECR10 + ECR11 + ECR12 + ECR13 + ECR14 + ECR15 + ECR16 + ECR17 + ECR18
-       AVO =~ ECR19 + ECR20 + ECR21 + ECR22 + ECR23 + ECR24 + ECR25 + ECR26 + ECR27 + ECR28 + ECR29 + ECR30 + ECR31 + ECR32 + ECR33 + ECR34 + ECR35 + ECR36
-       ECR =~ ANX + AVO
-            
-       HOME =~ HOME1 + HOME2 + HOME3 + HOME4 + HOME5 + HOME6 + HOME7 + HOME8 + HOME9
-
-       ECR ~ a*ALEX + age + language + avgtemp
-       HOME ~ b*ECR + age + language + avgtemp
-
-       ind_eff:=a*b ' %>%
-  lavaan::sem(.,data=df.pg.raw,estimator="ML") 
-  lavaan::summary(SEM,fit.measures=TRUE, standardized=TRUE, ci=TRUE)
-})
-writeLines(result.SEM, "./output/chp9/SEM.md")
-```
-
----
-# <h1 lang="en">lavaan::sem</h1>
-## <h2 lang="en">OUTPUT: Path Analysis and Indirect Effect</h2>
-<img src="./picture/chp9/SEM_1.png" width="100%"> <br>
-<img src="./picture/chp9/SEM_2.png" width="100%"> <br>
-大多数结果与CFA类似，但是多了路径系数，以及我们设定的中介效应值
-
----
-class: center, middle
-<span style="font-size: 60px;">9.4 Others</span> <br>
-
----
-# <h1 lang="zh-CN">其他有用的包</h1>
-1. 如果你的SEM模型中一定用latent moderator，你可以使用Mplus，或者回到PROCESS <br>
-2. Mplus某种意义上也是一个R包，install.packages("MplusAutomation") <br>
-3. CFA得到之后，可以借助semTools这个包来提取矩阵lambda, theta, psi, beta. 这些矩阵用于制作收敛和区别效度表 <br>
-
-其他SEM的细节就不在R课里讲述了
----
-# <h1 lang="en">Videos</h1>
-<div style="display:flex; align-items:center;">
-  <img src="./picture/chp9/SEM_bilibili.png" style="width:100%; height: 100%;">
-</div>
-
-https://www.bilibili.com/video/BV1Bt4y127xq/?spm_id_from=333.999.0.0&vd_source=4b61fa5a135da9b04ce5af0535b1e28c 
-<br>
-有兴趣的同学可以去看这个视频学习怎么做SEM
-
----
-# <h1 lang="en">Videos</h1>
-<div style="display:flex; align-items:center;">
-  <img src="./picture/chp9/SEM_youtube.png" style="width:100%; height: 100%;">
-</div>
-
-https://www.youtube.com/watch?v=fGdsiugwO0k&list=PLliBbGBc5nn3m8bXQ4CmOep3UmQ_5tVlC&index=1&ab_channel=SachaEpskamp
-<br>
-这是原地址

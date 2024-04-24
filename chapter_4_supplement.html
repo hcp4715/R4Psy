@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 4</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Hu Chuan-Peng et al." />
+    <meta name="date" content="2024-03-06" />
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Lecture 4
+]
+.subtitle[
+## Supplement: Objects in R
+]
+.author[
+### Hu Chuan-Peng et al.
+]
+.institute[
+### Nanjing Normal University
+]
+.date[
+### 2024-03-06
+]
+
+---
+
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第四章(补充)&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;初识R中的对象及数据类型&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-04-19&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+
+---
+layout: true
+
+# 1 初识R里的数据 （R语言中的对象）
+
+---
+
+## 1.1 从计算器说起 —— 数值(numeric)
+.pull-left[
+
+```r
+2*2
+```
+
+```
+## [1] 4
+```
+
+```r
+3^3
+```
+
+```
+## [1] 27
+```
+
+```r
+log2(4)
+```
+
+```
+## [1] 2
+```
+
+```r
+# 整除
+10 %/% 3
+```
+
+```
+## [1] 3
+```
+
+```r
+# 求余
+10 %% 3
+```
+
+```
+## [1] 1
+```
+
+]
+
+.pull-right[
+
+```r
+# 求余
+10 %% 3
+```
+
+```
+## [1] 1
+```
+
+```r
+# 四舍五入
+round(3.1415926)
+```
+
+```
+## [1] 3
+```
+
+```r
+# 问问神奇的 R：“这是什么”
+class(3.1415926)
+```
+
+```
+## [1] "numeric"
+```
+ 结论：
+
+R `\(≈\)` 计算器]
+
+---
+## 1.1.1 赋值
+赋值可以简单理解为给数值贴了一个标签（准确说叫变量名），通过这个标签就可以找到具体的数值，这样就可以使用变量名来代替具体数值进行计算；赋值本身不会显示输出（除非计算出错了），想要知道变量代表什么内容，直接输入变量名即可：
+
+
+```r
+# 赋值
+x = 1
+y = 2*2 + 3^3 + round(3.14)
+z = x + y
+# 查看变量
+x
+```
+
+```
+## [1] 1
+```
+
+```r
+y
+```
+
+```
+## [1] 34
+```
+
+```r
+z
+```
+
+```
+## [1] 35
+```
+
+```r
+# 
+```
+
+---
+
+## 1.2 比大小 —— 逻辑值（logical）
+.pull-left[
+
+```r
+1 &lt; 2
+```
+
+```
+## [1] TRUE
+```
+
+```r
+3.1415926 &lt; round(3.1415926)
+```
+
+```
+## [1] FALSE
+```
+
+```r
+1 == 1
+```
+
+```
+## [1] TRUE
+```
+
+```r
+class(1 == 1)
+```
+
+```
+## [1] "logical"
+```
+
+```r
+class(TRUE)
+```
+
+```
+## [1] "logical"
+```
+]
+
+--
+
+.pull-right[
+&lt;span style="font-size: 30px;"&gt; Very 👍!&lt;/span&gt; &lt;br&gt;
+但对于逻辑值来说，也有一些奇怪的特性：
+
+
+```r
+1 == TRUE
+```
+
+```
+## [1] TRUE
+```
+
+```r
+0 == FALSE
+```
+
+```
+## [1] TRUE
+```
+]
+
+
+---
+
+收集数据中，遇到性别（'男','女'），或者民族（'汉族','回族'....）等汉字（或者英文）显然不能直接用数字，应该怎么表示？
+
+
+```r
+##  直接输入试试？
+男
+my_darling
+```
+\#\# Error: object '男' not found
+
+\#\# Error: object 'my_darling' not found
+
+直接输入上面的内容，R语言会认为你在根据某个变量名找某个对象（比如数值），但显然，我们并没有给男或 my_darling进行赋值，所以会报错：找不到对象！
+--
+
+.pull-left[![pic1](picture/chp2/emo1.jpg)]
+.pull-right[![pic2](picture/chp2/emo2.jpg)]
+
+---
+## 1.3 字符串（character）
+对于文字类的数据，R 语言中使用字符串来记录，前后加上引号即可（单引号、双引号都可以，&lt;span style="font-size: 25px; color: #FF0000;"&gt; **但一定一定一定是英文符号！！**&lt;/span&gt; &lt;br&gt;）
+.pull-left[
+
+```r
+'男'
+```
+
+```
+## [1] "男"
+```
+
+```r
+"汉族"
+```
+
+```
+## [1] "汉族"
+```
+
+```r
+## 也可以输入数字
+'666'
+```
+
+```
+## [1] "666"
+```
+
+```r
+## 也可以胡言乱语不说人话
+'鍙︿竴$涓ø˚ß≈˙▼搴忔ß∂鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂@'
+```
+
+```
+## [1] "鍙︿竴$涓ø˚ß≈˙▼搴忔ß∂鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂@"
+```
+]
+
+--
+.pull-right[
+
+```r
+## 再问问神奇的 R：
+class('鍙︿竴$涓ø˚ß≈˙▼搴忔ß∂鍦ㄤ娇鐢ㄦ')
+```
+
+```
+## [1] "character"
+```
+
+```r
+## 虽然字符串和数值型都能表示数字
+## 但字符串的数字并不能直接进行运算
+'1' + '2'
+```
+\#\# `Error in "1" + "2" : non-numeric argument to binary operator`
+]
+
+
+---
+layout: true
+# 2 R 语言中的数据类型
+
+---
+## 2.1 向量（vector）
+- 如果要记录一系列的数据，比如记录5 个同学的数学成绩，就需要把多个数值“捆绑起来”：
+
+
+```r
+math = c(40,99,100,88,71)
+math
+```
+
+```
+## [1]  40  99 100  88  71
+```
+c()可以理解为 combine，即把各个元素“绑在一起”（就成了向量），然后贴了个标签叫“math”；
+
+&lt;span style="font-size: 30px; color: #FF0000;"&gt; **注意： c()中的逗号一定一定一定是英文符号!!!**&lt;/span&gt; &lt;br&gt;
+
+--
+
+- 之前我们谈到了数值、逻辑值和字符串，但向量里要求元素必须相同，否则：
+
+```r
+class(c(1:3,'haha',TRUE))
+```
+
+```
+## [1] "character"
+```
+
+```r
+# 注： c(1:3)是c(1,2,3)的简写
+# 输出将数值型、字符串、逻辑值都强制转换成了字符串
+```
+
+---
+## 2.2 数据框（data.frame）
+实际上，不仅要记录数学成绩，可能还要记录别的科目：语数英物化政史地生……单个向量就显得不够用了；所以需要想办法把多个向量“绑起来”，绑起来后就叫数据框了：
+.pull-left[
+
+```r
+# 定义语、数、英成绩
+chinese = c(1,44,90,80,100)
+math = c(40,99,100,88,71)
+english = c(3,42,56,14,68)
+# 进行“捆绑”
+scores = data.frame(
+  '语文' = chinese,
+  '数学' = math,
+  '英语' = english)
+```
+data.frame 即数据框，通过这个函数可以把前面创建的 chinese等变量进行捆绑，这里向量就相当于 Excel 中的一列，而'语文'、'数学'、'英语'就是列名；捆绑成的数据框命名为scores
+]
+
+--
+
+.pull-right[
+
+```r
+# 查看数据框内容
+scores
+```
+
+```
+##   语文 数学 英语
+## 1    1   40    3
+## 2   44   99   42
+## 3   90  100   56
+## 4   80   88   14
+## 5  100   71   68
+```
+
+```r
+# 查看变量的数据类型
+class(scores)
+```
+
+```
+## [1] "data.frame"
+```
+]
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -122,7 +122,7 @@ class: left, middle
 <span style="font-size: 60px;">8.1  研究问题</span> <br>
 
 ```{r, echo = FALSE, fig.width = 3, fig.height = 2}
-knitr::include_graphics('pic_new/chp8/IJzerman2018fig.png')
+knitr::include_graphics('picture/chp8/IJzerman2018fig.png')
 ```
 (引自[IJzerman et al., 2018](https://doi.org/10.1525/collabra.165))
 
@@ -211,7 +211,7 @@ $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + \epsilon$$
 * 独立样本*t*检验是线性模型的特殊形式(自变量为二分变量）
 --
 <p align="center">
-  <img src="./pic_new/chp8/indet-lm.png" width="55%">
+  <img src="./picture/chp8/indet-lm.png" width="55%">
 </p>
 
 
@@ -229,7 +229,7 @@ stats::t.test(
 ```
 
 <p align="center">
-  <img src="./pic_new/chp8/compare1.1.png" width="100%">
+  <img src="./picture/chp8/compare1.1.png" width="100%">
 </p>
 ]
 
@@ -244,7 +244,7 @@ summary(model.inde)
 ```
 
 <p align="center">
-  <img src="./pic_new/chp8/compare1.2.png" width="100%">
+  <img src="./picture/chp8/compare1.2.png" width="100%">
 </p>
 
 ]
@@ -288,7 +288,7 @@ $$H_0: \beta_0 = 0$$
 ]
 .pull-right[
 <p align="center">
-  <img src="./pic_new/chp8/singlet-lm.png" width="75%">
+  <img src="./picture/chp8/singlet-lm.png" width="75%">
 </p>
 ]
 ---
@@ -306,7 +306,7 @@ stats::t.test(
 <br>
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare2.1.png" width="100%">
+  <img src="./picture/chp8/compare2.1.png" width="100%">
 </p>
 
 ]
@@ -322,7 +322,7 @@ summary(model.single)
 <br>
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare2.2.png" width="100%">
+  <img src="./picture/chp8/compare2.2.png" width="100%">
 </p>
 
 ]
@@ -357,7 +357,7 @@ $$H_0: \beta_0 = 0 $$
 也可以认为这些组间之差是斜率（见图的左半部分）。<br>
 
 <p align="center">
-  <img src="./pic_new/chp8/pairt-lm.png" width="70%">
+  <img src="./picture/chp8/pairt-lm.png" width="70%">
 </p>
 
 ---
@@ -376,7 +376,7 @@ stats::t.test(
 <br>
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare3.1.png" width="100%">
+  <img src="./picture/chp8/compare3.1.png" width="100%">
 </p>
 
 ]
@@ -393,7 +393,7 @@ summary(model.paired)
 <br>
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare3.2.png" width="100%">
+  <img src="./picture/chp8/compare3.2.png" width="100%">
 </p>
 
 ]
@@ -404,7 +404,7 @@ summary(model.paired)
 * 如果偏好按传统方式使用*t*检验，推荐`bruceR::TTEST`函数
 
 <p align="center">
-  <img src="./pic_new/chp8/TTEST.png" width="70%">
+  <img src="./picture/chp8/TTEST.png" width="70%">
 </p>
 
 中文帮助文档：https://zhuanlan.zhihu.com/p/281150493
@@ -426,7 +426,7 @@ stats::t.test(
 
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare1.1.png" width="100%">
+  <img src="./picture/chp8/compare1.1.png" width="100%">
 </p>
 ]
 .pull-right[
@@ -441,7 +441,7 @@ bruceR::TTEST(
 
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/leven.png" width="100%">
+  <img src="./picture/chp8/leven.png" width="100%">
 </p>
 
 
@@ -460,7 +460,7 @@ stats::t.test(
 
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare2.1.png" width="100%">
+  <img src="./picture/chp8/compare2.1.png" width="100%">
 </p>
 ]
 .pull-right[
@@ -476,7 +476,7 @@ bruceR::TTEST(
 
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/sample.png" width="100%">
+  <img src="./picture/chp8/sample.png" width="100%">
 </p>
 
 ]
@@ -495,7 +495,7 @@ stats::t.test(
 
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/compare3.1.png" width="100%">
+  <img src="./picture/chp8/compare3.1.png" width="100%">
 </p>
 ]
 .pull-right[
@@ -510,7 +510,7 @@ bruceR::TTEST(
 
 <br>
 <p align="center">
-  <img src="./pic_new/chp8/pair.png" width="100%">
+  <img src="./picture/chp8/pair.png" width="100%">
 </p>
 ]
 ]]]]
@@ -662,7 +662,7 @@ summary(aov1)
 
 .panel[.panel-name[SPSS]
 ```{r, echo = FALSE, fig.width = 4.5, fig.height = 3}
-knitr::include_graphics('pic_new/chp8/SPSS.png')
+knitr::include_graphics('picture/chp8/SPSS.png')
 ```
 
 ]]]
@@ -717,12 +717,45 @@ class: center, middle
 .panelset[
 .panel[.panel-name[car::Anova()]
 ```{r}
-# 结果不一致
-aov1 <- stats::anova(stats::aov(Temperature ~ climate * romantic, data = df))
+# 结果不一致，原因PPT显示不全，请回到rmd文档查看
+aov1 <- car::Anova(stats::aov(Temperature ~ climate * romantic, data = df))
 aov1
 ```
 
-.panel[.panel-name[get results same as SPSS]
+```{r}
+# 原因debug
+# 查看R的默认对比设置
+options("contrasts")
+# 从输出结果可知，无序默认为contr.treatment()，有序默认为contr.poly()
+# factor()函数来创建无序因子，ordered()函数创建有序因子
+
+is.factor(df$climate)
+is.ordered(df$climate)
+# climate是无序因子
+
+# 创建一个3水平的因子的基准对比
+c1 <- contr.treatment(3)
+
+# 创建一个新的对比，这个编码假设分类水平之间的差异被等分，每一个水平与总均值的差异等于1/3
+my.coding <- matrix(rep(1/3, 6), ncol=2)
+# 将对比调整为每个水平与第一个水平的振幅减去1/3
+# 可能的原因：除了关心每个水平对应的效果，同时也关心水平与水平之间的效果
+my.simple <- c1-my.coding
+my.simple
+
+# 更改climate的对比
+contrasts(df$climate) <- my.simple
+
+# 将数据集df的romantic列的对比设为等距对比，它假设分类水平之间的差异为等距离
+contrasts(df$romantic) <- contr.sum(2)/2
+
+# 方差分析
+aov1 <- car::Anova(lm(Temperature ~ climate * romantic, data = df),
+                   type = 3)
+aov1
+```
+
+.panel[.panel-name[afex::aov_ez()]
 ```{r}
 afex::aov_ez(id = "subjID", 
              dv = "Temperature", 
@@ -761,7 +794,7 @@ afex::aov_4(Temperature ~ climate * romantic + (1|subjID), data = df)
 <br>
 <br>
 ```{r, echo = FALSE, fig.width = 3.5, fig.height = 2}
-knitr::include_graphics('pic_new/chp8/aovLM.png')
+knitr::include_graphics('picture/chp8/aovLM.png')
 ```
 ]
 
@@ -779,7 +812,7 @@ aov1 <- car::Anova(
 aov1
 ```
 <br>
-![](./pic_new/chp8/compare8231.png)
+![](./picture/chp8/compare8231.png)
 ]
 
 
@@ -795,7 +828,7 @@ lm1 <- car::Anova(
 lm1
 ```
 <br>
-![](./pic_new/chp8/compare8232.png)
+![](./picture/chp8/compare8232.png)
 
 ]
 
@@ -805,7 +838,7 @@ lm1
 ## 8.2.2 代码实操: `bruceR`
 * 使用`bruceR`可以更简单地实现心理学中习惯的ANOVA，但要注意数据格式
 <p align="center">
-  <img src="./pic_new/chp8/ANOVA data.png" width="65%">
+  <img src="./picture/chp8/ANOVA data.png" width="65%">
 </p>
 
 
@@ -813,7 +846,7 @@ lm1
 # 8.2  ANOVA & linear regression
 ## 8.2.2 代码实操: `bruceR::MANOVA`
 <p align="center">
-  <img src="./pic_new/chp8/MANOVA.png" width="70%">
+  <img src="./picture/chp8/MANOVA.png" width="70%">
 </p>
 
 
@@ -836,7 +869,7 @@ res1 %>%
 ## 8.2.2 代码实操: `bruceR::EMMEANS`
 更进一步进行简单效应分析与多重比较
 <p align="center">
-  <img src="./pic_new/chp8/EMMEANS.png" width="70%">
+  <img src="./picture/chp8/EMMEANS.png" width="70%">
 </p>
 
 
@@ -876,7 +909,7 @@ res2 <- bruceR::MANOVA(
 ---
 <h1 lang="zh-CN" style="font-size: 60px;">课堂总结</h1>
 
-![](./pic_new/chp8/route.png)
+![](./picture/chp8/route.png)
 
 
 ---
