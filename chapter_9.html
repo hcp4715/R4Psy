@@ -4,19 +4,19 @@
     <title>chapter_9.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.30/datatables.js"></script>
+    <script src="libs/datatables-binding-0.32/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -171,17 +171,15 @@ lm_temp %&gt;%
 ## 可以看到回归的结果以热带为基准，系数则为均值之差
 df.penguin %&gt;% 
   group_by(climate) %&gt;% 
-  summarise(mean = round(mean(Temperature), 
-                         3))
+  summarise(mean = mean(Temperature)) %&gt;% 
+  as.data.frame() 
 ```
 
 ```
-## # A tibble: 3 × 2
-##   climate  mean
-##   &lt;fct&gt;   &lt;dbl&gt;
-## 1 热带     36.6
-## 2 温带     36.4
-## 3 寒温带   36.3
+##   climate   mean
+## 1    热带 36.555
+## 2    温带 36.377
+## 3  寒温带 36.255
 ```
 ]
 
@@ -208,7 +206,7 @@ class: center, middle, inverse
 ## 1.1 数据与问题介绍
 
 .size5[
-以match_raw.csv为例，一个2x2的被试内实验设计（Identity(Self|Other) x Valence(Moral|Immoral)），我们希望知道这两种条件之下被试的反应时是否存在显著差异]
+以match_raw.csv为例，一个2x2的被试内实验设计（Identity: Self vs. Other) x Valence: Moral vs. Immoral)），我们希望知道这两种条件之下被试的反应时是否存在显著差异]
 
 .panelset[
 .panel[.panel-name[预处理]
@@ -224,8 +222,8 @@ mt_raw &lt;- mt_raw %&gt;%
 ```
 
 .panel[.panel-name[数据展示]
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-77cb5b460e1717f3c173" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-77cb5b460e1717f3c173">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-cd60bff57f15b052a272" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-cd60bff57f15b052a272">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Valence","targets":9},{"name":"Identity","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 
@@ -254,7 +252,7 @@ mt_raw &lt;- mt_raw %&gt;%
 
 ```r
 mt_mean &lt;- mt_raw %&gt;%
-  dplyr::filter(!is.na(RT) &amp; Match == "match") %&gt;%
+  dplyr::filter(!is.na(RT) &amp; Match == "match" &amp; ACC == 1) %&gt;%
   dplyr::group_by(Sub,Identity,Valence) %&gt;%
   dplyr::summarise(RT = mean(RT)) %&gt;%
   dplyr::ungroup()
@@ -282,7 +280,7 @@ bruceR::MANOVA(data = mt_mean,
 ```r
 bruceR::MANOVA(data = mt_mean,
                subID = 'Sub',
-               dv= 'RT',
+               dv = 'RT',
                within = c('Identity', 'Valence')) %&gt;%
   capture.output() %&gt;% .[c(15:31)]
 ```
@@ -296,9 +294,9 @@ bruceR::MANOVA(data = mt_mean,
 ##  [6] "─────────────────────────────────────────────────────────────────────────────────"
 ##  [7] "                       MS   MSE df1 df2      F     p     η²p [90% CI of η²p]  η²G"
 ##  [8] "─────────────────────────────────────────────────────────────────────────────────"
-##  [9] "Identity            0.006 0.003   1  43  2.084  .156       .046 [.000, .183] .007"
-## [10] "Valence             0.106 0.002   1  43 56.538 &lt;.001 ***   .568 [.401, .682] .101"
-## [11] "Identity * Valence  0.038 0.002   1  43 15.309 &lt;.001 ***   .263 [.094, .428] .039"
+##  [9] "Identity            0.008 0.003   1  43  2.554  .117       .056 [.000, .198] .009"
+## [10] "Valence             0.128 0.002   1  43 64.374 &lt;.001 ***   .600 [.440, .706] .131"
+## [11] "Identity * Valence  0.033 0.002   1  43 14.364 &lt;.001 ***   .250 [.085, .417] .037"
 ## [12] "─────────────────────────────────────────────────────────────────────────────────"
 ## [13] "MSE = mean square error (the residual variance of the linear model)"              
 ## [14] "η²p = partial eta-squared = SS / (SS + SSE) = F * df1 / (F * df1 + df2)"          
@@ -326,9 +324,9 @@ m_aov
 ## 
 ## Response: RT
 ##             Effect    df  MSE         F  ges p.value
-## 1         Identity 1, 43 0.00      2.08 .007    .156
-## 2          Valence 1, 43 0.00 56.54 *** .101   &lt;.001
-## 3 Identity:Valence 1, 43 0.00 15.31 *** .039   &lt;.001
+## 1         Identity 1, 43 0.00      2.55 .009    .117
+## 2          Valence 1, 43 0.00 64.37 *** .131   &lt;.001
+## 3 Identity:Valence 1, 43 0.00 14.36 *** .037   &lt;.001
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -365,9 +363,19 @@ m_aov
 
 
 &lt;br&gt;
+
+---
+# 1.4 重复测量方差分析的不足
+
+.bigfont[
+重复测量方差分析有没有局限性？
+]
+
+&lt;img src="picture/chp9/Neuron_LMM.png" width="45%" style="display: block; margin: auto;" /&gt;
+
 .bigfont[
 
-*而以上局限性，都可以通过多层线性回归(Hierarchical Linear Model) 来避免。*
+*因此，现在越来越多的期刊推荐使用多层线性回归(Hierarchical Linear Model) ，如[Neuron](https://www.sciencedirect.com/science/article/pii/S089662732100845X)。*
 ]
 
 
@@ -406,14 +414,14 @@ layout: true
 .size5[
 在回归模型中一般会在截距和斜率上分别讨论**固定效应**和**随机效应**。
 
-例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院后，在每个学院中随机抽取部分教师信息，具体数据如下表所示：]
+例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院的教师信息，具体数据如下：]
 &lt;br&gt;
 
 
 
 
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-a88616ccbb1549debcfb" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a88616ccbb1549debcfb">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.27099999999,87351.30100000001,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-7c5c45a388d67354da17" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-7c5c45a388d67354da17">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.27099999999,87351.30100000001,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"ids","targets":1},{"name":"department","targets":2},{"name":"bases","targets":3},{"name":"experience","targets":4},{"name":"raises","targets":5},{"name":"salary","targets":6}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 
 
@@ -444,7 +452,7 @@ layout: true
 
 .panel[.panel-name[OLS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-15-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-16-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ]]]
@@ -484,21 +492,21 @@ layout: true
 
 .panelset[
 .panel[.panel-name[fixI-fixS]
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-16-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-17-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[ranI-fixS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-17-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[fixI-ranS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-18-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-19-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[ranI-ranS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-19-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ]]]]]
@@ -537,23 +545,17 @@ layout: false
 
 -   不同被试总体上会不会存在反应时上的差异：有些个体普遍反应速度更快，而有些反应速度普遍更慢（随机斜率）
 
--   反应时会不会在Identity和Valence两种条件下出现个体差异？（随机斜率）
+-   在自我条件下，两种Valence的差异是否完全相同？还是会有个体差异？（随机斜率）
 
 
 画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
 ]
 
-.pull-left[
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-22-1.png" width="504" style="display: block; margin: auto;" /&gt;
-
-]
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-23-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
-.pull-right[
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-23-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
-]
 
 ---
 # 3 多层线性模型的应用
@@ -565,8 +567,11 @@ layout: false
 
 &lt;br&gt;
 
-`$$fit = lme4::lmer(data = , formula = DV ~ Fixed\_Factor + (Random\_intercept + Random\_Slope | Random\_Factor))$$`
-
+```r
+fit &lt;- lme4::lmer(
+    data =   , 
+*   formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor))
+```
 &lt;br&gt;
 --
 .size5[
@@ -588,9 +593,15 @@ layout: false
 ## 随机截距 固定斜率
 model &lt;- lme4::lmer(data = mt_raw,
                     RT ~ Identity * Valence + (1|Sub))
-
-## 还有没有别的可能
 ```
+
+
+.size5[
+-   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+]
+
 
 .panel[.panel-name[ranI ranS]
 
@@ -600,42 +611,50 @@ model &lt;- lme4::lmer(data = mt_raw,
 model_full &lt;- lme4::lmer(data = mt_raw,
                          RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
 ```
-         
+
+
+.size5[
+-   Identity \* Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+]
 
 .panel[.panel-name[模型比较]
 
 ```r
-## 模型比较，p值如果
-stats::anova(model, model_full)
+## 模型比较
+stats::anova(model, model_full) %&gt;% capture.output()
 ```
 
 ```
-## Data: mt_raw
-## Models:
-## model: RT ~ Identity * Valence + (1 | Sub)
-## model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)
-##            npar    AIC    BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    
-## model         6 -29173 -29124  14592   -29185                                 
-## model_full   15 -30024 -29902  15027   -30054   869  9 &lt;0.0000000000000002 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## [1] "Data: mt_raw"                                                                  
+## [2] "Models:"                                                                       
+## [3] "model: RT ~ Identity * Valence + (1 | Sub)"                                    
+## [4] "model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)"          
+## [5] "           npar    AIC    BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    "
+## [6] "model         6 -29173 -29124  14592   -29185                                 "
+## [7] "model_full   15 -30024 -29902  15027   -30054   869  9 &lt;0.0000000000000002 ***"
+## [8] "---"                                                                           
+## [9] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
 ```
 
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
 
+------
+注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://chinaxiv.org/abs/202308.00658)
 
 ]]]]
--   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
--   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
-   
 ---
 ## 3.3 似然比检验(Likelihood-ratio tests)
 
 .panelset[
 .panel[.panel-name[问题]
-
-在建立模型后，我们希望知道固定效应大小是否显著，但由于多层线性模型中对于自由度的估计有多种方法，比较复杂，在lme4::lmer()中是没有提供显著性。
-
+.size5[
+在建立模型后，我们希望知道固定效应大小是否显著，但由于多层线性模型中对于自由度的估计有多种方法，比较复杂，所以lme4::lmer()中没有提供显著性。
+]
 
 .panel[.panel-name[anova]
 
@@ -690,7 +709,7 @@ afex::mixed(data = mt_raw,
 
 .panel[.panel-name[lmerTest]
 
-lmerTest是一个与lme4包兼容的包，主要用于对线性混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
+lmerTest是一个与lme4包兼容的包，主要用于对混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
 
 
 ```r
@@ -753,7 +772,7 @@ interactions::cat_plot(model = model_full,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-32-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_9_files/figure-html/unnamed-chunk-33-1.png" width="432" style="display: block; margin: auto;" /&gt;
 
 
 ]]]]
@@ -786,9 +805,9 @@ m_aov
 ## 
 ## Response: RT
 ##             Effect    df  MSE         F  ges p.value
-## 1         Identity 1, 43 0.00      2.08 .007    .156
-## 2          Valence 1, 43 0.00 56.54 *** .101   &lt;.001
-## 3 Identity:Valence 1, 43 0.00 15.31 *** .039   &lt;.001
+## 1         Identity 1, 43 0.00      2.55 .009    .117
+## 2          Valence 1, 43 0.00 64.37 *** .131   &lt;.001
+## 3 Identity:Valence 1, 43 0.00 14.36 *** .037   &lt;.001
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -820,7 +839,7 @@ lmer_model %&gt;% anova()
 ```
 ## Type III Analysis of Variance Table with Satterthwaite's method
 ##                  Sum Sq Mean Sq NumDF DenDF F value      Pr(&gt;F)    
-## Identity          0.031   0.031     1  43.0    1.73     0.19579    
+## Identity          0.031   0.031     1  43.0    1.73     0.19575    
 ## Valence           0.765   0.765     1  43.3   42.46 0.000000063 ***
 ## Identity:Valence  0.244   0.244     1  43.0   13.54     0.00065 ***
 ## ---
@@ -835,15 +854,10 @@ lmer_model %&gt;% anova()
 
 
 ```r
-# 全模型：
-# model_full = lme4::lmer(data = mt_raw,
-                   # RT~ Identity * Valence + (1 + Identity*Valence|Sub))
-tmp &lt;- mt_mean %&gt;%
-  dplyr::group_by(Identity,Valence) %&gt;%
-  dplyr::summarise(n = n())
+# http://www.dwoll.de/rexrepos/posts/anovaMixed.html#two-way-repeated-measures-anova-rbf-pq-design
 
 model_aov &lt;- mt_mean %&gt;%
-  # dplyr::filter(!is.na(RT) &amp; Match == "match") %&gt;%
+  # dplyr::filter(!is.na(RT) &amp; Match == "match" &amp; ACC == 1) %&gt;%
   lmerTest::lmer(
    data = .,
    RT ~ Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub)
@@ -854,10 +868,10 @@ model_aov %&gt;% anova()
 
 ```
 ## Type III Analysis of Variance Table with Satterthwaite's method
-##                  Sum Sq Mean Sq NumDF DenDF F value        Pr(&gt;F)    
-## Identity         0.0046  0.0046     1    43    2.08          0.16    
-## Valence          0.1060  0.1060     1    86   48.55 0.00000000061 ***
-## Identity:Valence 0.0381  0.0381     1    86   17.47 0.00006982246 ***
+##                  Sum Sq Mean Sq NumDF DenDF F value         Pr(&gt;F)    
+## Identity         0.0055  0.0055     1    43    2.55        0.11735    
+## Valence          0.1282  0.1282     1    86   59.89 0.000000000018 ***
+## Identity:Valence 0.0329  0.0329     1    86   15.36        0.00018 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -887,7 +901,7 @@ HLM 非常复杂，本节课仅以重复测量为例，下面提供了一些其�
 &lt;img src="picture/chp9/meta1.jpg" width="85%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[元分析2]
-&lt;img src="picture/chp9/meta2.jpg" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/meta2.jpg" width="60%" style="display: block; margin: auto;" /&gt;
 
 ]]]]
 
@@ -906,6 +920,13 @@ HLM 非常复杂，本节课仅以重复测量为例，下面提供了一些其�
 -   [「固定效应、主效应、简单效应」概念辨析](https://zhuanlan.zhihu.com/p/513227882)
 ]
 
+---
+class: center, middle
+.tit_font[
+思考
+]
+&lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;当因变量不服从正态分布(如ACC)时如何处理？&lt;/span&gt; &lt;br&gt;
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

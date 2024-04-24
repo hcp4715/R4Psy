@@ -188,7 +188,7 @@ class: center, middle, inverse
 ## 1.1 数据与问题介绍
 
 .size5[
-以match_raw.csv为例，一个2x2的被试内实验设计（Identity(Self|Other) x Valence(Moral|Immoral)），我们希望知道这两种条件之下被试的反应时是否存在显著差异]
+以match_raw.csv为例，一个2x2的被试内实验设计（Identity: Self vs. Other) x Valence: Moral vs. Immoral)），我们希望知道这两种条件之下被试的反应时是否存在显著差异]
 
 .panelset[
 .panel[.panel-name[预处理]
@@ -307,9 +307,21 @@ m_aov
 
 
 <br>
+
+---
+# 1.4 重复测量方差分析的不足
+
+.bigfont[
+重复测量方差分析有没有局限性？
+]
+
+```{r echo=FALSE, out.width='45%'}
+knitr::include_graphics('picture/chp9/Neuron_LMM.png')
+```
+
 .bigfont[
 
-*而以上局限性，都可以通过多层线性回归(Hierarchical Linear Model) 来避免。*
+*因此，现在越来越多的期刊推荐使用多层线性回归(Hierarchical Linear Model) ，如[Neuron](https://www.sciencedirect.com/science/article/pii/S089662732100845X)。*
 ]
 
 
@@ -623,8 +635,8 @@ mt_sample_df %>%
 ]
 
 <br>
-```{r eval=FALSE,highlight=TRUE}
-fit = lme4::lmer(
+```{r eval=FALSE, highlight=TRUE}
+fit <- lme4::lmer(
     data =   , 
     formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor)) #<<
 ```
@@ -669,7 +681,7 @@ model_full <- lme4::lmer(data = mt_raw,
 
 
 .size5[
--   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+-   Identity \* Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
 -   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
 ]
