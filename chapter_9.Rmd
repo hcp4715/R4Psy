@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   fig.align = 'center',
-  fig.height=5, fig.width=7,
+  fig.height=6, fig.width=7.5,
   fig.retina=2
 )
 ```
@@ -160,8 +160,8 @@ lm_temp %>%
 ## 可以看到回归的结果以热带为基准，系数则为均值之差
 df.penguin %>% 
   group_by(climate) %>% 
-  summarise(mean = round(mean(Temperature), 
-                         3))
+  summarise(mean = mean(Temperature)) %>% 
+  as.data.frame() 
 ```
 ]
 
@@ -348,7 +348,7 @@ layout: true
 .size5[
 在回归模型中一般会在截距和斜率上分别讨论**固定效应**和**随机效应**。
 
-例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院后，在每个学院中随机抽取部分教师信息，具体数据如下表所示：]
+例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院的教师信息，具体数据如下：]
 <br>
 
 ```{r echo=FALSE}
@@ -438,7 +438,7 @@ df %>%
   geom_point(aes(x = experience,
                  y = salary,color = department),
              size = 5,alpha = 0.5) + 
-  geom_smooth(method = 'lm',color = 'black',se=F)  + 
+  geom_smooth(method = 'lm',color = 'black',se=F,size = 0.5)  + 
   labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
   scale_colour_discrete('Department') +
   bruceR::theme_bruce()
@@ -536,7 +536,8 @@ df %>%
 df %>% 
     ggplot(aes(x = experience,y = salary,color = department)) + 
     geom_point(size = 5,alpha = 0.4) + 
-    geom_smooth(method = 'lm',se = F) +
+    geom_smooth(method = 'lm',se = F,size = 0.5) +
+  labs(x="Experience", y="Salary") +
     ggtitle("Varying Slope and Intercept") +
     bruceR::theme_bruce() 
 ```
@@ -588,8 +589,7 @@ include_graphics('picture/chp9/nest.png')
 画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
 ]
 
-.pull-left[
-```{r echo=FALSE}
+```{r echo=FALSE,fig.height=5.8}
 mt_sample_df <- mt_raw %>% 
   dplyr::filter(Match == 'match' & ACC == 1) %>% 
   dplyr::filter(Sub %in% c(7311,7313, 7307, 7324)) %>%
@@ -598,34 +598,21 @@ mt_sample_df <- mt_raw %>%
                 Valence = factor(Valence, levels = c("moral", "immoral")))
 
 mt_sample_df %>%
-  dplyr::filter(Identity == 'Self') %>%
-   ggplot(aes(x = Valence, color = Valence, y = RT))  + 
-   geom_point(position = position_jitter(0.2),alpha = 0.2) +
-   geom_boxplot(outlier.colour = 'grey') + 
-   facet_wrap(~Sub, nrow = 1) +
-   bruceR::theme_bruce() 
+    dplyr::filter(Identity == 'Self') %>%
+    ggplot(aes(x = Valence, color = Valence, y = RT))  + 
+    geom_point(position = position_jitter(0.2),alpha = 1) +
+    stat_summary(fun.y = "mean", geom = "point", 
+                 shape = 18, size = 4, color = "darkred") +
+    stat_summary(fun.y = "mean", geom = "line", 
+                 aes(group = 1), color = "darkred") +
+    facet_wrap(~Sub, nrow = 1) +
+    scale_color_brewer(palette = 'Accent')+
+    theme_bw(base_size = 13)
 ```
 
-]
 
 
-.pull-right[
 
-```{r echo=FALSE}
-subs <- mt_raw %>% group_by(Sub) %>% 
-  summarise(mean = mean(RT)) %>% 
-  .[c(1:3,40:44),] %>% 
-  dplyr::pull(Sub)
-
-mt_raw %>% 
-  filter(Sub %in% subs) %>% 
-  ggplot(aes(x = as.factor(Sub),color = Shape,y = RT))  + 
-  # geom_point(position = position_jitter(0.2),alpha = 0.2)+
-  geom_boxplot(outlier.colour = 'grey') + 
-  bruceR::theme_bruce() 
-```
-
-]
 
 ---
 # 3 多层线性模型的应用
@@ -636,9 +623,11 @@ mt_raw %>%
 ]
 
 <br>
-
-$$fit = lme4::lmer(data = , formula = DV ~ Fixed\_Factor + (Random\_intercept + Random\_Slope | Random\_Factor))$$
-
+```{r eval=FALSE,highlight=TRUE}
+fit = lme4::lmer(
+    data =   , 
+    formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor)) #<<
+```
 <br>
 --
 .size5[
@@ -660,8 +649,15 @@ $$fit = lme4::lmer(data = , formula = DV ~ Fixed\_Factor + (Random\_intercept + 
 model <- lme4::lmer(data = mt_raw,
                     RT ~ Identity * Valence + (1|Sub))
 
-## 还有没有别的可能
 ```
+
+
+.size5[
+-   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+]
+
 
 .panel[.panel-name[ranI ranS]
 
@@ -670,29 +666,37 @@ model <- lme4::lmer(data = mt_raw,
 model_full <- lme4::lmer(data = mt_raw,
                          RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
 ```
-         
-
-.panel[.panel-name[模型比较]
-```{r}
-## 模型比较，p值如果
-stats::anova(model, model_full)
-```
 
 
-
-]]]]
+.size5[
 -   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
 -   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
-   
+]
+
+.panel[.panel-name[模型比较]
+```{r}
+## 模型比较
+stats::anova(model, model_full) %>% capture.output()
+```
+
+<br>
+<br>
+<br>
+
+------
+注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://chinaxiv.org/abs/202308.00658)
+
+]]]]
+
 ---
 ## 3.3 似然比检验(Likelihood-ratio tests)
 
 .panelset[
 .panel[.panel-name[问题]
-
-在建立模型后，我们希望知道固定效应大小是否显著，但由于多层线性模型中对于自由度的估计有多种方法，比较复杂，在lme4::lmer()中是没有提供显著性。
-
+.size5[
+在建立模型后，我们希望知道固定效应大小是否显著，但由于多层线性模型中对于自由度的估计有多种方法，比较复杂，所以lme4::lmer()中没有提供显著性。
+]
 
 .panel[.panel-name[anova]
 ```{r}
@@ -720,7 +724,7 @@ afex::mixed(data = mt_raw,
 
 .panel[.panel-name[lmerTest]
 
-lmerTest是一个与lme4包兼容的包，主要用于对线性混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
+lmerTest是一个与lme4包兼容的包，主要用于对混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
 
 ```{r}
 lmer_model <- lmerTest::lmer(data = mt_raw,
@@ -765,7 +769,7 @@ summary(model_full) %>% capture.output() %>% .[c(20:25)]
 
 
 .panel[.panel-name[交互效应的可视化]
-```{r}
+```{r fig.height=5,fig.width=6}
 ## 一种快捷的方法
 interactions::cat_plot(model = model_full,
                        pred = Identity,
@@ -859,7 +863,7 @@ include_graphics('picture/chp9/meta1.jpg')
 ```
 
 .panel[.panel-name[元分析2]
-```{r echo=FALSE, out.width="75%"}
+```{r echo=FALSE, out.width="60%"}
 include_graphics('picture/chp9/meta2.jpg')
 ```
 
@@ -880,4 +884,11 @@ include_graphics('picture/chp9/meta2.jpg')
 -   [「固定效应、主效应、简单效应」概念辨析](https://zhuanlan.zhihu.com/p/513227882)
 ]
 
+---
+class: center, middle
+.tit_font[
+思考
+]
+<br>
+<span style="font-size: 50px;">当因变量不服从正态分布(如ACC)时如何处理？</span> <br>
 
