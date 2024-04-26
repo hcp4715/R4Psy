@@ -593,7 +593,7 @@ include_graphics('picture/chp9/nest.png')
 .size5[
 对于match数据，类比与学校员工薪水数据，我们也可以设想：
 
--   不同被试总体上会不会存在反应时上的差异：有些个体普遍反应速度更快，而有些反应速度普遍更慢（随机斜率）
+-   不同被试总体上会不会存在反应时上的差异：有些个体普遍反应速度更快，而有些反应速度普遍更慢（随机截距）
 
 -   在自我条件下，两种Valence的差异是否完全相同？还是会有个体差异？（随机斜率）
 
@@ -895,6 +895,7 @@ include_graphics('picture/chp9/meta2.jpg')
 
 -   [「固定效应、主效应、简单效应」概念辨析](https://zhuanlan.zhihu.com/p/513227882)
 ]
+
 
 ---
 class: center, middle
