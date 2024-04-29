@@ -234,10 +234,11 @@ iris %>%
 ## 选中下面代码看看效果，尽管效果有限
 ## 还是平时养成书写习惯更好
 
-files<-list.files(
-here::here("data","match"), 
-pattern="data_exp7_rep_match_.*\\.out$", 
-full.names=TRUE)
+files <- list.files(
+  here::here("data","match"),
+  pattern = "data_exp7_rep_match_.*\\.out$",
+  full.names = TRUE
+)
 ```
 
 
