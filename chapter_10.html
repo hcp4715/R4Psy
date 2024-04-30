@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>chapter_10.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="libs/datatables-binding-0.27/datatables.js"></script>
+    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;**第十章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;回归模型(三)：广义线性模型&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-04-30&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+
+---
+
+
+&lt;style type="text/css"&gt;
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 24px;
+}
+.tit_font{
+font-size: 60px;
+}
+
+&lt;/style&gt;
+
+
+
+
+
+
+
+
+
+#上节课更新内容
+
+---
+class: center, middle
+.tit_font[
+当因变量不服从正态分布(如ACC)时如何处理？
+]
+---
+.panelset[
+.panel[.panel-name[df.match]
+
+```r
+head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
+```
+
+<div id="htmlwidget-0b82c9890943d087012b" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0b82c9890943d087012b">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],["immoral","immoral","moral","moral","immoral"],["Self","Self","Other","Self","Other"],["immoralSelf","immoralSelf","moralOther","moralSelf","immoralOther"],["match","match","match","match","match"],["m","m","m","m","m"],["m","m","m","m","m"],[1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+.panel[.panel-name[df.match.aov]
+
+```r
+head(df.match.aov[1:4],5) %&gt;% DT::datatable()
+```
+
+<div id="htmlwidget-f25cea25d27144607bca" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f25cea25d27144607bca">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7303],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.886363636363636,0.955555555555556,0.863636363636364,0.888888888888889,0.933333333333333]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+]]]
+---
+.tit_font[  Contents&lt;/h1&gt;]
+&lt;br&gt;
+&lt;br&gt;
+.bigfont[
+    10.1 广义线性模型&lt;br&gt;
+&lt;br&gt;
+    10.2 二项分布&lt;br&gt;
+&lt;br&gt;
+    10.3 其他分布&lt;br&gt;
+&lt;br&gt;
+    10.4 代码实操&lt;br&gt;
+&lt;br&gt;
+    10.5 方法比较&lt;br&gt;
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##多元线性回归（Multiple Linear Regression）
+&lt;br&gt;
+.normal[
+`$$Y = b_0 + b_{1}X_{1} + b_{2}X_{2} +... + b_{p}X_{p} + \epsilon$$`
+- `\(Y\)` : 因变量，Dependent variable
+- `\(X_i\)` : 自变量，Independent (explanatory) variable
+- `\(b_0\)` : 截距，Intercept
+- `\(b_i\)` : 斜率，Slope
+- `\(\epsilon\)` : 残差，Residual (error)
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##线性模型的组成部分
+![](./picture/chp10/formula.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##线性模型的组成部分
+&lt;img src="./picture/chp10/plot.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##回归方程的多种表达形式&lt;br&gt;
+&lt;br&gt;
+.bigfont[
+- 简单线性回归：
+`$$Y = b_0+b_1 X_1+ b_2 X_2+…+b_p X_p + \epsilon$$` 
+- 线性代数表达：
+`$$y_i = b_0 + b_1 X_{i1} + b_2 X_{i2} + … + b_p X_{ip} + \epsilon$$` 
+- 矩阵表达：
+`$$Y= X\beta + \epsilon$$`
+- 代码表达(r)：
+`$$Y \sim X_1 + X_2 + ... + X_n$$`
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##回归方程的多种表达形式&lt;br&gt;
+&lt;br&gt;
+.bigfont[
+- 概率分布的形式：观测项 = 预测项 + 误差项 &lt;br&gt;
+- 假定观测项是正态分布，上述公式可以重新表达为： &lt;br&gt;
+`$$y \sim N(\mu, \epsilon)$$` 
+  - 其中，μ为预测值，即
+  `$$μ = \beta_0 + \beta_1 x$$`
+- 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。&lt;br&gt;
+]
+--
+
+.bigfont[
+如果因变量不服从正态分布，如何构建回归模型？
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+
+![](./picture/chp10/function1.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+![](./picture/chp10/function.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+![](./picture/chp10/function2.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##Generalized Linear Model, GLM
+###在简单线性回归中，预测项的连接函数等于它本身
+![](./picture/chp10/lm.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+.bigfont[
+- 简单线性模型可视为GLM的特殊形式，预测项的连接函数等于它本身，观测项为正态分布。
+- 在广义线性模型中：
+  - 观测项不一定是正态分布（残差不一定是正态分布）
+  - 连接函数不等于其自身
+
+- 广义线性模型，能够对不正态分布的因变量进行建模
+]
+---
+#10.2 二项分布(Binomial Distribution)
+##伯努利试验
+&lt;br&gt;
+.bigfont[
+- 同样的条件下重复地、相互独立地进行的一种随机试验。
+&lt;br&gt;
+&lt;br&gt;
+- 该随机试验只有两种可能结果：发生或者不发生。
+&lt;br&gt;
+&lt;br&gt;
+- 假设该项试验独立重复地进行了n次，那么就称这一系列重复独立的随机试验为n重伯努利试验(n-fold bernoulli trials)。
+&lt;br&gt;
+&lt;br&gt;
+- n次独立重复的伯努利试验的概率分布服从二项分布
+]
+---
+#10.2 二项分布(Binomial Distribution)
+.bigfont[
+- 每次试验中事件A发生的概率为p
+&lt;br&gt;&lt;br&gt;
+- X表示n重伯努利试验中事件A发生的次数，X的可能取值为0，1，…，n
+&lt;br&gt;&lt;br&gt;
+- 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
+&lt;br&gt;&lt;br&gt;
+- 随机变量X服从以n, p为参数的二项分布，写作 X ~ B(n, p) 
+&lt;br&gt;&lt;br&gt;
+- p∈[0,1] ,n∈N 
+
+`$$P(X=k )=𝐶_𝑛^𝑘 𝑝^𝑘 𝑞^{𝑛−𝑘}= 𝐶_𝑛^𝑘 𝑝^𝑘 (1−𝑝)^{𝑛−𝑘}$$`
+$$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
+]
+---
+#10.2 二项分布(Binomial Distribution)
+##抛硬币
+
+
+.panelset[
+.panel[.panel-name[5人，每人10次]
+
+```r
+simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
+```
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-8-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[10人，每人10次]
+
+
+```r
+simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
+```
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[1000人，每人10次]
+
+
+```r
+simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
+```
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+]]]]
+
+---
+#10.2 二项分布(Binomial Distribution)
+.bigfont[
+- 已知一次试验中的每次尝试中事件A发生的概率p，共进行n次独立重复的伯努利试验
+- 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
+`$$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$`
+- 当n → ∞，p ≠ q，np ≥5且nq≥5，事件A在n次试验中出现次数的平均数：
+`$$\mu = np$$`
+- 事件A出现次数所属分布的标准差：
+`$$𝜎 = √(𝑛𝑝𝑞 )$$`
+]
+---
+#10.2 二项分布(Binomial Distribution)
+##如何将z与二分变量进行连接？
+###(1)将预测项映射到(0,1)之间，例如，使用
+`$$\frac{1}{1+exp(-z)}$$`
+###(2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
+.pull-left[
+![](./picture/chp10/func.png)
+]
+.pull-right[
+![](./picture/chp10/bernoulli.png)
+]
+---
+#10.2 二项分布(Binomial Distribution)
+&lt;img src="./picture/chp10/func2.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+#10.2 二项分布(Binomial Distribution)
+##参数求解
+.bigfont[
+- 对于logit回归，我们可以使用极大似然估计对其进行求解
+- 该求解过程比较复杂，一般由计算机自动完成
+]
+![](./picture/chp10/logit.png)
+---
+#10.3 其他分布
+##泊松分布(Poisson distribution)
+.bigfont[
+- 在固定时间间隔或空间区域内发生某种事件的次数的概率。
+- 适用于事件以恒定平均速率独立发生的情况
+- 例如电话呼叫、网站访问、机器故障等。
+`$$P(X = k) = \frac{e^{-\lambda} \lambda^k}{k!}$$`
+- λ:事件在给定时间或空间内的平均发生率（或平均数量）。
+- k:可能的事件发生次数，可以是0, 1, 2, …
+]
+---
+#10.3 其他分布
+##泊松分布(Poisson distribution)
+
+
+```r
+set.seed(123) # 设置随机种子以获得可重复的结果
+random_samples &lt;- rpois(1000, lambda = 5)
+hist(random_samples,col = 'white', border = 'black',)
+```
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-12-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+---
+#10.3 其他分布
+##泊松分布(Poisson distribution)
+![](./picture/chp10/poission.png)
+---
+#10.3 其他分布
+##伽马分布(Gamma distribution)
+&lt;br&gt;
+.bigfont[
+- 伽玛分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
+- “指数分布”和“卡方分布”都是伽马分布的特例。
+`$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$`
+- α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
+- β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
+]
+---
+#10.3 其他分布
+##伽马分布(Gamma distribution)
+&lt;img src="./picture/chp10/gamma.webp" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+#10.4 代码实操
+##首先分析一个被试的数据
+
+```r
+df.match.7302 &lt;- df.match %&gt;%
+  dplyr::filter(Sub == 7302)
+model_7302_full &lt;- stats::glm(data = df.match.7302,
+                          formula = ACC ~ 1 + Identity * Valence,
+                          family = binomial)
+summary(model_7302_full) %&gt;%
+  capture.output() %&gt;% .[c(6:11,15:19)]
+```
+
+```
+##  [1] "Coefficients:"                                                        
+##  [2] "                             Estimate Std. Error z value Pr(&gt;|z|)    "
+##  [3] "(Intercept)                     2.054      0.475    4.32 0.000015 ***"
+##  [4] "IdentityOther                   1.014      0.865    1.17     0.24    "
+##  [5] "Valenceimmoral                 -0.208      0.647   -0.32     0.75    "
+##  [6] "IdentityOther:Valenceimmoral   -0.780      1.080   -0.72     0.47    "
+##  [7] "(Dispersion parameter for binomial family taken to be 1)"             
+##  [8] ""                                                                     
+##  [9] "    Null deviance: 116.61  on 177  degrees of freedom"                
+## [10] "Residual deviance: 113.97  on 174  degrees of freedom"                
+## [11] "AIC: 122"
+```
+
+---
+#10.4 代码实操
+
+.panelset[
+.panel[.panel-name[model_null]
+
+```r
+#无固定效应
+model_null &lt;- lme4::glmer(data = df.match,
+                   formula = ACC ~ (1 + Identity * Valence|Sub),
+                   family = binomial)
+summary(model_null) %&gt;%
+  capture.output()%&gt;% .[c(7:8,14:24,27:28)]
+```
+
+```
+##  [1] "     AIC      BIC   logLik deviance df.resid "                                  
+##  [2] "  9807.5   9889.4  -4892.7   9785.5    12651 "                                  
+##  [3] "Random effects:"                                                                
+##  [4] " Groups Name                         Variance Std.Dev. Corr             "       
+##  [5] " Sub    (Intercept)                  1.30     1.14                      "       
+##  [6] "        IdentityOther                2.33     1.53     -0.84            "       
+##  [7] "        Valenceimmoral               2.21     1.49     -0.83  0.81      "       
+##  [8] "        IdentityOther:Valenceimmoral 3.07     1.75      0.67 -0.87 -0.81"       
+##  [9] "Number of obs: 12662, groups:  Sub, 44"                                         
+## [10] ""                                                                               
+## [11] "Fixed effects:"                                                                 
+## [12] "            Estimate Std. Error z value            Pr(&gt;|z|)    "                
+## [13] "(Intercept)    2.062      0.108      19 &lt;0.0000000000000002 ***"                
+## [14] "optimizer (Nelder_Mead) convergence code: 0 (OK)"                               
+## [15] "Model failed to converge with max|grad| = 0.00436644 (tol = 0.002, component 1)"
+```
+
+.panel[.panel-name[model]
+
+```r
+#随机截距，固定斜率
+model &lt;- lme4::glmer(data = df.match,
+                     formula = ACC ~ 1 + Identity * Valence + (1|Sub), 
+                     family = binomial)
+summary(model) %&gt;%
+  capture.output() %&gt;% .[c(7:8,14:24,28:32)]
+```
+
+```
+##  [1] "     AIC      BIC   logLik deviance df.resid "                                
+##  [2] " 10071.5  10108.7  -5030.7  10061.5    12657 "                                
+##  [3] "Random effects:"                                                              
+##  [4] " Groups Name        Variance Std.Dev."                                        
+##  [5] " Sub    (Intercept) 0.239    0.489   "                                        
+##  [6] "Number of obs: 12662, groups:  Sub, 44"                                       
+##  [7] ""                                                                             
+##  [8] "Fixed effects:"                                                               
+##  [9] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [10] "(Intercept)                    2.4883     0.0984   25.29 &lt; 0.0000000000000002"
+## [11] "IdentityOther                 -0.6622     0.0819   -8.08  0.00000000000000064"
+## [12] "Valenceimmoral                -0.9261     0.0796  -11.64 &lt; 0.0000000000000002"
+## [13] "IdentityOther:Valenceimmoral   0.7786     0.1061    7.34  0.00000000000021372"
+## [14] "Valenceimmoral               ***"                                             
+## [15] "IdentityOther:Valenceimmoral ***"                                             
+## [16] "---"                                                                          
+## [17] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"               
+## [18] ""
+```
+
+.panel[.panel-name[model_full]
+
+```r
+#随机截距，随机斜率
+model_full &lt;- lme4::glmer(data = df.match,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
+                          family = binomial)
+summary(model_full) %&gt;%
+  capture.output() %&gt;% .[c(7:8,14:20,22:27,31:35)]
+```
+
+```
+##  [1] "     AIC      BIC   logLik deviance df.resid "                                
+##  [2] "  9783.1   9887.3  -4877.5   9755.1    12648 "                                
+##  [3] "Random effects:"                                                              
+##  [4] " Groups Name                         Variance Std.Dev. Corr             "     
+##  [5] " Sub    (Intercept)                  0.892    0.944                     "     
+##  [6] "        IdentityOther                1.817    1.348    -0.78            "     
+##  [7] "        Valenceimmoral               0.996    0.998    -0.75  0.76      "     
+##  [8] "        IdentityOther:Valenceimmoral 2.281    1.510     0.54 -0.84 -0.74"     
+##  [9] "Number of obs: 12662, groups:  Sub, 44"                                       
+## [10] "Fixed effects:"                                                               
+## [11] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [12] "(Intercept)                     2.728      0.166   16.47 &lt; 0.0000000000000002"
+## [13] "IdentityOther                  -0.756      0.228   -3.31              0.00093"
+## [14] "Valenceimmoral                 -1.100      0.180   -6.11          0.000000001"
+## [15] "IdentityOther:Valenceimmoral    0.887      0.261    3.40              0.00068"
+## [16] "Valenceimmoral               ***"                                             
+## [17] "IdentityOther:Valenceimmoral ***"                                             
+## [18] "---"                                                                          
+## [19] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"               
+## [20] ""
+```
+
+.panel[.panel-name[模型比较]
+
+```r
+stats::anova(model, model_null, model_full)
+```
+
+```
+## Data: df.match
+## Models:
+## model: ACC ~ 1 + Identity * Valence + (1 | Sub)
+## model_null: ACC ~ (1 + Identity * Valence | Sub)
+## model_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+##            npar   AIC   BIC logLik deviance Chisq Df           Pr(&gt;Chisq)    
+## model         5 10071 10109  -5031    10061                                  
+## model_null   11  9807  9889  -4893     9785 276.0  6 &lt; 0.0000000000000002 ***
+## model_full   14  9783  9887  -4878     9755  30.4  3            0.0000011 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]]]]
+
+---
+#10.4 代码实操
+##结果解读
+
+```r
+summary(model_full) %&gt;% capture.output() %&gt;% .[c(22:27)]
+```
+
+```
+## [1] "Fixed effects:"                                                               
+## [2] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [3] "(Intercept)                     2.728      0.166   16.47 &lt; 0.0000000000000002"
+## [4] "IdentityOther                  -0.756      0.228   -3.31              0.00093"
+## [5] "Valenceimmoral                 -1.100      0.180   -6.11          0.000000001"
+## [6] "IdentityOther:Valenceimmoral    0.887      0.261    3.40              0.00068"
+```
+&lt;img src="./picture/chp10/logit2.png" width="70%" style="display: block; margin: auto;" /&gt;
+.pull-left[
+- MoralSelf:
+$$P=\frac{e^{2.73}}{1+e^{2.73}} $$
+- ImmoralSelf:
+`$$P=\frac{e^{2.73-1.10 }}{1+e^{2.73-1.10}}$$`
+]
+.pull-right[
+MoralOther:
+`$$P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }}$$`
+ImmoralOther:
+`$$P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}}$$`
+]
+---
+#10.4 代码实操
+
+
+```r
+#交互作用
+interactions::cat_plot(model = model_full,
+                       pred = Identity,
+                       modx = Valence)
+```
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-21-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+---
+#10.5 方法比较
+
+.panelset[
+.panel[.panel-name[anova]
+
+```r
+res &lt;- bruceR::MANOVA(data = df.match.aov,
+       subID = 'Sub', # 被试编号
+       dv= 'mean_ACC', # dependent variable
+       within = c('Identity', 'Valence')) 
+```
+
+
+```r
+capture.output(res) %&gt;% .[3:8]
+```
+
+```
+## [1] "Response: mean_ACC"                                  
+## [2] "            Effect    df  MSE         F  ges p.value"
+## [3] "1         Identity 1, 43 0.01      2.41 .013    .128"
+## [4] "2          Valence 1, 43 0.01 18.57 *** .072   &lt;.001"
+## [5] "3 Identity:Valence 1, 43 0.01   8.29 ** .034    .006"
+## [6] "---"
+```
+
+
+.panel[.panel-name[EMMAMNS]
+
+```r
+res %&gt;%
+  bruceR::EMMEANS(effect = 'Valence', by = 'Identity') %&gt;%
+  capture.output()
+```
+
+```
+##  [1] "------ EMMEANS (effect = \"Valence\") ------"                                              
+##  [2] ""                                                                                          
+##  [3] "Joint Tests of \"Valence\":"                                                               
+##  [4] "────────────────────────────────────────────────────────────────"                          
+##  [5] "  Effect \"Identity\" df1 df2      F     p     η²p [90% CI of η²p]"                        
+##  [6] "────────────────────────────────────────────────────────────────"                          
+##  [7] " Valence      Self    1  43 36.539 &lt;.001 ***   .459 [.277, .597]"                          
+##  [8] " Valence      Other   1  43  0.736  .396       .017 [.000, .127]"                          
+##  [9] "────────────────────────────────────────────────────────────────"                          
+## [10] "Note. Simple effects of repeated measures with 3 or more levels"                           
+## [11] "are different from the results obtained with SPSS MANOVA syntax."                          
+## [12] ""                                                                                          
+## [13] "Estimated Marginal Means of \"Valence\":"                                                  
+## [14] "───────────────────────────────────────────────────"                                       
+## [15] " \"Valence\" \"Identity\" Mean [95% CI of Mean]    S.E."                                   
+## [16] "───────────────────────────────────────────────────"                                       
+## [17] "   moral        Self   0.915 [0.886, 0.944] (0.014)"                                       
+## [18] "   immoral      Self   0.815 [0.780, 0.851] (0.018)"                                       
+## [19] "   moral        Other  0.851 [0.818, 0.884] (0.016)"                                       
+## [20] "   immoral      Other  0.832 [0.798, 0.865] (0.016)"                                       
+## [21] "───────────────────────────────────────────────────"                                       
+## [22] ""                                                                                          
+## [23] "Pairwise Comparisons of \"Valence\":"                                                      
+## [24] "────────────────────────────────────────────────────────────────────────────────────────"  
+## [25] "        Contrast \"Identity\" Estimate    S.E. df      t     p     Cohen’s d [95% CI of d]"
+## [26] "────────────────────────────────────────────────────────────────────────────────────────"  
+## [27] " immoral - moral      Self    -0.100 (0.017) 43 -6.045 &lt;.001 *** -0.735 [-0.980, -0.490]"  
+## [28] " immoral - moral      Other   -0.019 (0.022) 43 -0.858  .396     -0.141 [-0.474,  0.191]"  
+## [29] "────────────────────────────────────────────────────────────────────────────────────────"  
+## [30] "Pooled SD for computing Cohen’s d: 0.136"                                                  
+## [31] "No need to adjust p values."                                                               
+## [32] ""                                                                                          
+## [33] "Disclaimer:"                                                                               
+## [34] "By default, pooled SD is Root Mean Square Error (RMSE)."                                   
+## [35] "There is much disagreement on how to compute Cohen’s d."                                   
+## [36] "You are completely responsible for setting `sd.pooled`."                                   
+## [37] "You might also use `effectsize::t_to_d()` to compute d."                                   
+## [38] ""
+```
+
+.panel[.panel-name[GLM]
+
+```r
+stats::anova(model_full)
+```
+
+```
+## Analysis of Variance Table
+##                  npar Sum Sq Mean Sq F value
+## Identity            1   0.83    0.83    0.83
+## Valence             1  30.40   30.40   30.40
+## Identity:Valence    1  11.84   11.84   11.84
+```
+
+.panel[.panel-name[HLM]
+
+```r
+mod &lt;- lme4::lmer(data = df.match.aov,
+                          formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
+stats::anova(mod)
+```
+
+```
+## Analysis of Variance Table
+##                  npar Sum Sq Mean Sq F value
+## Identity            1 0.0206  0.0206    2.41
+## Valence             1 0.1559  0.1559   18.31
+## Identity:Valence    1 0.0716  0.0716    8.41
+```
+]]]]]
+
+---
+class: center, middle
+.tit_font[
+思考
+]
+&lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;信号检测论是否可以用广义线性模型分析？&lt;/span&gt; &lt;br&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "github",
+"countIncrementalSlides": false,
+"seal": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
