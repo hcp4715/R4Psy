@@ -59,7 +59,7 @@ pacman::p_load(
   # 本节课需要用到的 packages
   here, tidyverse, ggplot2,
   # ANOVA & HLM
-  bruceR, lmerTest, lme4, broom, afex, interactions,
+  bruceR, lmerTest, lme4, broom, afex, interactions, easystats, caret, 
   # 生成课件
   xaringan, xaringanthemer, xaringanExtra, knitr)
 
@@ -92,6 +92,13 @@ xaringanExtra::use_panelset()
 ```
 
 #上节课更新内容
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./picture/chp10/bilibili.png')
+```
+
+<br>
+<br>
+https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
 
 ---
 class: center, middle
@@ -365,10 +372,10 @@ knitr::include_graphics('./picture/chp10/gamma.webp')
 ```{r}
 df.match.7302 <- df.match %>%
   dplyr::filter(Sub == 7302)
-model_7302_full <- stats::glm(data = df.match.7302,
+mod_7302_full <- stats::glm(data = df.match.7302,
                           formula = ACC ~ 1 + Identity * Valence,
                           family = binomial)
-summary(model_7302_full) %>%
+summary(mod_7302_full) %>%
   capture.output() %>% .[c(6:11,15:19)]
 ```
 
@@ -376,47 +383,57 @@ summary(model_7302_full) %>%
 #10.4 代码实操
 
 .panelset[
-.panel[.panel-name[model_null]
+.panel[.panel-name[mod_null]
 ```{r}
 #无固定效应
-model_null <- lme4::glmer(data = df.match,
+mod_null <- lme4::glmer(data = df.match,
                    formula = ACC ~ (1 + Identity * Valence|Sub),
                    family = binomial)
-summary(model_null) %>%
+#model_performance(mod_null)
+summary(mod_null) %>%
   capture.output()%>% .[c(7:8,14:24,27:28)]
 ```
 
-.panel[.panel-name[model]
+.panel[.panel-name[mod]
 ```{r}
 #随机截距，固定斜率
-model <- lme4::glmer(data = df.match,
+mod <- lme4::glmer(data = df.match,
                      formula = ACC ~ 1 + Identity * Valence + (1|Sub), 
                      family = binomial)
-summary(model) %>%
+#model_performance(mod)
+summary(mod) %>%
   capture.output() %>% .[c(7:8,14:24,28:32)]
 ```
 
 .panel[.panel-name[model_full]
 ```{r}
 #随机截距，随机斜率
-model_full <- lme4::glmer(data = df.match,
+mod_full <- lme4::glmer(data = df.match,
                           formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
                           family = binomial)
-summary(model_full) %>%
+#model_performance(mod_full)
+summary(mod_full) %>%
   capture.output() %>% .[c(7:8,14:20,22:27,31:35)]
 ```
 
-.panel[.panel-name[模型比较]
+.panel[.panel-name[模型比较anova]
 ```{r}
-stats::anova(model, model_null, model_full)
+stats::anova(mod_null, mod, mod_full)
 ```
-]]]]]
+
+.panel[.panel-name[模型比较compare_performance]
+```{r,results='hide'}
+performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance1.png)
+]]]]]]
 
 ---
 #10.4 代码实操
 ##结果解读
 ```{r}
-summary(model_full) %>% capture.output() %>% .[c(22:27)]
+summary(mod_full) %>% capture.output() %>% .[c(22:27)]
 ```
 ```{r echo=FALSE, out.width='70%'}
 knitr::include_graphics('./picture/chp10/logit2.png')
@@ -438,10 +455,11 @@ $$P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}}$$
 
 ```{r}
 #交互作用
-interactions::cat_plot(model = model_full,
+interactions::cat_plot(model = mod_full,
                        pred = Identity,
                        modx = Valence)
 ```
+
 
 ---
 #10.5 方法比较
@@ -469,17 +487,104 @@ res %>%
 
 .panel[.panel-name[GLM]
 ```{r}
-stats::anova(model_full)
+stats::anova(mod_full)
 ```
 
 .panel[.panel-name[HLM]
+
+
 ```{r}
-mod <- lme4::lmer(data = df.match.aov,
+mod_anova <- lme4::lmer(data = df.match,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+stats::anova(mod_anova)
+```
+
+.panel[.panel-name[HLM_mean]
+```{r}
+mod_mean <- lme4::lmer(data = df.match.aov,
                           formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
-stats::anova(mod)
+stats::anova(mod_mean)
 
 ```
-]]]]]
+
+.panel[.panel-name[compare]
+```{r, results='hide'}
+performance::compare_performance(mod_full, mod_anova, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance2.png)
+
+```{r}
+stats::anova(mod_full, mod_anova)
+```
+
+
+]]]]]]]
+
+---
+#10.5 方法比较
+## 留出法
+```{r model prediction}
+# 设置种子以确保结果的可重复性
+set.seed(456)
+
+# 随机选择70%的数据作为训练集，剩余的30%作为测试集
+train_index <- createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
+train_data <- df.match[train_index, ]
+test_data <- df.match[-train_index, ]
+
+# 根据训练集生成模型
+model_full <- lme4::glmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
+                          family = binomial)
+model_anova <- lme4::lmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+
+# 使用留出法评估模型性能
+pre_mod_full <- predict(model_full, newdata = test_data)
+pre_mod_anova <- predict(model_anova, newdata = test_data)
+
+# 计算模型的性能指标
+performance_mod_full <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
+                R2 = cor(test_data$ACC, pre_mod_full)^2)
+performance_mod_anova <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
+                R2 = cor(test_data$ACC, pre_mod_anova)^2)
+
+
+```
+
+---
+#10.5 方法比较
+## 留出法
+.pull-left[
+```{r}
+# 打印性能指标
+print(performance_mod_full)
+```
+]
+.pull-right[
+```{r}
+# 打印性能指标
+print(performance_mod_anova)
+```
+
+]
+
+---
+#10.5 方法比较
+## 重复测量分析的不足
+.bigfont[
+- 会产生难以解释的结果
+  - 假设在10个回答中，正确回答8次，错误回答2次
+  - 此时95%CI为[0.52,1.08] ( = 0.8 ± 0.275)
+- 方差不齐，不满足方差分析基本假设
+
+$$\mu = np$$
+$$𝜎 = √(𝑛𝑝𝑞 )$$
+$$𝜎_p^2 = \frac{p(1-p)}{n}$$
+]
+Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
+
 
 ---
 class: center, middle

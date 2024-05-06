@@ -29,7 +29,7 @@ class: center, middle
 &lt;span style="font-size: 50px;"&gt;回归模型(三)：广义线性模型&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-04-30&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-05-07&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
@@ -57,6 +57,11 @@ font-size: 60px;
 
 
 #上节课更新内容
+&lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
 
 ---
 class: center, middle
@@ -71,8 +76,8 @@ class: center, middle
 head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 ```
 
-<div id="htmlwidget-0b82c9890943d087012b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0b82c9890943d087012b">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],["immoral","immoral","moral","moral","immoral"],["Self","Self","Other","Self","Other"],["immoralSelf","immoralSelf","moralOther","moralSelf","immoralOther"],["match","match","match","match","match"],["m","m","m","m","m"],["m","m","m","m","m"],[1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1b2435a30d813a493d98" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1b2435a30d813a493d98">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],["immoral","immoral","moral","moral","immoral"],["Self","Self","Other","Self","Other"],["immoralSelf","immoralSelf","moralOther","moralSelf","immoralOther"],["match","match","match","match","match"],["m","m","m","m","m"],["m","m","m","m","m"],[1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[df.match.aov]
 
@@ -80,8 +85,8 @@ head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 head(df.match.aov[1:4],5) %&gt;% DT::datatable()
 ```
 
-<div id="htmlwidget-f25cea25d27144607bca" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f25cea25d27144607bca">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7303],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.886363636363636,0.955555555555556,0.863636363636364,0.888888888888889,0.933333333333333]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-2bbf85aa16a957d47f9a" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2bbf85aa16a957d47f9a">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7303],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.886363636363636,0.955555555555556,0.863636363636364,0.888888888888889,0.933333333333333]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 ---
@@ -220,7 +225,7 @@ $$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
 simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-8-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[10人，每人10次]
 
@@ -229,7 +234,7 @@ simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[1000人，每人10次]
 
@@ -238,7 +243,7 @@ simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-11-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 ]]]]
 
@@ -299,7 +304,7 @@ random_samples &lt;- rpois(1000, lambda = 5)
 hist(random_samples,col = 'white', border = 'black',)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-12-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-13-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 ---
 #10.3 其他分布
@@ -310,7 +315,7 @@ hist(random_samples,col = 'white', border = 'black',)
 ##伽马分布(Gamma distribution)
 &lt;br&gt;
 .bigfont[
-- 伽玛分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
+- 伽马分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
 - “指数分布”和“卡方分布”都是伽马分布的特例。
 `$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$`
 - α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
@@ -330,10 +335,10 @@ hist(random_samples,col = 'white', border = 'black',)
 ```r
 df.match.7302 &lt;- df.match %&gt;%
   dplyr::filter(Sub == 7302)
-model_7302_full &lt;- stats::glm(data = df.match.7302,
+mod_7302_full &lt;- stats::glm(data = df.match.7302,
                           formula = ACC ~ 1 + Identity * Valence,
                           family = binomial)
-summary(model_7302_full) %&gt;%
+summary(mod_7302_full) %&gt;%
   capture.output() %&gt;% .[c(6:11,15:19)]
 ```
 
@@ -355,14 +360,15 @@ summary(model_7302_full) %&gt;%
 #10.4 代码实操
 
 .panelset[
-.panel[.panel-name[model_null]
+.panel[.panel-name[mod_null]
 
 ```r
 #无固定效应
-model_null &lt;- lme4::glmer(data = df.match,
+mod_null &lt;- lme4::glmer(data = df.match,
                    formula = ACC ~ (1 + Identity * Valence|Sub),
                    family = binomial)
-summary(model_null) %&gt;%
+#model_performance(mod_null)
+summary(mod_null) %&gt;%
   capture.output()%&gt;% .[c(7:8,14:24,27:28)]
 ```
 
@@ -384,14 +390,15 @@ summary(model_null) %&gt;%
 ## [15] "Model failed to converge with max|grad| = 0.00436644 (tol = 0.002, component 1)"
 ```
 
-.panel[.panel-name[model]
+.panel[.panel-name[mod]
 
 ```r
 #随机截距，固定斜率
-model &lt;- lme4::glmer(data = df.match,
+mod &lt;- lme4::glmer(data = df.match,
                      formula = ACC ~ 1 + Identity * Valence + (1|Sub), 
                      family = binomial)
-summary(model) %&gt;%
+#model_performance(mod)
+summary(mod) %&gt;%
   capture.output() %&gt;% .[c(7:8,14:24,28:32)]
 ```
 
@@ -420,10 +427,11 @@ summary(model) %&gt;%
 
 ```r
 #随机截距，随机斜率
-model_full &lt;- lme4::glmer(data = df.match,
+mod_full &lt;- lme4::glmer(data = df.match,
                           formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
                           family = binomial)
-summary(model_full) %&gt;%
+#model_performance(mod_full)
+summary(mod_full) %&gt;%
   capture.output() %&gt;% .[c(7:8,14:20,22:27,31:35)]
 ```
 
@@ -450,33 +458,41 @@ summary(model_full) %&gt;%
 ## [20] ""
 ```
 
-.panel[.panel-name[模型比较]
+.panel[.panel-name[模型比较anova]
 
 ```r
-stats::anova(model, model_null, model_full)
+stats::anova(mod_null, mod, mod_full)
 ```
 
 ```
 ## Data: df.match
 ## Models:
-## model: ACC ~ 1 + Identity * Valence + (1 | Sub)
-## model_null: ACC ~ (1 + Identity * Valence | Sub)
-## model_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
-##            npar   AIC   BIC logLik deviance Chisq Df           Pr(&gt;Chisq)    
-## model         5 10071 10109  -5031    10061                                  
-## model_null   11  9807  9889  -4893     9785 276.0  6 &lt; 0.0000000000000002 ***
-## model_full   14  9783  9887  -4878     9755  30.4  3            0.0000011 ***
+## mod: ACC ~ 1 + Identity * Valence + (1 | Sub)
+## mod_null: ACC ~ (1 + Identity * Valence | Sub)
+## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+##          npar   AIC   BIC logLik deviance Chisq Df           Pr(&gt;Chisq)    
+## mod         5 10071 10109  -5031    10061                                  
+## mod_null   11  9807  9889  -4893     9785 276.0  6 &lt; 0.0000000000000002 ***
+## mod_full   14  9783  9887  -4878     9755  30.4  3            0.0000011 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
-]]]]]
+
+.panel[.panel-name[模型比较compare_performance]
+
+```r
+performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance1.png)
+]]]]]]
 
 ---
 #10.4 代码实操
 ##结果解读
 
 ```r
-summary(model_full) %&gt;% capture.output() %&gt;% .[c(22:27)]
+summary(mod_full) %&gt;% capture.output() %&gt;% .[c(22:27)]
 ```
 
 ```
@@ -506,12 +522,13 @@ ImmoralOther:
 
 ```r
 #交互作用
-interactions::cat_plot(model = model_full,
+interactions::cat_plot(model = mod_full,
                        pred = Identity,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-21-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-23-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
 
 ---
 #10.5 方法比较
@@ -593,7 +610,7 @@ res %&gt;%
 .panel[.panel-name[GLM]
 
 ```r
-stats::anova(model_full)
+stats::anova(mod_full)
 ```
 
 ```
@@ -606,10 +623,28 @@ stats::anova(model_full)
 
 .panel[.panel-name[HLM]
 
+
+
 ```r
-mod &lt;- lme4::lmer(data = df.match.aov,
+mod_anova &lt;- lme4::lmer(data = df.match,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+stats::anova(mod_anova)
+```
+
+```
+## Analysis of Variance Table
+##                  npar Sum Sq Mean Sq F value
+## Identity            1   0.28    0.28    2.45
+## Valence             1   3.28    3.28   28.95
+## Identity:Valence    1   0.94    0.94    8.28
+```
+
+.panel[.panel-name[HLM_mean]
+
+```r
+mod_mean &lt;- lme4::lmer(data = df.match.aov,
                           formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
-stats::anova(mod)
+stats::anova(mod_mean)
 ```
 
 ```
@@ -619,7 +654,110 @@ stats::anova(mod)
 ## Valence             1 0.1559  0.1559   18.31
 ## Identity:Valence    1 0.0716  0.0716    8.41
 ```
-]]]]]
+
+.panel[.panel-name[compare]
+
+```r
+performance::compare_performance(mod_full, mod_anova, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance2.png)
+
+
+```r
+stats::anova(mod_full, mod_anova)
+```
+
+```
+## Data: df.match
+## Models:
+## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+## mod_anova: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+##           npar  AIC  BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    
+## mod_full    14 9783 9887  -4878     9755                                 
+## mod_anova   15 8710 8822  -4340     8680  1075  1 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
+]]]]]]]
+
+---
+#10.5 方法比较
+## 留出法
+
+```r
+# 设置种子以确保结果的可重复性
+set.seed(456)
+
+# 随机选择70%的数据作为训练集，剩余的30%作为测试集
+train_index &lt;- createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
+train_data &lt;- df.match[train_index, ]
+test_data &lt;- df.match[-train_index, ]
+
+# 根据训练集生成模型
+model_full &lt;- lme4::glmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
+                          family = binomial)
+model_anova &lt;- lme4::lmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+
+# 使用留出法评估模型性能
+pre_mod_full &lt;- predict(model_full, newdata = test_data)
+pre_mod_anova &lt;- predict(model_anova, newdata = test_data)
+
+# 计算模型的性能指标
+performance_mod_full &lt;- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
+                R2 = cor(test_data$ACC, pre_mod_full)^2)
+performance_mod_anova &lt;- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
+                R2 = cor(test_data$ACC, pre_mod_anova)^2)
+```
+
+---
+#10.5 方法比较
+## 留出法
+.pull-left[
+
+```r
+# 打印性能指标
+print(performance_mod_full)
+```
+
+```
+##     RMSE       R2 
+## 1.410992 0.064223
+```
+]
+.pull-right[
+
+```r
+# 打印性能指标
+print(performance_mod_anova)
+```
+
+```
+##     RMSE       R2 
+## 0.335414 0.077816
+```
+
+]
+
+---
+#10.5 方法比较
+## 重复测量分析的不足
+.bigfont[
+- 会产生难以解释的结果
+  - 假设在10个回答中，正确回答8次，错误回答2次
+  - 此时95%CI为[0.52,1.08] ( = 0.8 ± 0.275)
+- 方差不齐，不满足方差分析基本假设
+
+`$$\mu = np$$`
+`$$𝜎 = √(𝑛𝑝𝑞 )$$`
+`$$𝜎_p^2 = \frac{p(1-p)}{n}$$`
+]
+Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
+
 
 ---
 class: center, middle
