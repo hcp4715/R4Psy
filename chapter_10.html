@@ -4,19 +4,20 @@
     <title>chapter_10.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.27/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -56,17 +57,18 @@ font-size: 60px;
 
 
 
-#上节课更新内容
+# 补充内容: easystats系统包的简介
 &lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 &lt;br&gt;
 &lt;br&gt;
+&lt;center&gt;
 https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
-
+&lt;/center&gt;
 ---
 class: center, middle
 .tit_font[
-当因变量不服从正态分布(如ACC)时如何处理？
+当因变量不服从正态分布(如正确率)时如何处理？
 ]
 ---
 .panelset[
@@ -76,17 +78,23 @@ class: center, middle
 head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 ```
 
-<div id="htmlwidget-1b2435a30d813a493d98" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1b2435a30d813a493d98">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],["immoral","immoral","moral","moral","immoral"],["Self","Self","Other","Self","Other"],["immoralSelf","immoralSelf","moralOther","moralSelf","immoralOther"],["match","match","match","match","match"],["m","m","m","m","m"],["m","m","m","m","m"],[1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-f6c8257093ea0439367e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f6c8257093ea0439367e">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],["immoral","immoral","moral","moral","immoral"],["Self","Self","Other","Self","Other"],["immoralSelf","immoralSelf","moralOther","moralSelf","immoralOther"],["match","match","match","match","match"],["m","m","m","m","m"],["m","m","m","m","m"],[1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"Label","targets":4},{"name":"Match","targets":5},{"name":"CorrResp","targets":6},{"name":"Resp","targets":7},{"name":"ACC","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[df.match.aov]
 
 ```r
-head(df.match.aov[1:4],5) %&gt;% DT::datatable()
+df.match %&gt;%
+  dplyr::group_by(Sub, Valence, Identity) %&gt;%
+  dplyr::summarise(mean_ACC = mean(ACC)) %&gt;%
+  dplyr::ungroup() %&gt;%
+  dplyr::select(1:4) %&gt;%
+  head(5) %&gt;% 
+  DT::datatable()
 ```
 
-<div id="htmlwidget-2bbf85aa16a957d47f9a" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2bbf85aa16a957d47f9a">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7303],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.886363636363636,0.955555555555556,0.863636363636364,0.888888888888889,0.933333333333333]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-3d65cbf1b389cd9af642" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-3d65cbf1b389cd9af642">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7303],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.8863636363636364,0.9555555555555556,0.8636363636363636,0.8888888888888888,0.9333333333333333]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"mean_ACC","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 ---
@@ -127,8 +135,7 @@ head(df.match.aov[1:4],5) %&gt;% DT::datatable()
 
 ---
 #10.1 广义线性模型(Generalized Linear Model, GLM)
-##回归方程的多种表达形式&lt;br&gt;
-&lt;br&gt;
+##回归方程的多种形式&lt;br&gt;
 .bigfont[
 - 简单线性回归：
 `$$Y = b_0+b_1 X_1+ b_2 X_2+…+b_p X_p + \epsilon$$` 
@@ -144,10 +151,10 @@ head(df.match.aov[1:4],5) %&gt;% DT::datatable()
 ##回归方程的多种表达形式&lt;br&gt;
 &lt;br&gt;
 .bigfont[
-- 概率分布的形式：观测项 = 预测项 + 误差项 &lt;br&gt;
+- 回归模型形式：观测项 = 预测项 + 误差项 &lt;br&gt;
 - 假定观测项是正态分布，上述公式可以重新表达为： &lt;br&gt;
 `$$y \sim N(\mu, \epsilon)$$` 
-  - 其中，μ为预测值，即
+  - 其中，$\mu$为预测值，即
   `$$μ = \beta_0 + \beta_1 x$$`
 - 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。&lt;br&gt;
 ]
@@ -179,7 +186,7 @@ head(df.match.aov[1:4],5) %&gt;% DT::datatable()
   - 观测项不一定是正态分布（残差不一定是正态分布）
   - 连接函数不等于其自身
 
-- 广义线性模型，能够对不正态分布的因变量进行建模
+- 广义线性模型，能够对非正态分布的因变量进行建模
 ]
 ---
 #10.2 二项分布(Binomial Distribution)
@@ -206,9 +213,9 @@ head(df.match.aov[1:4],5) %&gt;% DT::datatable()
 &lt;br&gt;&lt;br&gt;
 - 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
 &lt;br&gt;&lt;br&gt;
-- 随机变量X服从以n, p为参数的二项分布，写作 X ~ B(n, p) 
+- 随机变量X服从以n, p为参数的二项分布，写作 `\(X \sim B(n, p)\)` 
 &lt;br&gt;&lt;br&gt;
-- p∈[0,1] ,n∈N 
+- `\(p \in [0,1]\)`, `\(n \in N\)` 
 
 `$$P(X=k )=𝐶_𝑛^𝑘 𝑝^𝑘 𝑞^{𝑛−𝑘}= 𝐶_𝑛^𝑘 𝑝^𝑘 (1−𝑝)^{𝑛−𝑘}$$`
 $$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
@@ -250,20 +257,20 @@ simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ---
 #10.2 二项分布(Binomial Distribution)
 .bigfont[
-- 已知一次试验中的每次尝试中事件A发生的概率p，共进行n次独立重复的伯努利试验
+- 已知一次试验中的每次尝试中事件A发生的概率$p$，共进行$n$次独立重复的伯努利试验
 - 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
 `$$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$`
-- 当n → ∞，p ≠ q，np ≥5且nq≥5，事件A在n次试验中出现次数的平均数：
+- 当n → ∞，$p$ ≠ q，$np$ ≥ 5且$nq$ ≥ 5，事件A在$n$次试验中出现次数的平均数：
 `$$\mu = np$$`
 - 事件A出现次数所属分布的标准差：
-`$$𝜎 = √(𝑛𝑝𝑞 )$$`
+$$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 ]
 ---
 #10.2 二项分布(Binomial Distribution)
-##如何将z与二分变量进行连接？
-###(1)将预测项映射到(0,1)之间，例如，使用
+## 如何将$z$与二分变量进行连接？
+### (1)将预测项映射到(0,1)之间，例如，使用
 `$$\frac{1}{1+exp(-z)}$$`
-###(2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
+### (2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
 .pull-left[
 ![](./picture/chp10/func.png)
 ]
@@ -373,21 +380,21 @@ summary(mod_null) %&gt;%
 ```
 
 ```
-##  [1] "     AIC      BIC   logLik deviance df.resid "                                  
-##  [2] "  9807.5   9889.4  -4892.7   9785.5    12651 "                                  
-##  [3] "Random effects:"                                                                
-##  [4] " Groups Name                         Variance Std.Dev. Corr             "       
-##  [5] " Sub    (Intercept)                  1.30     1.14                      "       
-##  [6] "        IdentityOther                2.33     1.53     -0.84            "       
-##  [7] "        Valenceimmoral               2.21     1.49     -0.83  0.81      "       
-##  [8] "        IdentityOther:Valenceimmoral 3.07     1.75      0.67 -0.87 -0.81"       
-##  [9] "Number of obs: 12662, groups:  Sub, 44"                                         
-## [10] ""                                                                               
-## [11] "Fixed effects:"                                                                 
-## [12] "            Estimate Std. Error z value            Pr(&gt;|z|)    "                
-## [13] "(Intercept)    2.062      0.108      19 &lt;0.0000000000000002 ***"                
-## [14] "optimizer (Nelder_Mead) convergence code: 0 (OK)"                               
-## [15] "Model failed to converge with max|grad| = 0.00436644 (tol = 0.002, component 1)"
+##  [1] "     AIC      BIC   logLik deviance df.resid "                                 
+##  [2] "  9807.5   9889.4  -4892.7   9785.5    12651 "                                 
+##  [3] "Random effects:"                                                               
+##  [4] " Groups Name                         Variance Std.Dev. Corr             "      
+##  [5] " Sub    (Intercept)                  1.30     1.14                      "      
+##  [6] "        IdentityOther                2.33     1.53     -0.84            "      
+##  [7] "        Valenceimmoral               2.22     1.49     -0.83  0.81      "      
+##  [8] "        IdentityOther:Valenceimmoral 3.07     1.75      0.67 -0.87 -0.81"      
+##  [9] "Number of obs: 12662, groups:  Sub, 44"                                        
+## [10] ""                                                                              
+## [11] "Fixed effects:"                                                                
+## [12] "            Estimate Std. Error z value            Pr(&gt;|z|)    "               
+## [13] "(Intercept)    2.061      0.108      19 &lt;0.0000000000000002 ***"               
+## [14] "optimizer (Nelder_Mead) convergence code: 0 (OK)"                              
+## [15] "Model failed to converge with max|grad| = 0.0107955 (tol = 0.002, component 1)"
 ```
 
 .panel[.panel-name[mod]
@@ -412,10 +419,10 @@ summary(mod) %&gt;%
 ##  [7] ""                                                                             
 ##  [8] "Fixed effects:"                                                               
 ##  [9] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [10] "(Intercept)                    2.4883     0.0984   25.29 &lt; 0.0000000000000002"
-## [11] "IdentityOther                 -0.6622     0.0819   -8.08  0.00000000000000064"
-## [12] "Valenceimmoral                -0.9261     0.0796  -11.64 &lt; 0.0000000000000002"
-## [13] "IdentityOther:Valenceimmoral   0.7786     0.1061    7.34  0.00000000000021372"
+## [10] "(Intercept)                    2.4883     0.0985   25.27 &lt; 0.0000000000000002"
+## [11] "IdentityOther                 -0.6622     0.0820   -8.08  0.00000000000000067"
+## [12] "Valenceimmoral                -0.9261     0.0796  -11.63 &lt; 0.0000000000000002"
+## [13] "IdentityOther:Valenceimmoral   0.7786     0.1062    7.33  0.00000000000022433"
 ## [14] "Valenceimmoral               ***"                                             
 ## [15] "IdentityOther:Valenceimmoral ***"                                             
 ## [16] "---"                                                                          
@@ -441,16 +448,16 @@ summary(mod_full) %&gt;%
 ##  [3] "Random effects:"                                                              
 ##  [4] " Groups Name                         Variance Std.Dev. Corr             "     
 ##  [5] " Sub    (Intercept)                  0.892    0.944                     "     
-##  [6] "        IdentityOther                1.817    1.348    -0.78            "     
+##  [6] "        IdentityOther                1.818    1.348    -0.78            "     
 ##  [7] "        Valenceimmoral               0.996    0.998    -0.75  0.76      "     
-##  [8] "        IdentityOther:Valenceimmoral 2.281    1.510     0.54 -0.84 -0.74"     
+##  [8] "        IdentityOther:Valenceimmoral 2.282    1.511     0.54 -0.84 -0.74"     
 ##  [9] "Number of obs: 12662, groups:  Sub, 44"                                       
 ## [10] "Fixed effects:"                                                               
 ## [11] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [12] "(Intercept)                     2.728      0.166   16.47 &lt; 0.0000000000000002"
-## [13] "IdentityOther                  -0.756      0.228   -3.31              0.00093"
-## [14] "Valenceimmoral                 -1.100      0.180   -6.11          0.000000001"
-## [15] "IdentityOther:Valenceimmoral    0.887      0.261    3.40              0.00068"
+## [12] "(Intercept)                     2.728      0.166   16.43 &lt; 0.0000000000000002"
+## [13] "IdentityOther                  -0.756      0.229   -3.30              0.00096"
+## [14] "Valenceimmoral                 -1.100      0.180   -6.09         0.0000000011"
+## [15] "IdentityOther:Valenceimmoral    0.887      0.262    3.39              0.00071"
 ## [16] "Valenceimmoral               ***"                                             
 ## [17] "IdentityOther:Valenceimmoral ***"                                             
 ## [18] "---"                                                                          
@@ -498,23 +505,25 @@ summary(mod_full) %&gt;% capture.output() %&gt;% .[c(22:27)]
 ```
 ## [1] "Fixed effects:"                                                               
 ## [2] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [3] "(Intercept)                     2.728      0.166   16.47 &lt; 0.0000000000000002"
-## [4] "IdentityOther                  -0.756      0.228   -3.31              0.00093"
-## [5] "Valenceimmoral                 -1.100      0.180   -6.11          0.000000001"
-## [6] "IdentityOther:Valenceimmoral    0.887      0.261    3.40              0.00068"
+## [3] "(Intercept)                     2.728      0.166   16.43 &lt; 0.0000000000000002"
+## [4] "IdentityOther                  -0.756      0.229   -3.30              0.00096"
+## [5] "Valenceimmoral                 -1.100      0.180   -6.09         0.0000000011"
+## [6] "IdentityOther:Valenceimmoral    0.887      0.262    3.39              0.00071"
 ```
 &lt;img src="./picture/chp10/logit2.png" width="70%" style="display: block; margin: auto;" /&gt;
 .pull-left[
 - MoralSelf:
-$$P=\frac{e^{2.73}}{1+e^{2.73}} $$
+`\(P=\frac{e^{2.73}}{1+e^{2.73}} = 0.939\)`
+&lt;br&gt;
 - ImmoralSelf:
-`$$P=\frac{e^{2.73-1.10 }}{1+e^{2.73-1.10}}$$`
+`\(P=\frac{e^{2.73-1.10 }}{1+e^{2.73-1.10}} = 0.836\)`
 ]
 .pull-right[
-MoralOther:
-`$$P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }}$$`
-ImmoralOther:
-`$$P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}}$$`
+- MoralOther:
+`\(P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }} = 0.878\)`
+&lt;br&gt;
+- ImmoralOther:
+`\(P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}} = 0.853\)`
 ]
 ---
 #10.4 代码实操
@@ -617,8 +626,8 @@ stats::anova(mod_full)
 ## Analysis of Variance Table
 ##                  npar Sum Sq Mean Sq F value
 ## Identity            1   0.83    0.83    0.83
-## Valence             1  30.40   30.40   30.40
-## Identity:Valence    1  11.84   11.84   11.84
+## Valence             1  30.39   30.39   30.39
+## Identity:Valence    1  11.83   11.83   11.83
 ```
 
 .panel[.panel-name[HLM]
@@ -627,7 +636,7 @@ stats::anova(mod_full)
 
 ```r
 mod_anova &lt;- lme4::lmer(data = df.match,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+                        formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
 stats::anova(mod_anova)
 ```
 
@@ -636,7 +645,7 @@ stats::anova(mod_anova)
 ##                  npar Sum Sq Mean Sq F value
 ## Identity            1   0.28    0.28    2.45
 ## Valence             1   3.28    3.28   28.95
-## Identity:Valence    1   0.94    0.94    8.28
+## Identity:Valence    1   0.94    0.94    8.27
 ```
 
 .panel[.panel-name[HLM_mean]
@@ -726,7 +735,7 @@ print(performance_mod_full)
 
 ```
 ##     RMSE       R2 
-## 1.410992 0.064223
+## 1.411014 0.064221
 ```
 ]
 .pull-right[
@@ -738,7 +747,7 @@ print(performance_mod_anova)
 
 ```
 ##     RMSE       R2 
-## 0.335414 0.077816
+## 0.335414 0.077817
 ```
 
 ]

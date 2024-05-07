@@ -91,19 +91,20 @@ df.match.aov <- df.match %>%
 xaringanExtra::use_panelset()
 ```
 
-#上节课更新内容
+# 补充内容: easystats系统包的简介
 ```{r echo=FALSE, out.width='60%'}
 knitr::include_graphics('./picture/chp10/bilibili.png')
 ```
 
 <br>
 <br>
+<center>
 https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
-
+</center>
 ---
 class: center, middle
 .tit_font[
-当因变量不服从正态分布(如ACC)时如何处理？
+当因变量不服从正态分布(如正确率)时如何处理？
 ]
 ---
 .panelset[
@@ -114,7 +115,13 @@ head(df.match[c(3,11:17)],5) %>% DT::datatable()
 
 .panel[.panel-name[df.match.aov]
 ```{r}
-head(df.match.aov[1:4],5) %>% DT::datatable()
+df.match %>%
+  dplyr::group_by(Sub, Valence, Identity) %>%
+  dplyr::summarise(mean_ACC = mean(ACC)) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(1:4) %>%
+  head(5) %>% 
+  DT::datatable()
 ```
 
 ]]]
@@ -158,8 +165,7 @@ knitr::include_graphics('./picture/chp10/plot.png')
 
 ---
 #10.1 广义线性模型(Generalized Linear Model, GLM)
-##回归方程的多种表达形式<br>
-<br>
+##回归方程的多种形式<br>
 .bigfont[
 - 简单线性回归：
 $$Y = b_0+b_1 X_1+ b_2 X_2+…+b_p X_p + \epsilon$$ 
@@ -175,10 +181,10 @@ $$Y \sim X_1 + X_2 + ... + X_n$$
 ##回归方程的多种表达形式<br>
 <br>
 .bigfont[
-- 概率分布的形式：观测项 = 预测项 + 误差项 <br>
+- 回归模型形式：观测项 = 预测项 + 误差项 <br>
 - 假定观测项是正态分布，上述公式可以重新表达为： <br>
 $$y \sim N(\mu, \epsilon)$$ 
-  - 其中，μ为预测值，即
+  - 其中，$\mu$为预测值，即
   $$μ = \beta_0 + \beta_1 x$$
 - 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。<br>
 ]
@@ -210,7 +216,7 @@ $$y \sim N(\mu, \epsilon)$$
   - 观测项不一定是正态分布（残差不一定是正态分布）
   - 连接函数不等于其自身
 
-- 广义线性模型，能够对不正态分布的因变量进行建模
+- 广义线性模型，能够对非正态分布的因变量进行建模
 ]
 ---
 #10.2 二项分布(Binomial Distribution)
@@ -237,9 +243,9 @@ $$y \sim N(\mu, \epsilon)$$
 <br><br>
 - 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
 <br><br>
-- 随机变量X服从以n, p为参数的二项分布，写作 X ~ B(n, p) 
+- 随机变量X服从以n, p为参数的二项分布，写作 $X \sim B(n, p)$ 
 <br><br>
-- p∈[0,1] ,n∈N 
+- $p \in [0,1]$, $n \in N$ 
 
 $$P(X=k )=𝐶_𝑛^𝑘 𝑝^𝑘 𝑞^{𝑛−𝑘}= 𝐶_𝑛^𝑘 𝑝^𝑘 (1−𝑝)^{𝑛−𝑘}$$
 $$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
@@ -287,20 +293,20 @@ simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ---
 #10.2 二项分布(Binomial Distribution)
 .bigfont[
-- 已知一次试验中的每次尝试中事件A发生的概率p，共进行n次独立重复的伯努利试验
+- 已知一次试验中的每次尝试中事件A发生的概率$p$，共进行$n$次独立重复的伯努利试验
 - 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
 $$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$
-- 当n → ∞，p ≠ q，np ≥5且nq≥5，事件A在n次试验中出现次数的平均数：
+- 当n → ∞，$p$ ≠ q，$np$ ≥ 5且$nq$ ≥ 5，事件A在$n$次试验中出现次数的平均数：
 $$\mu = np$$
 - 事件A出现次数所属分布的标准差：
-$$𝜎 = √(𝑛𝑝𝑞 )$$
+$$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 ]
 ---
 #10.2 二项分布(Binomial Distribution)
-##如何将z与二分变量进行连接？
-###(1)将预测项映射到(0,1)之间，例如，使用
+## 如何将$z$与二分变量进行连接？
+### (1)将预测项映射到(0,1)之间，例如，使用
 $$\frac{1}{1+exp(-z)}$$
-###(2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
+### (2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
 .pull-left[
 ![](./picture/chp10/func.png)
 ]
@@ -440,15 +446,17 @@ knitr::include_graphics('./picture/chp10/logit2.png')
 ```
 .pull-left[
 - MoralSelf:
-$$P=\frac{e^{2.73}}{1+e^{2.73}} $$
+$P=\frac{e^{2.73}}{1+e^{2.73}} = 0.939$
+<br>
 - ImmoralSelf:
-$$P=\frac{e^{2.73-1.10 }}{1+e^{2.73-1.10}}$$
+$P=\frac{e^{2.73-1.10 }}{1+e^{2.73-1.10}} = 0.836$
 ]
 .pull-right[
-MoralOther:
-$$P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }}$$
-ImmoralOther:
-$$P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}}$$
+- MoralOther:
+$P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }} = 0.878$
+<br>
+- ImmoralOther:
+$P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}} = 0.853$
 ]
 ---
 #10.4 代码实操
@@ -495,7 +503,7 @@ stats::anova(mod_full)
 
 ```{r}
 mod_anova <- lme4::lmer(data = df.match,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+                        formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
 stats::anova(mod_anova)
 ```
 
