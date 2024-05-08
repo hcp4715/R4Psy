@@ -29,7 +29,7 @@ class: center, middle
 &lt;span style="font-size: 50px;"&gt;回归模型(三)：广义线性模型&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-05-07&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-05-08&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
@@ -77,8 +77,8 @@ class: center, middle
 head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 ```
 
-<div id="htmlwidget-30a1614f3aeae20f256c" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-30a1614f3aeae20f256c">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4b265194992d10b5e8d6" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4b265194992d10b5e8d6">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[df.match.aov]
 
@@ -89,8 +89,8 @@ df.match.aov %&gt;%
   DT::datatable()
 ```
 
-<div id="htmlwidget-d5d3115f17d58b14c9da" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d5d3115f17d58b14c9da">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.986666666666667,0.833333333333333,0.821917808219178,0.71830985915493,0.932432432432432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1116b80a9e34a8a9ed3a" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1116b80a9e34a8a9ed3a">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.986666666666667,0.833333333333333,0.821917808219178,0.71830985915493,0.932432432432432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 ---
@@ -708,10 +708,11 @@ model_full &lt;- lme4::glmer(data = train_data,
 model_anova &lt;- lme4::lmer(data = train_data,
                           formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
 
-# 使用留出法评估模型性能
-pre_mod_full &lt;- predict(model_full, newdata = test_data)
-pre_mod_anova &lt;- predict(model_anova, newdata = test_data)
+# 使用模型进行预测
+pre_mod_full &lt;- stats::predict(model_full, newdata = test_data, type = 'response')
+pre_mod_anova &lt;- stats::predict(model_anova, newdata = test_data)
 ```
+
 
 ---
 #10.5 方法比较
@@ -728,7 +729,7 @@ print(performance_mod_full)
 
 ```
 ##     RMSE       R2 
-## 1.375745 0.067124
+## 0.342402 0.074985
 ```
 ]
 .pull-right[
@@ -749,6 +750,87 @@ print(performance_mod_anova)
 
 ]
 
+---
+#10.5 方法比较
+## 留出法
+
+```r
+# 将预测概率转换为分类结果
+predicted_classes &lt;- ifelse(pre_mod_full &gt; 0.5, 1, 0)
+# 计算混淆矩阵
+confusion_matrix &lt;- caret::confusionMatrix(as.factor(predicted_classes), as.factor(test_data$ACC))
+```
+
+---
+#10.5 方法比较
+## 留出法
+
+```r
+# 打印混淆矩阵和性能指标
+print(confusion_matrix)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0   37   27
+##          1  499 3037
+##                                              
+##                Accuracy : 0.854              
+##                  95% CI : (0.842, 0.865)     
+##     No Information Rate : 0.851              
+##     P-Value [Acc &gt; NIR] : 0.33               
+##                                              
+##                   Kappa : 0.095              
+##                                              
+##  Mcnemar's Test P-Value : &lt;0.0000000000000002
+##                                              
+##             Sensitivity : 0.0690             
+##             Specificity : 0.9912             
+##          Pos Pred Value : 0.5781             
+##          Neg Pred Value : 0.8589             
+##              Prevalence : 0.1489             
+##          Detection Rate : 0.0103             
+##    Detection Prevalence : 0.0178             
+##       Balanced Accuracy : 0.5301             
+##                                              
+##        'Positive' Class : 0                  
+## 
+```
+
+---
+#10.5 方法比较
+## 留出法
+.pull-left[
+
+```r
+# 计算ROC曲线和AUC
+roc_result &lt;- pROC::roc(test_data$ACC, pre_mod_full)
+print(roc_result)
+```
+
+```
+## 
+## Call:
+## roc.default(response = test_data$ACC, predictor = pre_mod_full)
+## 
+## Data: pre_mod_full in 536 controls (test_data$ACC 0) &lt; 3064 cases (test_data$ACC 1).
+## Area under the curve: 0.699
+```
+]
+.pull-right[
+
+```r
+# 绘制ROC曲线
+plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2) # 添加对角线
+```
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-37-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+]
 ---
 #10.5 方法比较
 ## 重复测量分析的不足

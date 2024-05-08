@@ -59,7 +59,7 @@ pacman::p_load(
   # 本节课需要用到的 packages
   here, tidyverse, ggplot2,
   # ANOVA & HLM
-  bruceR, lmerTest, lme4, broom, afex, interactions, easystats, caret, 
+  bruceR, lmerTest, lme4, broom, afex, interactions, easystats, caret, pROC,
   # 生成课件
   xaringan, xaringanthemer, xaringanExtra, knitr)
 
@@ -550,11 +550,12 @@ model_full <- lme4::glmer(data = train_data,
 model_anova <- lme4::lmer(data = train_data,
                           formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
 
-# 使用留出法评估模型性能
-pre_mod_full <- predict(model_full, newdata = test_data)
-pre_mod_anova <- predict(model_anova, newdata = test_data)
+# 使用模型进行预测
+pre_mod_full <- stats::predict(model_full, newdata = test_data, type = 'response')
+pre_mod_anova <- stats::predict(model_anova, newdata = test_data)
 
 ```
+
 
 ---
 #10.5 方法比较
@@ -580,6 +581,43 @@ print(performance_mod_anova)
 
 ]
 
+---
+#10.5 方法比较
+## 留出法
+```{r}
+# 将预测概率转换为分类结果
+predicted_classes <- ifelse(pre_mod_full > 0.5, 1, 0)
+# 计算混淆矩阵
+confusion_matrix <- caret::confusionMatrix(as.factor(predicted_classes), as.factor(test_data$ACC))
+
+```
+
+---
+#10.5 方法比较
+## 留出法
+```{r}
+# 打印混淆矩阵和性能指标
+print(confusion_matrix)
+```
+
+---
+#10.5 方法比较
+## 留出法
+.pull-left[
+```{r}
+# 计算ROC曲线和AUC
+roc_result <- pROC::roc(test_data$ACC, pre_mod_full)
+print(roc_result)
+```
+]
+.pull-right[
+```{r}
+# 绘制ROC曲线
+plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2) # 添加对角线
+```
+
+]
 ---
 #10.5 方法比较
 ## 重复测量分析的不足
