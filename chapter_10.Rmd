@@ -77,7 +77,9 @@ df.match <- bruceR::import(here::here('data','match','match_raw.csv')) %>%
                 Identity = factor(Identity, levels = c('Self','Other'), labels = c('Self','Other'))) %>%
   dplyr::filter(ACC == 0 | ACC == 1, 
                 RT >= 0.2 & RT <= 1.5,
-                Match == 'match')#筛选
+                Match == 'match',
+                (!Sub %in% c(7302,7303,7338))
+                )#筛选
 ```
 
 ```{r, echo = FALSE}
@@ -115,10 +117,7 @@ head(df.match[c(3,11:17)],5) %>% DT::datatable()
 
 .panel[.panel-name[df.match.aov]
 ```{r}
-df.match %>%
-  dplyr::group_by(Sub, Valence, Identity) %>%
-  dplyr::summarise(mean_ACC = mean(ACC)) %>%
-  dplyr::ungroup() %>%
+df.match.aov %>%
   dplyr::select(1:4) %>%
   head(5) %>% 
   DT::datatable()
@@ -200,9 +199,11 @@ $$y \sim N(\mu, \epsilon)$$
 ---
 #10.1 广义线性模型(Generalized Linear Model, GLM)
 ![](./picture/chp10/function.png)
+
 ---
 #10.1 广义线性模型(Generalized Linear Model, GLM)
 ![](./picture/chp10/function2.png)
+
 ---
 #10.1 广义线性模型(Generalized Linear Model, GLM)
 ##Generalized Linear Model, GLM
@@ -376,12 +377,12 @@ knitr::include_graphics('./picture/chp10/gamma.webp')
 #10.4 代码实操
 ##首先分析一个被试的数据
 ```{r}
-df.match.7302 <- df.match %>%
-  dplyr::filter(Sub == 7302)
-mod_7302_full <- stats::glm(data = df.match.7302,
+df.match.7304 <- df.match %>%
+  dplyr::filter(Sub == 7304)
+mod_7304_full <- stats::glm(data = df.match.7304,
                           formula = ACC ~ 1 + Identity * Valence,
                           family = binomial)
-summary(mod_7302_full) %>%
+summary(mod_7304_full) %>%
   capture.output() %>% .[c(6:11,15:19)]
 ```
 
@@ -395,9 +396,9 @@ summary(mod_7302_full) %>%
 mod_null <- lme4::glmer(data = df.match,
                    formula = ACC ~ (1 + Identity * Valence|Sub),
                    family = binomial)
-#model_performance(mod_null)
+#performance::model_performance(mod_null)
 summary(mod_null) %>%
-  capture.output()%>% .[c(7:8,14:24,27:28)]
+  capture.output()%>% .[c(7:8,14:24)]
 ```
 
 .panel[.panel-name[mod]
@@ -406,7 +407,7 @@ summary(mod_null) %>%
 mod <- lme4::glmer(data = df.match,
                      formula = ACC ~ 1 + Identity * Valence + (1|Sub), 
                      family = binomial)
-#model_performance(mod)
+#performance::model_performance(mod)
 summary(mod) %>%
   capture.output() %>% .[c(7:8,14:24,28:32)]
 ```
@@ -417,9 +418,9 @@ summary(mod) %>%
 mod_full <- lme4::glmer(data = df.match,
                           formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
                           family = binomial)
-#model_performance(mod_full)
+##performance::model_performance(mod_full)
 summary(mod_full) %>%
-  capture.output() %>% .[c(7:8,14:20,22:27,31:35)]
+  capture.output() %>% .[c(6:7,13:18,21:26,30:34)]
 ```
 
 .panel[.panel-name[模型比较anova]
@@ -439,9 +440,10 @@ performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose =
 #10.4 代码实操
 ##结果解读
 ```{r}
-summary(mod_full) %>% capture.output() %>% .[c(22:27)]
+summary(mod_full) %>% capture.output() %>% .[c(21:26)]
 ```
-```{r echo=FALSE, out.width='70%'}
+
+```{r echo=FALSE, out.width='60%'}
 knitr::include_graphics('./picture/chp10/logit2.png')
 ```
 .pull-left[
@@ -537,7 +539,7 @@ stats::anova(mod_full, mod_anova)
 set.seed(456)
 
 # 随机选择70%的数据作为训练集，剩余的30%作为测试集
-train_index <- createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
+train_index <- caret::createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
 train_data <- df.match[train_index, ]
 test_data <- df.match[-train_index, ]
 
@@ -552,13 +554,6 @@ model_anova <- lme4::lmer(data = train_data,
 pre_mod_full <- predict(model_full, newdata = test_data)
 pre_mod_anova <- predict(model_anova, newdata = test_data)
 
-# 计算模型的性能指标
-performance_mod_full <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
-                R2 = cor(test_data$ACC, pre_mod_full)^2)
-performance_mod_anova <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
-                R2 = cor(test_data$ACC, pre_mod_anova)^2)
-
-
 ```
 
 ---
@@ -566,12 +561,19 @@ performance_mod_anova <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
 ## 留出法
 .pull-left[
 ```{r}
+# 计算模型的性能指标
+performance_mod_full <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
+                R2 = cor(test_data$ACC, pre_mod_full)^2)
 # 打印性能指标
 print(performance_mod_full)
 ```
 ]
 .pull-right[
 ```{r}
+# 计算模型的性能指标
+performance_mod_anova <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
+                R2 = cor(test_data$ACC, pre_mod_anova)^2)
+
 # 打印性能指标
 print(performance_mod_anova)
 ```
