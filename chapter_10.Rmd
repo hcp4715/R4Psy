@@ -440,7 +440,7 @@ performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose =
 #10.4 代码实操
 ##结果解读
 ```{r}
-summary(mod_full) %>% capture.output() %>% .[c(21:26)]
+summary(mod_full) %>% capture.output() %>% .[c(21:27)]
 ```
 
 ```{r echo=FALSE, out.width='60%'}
