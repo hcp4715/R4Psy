@@ -328,74 +328,33 @@ knitr::include_graphics('./picture/chp10/func2.png')
 - 该求解过程比较复杂，一般由计算机自动完成
 ]
 ![](./picture/chp10/logit.png)
----
-#10.3 其他分布
-##泊松分布(Poisson distribution)
-.bigfont[
-- 在固定时间间隔或空间区域内发生某种事件的次数的概率。
-- 适用于事件以恒定平均速率独立发生的情况
-- 例如电话呼叫、网站访问、机器故障等。
-$$P(X = k) = \frac{e^{-\lambda} \lambda^k}{k!}$$
-- λ:事件在给定时间或空间内的平均发生率（或平均数量）。
-- k:可能的事件发生次数，可以是0, 1, 2, …
-]
----
-#10.3 其他分布
-##泊松分布(Poisson distribution)
 
-```{r}
-set.seed(123) # 设置随机种子以获得可重复的结果
-random_samples <- rpois(1000, lambda = 5)
-hist(random_samples,col = 'white', border = 'black',)
-```
-
----
-#10.3 其他分布
-##泊松分布(Poisson distribution)
-![](./picture/chp10/poission.png)
----
-#10.3 其他分布
-##伽马分布(Gamma distribution)
-<br>
-.bigfont[
-- 伽马分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
-- “指数分布”和“卡方分布”都是伽马分布的特例。
-$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$
-- α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
-- β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
-]
----
-#10.3 其他分布
-##伽马分布(Gamma distribution)
-```{r echo=FALSE, out.width='60%'}
-knitr::include_graphics('./picture/chp10/gamma.webp')
-```
 
 
 
 ---
-#10.4 代码实操
+#10.3 代码实操
 ##首先分析一个被试的数据
 ```{r}
 df.match.7304 <- df.match %>%
-  dplyr::filter(Sub == 7304)
-mod_7304_full <- stats::glm(data = df.match.7304,
-                          formula = ACC ~ 1 + Identity * Valence,
-                          family = binomial)
-summary(mod_7304_full) %>%
-  capture.output() %>% .[c(6:11,15:19)]
+  dplyr::filter(Sub == 7304) #选择被试7304
+mod_7304_full <- stats::glm(data = df.match.7304, #数据
+                          formula = ACC ~ 1 + Identity * Valence, #模型
+                          family = binomial) #因变量为二项分布
+summary(mod_7304_full) %>% #查看模型信息
+  capture.output() %>% .[c(6:11,15:19)] #课堂展示重要结果
 ```
 
 ---
-#10.4 代码实操
+#10.3 代码实操
 
 .panelset[
 .panel[.panel-name[mod_null]
 ```{r}
 #无固定效应
-mod_null <- lme4::glmer(data = df.match,
-                   formula = ACC ~ (1 + Identity * Valence|Sub),
-                   family = binomial)
+mod_null <- lme4::glmer(data = df.match, #数据
+                   formula = ACC ~ (1 + Identity * Valence|Sub), #模型
+                   family = binomial) #因变量二项分布
 #performance::model_performance(mod_null)
 summary(mod_null) %>%
   capture.output()%>% .[c(7:8,14:24)]
@@ -404,9 +363,9 @@ summary(mod_null) %>%
 .panel[.panel-name[mod]
 ```{r}
 #随机截距，固定斜率
-mod <- lme4::glmer(data = df.match,
-                     formula = ACC ~ 1 + Identity * Valence + (1|Sub), 
-                     family = binomial)
+mod <- lme4::glmer(data = df.match, #数据
+                     formula = ACC ~ 1 + Identity * Valence + (1|Sub), #模型
+                     family = binomial) #因变量二项分布
 #performance::model_performance(mod)
 summary(mod) %>%
   capture.output() %>% .[c(7:8,14:24,28:32)]
@@ -415,17 +374,17 @@ summary(mod) %>%
 .panel[.panel-name[model_full]
 ```{r}
 #随机截距，随机斜率
-mod_full <- lme4::glmer(data = df.match,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
-                          family = binomial)
+mod_full <- lme4::glmer(data = df.match, #数据
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), #模型
+                          family = binomial) #因变量二项分布
 ##performance::model_performance(mod_full)
 summary(mod_full) %>%
-  capture.output() %>% .[c(6:7,13:18,21:26,30:34)]
+  capture.output() %>% .[c(6:8,13:18,21:26,30:34)]
 ```
 
 .panel[.panel-name[模型比较anova]
 ```{r}
-stats::anova(mod_null, mod, mod_full)
+stats::anova(mod_null, mod, mod_full) #比较三个模型
 ```
 
 .panel[.panel-name[模型比较compare_performance]
@@ -437,7 +396,7 @@ performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose =
 ]]]]]]
 
 ---
-#10.4 代码实操
+#10.3 代码实操
 ##结果解读
 ```{r}
 summary(mod_full) %>% capture.output() %>% .[c(21:27)]
@@ -461,7 +420,7 @@ $P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }} = 0.878$
 $P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}} = 0.853$
 ]
 ---
-#10.4 代码实操
+#10.3 代码实操
 
 ```{r}
 #交互作用
@@ -472,15 +431,15 @@ interactions::cat_plot(model = mod_full,
 
 
 ---
-#10.5 方法比较
+#10.4 方法比较
 
 .panelset[
 .panel[.panel-name[anova]
 ```{r, results = 'hide'}
-res <- bruceR::MANOVA(data = df.match.aov,
+res <- bruceR::MANOVA(data = df.match.aov, #数据
        subID = 'Sub', # 被试编号
-       dv= 'mean_ACC', # dependent variable
-       within = c('Identity', 'Valence')) 
+       dv= 'mean_ACC', # 因变量
+       within = c('Identity', 'Valence')) #自变量（被试内）
 ```
 
 ```{r}
@@ -532,7 +491,7 @@ stats::anova(mod_full, mod_anova)
 ]]]]]]]
 
 ---
-#10.5 方法比较
+#10.4 方法比较
 ## 留出法
 ```{r model prediction}
 # 设置种子以确保结果的可重复性
@@ -558,7 +517,7 @@ pre_mod_anova <- stats::predict(model_anova, newdata = test_data)
 
 
 ---
-#10.5 方法比较
+#10.4 方法比较
 ## 留出法
 .pull-left[
 ```{r}
@@ -582,7 +541,7 @@ print(performance_mod_anova)
 ]
 
 ---
-#10.5 方法比较
+#10.4 方法比较
 ## 留出法
 ```{r}
 # 将预测概率转换为分类结果
@@ -593,7 +552,7 @@ confusion_matrix <- caret::confusionMatrix(as.factor(predicted_classes), as.fact
 ```
 
 ---
-#10.5 方法比较
+#10.4 方法比较
 ## 留出法
 ```{r}
 # 打印混淆矩阵和性能指标
@@ -601,7 +560,7 @@ print(confusion_matrix)
 ```
 
 ---
-#10.5 方法比较
+#10.4 方法比较
 ## 留出法
 .pull-left[
 ```{r}
@@ -619,7 +578,7 @@ abline(a = 0, b = 1, lty = 2) # 添加对角线
 
 ]
 ---
-#10.5 方法比较
+#10.4 方法比较
 ## 重复测量分析的不足
 .bigfont[
 - 会产生难以解释的结果
@@ -633,6 +592,49 @@ $$𝜎_p^2 = \frac{p(1-p)}{n}$$
 ]
 Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
 
+
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+.bigfont[
+- 在固定时间间隔或空间区域内发生某种事件的次数的概率。
+- 适用于事件以恒定平均速率独立发生的情况
+- 例如电话呼叫、网站访问、机器故障等。
+$$P(X = k) = \frac{e^{-\lambda} \lambda^k}{k!}$$
+- λ:事件在给定时间或空间内的平均发生率（或平均数量）。
+- k:可能的事件发生次数，可以是0, 1, 2, …
+]
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+
+```{r}
+set.seed(123) # 设置随机种子以获得可重复的结果
+random_samples <- rpois(1000, lambda = 5)
+hist(random_samples,col = 'white', border = 'black',)
+```
+
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+![](./picture/chp10/poission.png)
+---
+#10.5 其他分布
+##伽马分布(Gamma distribution)
+<br>
+.bigfont[
+- 伽马分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
+- “指数分布”和“卡方分布”都是伽马分布的特例。
+$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$
+- α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
+- β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
+]
+---
+#10.5 其他分布
+##伽马分布(Gamma distribution)
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./picture/chp10/gamma.webp')
+```
 
 ---
 class: center, middle
