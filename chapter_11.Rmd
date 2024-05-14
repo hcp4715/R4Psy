@@ -1,0 +1,824 @@
+---
+title: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [default, css/zh-CN.css, css/Custumed_Style.css]
+    lib_dir: libs
+    nature:
+      highlightLines: true
+      highlightStyle: github
+      countIncrementalSlides: false
+      seal: true
+      ratio: 16:9
+params:
+  output_dir: "../output"
+---
+
+class: center, middle
+<span style="font-size: 50px;">**第十一章**</span> <br>
+<span style="font-size: 50px;">回归模型(四)：中介分析</span> <br>
+<span style="font-size: 30px;">胡传鹏</span> <br>
+<span style="font-size: 20px;"> </span> <br>
+<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = 'center',
+  fig.height=6, fig.width=7.5,
+  fig.retina=2
+)
+```
+
+
+```{css extra.css, echo=FALSE}
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 24px;
+}
+.titfont{
+font-size: 60px;
+}
+.foot{
+font-size: 10px;
+}
+
+```
+
+
+## 准备工作
+```{r }
+# Packages
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+pacman::p_load(tidyverse,easystats,magrittr,
+               # 中介分析
+               lavaan, bruceR,tidySEM,
+               # 数据集
+               quartets,
+               # 绘图
+               patchwork,DiagrammeR,magick)
+options(scipen=99999,digits = 3)
+set.seed(1002)
+
+```
+
+
+
+---
+class: inverse, middle ,center
+
+
+.titfont[线性模型回顾]
+
+
+
+---
+# 0.1 线性模型及模型检验
+-   回归方程用于分析一个因变量与多个自变量之间的关系。在回归中，将一个或多个自变量视为整体，对因变量进行预测，通过OLS或ML进行拟合，解释不了的成分则被视为残差；而我们的目的在于，舍弃残差（随机部分），而获得可解释的成分。
+
+
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+.panelset[
+.panel[.panel-name[anscombe_quartet]
+
+```{r echo=FALSE}
+p1 = list()
+group = unique(quartets::anscombe_quartet$dataset)
+
+for(i in 1:4){
+  p1[[i]] = quartets::anscombe_quartet %>% 
+    dplyr::filter(dataset == group[i]) %>% 
+    ggplot(aes(x = x,y = y)) + 
+    geom_point(size = 2.5,color = 'darkblue',alpha = 0.5) + 
+    geom_smooth(method = 'lm',se = F,
+                fullrange = T,size = 0.7,
+                color = 'darkgreen',alpha = 0.5) + 
+    scale_x_continuous(limits = c(4,19)) + 
+    scale_y_continuous(limits = c(3,13)) + 
+    labs(title = group[i]) + 
+    theme_bruce()
+}
+
+(p1[[1]] + p1[[2]])/(p1[[3]] + p1[[4]])
+
+
+```
+
+.panel[.panel-name[performance]
+
+```{r Outlier, highlight=TRUE}
+lm(y ~ x,data = anscombe_quartet %>% 
+     dplyr::filter(dataset == '(3) Outlier')) %>% 
+  performance::check_model() #<<
+
+```
+
+
+
+
+]]]
+
+
+
+---
+# 0.2 多元线性模型的局限
+
+.size5[
+
+-   模型可分为三类 $^*$：描述模型、推断模型、预测模型
+
+
+-   回归兼具这三种功能：
+
+    -   使用LOESS(即geom_smooth()中method默认的参数)可以对数据进行描述；
+    
+    -   关注各个变量的(偏)回归系数的显著性可以进行统计推断(如果是离散变量的时候即等价与ANOVA)
+    
+    -   进行预测时，则不关注各个变量之间的复杂关系，因而将自变量当做整体，关注其是否能够预测因变量(拟合指标)
+    
+]
+
+--
+
+### 局限
+.size5[
+如果所有自变量都相互独立，使用多元回归是合理的；
+
+但在现实中，变量之间存在相互作用更为普遍，而多元回归值仅关注到自变量对因变量的独立作用(偏回归系数)，很难描述变量间复杂的关系。变量越多，这个问题越明显。
+
+]
+
+.footnote[
+-----------
+.footfont[
+Ref: [https://www.tmwr.org/software-modeling](https://www.tmwr.org/software-modeling)
+]
+]
+
+---
+class: inverse, middle ,center
+
+.titfont[中介分析]
+
+
+---
+# 2.1 对于“机制”的表示——“图”
+
+-   变量间关系中，我们期望验证因果关系。
+
+-   对于因果关系，可以用“图”来表示：
+
+    -   图包括两部分：节点和边。节点表示具体变量，而箭头表示变量之间的关系；
+    
+    -   对节点来说，在SEM中，观测变量用椭圆表示，潜变量用椭圆表示
+    
+    -   对于边来说，单箭头直线表示因果（当然也存在双箭头直线表示互为因果）
+
+
+-   中介分析：
+
+关注变量间因果关系，自变量如何影响因变量（即机制），如X通过M作用于Y，M为中介变量。中介的存在意味着时间上发生的先后顺序： $X \rightarrow M \rightarrow Y$ 。
+
+对于中介过程的量化包括路径分析和SEM（同时包含测量模型和结构模型），后面的介绍基于路径分析。
+
+
+```{r echo = FALSE,out.height=100}
+grViz(
+    'digraph {
+  graph [layout = dot,rankdir = LR]
+  # 定义节点
+  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
+ 
+  # 定义边
+  edge [color = black, arrowhead = vee,fontsize = 10]
+
+  X -> M
+  X -> Y
+  M -> Y
+}'
+)
+```
+
+
+---
+# 2.2 中介分析
+
+
+.pull-left[
+
+.bigfont[
+总方程:  
+
+$$Y = i_1 + cX + e_1$$
+]
+
+]
+
+.pull-right[
+```{r echo = F,out.height=200}
+DiagrammeR::grViz(
+  'digraph {
+  graph [layout = dot,rankdir = LR]
+  
+  # 定义节点
+  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.4,weight = 0.3,fontsize = 10]
+  e1[style = NULL,fillcolor = NULL,penwidth = 0,height = 0.02,width = 0.02]
+  
+  # 定义边
+  edge [color = black, arrowhead = vee]
+  {rank = same; e1; Y}
+  X -> Y [label = "c"]
+  e1 -> Y
+}'
+
+)
+```
+]
+
+
+------------------
+
+<br>
+.pull-left[
+
+.bigfont[
+分解:
+
+$$M = i_2 + aX + e_2$$
+
+$$Y = i_3 + c' + bM + e_3$$
+]
+]
+
+.pull-right[
+
+```{r echo=FALSE,out.height=200}
+grViz(
+    'digraph {
+  graph [layout = dot]
+  # 定义节点
+  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
+  e2[style = NULL,fillcolor = NULL,penwidth = 0,
+    height = 0.02,width = 0.02]
+  e3[style = NULL,fillcolor = NULL,penwidth = 0,
+    height = 0.02,width = 0.02]
+    
+  # 定义边
+  edge [color = black, arrowhead = vee,fontsize = 10]
+  # {rank = min; X; Med}
+  {rank = same; e2 Med}
+  {rank = same; X Y}
+
+  X -> Med [label = "a", len = 1]  
+  Med -> Y [label = "b", len = 1]  
+  X -> Y [label = "c′", len = 15]  
+  e3 -> Y [len = 1]  
+  e2 -> Med [len = 1] 
+}'
+)
+```
+
+]
+
+---
+# 2.3 中介效应
+
+
+.pull-left[
+<br>
+<br>
+.bigfont[
+$$ Y = i_1 + cX + e_1$$  
+
+$$ M = i_2 + aX + e_2$$  
+
+$$Y = i_3 + c'X + bM + e_3$$  
+
+]
+
+.size5[
+-   在中介模型路径图中， $X \rightarrow Y$路径上的回归系数 $c'$为直接效应
+
+
+-   中介效应：ab，或 $c - c'$。在M和Y均为连续变量的时候，有： $ab = c - c'$
+
+]]
+
+.pull-right[
+```{r echo=FALSE}
+grViz(
+    'digraph {
+  graph [layout = dot]
+  # 定义节点
+  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
+  e2[style = NULL,fillcolor = NULL,penwidth = 0,
+    height = 0.02,width = 0.02]
+  e3[style = NULL,fillcolor = NULL,penwidth = 0,
+    height = 0.02,width = 0.02]
+    
+  # 定义边
+  edge [color = black, arrowhead = vee,fontsize = 10]
+  # {rank = min; X; Med}
+  {rank = same; e2 Med}
+  {rank = same; X Y}
+
+  X -> Med [label = "a", len = 1]  
+  Med -> Y [label = "b", len = 1]  
+  X -> Y [label = "c′", len = 15]  
+  e3 -> Y [len = 1]  
+  e2 -> Med [len = 1] 
+}'
+)
+```
+
+]
+
+
+
+---
+# 2.3 中介效应的检验
+
+.size5[
+中介效应的检验方法很多，如四步法、Sobel检验等，但最常用的是通过Bootstrap 来计算中介效应的置信区间，如果其置信区间不包含0则认为该参数估计值显著：
+
+
+-   Bootstrap对原始样本进行有放回的重复抽样（允许重复抽取相同数据），抽样次数通常等于数据本身大小N相同，假设重复抽取1000次；
+
+-   然后对每次抽取的样本计算中介效应ab，就得到了1000个ab的值，据此估计中介效应ab的分布情况，进而取2.5%和97.5%个百分位点计算95%置信区间。
+
+
+]
+
+---
+# 2.4 问题提出
+
+在第六章中，我们使用Penguins数据研究了社交复杂度(CSI)是否影响核心体温(CBT)，特别是在离赤道比较远的（低温）地区(DEQ)。
+
+
+这里，我们假设：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响。具体来说：
+
+-   DEQ为自变量，CBT为因变量，CSI为中介变量。
+
+-   赤道距离(DEQ)应当正向预测社会复杂度(CSI)，而社会复杂度应当正向预测体温(CBT)，但赤道距离(DEQ)应当负向预测体温(CBT)(即遮掩效应，如下图)
+
+
+
+
+.panelset[
+.panel[.panel-name[假设]
+
+```{r echo = FALSE,out.height=300}
+
+grViz(
+    'digraph {
+  graph [layout = dot,rankdir = LR]
+  # 定义节点
+  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
+ 
+  # 定义边
+  edge [color = black, arrowhead = vee,fontsize = 10]
+
+  DEQ -> CSI[label = "+"]
+  DEQ -> CBT[label = "-"]
+  CSI -> CBT[label = "+"]
+}'
+)
+```
+
+.panel[.panel-name[数据导入]
+
+
+
+```{r}
+# 数据导入
+pg_raw = bruceR::import(here::here('data','penguin','penguin_rawdata_full.csv'))
+```
+
+.panel[.panel-name[计算CSI]
+```{r}
+# 计算CSI
+### get the column names:
+snDivNames  <- c("SNI3", "SNI5", "SNI7", "SNI9", "SNI11", "SNI13",  "SNI15", "SNI17","SNI18","SNI19","SNI21")
+extrDivName <- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
+
+### create a empty dataframe for social network diversity
+snDivData <- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(pg_raw))), snDivNames)
+
+### recode Q10 (spouse): 1-> 1; else ->0
+snDivData$SNI1_r <- car::recode(pg_raw$SNI1,"1= 1; else = 0")
+
+####re-code Q12 ~ Q30: NA -> 0; 0 -> 0; 1~10 -> 1
+snDivData[,snDivNames] <- apply(pg_raw[,snDivNames],2,function(x) {x <- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
+
+### add suffix to the colnames
+colnames(snDivData[,snDivNames]) <- paste(snDivNames,"div",  sep = "_")    
+
+### recode the social network at work by combining SNI17, SNI18
+snDivData$SNIwork   <- snDivData$SNI17 + snDivData$SNI18
+snDivData$SNIwork_r <- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
+
+### re-code extra groups, 0/NA --> 0; more than 0 --> 1
+extrDivData <- pg_raw[,extrDivName]          # Get extra data
+extrDivData$sum <- rowSums(extrDivData)    # sum the other groups
+snDivData$extrDiv_r <- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")  # recode
+
+### Get the column names for social diversity 
+snDivNames_r <- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
+                  "SNI19","SNI21","extrDiv_r")
+
+### Get the social diveristy score
+snDivData$SNdiversity <- rowSums(snDivData[,snDivNames_r])
+pg_raw$socialdiversity <- snDivData$SNdiversity
+```
+
+.panel[.panel-name[计算CBT]
+
+```{r}
+## 更改列名
+pg_raw %<>% dplyr::rename(CSI = socialdiversity)
+###  计算CBT（mean）
+# 筛选大于34.99 的被试
+
+# pg_raw %<>%
+#   filter(Temperature_t1 > 34.99 &
+#            Temperature_t2 > 34.99)
+
+# 前测后测求均值
+pg_raw %<>% 
+  dplyr::mutate(CBT = (Temperature_t1 + Temperature_t2)/2)
+```
+]]]]]
+
+---
+layout: true
+# 2.5 代码实现
+
+---
+## 2.5.1 lavaan 介绍
+
+-   lavaan包专门用于结构方程模型（SEM）的估计，如CFA、EFA、Multiple groups、Growth curves等。
+
+
+-   基本语法 $^*$：
+
+| formula type               | operator | mnemonic           |
+|----------------------------|----------|--------------------|
+| latent variable definition | `=~`     | is measured by     |
+| regression                 | `~`      | is regressed on    |
+| (residual) (co)variance    | `~~`     | is correlated with |
+| intercept                  | `~ 1`    | intercept          |
+
+
+.footnote[
+
+-----------
+.footfont[
+Ref: [https://lavaan.ugent.be/tutorial/syntax1.html](https://lavaan.ugent.be/tutorial/syntax1.html)
+]
+]
+
+
+---
+## 2.5.2 lavaan语句
+
+
+.panelset[
+.panel[.panel-name[lavaan语句]
+
+```{r lavaan}
+
+med_model <- "
+  # 直接效应(Y = cX)
+  CBT ~ c*DEQ
+  
+  # 中介路径(M)
+  CSI ~ a*DEQ
+  CBT ~ b* CSI
+  
+  # 间接效应c'
+  ab := a*b
+
+  # 总效应
+  total := c + (a*b)"
+# 注：这里数据仅以处于浪漫关系中的个体为例
+fit <- lavaan::sem(med_model,
+           data = pg_raw %>% dplyr::filter(romantic == 1),
+           bootstrap = 100 # 建议1000
+           )
+
+```
+
+.panel[.panel-name[lavaan-output]
+
+```{r}
+fit %>% summary() %>% capture.output() %>% .[21:38]
+```
+
+.panel[.panel-name[中介图-Paper]
+
+```{r echo =F}
+library(magick)
+img = image_read('picture/chp6/pr1.png')
+img %>% image_crop('870x500')
+```
+
+
+.panel[.panel-name[中介图-tidySEM]
+
+这里绘图使用的是tidySEM包，当然也有semPlot等包可以选择；tidySEM使用了tidyverse风格，并支持lavaan和Mplus等语法对SEM进行建模，可使用help(package = tidySEM)进行查看。
+
+.pull-left[
+```{r eval = F}
+## 与DiagrammeR::get_edges相冲突
+detach("package:DiagrammeR", unload = TRUE)
+## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
+lay = get_layout("", "CSI", "",
+                 "DEQ", "", "CBT", 
+                 rows = 2)
+tidySEM::graph_sem(fit,digits = 3,
+                   layout = lay)
+```
+]
+
+.pull-right[
+```{r echo = F}
+## 与DiagrammeR::get_edges相冲突
+detach("package:DiagrammeR", unload = TRUE)
+## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
+lay = get_layout("", "CSI", "",
+                 "DEQ", "", "CBT", 
+                 rows = 2)
+tidySEM::graph_sem(fit,digits = 3,
+                   layout = lay)
+```
+]
+]]]]]
+
+
+---
+## 2.5.3 PROCESS in bruceR()
+
+.panelset[
+.panel[.panel-name[bruceR::PROCESS]
+```{r}
+## RUN IN CONSOLE !!!
+pg_raw %>% dplyr::filter(romantic == 1) %>% 
+  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
+  x = 'DEQ', y = 'CBT',meds = 'CSI',nsim = 100)
+
+```
+
+
+.panel[.panel-name[bruceR::PROCESS-Regression]
+```{r echo = F}
+## RUN IN CONSOLE !!!
+pg_raw %>% dplyr::filter(romantic == 1) %>% 
+  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
+  x = 'DEQ', y = 'CBT',meds = 'CSI',nsim = 100) %>%
+  capture.output() %>% .[27:43]
+
+```
+
+.panel[.panel-name[bruceR::PROCESS-Mediation]
+
+```{r echo = F}
+pg_raw %>% dplyr::filter(romantic == 1) %>% 
+  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
+  y = 'CBT', x = 'DEQ',meds = 'CSI') %>% 
+  capture.output() %>% .[47:61]
+```
+
+]]]]
+
+
+---
+layout: false
+
+# 2.6 反思
+
+.size5[
+在刚才的分析中，是否可以认为我们验证了社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响？
+]
+
+--
+.size5[
+刚才的数据分析仍然基于回归，但回归系数本质上只是(偏)相关( $\beta = \frac{S_y}{S_x}·r$)，比如对于总效应来说：]
+
+```{r}
+tot = lm(CBT ~ DEQ,data = pg_raw %>% 
+           dplyr::filter(romantic == 1))
+# 计算相关
+r = pg_raw %>% 
+  dplyr::filter(romantic == 1) %>%  
+  correlation::correlation(select = cc("DEQ,CBT")) %>% 
+  .$r
+
+# 比较回归系数与相关
+(sd(pg_raw$CBT,na.rm = T)/sd(pg_raw$DEQ,na.rm = T))*r
+tot$coefficients
+```
+
+
+
+
+---
+# 3.1 因果推断(Casual Inference)
+.size5[
+确认变量间存在因果关系至少满足三个条件：
+
+1.时间顺序：因在果之前发生；
+
+2.共变：因果之间存在相关，原因的变化伴随结果的变化；
+
+3.排除其他可能的解释
+
+对实证研究的要求也与之类似：可控制、可重复、可测量
+
+]
+
+
+--
+
+.size5[
+在社科中被反复使用的一个因果推断框架是反事实(conterfactual)理论，即观察到与事实情况相反的情况：
+
+-   如，一个人得了感冒， 而服用感冒药以后症状得到了缓解，而对药效的归因则因为“如果当时不吃药，感冒就好不了”（即反事实）
+
+-   但反事实理论框架要求需要针对特定的个体——相同个体，当时在感冒发生时不吃药，且最后“感冒好不了”
+
+-   由于反事实的“不可观测性”，实际研究中使用随机对照的方式来解决（找到发生在相似个体身上的“反事实情况”）。
+]
+
+---
+# 3.2 因果推断与概率
+
+
+假设100万儿童中已有99%接种了疫苗，1%没有接种。
+-   接种疫苗：有1%的可能性出现不良反应，这种不良反应有1%的可能性导致儿童死亡，但不可能得天花。
+-   未接种疫苗：有2%的概率得天花。最后，假设天花的致死率是20%。
+
+要不要接种？
+--
+
+-   99万接种：则有990000\*1% = 9900的人出现不良反应，9900\*1% = 99人因不良反应死亡
+
+-   1万未接种：有10000\*2% = 200人得了天花，共200\*20% = 40人因天花死亡
+
+不接种疫苗更好？   
+
+--
+
+
+如果基于一个反事实问题：疫苗接种率为0时会如何？
+
+共100万\*2% = 20000人得天花，20000\*20% = 4000人会因天花死亡。
+
+.size5[
+“‘因果关系不能被简化为概率’这个认识来之 不易……这个概念也存在于我们的直觉中，并且根深蒂固。例如，当我们说“鲁莽驾驶会导致交通事故”或“你会因为懒惰而挂科”时，我们很清楚地知道，前者只是增加了后者发生的可能性，而非必然会让后者发生。”]
+
+
+.footnote[
+-----------
+Ref: 《The Book of Why: The New Science of Cause and Effect》
+
+]
+
+---
+# 3.3 基于实验的中介
+.pull-left[
+.size5[
+如何验证中介中的因果？
+]]
+
+.pull-right[
+```{r echo = F ,out.height=200}
+library(DiagrammeR)
+grViz(
+    'digraph {
+  graph [layout = dot,rankdir = LR]
+  # 定义节点
+  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
+ 
+  # 定义边
+  edge [color = black, arrowhead = vee,fontsize = 10]
+
+  X -> M
+  X -> Y
+  M -> Y
+}'
+)
+```
+
+]
+
+--
+
+
+.panelset[
+.panel[.panel-name[假设]
+
+假设：教材难度(X)通过焦虑(M)来影响努力程度(Y)，可以穷举出在哪些情况下我们不能验证中介中的因果：
+
+-   教材难度(X)不能影响焦虑(M)
+
+-   焦虑(M)不能影响努力程度(Y)
+
+-   教材难度(X)可以影响焦虑(M)，焦虑(M)也可以影响努力程度(Y)，由 X 的变化引起的 M 的变化并不会导致 Y 的变化（即 M 对 Y 的影响与 X 对 Y 的影响无关）。
+
+
+.panel[.panel-name[SMA]
+.size5[
+statistical mediation analyses
+]
+
+• Manipulate X
+
+• Measure M
+
+• Measure Y
+
+--
+M → Y 并没有验证
+
+.panel[.panel-name[TRE]
+
+.size5[
+two randomized experiments design.
+]
+
+实验1（验证X → M）：
+
+• Manipulate X
+
+• Measure M
+
+
+实验2：
+
+• Manipulate M
+
+• Measure Y
+
+局限：无法确认 X → M → Y，可能出现虚报
+
+
+.panel[.panel-name[ECC]
+.size5[
+moderation-of-process design
+
+]
+
+• Manipulate X
+
+• Manipulate M
+
+• Measure Y
+
+局限：由于没有测量M，所以无法确认 X → M
+
+.panel[.panel-name[MMM]
+
+.size5[
+manipulation-of-mediation-as-a-moderator design
+
+]
+
+• Manipulate X
+
+• Manipulate M
+
+• Measure M
+
+• Measure Y
+
+
+局限：当X及其操纵仅影响M的某个一方面时可能失效
+
+
+]]]]]]
+
+
+
+---
+Ref
+
+-   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
+
+-   调节验证中介：[https://doi.org/10.1016/j.jesp.2023.104507](https://doi.org/10.1016/j.jesp.2023.104507)
+
+-   内隐中介分析：[https://journals.sagepub.com/doi/10.1177/25152459211047227](https://journals.sagepub.com/doi/10.1177/25152459211047227)
+
+-   
