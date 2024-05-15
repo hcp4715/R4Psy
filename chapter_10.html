@@ -77,8 +77,8 @@ class: center, middle
 head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 ```
 
-<div id="htmlwidget-c53896cab43bc8e89e25" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c53896cab43bc8e89e25">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-db93ea4216a2eb01ef04" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-db93ea4216a2eb01ef04">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[df.match.aov]
 
@@ -89,8 +89,8 @@ df.match.aov %&gt;%
   DT::datatable()
 ```
 
-<div id="htmlwidget-90202a5922ffe101babd" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-90202a5922ffe101babd">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.986666666666667,0.833333333333333,0.821917808219178,0.71830985915493,0.932432432432432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-751dc3e27421b5184726" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-751dc3e27421b5184726">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.986666666666667,0.833333333333333,0.821917808219178,0.71830985915493,0.932432432432432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 ---
@@ -393,29 +393,30 @@ mod_full &lt;- lme4::glmer(data = df.match, #数据
                           family = binomial) #因变量二项分布
 ##performance::model_performance(mod_full)
 summary(mod_full) %&gt;%
-  capture.output() %&gt;% .[c(6:7,13:18,21:26,30:34)]
+  capture.output() %&gt;% .[c(6:8,13:18,21:26,30:34)]
 ```
 
 ```
 ##  [1] ""                                                                             
 ##  [2] "     AIC      BIC   logLik deviance df.resid "                                
-##  [3] ""                                                                             
-##  [4] "Random effects:"                                                              
-##  [5] " Groups Name                         Variance Std.Dev. Corr             "     
-##  [6] " Sub    (Intercept)                  0.971    0.986                     "     
-##  [7] "        IdentityOther                1.770    1.331    -0.79            "     
-##  [8] "        Valenceimmoral               1.028    1.014    -0.75  0.75      "     
-##  [9] ""                                                                             
-## [10] "Fixed effects:"                                                               
-## [11] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [12] "(Intercept)                     2.772      0.178   15.53 &lt; 0.0000000000000002"
-## [13] "IdentityOther                  -0.870      0.234   -3.71              0.00021"
-## [14] "Valenceimmoral                 -1.150      0.190   -6.06         0.0000000013"
-## [15] "IdentityOther                ***"                                             
-## [16] "Valenceimmoral               ***"                                             
-## [17] "IdentityOther:Valenceimmoral ***"                                             
-## [18] "---"                                                                          
-## [19] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+##  [3] "  9355.9   9459.4  -4664.0   9327.9    11996 "                                
+##  [4] ""                                                                             
+##  [5] "Random effects:"                                                              
+##  [6] " Groups Name                         Variance Std.Dev. Corr             "     
+##  [7] " Sub    (Intercept)                  0.971    0.986                     "     
+##  [8] "        IdentityOther                1.770    1.331    -0.79            "     
+##  [9] "        Valenceimmoral               1.028    1.014    -0.75  0.75      "     
+## [10] ""                                                                             
+## [11] "Fixed effects:"                                                               
+## [12] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [13] "(Intercept)                     2.772      0.178   15.53 &lt; 0.0000000000000002"
+## [14] "IdentityOther                  -0.870      0.234   -3.71              0.00021"
+## [15] "Valenceimmoral                 -1.150      0.190   -6.06         0.0000000013"
+## [16] "IdentityOther                ***"                                             
+## [17] "Valenceimmoral               ***"                                             
+## [18] "IdentityOther:Valenceimmoral ***"                                             
+## [19] "---"                                                                          
+## [20] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
 ```
 
 .panel[.panel-name[模型比较anova]
@@ -468,17 +469,17 @@ summary(mod_full) %&gt;% capture.output() %&gt;% .[c(21:27)]
 &lt;img src="./picture/chp10/logit2.png" width="60%" style="display: block; margin: auto;" /&gt;
 .pull-left[
 - MoralSelf:
-`\(P=\frac{e^{2.73}}{1+e^{2.73}} = 0.939\)`
+`\(P=\frac{e^{2.77}}{1+e^{2.77}} = 0.941\)`
 &lt;br&gt;
 - ImmoralSelf:
-`\(P=\frac{e^{2.73-1.10 }}{1+e^{2.73-1.10}} = 0.836\)`
+`\(P=\frac{e^{2.77-1.15}}{1+e^{2.77-1.15}} = 0.835\)`
 ]
 .pull-right[
 - MoralOther:
-`\(P=\frac{e^{2.73-0.76 }}{1+e^{2.73-0.76 }} = 0.878\)`
+`\(P=\frac{e^{2.77-0.87}}{1+e^{2.77-0.87}} = 0.870\)`
 &lt;br&gt;
 - ImmoralOther:
-`\(P=\frac{e^{2.73-0.76-1.10+0.89}}{1+e^{2.73-0.76-1.10+0.89}} = 0.853\)`
+`\(P=\frac{e^{2.77-0.87-1.15+0.99}}{1+e^{2.77-0.87-1.15+0.99}} = 0.851\)`
 ]
 ---
 #10.3 代码实操
