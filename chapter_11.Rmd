@@ -946,8 +946,11 @@ Ref
 
 -   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
 
--   调节验证中介：[https://doi.org/10.1016/j.jesp.2023.104507](https://doi.org/10.1016/j.jesp.2023.104507)
+-   通过实验来验证中介效应([葛枭语, 2023](https://doi.org/10.1016/j.jesp.2023.104507))
 
--   内隐中介分析：[https://journals.sagepub.com/doi/10.1177/25152459211047227](https://journals.sagepub.com/doi/10.1177/25152459211047227)
+-   内隐中介分析([Bullock et al , 2023, AMPPS](https://journals.sagepub.com/doi/10.1177/25152459211047227))
 
+-   相关不等于因果([Rohrer, 2018](https://doi.org/10.1177/2515245917745629))
+
+-   A lot of processes ([Rohrer, 2022](https://doi.org/10.1177/25152459221095827))
 ]

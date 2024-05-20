@@ -4,7 +4,11 @@
     <title>chapter_11.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
+<<<<<<< HEAD
     <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+=======
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
+>>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -62,6 +66,7 @@ pacman::p_load(tidyverse,easystats,magrittr,
                quartets,
                # 绘图
                patchwork,DiagrammeR,magick)
+<<<<<<< HEAD
 ```
 
 ```
@@ -72,6 +77,8 @@ pacman::p_load(tidyverse,easystats,magrittr,
 ```
 
 ```r
+=======
+>>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 options(scipen=99999,digits = 3)
 set.seed(1002)
 ```
@@ -512,7 +519,11 @@ fit %&gt;% summary() %&gt;% capture.output() %&gt;% .[21:38]
 
 .panel[.panel-name[中介图-Paper]
 
+<<<<<<< HEAD
 &lt;img src="picture/chp11/lav.png" style="display: block; margin: auto;" /&gt;
+=======
+&lt;img src="picture/chp11/lav.png" width="1158" style="display: block; margin: auto;" /&gt;
+>>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 
 
 .panel[.panel-name[中介图-tidySEM]
@@ -610,9 +621,15 @@ pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;%
 ## ───────────────────────────────────────────────────────────────
 ##                Effect    S.E.      z     p        [Boot 95% CI]
 ## ───────────────────────────────────────────────────────────────
+<<<<<<< HEAD
 ## Indirect (ab)   0.002 (0.000)  5.233 &lt;.001 *** [ 0.001,  0.003]
 ## Direct (c')    -0.004 (0.001) -3.718 &lt;.001 *** [-0.006, -0.002]
 ## Total (c)      -0.002 (0.001) -2.074  .038 *   [-0.004, -0.000]
+=======
+## Indirect (ab)   0.002 (0.000)  5.055 &lt;.001 *** [ 0.001,  0.003]
+## Direct (c')    -0.004 (0.001) -3.555 &lt;.001 *** [-0.006, -0.002]
+## Total (c)      -0.002 (0.001) -2.035  .042 *   [-0.004, -0.000]
+>>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 ## ───────────────────────────────────────────────────────────────
 ## Percentile Bootstrap Confidence Interval
 ## (SE and CI are estimated based on 100 Bootstrap samples.)
@@ -662,9 +679,15 @@ pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;%
 ##  [9] "───────────────────────────────────────────────────────────────"
 ## [10] "               Effect    S.E.      z     p        [Boot 95% CI]"
 ## [11] "───────────────────────────────────────────────────────────────"
+<<<<<<< HEAD
 ## [12] "Indirect (ab)   0.002 (0.000)  4.812 &lt;.001 *** [ 0.001,  0.003]"
 ## [13] "Direct (c')    -0.004 (0.001) -3.355 &lt;.001 *** [-0.006, -0.002]"
 ## [14] "Total (c)      -0.002 (0.001) -2.037  .042 *   [-0.004, -0.000]"
+=======
+## [12] "Indirect (ab)   0.002 (0.000)  5.804 &lt;.001 *** [ 0.001,  0.002]"
+## [13] "Direct (c')    -0.004 (0.001) -3.750 &lt;.001 *** [-0.006, -0.002]"
+## [14] "Total (c)      -0.002 (0.001) -2.135  .033 *   [-0.005, -0.001]"
+>>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 ## [15] "───────────────────────────────────────────────────────────────"
 ```
 
@@ -827,10 +850,20 @@ Ref
 
 -   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
 
+<<<<<<< HEAD
 -   调节验证中介：[https://doi.org/10.1016/j.jesp.2023.104507](https://doi.org/10.1016/j.jesp.2023.104507)
 
 -   内隐中介分析：[https://journals.sagepub.com/doi/10.1177/25152459211047227](https://journals.sagepub.com/doi/10.1177/25152459211047227)
 
+=======
+-   通过实验来验证中介效应([葛枭语, 2023](https://doi.org/10.1016/j.jesp.2023.104507))
+
+-   内隐中介分析([Bullock et al , 2023, AMPPS](https://journals.sagepub.com/doi/10.1177/25152459211047227))
+
+-   相关不等于因果([Rohrer, 2018](https://doi.org/10.1177/2515245917745629))
+
+-   A lot of processes ([Rohrer, 2022](https://doi.org/10.1177/25152459221095827))
+>>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 ]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
