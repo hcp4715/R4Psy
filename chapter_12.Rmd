@@ -96,7 +96,7 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
 
 pacman::p_load(
   # 本节课需要用到的 packages
-  here, tidyverse, bruceR, ggplot2, patchwork, magick,
+  here, tidyverse, reshape, bruceR, ggplot2, patchwork, magick,
   # 生成课件
   xaringan, xaringanthemer, xaringanExtra, knitr)
 
@@ -118,7 +118,7 @@ df.match.trial <- bruceR::import(here::here('data','match','match_raw.csv')) %>%
                 (!Sub %in% c(7302,7303,7338))) 
 ```
 ```{r echo=FALSE}
-head(df.match.trial, 3) %>% DT::datatable()
+head(df.match.trial, 4) %>% DT::datatable()
 ```
 
 .panel[.panel-name[subj data]
@@ -131,7 +131,7 @@ df.match.subj <- df.match.trial %>%
 ```
 
 ```{r echo=FALSE}
-head(df.match.subj, 3) %>% DT::datatable()
+head(df.match.subj, 4) %>% DT::datatable()
 ```
 
 .panel[.panel-name[sum data]
@@ -149,7 +149,7 @@ df.match.sum <- df.match.subj %>%
 ```
 
 ```{r echo=FALSE}
-head(df.match.sum, 3) %>% DT::datatable()
+head(df.match.sum, 4) %>% DT::datatable()
 ```
 
 ]]]]]
@@ -178,14 +178,14 @@ class: center, middle
 ## 什么是ggplot
 
 ```{r echo=FALSE, out.width='70%', fig.align='center'}
-include_graphics('./picture/chp12/ggplot.png')
+knitr::include_graphics('./picture/chp12/ggplot.png')
 ```
 
 ---
 # 12.1 ggplot2基础
 ## 图层叠加
 ```{r echo=FALSE, out.width='65%', fig.align='center'}
-include_graphics('./picture/chp12/gramma.png')
+knitr::include_graphics('./picture/chp12/gramma.png')
 ```
 - 和PS类似，采用图层的设计方式；
 - 图层之间的叠加是靠 “+” 实现的，越往后，其图层越在上方；
@@ -199,13 +199,13 @@ include_graphics('./picture/chp12/gramma.png')
 
 ```{r}
 # 以柱状图为例
-p1 <- ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_RT, fill = Valence)) +
-  geom_bar(stat = "Identity",
-           position = "dodge") +
-  geom_errorbar(data = df.match.sum,
-                aes(ymin = grand_mean_RT - SE_RT, ymax = grand_mean_RT + SE_RT),
-                width=.1,
-                position = position_dodge(.9))
+p1 <- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_RT, fill = Valence)) +
+  ggplot2::geom_bar(stat = "Identity",
+                    position = "dodge") +
+  ggplot2::geom_errorbar(data = df.match.sum,
+                         aes(ymin = grand_mean_RT - SE_RT, ymax = grand_mean_RT + SE_RT),
+                         width=.1,
+                         position = position_dodge(.9))
 ```
 
 ---
@@ -219,14 +219,14 @@ p1
 # 12.1 ggplot2基础
 ## 可选图层
 ```{r echo=FALSE, out.width='70%', fig.align='center'}
-include_graphics('./picture/chp12/adjust.png')
+knitr::include_graphics('./picture/chp12/adjust.png')
 ```
 
 ```{r}
 # 以柱状图为例
 p2 <- p1 +
-  scale_y_continuous(expand=c(0, 0), breaks = seq(0, 0.75, 0.25), limits = c(0, 0.75)) +
-  labs(title = "Mean RT for match trials", y = "RT") +
+  ggplot2::scale_y_continuous(expand=c(0, 0), breaks = seq(0, 0.75, 0.25), limits = c(0, 0.75)) +
+  ggplot2::labs(title = "Mean RT for match trials", y = "RT") +
   papaja::theme_apa()
 ```
 
@@ -242,16 +242,16 @@ p2
 ## 可选图层
 ## 同理可以得到ACC的图
 ```{r echo=FALSE}
-p3 <- ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_ACC, fill = Valence)) +
-  geom_bar(stat = "Identity",
-           position = "dodge") +
-  geom_errorbar(data = df.match.sum,
-                aes(ymin = grand_mean_ACC - SE_ACC,
-                    ymax = grand_mean_ACC + SE_ACC),
-                width=.1,
-                position = position_dodge(.9)) +
-  scale_y_continuous(expand=c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1)) +
-  labs(title = "Mean ACC for match trials", y = "ACC") +
+p3 <- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_ACC, fill = Valence)) +
+  ggplot2::geom_bar(stat = "Identity",
+                    position = "dodge") +
+  ggplot2::geom_errorbar(data = df.match.sum,
+                         aes(ymin = grand_mean_ACC - SE_ACC,
+                             ymax = grand_mean_ACC + SE_ACC),
+                         width=.1,
+                         position = position_dodge(.9)) +
+  ggplot2::scale_y_continuous(expand=c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1)) +
+  ggplot2::labs(title = "Mean ACC for match trials", y = "ACC") +
   papaja::theme_apa()
 
 p3
@@ -266,7 +266,7 @@ p3
 - Facet 也可以被认为是图层的一种，也是通过"+"加号叠加在原始图片上
 - 可以分为一维(facet_wrap)和二维(facet_grid)两种，图示为二维
 ```{r echo=FALSE, out.width='40%', fig.align='center'}
-include_graphics('./picture/chp12/facet.png')
+knitr::include_graphics('./picture/chp12/facet.png')
 ```
 
 .panel[.panel-name[Data preprocessing]
@@ -306,10 +306,10 @@ p4 <- df.match.sum.long %>%
                          width = .1,
                          position = position_dodge(.9)) +
   papaja::theme_apa() +
-  facet_wrap(~DV, scales = "free_y") +
-  labs(title = "Mean for match trials",
-       x="Identity",
-       y="mean")
+  ggplot2::facet_wrap(~DV, scales = "free_y") +
+  ggplot2::labs(title = "Mean for match trials",
+                x="Identity",
+                y="mean")
 ```
 
 .panel[.panel-name[figure]
@@ -334,7 +334,7 @@ p2 + p3 + plot_layout(guides = "collect")
 ## 总结
 
 ```{r echo=FALSE, out.width='80%', fig.align='center'}
-include_graphics('./picture/chp12/basic.png')
+knitr::include_graphics('./picture/chp12/basic.png')
 ```
 
 ---
@@ -342,7 +342,7 @@ include_graphics('./picture/chp12/basic.png')
 ## 总结
 
 ```{r echo=FALSE, out.width='80%', fig.align='center'}
-include_graphics('./picture/chp12/summary.png')
+knitr::include_graphics('./picture/chp12/summary.png')
 ```
 
 .footnote[
@@ -360,7 +360,7 @@ class: center, middle
 ## 问题1：可视化RT, ACC的总体趋势与个体趋势
 ## 目标图片1
 ```{r echo=FALSE, out.width='70%', fig.align='center'}
-include_graphics('./picture/chp12/target1.png')
+knitr::include_graphics('./picture/chp12/target1.png')
 ```
 
 ---
@@ -376,13 +376,12 @@ s1 <- df.match.sum %>%
                       group = Valence,
                       color = Valence)) +
   ggplot2::geom_line(position = position_dodge(0.5)) +
-  ggplot2::geom_point(size = 5,
+  ggplot2::geom_point(size = 3,
                       position = position_dodge(0.5)) + 
   ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
                              ymax=grand_mean_RT+SE_RT),
                          width=.1,
-                         position = position_dodge(0.5),
-                         ) +
+                         position = position_dodge(0.5)) +
   ggplot2::scale_y_continuous(limits = c(0.4, 0.9)) + #选取能纳入全部散点的范围
   papaja::theme_apa()
 ```
@@ -402,9 +401,9 @@ s1
 ```{r}
 s2 <- s1 +
   ggplot2::geom_point(data = df.match.subj,
-                       aes(x = Identity,
-                           y = RT_mean,
-                           group = Valence))
+                      aes(x = Identity,
+                          y = RT_mean,
+                          group = Valence))
 ```
 
 ```{r echo=FALSE, out.width='70%', fig.align='center'}
@@ -495,7 +494,7 @@ s6 <- s1 +
                      size=0.8,
                      color="#000000",
                      alpha=0.05) +
-  labs(y = "RT")
+  ggplot2::labs(y = "RT")
 ```
 
 .panel[.panel-name[figure]
@@ -519,13 +518,12 @@ s7 <- df.match.sum %>%
                       group = Valence,
                       color = Valence)) +
   ggplot2::geom_line(position = position_dodge(0.5)) +
-  ggplot2::geom_point(size = 5,
+  ggplot2::geom_point(size = 3,
                       position = position_dodge(0.5)) + 
   ggplot2::geom_errorbar(aes(ymin = grand_mean_ACC - SE_ACC,
                              ymax = grand_mean_ACC + SE_ACC),
                          width=.1,
-                         position = position_dodge(0.5),
-                         ) +
+                         position = position_dodge(0.5)) +
   ggplot2::scale_y_continuous(breaks = seq(0.4, 1.0, 0.2), limits = c(0.3, 1.0)) + #选取能纳入全部散点的范围
   papaja::theme_apa()
   
@@ -546,7 +544,7 @@ s8 <- s7 +
                      size=0.8,
                      color="#000000",
                      alpha=0.05) +
-  labs(y = "ACC")
+  ggplot2::labs(y = "ACC")
 
 s8
 ```
@@ -563,95 +561,108 @@ s9
 # 12.2 进阶——细节调整(目标图片1)
 ## 保存图片
 ```{r}
-ggsave(filename = "./picture/chp12/p1.pdf", 
-       plot = s9, 
-       width = 5, 
-       height = 4)
+# 保存为pdf更加清晰
+ggplot2::ggsave(filename = "./picture/chp12/p1.pdf", 
+                plot = s9, 
+                width = 5, 
+                height = 4)
 ```
 
 ---
 # 12.2 进阶——细节调整
 ## 问题2：可视化层级模型的random effect
 ## 目标图片2
-```{r echo = F,out.width="80%", fig.align='center'}
+```{r echo = F,out.width="100%", fig.align='center'}
 knitr::include_graphics('picture/chp12/target2.png')
 ```
 
+
 ---
 # 12.2 进阶——细节调整(目标图片2)
-## 数据预处理
+## 预测
 .panelset[
 .panel[.panel-name[data preprocessing]
 ```{r}
-# 此处选择12个被试是为了在展示的时候更清晰
+#此处选择12个被试是为了在展示的时候更清晰
 sublist <- unique(df.match.trial$Sub)
 target2 <- df.match.trial %>% 
-  filter(Sub == sublist[1:12]) %>%
-  mutate(Label = factor(Label, levels = c("moralSelf", "moralOther", "immoralSelf", "immoralOther")),
-         Sub = factor(Sub))
+  dplyr::filter(Sub == sublist[1:12]) %>%
+  dplyr::mutate(Label = factor(Label, levels = c("moralSelf", "moralOther", "immoralSelf", "immoralOther")),
+                Sub = factor(Sub))
 
-# random slope
 model <- lme4::lmer(data = target2,
-                    RT ~ Label + (Label|Sub)) 
+                    RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
 
-# 数据清洗
 target2.subj <- target2 %>%
-  dplyr::group_by(Sub, Label) %>%
+  dplyr::group_by(Sub, Identity, Valence) %>%
   dplyr::summarise(RT_mean = mean(RT)) %>%
   dplyr::ungroup()
+
+target2.subj$pred <- stats::predict(model, newdata = target2.subj)
 ```
+
 .panel[.panel-name[data visualization]
-```{r out.width="70%"}
-# 查看原始数据
-ggplot(target2.subj, aes(x = Label, y = RT_mean, group = Sub, color = Sub)) +
-  geom_point() +
-  geom_line() +
-  labs(y = "RT") +
+```{r out.width="65%"}
+# 观察数据和预测数据一起画出
+ggplot2::ggplot(data = target2.subj, aes(x = Identity, y = RT_mean, color = Valence)) +
+  ggplot2::geom_point() + # 实际的观察数据
+  ggplot2::geom_line(aes(y = pred, group = interaction(Sub,Valence))) + # 预测的数据线
+  ggplot2::labs(y = "RT") +
+  ggplot2::facet_wrap(~ Sub) + # 按照对象分面
   papaja::theme_apa()
 ```
 
+
 ]]]
+
 
 ---
 # 12.2 进阶——细节调整(目标图片2)
-## 可视化
+## 随机效应森林图
 .panelset[
-.panel[.panel-name[提取画图所需的斜率与截距]
+.panel[.panel-name[data preprocessing]
 ```{r}
-# 提取模型的截距和斜率并转为数据框
-random_slopes <- as.data.frame(t(apply(ranef(model)$Sub, 1,function(x) fixef(model) + x)))
+# 提取随机效应
+ranef_df <- as.data.frame(ranef(model)$Sub)
+ranef_df$Sub <- row.names(ranef_df)
 
-# 获得每个被试的预测线：Intercept + Slope * Label
-pre_slope <- melt(apply(random_slopes, 1, function(x) x[1] + x[2]*1:4), value.name = "RT_mean")
-
-names(pre_slope)[1:2] <- c("Label","Sub")
-
-pre_slope$Label <- as.factor(pre_slope$Label)
-levels(pre_slope$Label) <- levels(target2.subj$Label)
-
-pre_slope$Sub <- as.factor(pre_slope$Sub)
+# 将数据重新塑造为长格式,添加置信区间
+ranef_melt <- reshape::melt(ranef_df, id.vars = 'Sub')
+ranef_melt$se <- sqrt(diag(vcov(model)))
+ranef_melt$upper <- ranef_melt$value + (1.96 * ranef_melt$se)
+ranef_melt$lower <- ranef_melt$value - (1.96 * ranef_melt$se)
 ```
 
-.panel[.panel-name[figure]
-```{r}
-z1 <- ggplot(pre_slope, aes(x = Label, y = RT_mean, group = factor(Sub), color = factor(Sub))) +
-  geom_line() +
-  geom_point(data = target2.subj, aes(x = Label, y = RT_mean)) +
-  labs(y = "RT") +
-  facet_wrap(~Sub,nrow=3) +
-  papaja::theme_apa() 
+.panel[.panel-name[forest]
+```{r out.width="65%"}
+# 绘制森林图
+ggplot2::ggplot(ranef_melt, aes(x=value, y=Sub)) +
+  ggplot2::geom_point(aes(color = variable), size = 2) +
+  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), height = .2, color = 'grey') +
+  ggplot2::geom_vline(xintercept = 0, linetype = 2) +
+  ggplot2::facet_wrap(~ variable, nrow = 1) + # 按照对象分面
+  papaja::theme_apa()
 ```
 
-```{r echo=FALSE, out.width='70%', fig.align='center'}
-z1
+.panel[.panel-name[forest-certain]
+```{r out.width="65%"}
+# 某个特定随机效应的森林图
+ranef_melt %>%
+  dplyr::filter(Sub == "7305" & variable == "IdentityOther") %>%
+  ggplot2::ggplot(., aes(x=value, y=Sub)) +
+  ggplot2::geom_point(aes(color = variable), size = 5) +
+  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), height = .2, color = 'grey') +
+  ggplot2::geom_vline(xintercept = 0, linetype = 2) +
+  ggplot2::theme_bw()
 ```
 
-]]]
+
+]]]]
 
 ---
 # 12.2 进阶——细节调整
-## 问题3：使用云雨图呈现数据的分布状态
-## 云雨图将不在PPT中出现，感兴趣的同学可以自行回到rmd文件运行chunk
+## 问题3：使用雨云图(Raincloud plot)呈现数据的分布
+## 雨云图将不在PPT中出现，感兴趣的同学可以自行回到rmd文件运行chunk
 ## 目标图片3
 ```{r echo = F,out.width="80%", fig.align='center'}
 knitr::include_graphics('picture/chp12/target3.png')
@@ -686,7 +697,7 @@ names(df)[2] <- "Clean"
 p[[1]] <- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = Shape)) +
   ggplot2::geom_boxplot(color = "grey", alpha = 0.5) 
 names(p)[1] <- "Basic: Box Plot"; p[[1]]
-ggsave(filename = "./picture/chp11/plot1.png", plot = p[[1]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot1.png", plot = p[[1]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 2, eval=FALSE, include=FALSE}
@@ -694,7 +705,7 @@ ggsave(filename = "./picture/chp11/plot1.png", plot = p[[1]], height = 5, width 
 p[[2]] <- p[[1]] +
   ggplot2::labs(x = "Moral & Identity", y = "Mean of Reaction Time", title = "Boxplot of RT_mean by Shape") 
 names(p)[2] <- "Basic: Plot Labels"; p[[2]]
-ggsave(filename = "./picture/chp11/plot2.png", plot = p[[2]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot2.png", plot = p[[2]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 3, eval=FALSE, include=FALSE}
@@ -702,7 +713,7 @@ ggsave(filename = "./picture/chp11/plot2.png", plot = p[[2]], height = 5, width 
 p[[3]] <- p[[2]] +
   ggplot2::geom_point(aes(colour = Shape), position = position_jitter(width = 0.2), size = 3, alpha = 0.5) 
 names(p)[3] <- "Basic: Point Plot"; p[[3]]
-ggsave(filename = "./picture/chp11/plot3.png", plot = p[[3]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot3.png", plot = p[[3]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 4, eval=FALSE, include=FALSE}
@@ -710,7 +721,7 @@ ggsave(filename = "./picture/chp11/plot3.png", plot = p[[3]], height = 5, width 
 p[[4]] <- p[[3]] +
   ggplot2::geom_violin(aes(colour = Shape), color = "grey", width = 0.2, alpha = 0.5) 
 names(p)[4] <- "Basic: Violin Plot"; p[[4]]
-ggsave(filename = "./picture/chp11/plot4.png", plot = p[[4]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot4.png", plot = p[[4]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 5, eval=FALSE, include=FALSE}
@@ -721,7 +732,7 @@ p[[5]] <- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = Shape)) +
   ggplot2::geom_violin(aes(colour = Shape), width = 0.1, position = position_nudge(x = 0.2), color = "grey", alpha = 0.5) + # 小提琴图右移0.2各单位，宽度0.1
   ggplot2::labs(x = "Moral & Identity", y = "Mean of Reaction Time", title = "Boxplot of RT_mean by Shape")
 names(p)[5] <- "Basic: Plot Position"; p[[5]]
-ggsave(filename = "./picture/chp11/plot5.png", plot = p[[5]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot5.png", plot = p[[5]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 6, eval=FALSE, include=FALSE}
@@ -730,7 +741,7 @@ p[[6]] <- p[[5]] +
   ggdist::stat_halfeye(adjust = 0.2,justification = -0.35, alpha = 0.5, width = 0.5,   # adjust 拟合的锐度(平滑度), justification位置(与ggplot方向相反), alpha 透明度
                        .width = 0, point_colour = NA) # 如果没有 .width = 0, point_colour = NA, halfeye也会画出一些黑点
 names(p)[6] <- "Basic: Cloud Plot"; p[[6]]
-ggsave(filename = "./picture/chp11/plot6.png", plot = p[[6]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot6.png", plot = p[[6]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 7, eval=FALSE, include=FALSE}
@@ -739,7 +750,7 @@ p[[7]] <- p[[6]] # 把p[[6]]传递给p[[7]]
 p[[7]]$layers[3] <- NULL # 然后把第三个图层--violin赋值为空
 # 这样就删除了violin这个图层
 names(p)[7] <- "Basic: Delete Layers"; p[[7]]
-ggsave(filename = "./picture/chp11/plot7.png", plot = p[[7]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot7.png", plot = p[[7]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 8, eval=FALSE, include=FALSE}
@@ -750,7 +761,7 @@ p[[8]] <- ggplot2::ggplot(df[[2]], aes(x = Shape, y = RT_mean, fill = Shape,)) +
   ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) + 
   ggplot2::labs(x = "Moral & Identity", y = "Mean of Reaction Time", title = "RainCloud Plot of RT_mean by Moral & Identity")
 names(p)[8] <- "Basic: RainCloud Plot"; p[[8]]
-ggsave(filename = "./picture/chp11/plot8.png", plot = p[[8]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot8.png", plot = p[[8]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 9, eval=FALSE, include=FALSE}
@@ -758,7 +769,7 @@ ggsave(filename = "./picture/chp11/plot8.png", plot = p[[8]], height = 5, width 
 p[[9]] <- p[[8]] +
   ggplot2::coord_flip()
 names(p)[9] <- "Basic: Plot Flip"; p[[9]]
-ggsave(filename = "./picture/chp11/plot9.png", plot = p[[9]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot9.png", plot = p[[9]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 10, eval=FALSE, include=FALSE}
@@ -766,7 +777,7 @@ ggsave(filename = "./picture/chp11/plot9.png", plot = p[[9]], height = 5, width 
 p[[10]] <- p[[9]] +
   ggplot2::theme(legend.position = "none")
 names(p)[10] <- "Basic: Legend Hidden"; p[[10]]
-ggsave(filename = "./picture/chp11/plot10.png", plot = p[[10]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot10.png", plot = p[[10]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r Color Palette, include=FALSE}
@@ -782,7 +793,7 @@ rm(popsicle, sunset, glassdoor)
 p[[11]] <- p[[10]] +
   ggplot2::scale_fill_manual(values = palette$popsicle)  # 用什么颜色，体现了你的审美！
 names(p)[11] <- "Basic: Fill Color"; p[[11]]
-ggsave(filename = "./picture/chp11/plot11.png", plot = p[[11]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot11.png", plot = p[[11]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 12, eval=FALSE, warning=FALSE, include=FALSE}
@@ -790,7 +801,7 @@ ggsave(filename = "./picture/chp11/plot11.png", plot = p[[11]], height = 5, widt
 p[[12]] <- p[[11]] +
   ggplot2::theme(axis.text.y = element_text(color = palette$popsicle))
 names(p)[12] <- "Basic: Axis Text Color"; p[[12]]
-ggsave(filename = "./picture/chp11/plot12.png", plot = p[[12]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot12.png", plot = p[[12]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 13, eval=FALSE, warning=FALSE, include=FALSE}
@@ -800,7 +811,7 @@ p[[13]] <- p[[12]] +
                  axis.title = element_text(size = 14),
                  plot.title = element_text(size = 16),)
 names(p)[13] <- "Basic: Axis Text Size"; p[[13]]
-ggsave(filename = "./picture/chp11/plot13.png", plot = p[[13]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot13.png", plot = p[[13]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 14, eval=FALSE, warning=FALSE, include=FALSE}
@@ -808,7 +819,7 @@ ggsave(filename = "./picture/chp11/plot13.png", plot = p[[13]], height = 5, widt
 p[[14]] <- p[[13]] +
   ggplot2::facet_wrap(~Match)
 names(p)[14] <- "Basic: Facet"; p[[14]]
-ggsave(filename = "./picture/chp11/plot14.png", plot = p[[14]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot14.png", plot = p[[14]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 15, eval=FALSE, warning=FALSE, include=FALSE}
@@ -816,7 +827,7 @@ ggsave(filename = "./picture/chp11/plot14.png", plot = p[[14]], height = 5, widt
 p[[15]] <- p[[14]] +
   ggplot2::theme(strip.text = element_text(size = 14)) 
 names(p)[15] <- "Basic: Facet Text Size"; p[[15]]
-ggsave(filename = "./picture/chp11/plot15.png", plot = p[[15]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot15.png", plot = p[[15]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot16, eval=FALSE, warning=FALSE, include=FALSE}
@@ -832,7 +843,7 @@ p[[16]] <- ggplot2::ggplot(df[[2]],
   ggplot2::facet_wrap(~Match, ncol = 1) 
 
 names(p)[16] <- "Basic: Interactional Fill"; p[[16]]
-ggsave(filename = "./picture/chp11/plot16.png",plot = p[[16]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot16.png",plot = p[[16]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 17, eval=FALSE, warning=FALSE, include=FALSE}
@@ -840,7 +851,7 @@ ggsave(filename = "./picture/chp11/plot16.png",plot = p[[16]], height = 5, width
 p[[17]] <- p[[16]] +
   ggplot2::theme_bw()  
 names(p)[17] <- "APA theme: theme_bw"; p[[17]]
-ggsave(filename = "./picture/chp11/plot17.png", plot = p[[17]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot17.png", plot = p[[17]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 18, eval=FALSE, warning=FALSE, include=FALSE}
@@ -848,7 +859,7 @@ ggsave(filename = "./picture/chp11/plot17.png", plot = p[[17]], height = 5, widt
 p[[18]] <- p[[17]] +
   ggplot2::theme(legend.position = "right",)  # 也可以去掉图例
 names(p)[18] <- "APA theme: legend.position"; p[[18]]
-ggsave(filename = "./picture/chp11/plot18.png", plot = p[[18]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot18.png", plot = p[[18]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 19, eval=FALSE, warning=FALSE, include=FALSE}
@@ -859,7 +870,7 @@ p[[19]] <- p[[18]] +
                  strip.text = element_text(size = 12), # facet标题字体大小
                  plot.title = element_text(size = 12, face = "bold", hjust = 0.5)) # 图片整体标题字体大小 title粗体，居中
 names(p)[19] <- "APA theme: font_size"; p[[19]]
-ggsave(filename = "./picture/chp11/plot19.png", plot = p[[19]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot19.png", plot = p[[19]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 20, eval=FALSE, warning=FALSE, include=FALSE}
@@ -867,7 +878,7 @@ ggsave(filename = "./picture/chp11/plot19.png", plot = p[[19]], height = 5, widt
 p[[20]] <- p[[19]] +
   ggplot2::theme(strip.background = element_blank()) 
 names(p)[20] <- "APA theme: facet_title_background"; p[[20]]
-ggsave(filename = "./picture/chp11/plot20.png", plot = p[[20]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot20.png", plot = p[[20]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 21, eval=FALSE, warning=FALSE, include=FALSE}
@@ -875,7 +886,7 @@ ggsave(filename = "./picture/chp11/plot20.png", plot = p[[20]], height = 5, widt
 p[[21]] <- p[[20]] +
   ggplot2::theme(panel.grid.major=element_blank()) 
 names(p)[21] <- "APA theme: panel.grid.major"; p[[21]]
-ggsave(filename = "./picture/chp11/plot21.png", plot = p[[21]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot21.png", plot = p[[21]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 22, eval=FALSE, warning=FALSE, include=FALSE}
@@ -883,7 +894,7 @@ ggsave(filename = "./picture/chp11/plot21.png", plot = p[[21]], height = 5, widt
 p[[22]] <- p[[21]] +
   ggplot2::theme(panel.grid.minor=element_blank()) 
 names(p)[22] <- "APA theme: panel.grid.minor"; p[[22]]
-ggsave(filename = "./picture/chp11/plot22.png", plot = p[[22]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot22.png", plot = p[[22]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 23, eval=FALSE, warning=FALSE, include=FALSE}
@@ -891,7 +902,7 @@ ggsave(filename = "./picture/chp11/plot22.png", plot = p[[22]], height = 5, widt
 p[[23]] <- p[[22]] +
   ggplot2::theme(panel.border=element_blank()) # 也可以不去除边框，保留坐标轴
 names(p)[23] <- "APA theme: panel.border"; p[[23]]
-ggsave(filename = "./picture/chp11/plot23.png", plot = p[[23]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot23.png", plot = p[[23]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r plot 24, eval=FALSE, warning=FALSE, include=FALSE}
@@ -899,7 +910,7 @@ ggsave(filename = "./picture/chp11/plot23.png", plot = p[[23]], height = 5, widt
 p[[24]] <- p[[23]] +
   ggplot2::theme(text=element_text(family='Times New Roman')) 
 names(p)[24] <- "APA theme: font_family"; p[[24]]
-ggsave(filename = "./picture/chp11/plot24.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot24.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
 ```
 
 ```{r import font family, echo=FALSE, eval=FALSE, warning=FALSE, include=FALSE}
@@ -941,7 +952,7 @@ theme_apa <- ggplot2::theme_bw() +
 p[[24]] <- p[[16]] +
   papaja::theme_apa(base_family = "Times New Roman")
 names(p)[24] <- "APA theme: font_family"; p[[24]]
-ggsave(filename = "./picture/chp11/plot24_apa.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
+ggsave(filename = "./picture/chp12/plot24_apa.png", plot = p[[24]], height = 5, width = 10, dpi = 300)
 ```
 
 

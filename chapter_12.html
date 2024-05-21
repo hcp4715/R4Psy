@@ -29,7 +29,7 @@ class: center, middle
 &lt;span style="font-size: 50px;"&gt;数据可视化进阶&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-05-20&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-05-21&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 
@@ -96,7 +96,7 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
 
 pacman::p_load(
   # 本节课需要用到的 packages
-  here, tidyverse, bruceR, ggplot2, patchwork, magick,
+  here, tidyverse, reshape, bruceR, ggplot2, patchwork, magick,
   # 生成课件
   xaringan, xaringanthemer, xaringanExtra, knitr)
 
@@ -118,8 +118,8 @@ df.match.trial &lt;- bruceR::import(here::here('data','match','match_raw.csv')) 
                 Match == 'match',
                 (!Sub %in% c(7302,7303,7338))) 
 ```
-<div class="datatables html-widget html-fill-item" id="htmlwidget-2a908c873c8b5af77e4d" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-2a908c873c8b5af77e4d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["06-May-2018_14:45:42","06-May-2018_14:45:44","06-May-2018_14:45:50"],["Exp","Exp","Exp"],[7304,7304,7304],[25,25,25],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[3,4,7],["moralOther","immoralOther","moralSelf"],["moral","immoral","moral"],["Other","Other","Self"],["moralOther","immoralOther","moralSelf"],["match","match","match"],["n","n","n"],["n","m","n"],[1,0,1],[0.8167,0.8728,0.4951]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,17,18]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Valence","targets":11},{"name":"Identity","targets":12},{"name":"Label","targets":13},{"name":"Match","targets":14},{"name":"CorrResp","targets":15},{"name":"Resp","targets":16},{"name":"ACC","targets":17},{"name":"RT","targets":18}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-f55263ddb93de4108b1d" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f55263ddb93de4108b1d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["06-May-2018_14:45:42","06-May-2018_14:45:44","06-May-2018_14:45:50","06-May-2018_14:45:53"],["Exp","Exp","Exp","Exp"],[7304,7304,7304,7304],[25,25,25,25],["female","female","female","female"],["R","R","R","R"],[1,1,1,1],[1,1,1,1],[3,4,7,8],["moralOther","immoralOther","moralSelf","immoralOther"],["moral","immoral","moral","immoral"],["Other","Other","Self","Other"],["moralOther","immoralOther","moralSelf","immoralOther"],["match","match","match","match"],["n","n","n","n"],["n","m","n","m"],[1,0,1,0],[0.8167,0.8728,0.4951,0.8713]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,17,18]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Valence","targets":11},{"name":"Identity","targets":12},{"name":"Label","targets":13},{"name":"Match","targets":14},{"name":"CorrResp","targets":15},{"name":"Resp","targets":16},{"name":"ACC","targets":17},{"name":"RT","targets":18}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[subj data]
 
@@ -131,8 +131,8 @@ df.match.subj &lt;- df.match.trial %&gt;%
   dplyr::ungroup()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-69bdedab173dc13791f8" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-69bdedab173dc13791f8">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],[7304,7304,7304],["Self","Self","Other"],["moral","immoral","moral"],[0.552276,0.706672602739726,0.7493875],[0.9866666666666667,0.821917808219178,0.8333333333333334]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>RT_mean<\/th>\n      <th>ACC_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Identity","targets":2},{"name":"Valence","targets":3},{"name":"RT_mean","targets":4},{"name":"ACC_mean","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b19a9f216e4539f7ba81" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b19a9f216e4539f7ba81">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],[7304,7304,7304,7304],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.552276,0.706672602739726,0.7493875,0.7581492957746478],[0.9866666666666667,0.821917808219178,0.8333333333333334,0.7183098591549296]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>RT_mean<\/th>\n      <th>ACC_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Identity","targets":2},{"name":"Valence","targets":3},{"name":"RT_mean","targets":4},{"name":"ACC_mean","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[sum data]
 
@@ -149,8 +149,8 @@ df.match.sum &lt;- df.match.subj %&gt;%
   dplyr::ungroup()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-c96bf2de0b6dd429ba77" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-c96bf2de0b6dd429ba77">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[0.9161836748531289,0.8142527831854576,0.8440248488102073],[0.0980144792704873,0.1197130892135965,0.1095526473381531],[0.01549744990850493,0.01892830138249502,0.01732179446448731],[41,41,41]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean_RT<\/th>\n      <th>SD_RT<\/th>\n      <th>SE_RT<\/th>\n      <th>grand_mean_ACC<\/th>\n      <th>SD_ACC<\/th>\n      <th>SE_ACC<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean_RT","targets":3},{"name":"SD_RT","targets":4},{"name":"SE_RT","targets":5},{"name":"grand_mean_ACC","targets":6},{"name":"SD_ACC","targets":7},{"name":"SE_ACC","targets":8},{"name":"n","targets":9}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-ae86a48f52716929f35d" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-ae86a48f52716929f35d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973,0.6996564845828235],[0.06334254097700114,0.06957103122069196,0.07816459938618592,0.0695041721958588],[0.01001533511349354,0.01100014589120355,0.01235890832274734,0.01098957455117302],[0.9161836748531289,0.8142527831854576,0.8440248488102073,0.828686850170307],[0.0980144792704873,0.1197130892135965,0.1095526473381531,0.1107136186340657],[0.01549744990850493,0.01892830138249502,0.01732179446448731,0.01750536014414538],[41,41,41,41]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean_RT<\/th>\n      <th>SD_RT<\/th>\n      <th>SE_RT<\/th>\n      <th>grand_mean_ACC<\/th>\n      <th>SD_ACC<\/th>\n      <th>SE_ACC<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean_RT","targets":3},{"name":"SD_RT","targets":4},{"name":"SE_RT","targets":5},{"name":"grand_mean_ACC","targets":6},{"name":"SD_ACC","targets":7},{"name":"SE_ACC","targets":8},{"name":"n","targets":9}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]]]
 
@@ -196,13 +196,13 @@ class: center, middle
 
 ```r
 # 以柱状图为例
-p1 &lt;- ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_RT, fill = Valence)) +
-  geom_bar(stat = "Identity",
-           position = "dodge") +
-  geom_errorbar(data = df.match.sum,
-                aes(ymin = grand_mean_RT - SE_RT, ymax = grand_mean_RT + SE_RT),
-                width=.1,
-                position = position_dodge(.9))
+p1 &lt;- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_RT, fill = Valence)) +
+  ggplot2::geom_bar(stat = "Identity",
+                    position = "dodge") +
+  ggplot2::geom_errorbar(data = df.match.sum,
+                         aes(ymin = grand_mean_RT - SE_RT, ymax = grand_mean_RT + SE_RT),
+                         width=.1,
+                         position = position_dodge(.9))
 ```
 
 ---
@@ -224,8 +224,8 @@ p1
 ```r
 # 以柱状图为例
 p2 &lt;- p1 +
-  scale_y_continuous(expand=c(0, 0), breaks = seq(0, 0.75, 0.25), limits = c(0, 0.75)) +
-  labs(title = "Mean RT for match trials", y = "RT") +
+  ggplot2::scale_y_continuous(expand=c(0, 0), breaks = seq(0, 0.75, 0.25), limits = c(0, 0.75)) +
+  ggplot2::labs(title = "Mean RT for match trials", y = "RT") +
   papaja::theme_apa()
 ```
 
@@ -274,8 +274,8 @@ df.match.sum.long &lt;- rbind(df1, df2)
 rm(df1, df2)
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-5fce4073ab95493b32b2" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-5fce4073ab95493b32b2">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[41,41,41],["RT","RT","RT"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean<\/th>\n      <th>SD<\/th>\n      <th>SE<\/th>\n      <th>n<\/th>\n      <th>DV<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean","targets":3},{"name":"SD","targets":4},{"name":"SE","targets":5},{"name":"n","targets":6},{"name":"DV","targets":7}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-69ac7d0dc149aa4e0b52" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-69ac7d0dc149aa4e0b52">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[41,41,41],["RT","RT","RT"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean<\/th>\n      <th>SD<\/th>\n      <th>SE<\/th>\n      <th>n<\/th>\n      <th>DV<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean","targets":3},{"name":"SD","targets":4},{"name":"SE","targets":5},{"name":"n","targets":6},{"name":"DV","targets":7}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[figure code]
 
@@ -293,10 +293,10 @@ p4 &lt;- df.match.sum.long %&gt;%
                          width = .1,
                          position = position_dodge(.9)) +
   papaja::theme_apa() +
-  facet_wrap(~DV, scales = "free_y") +
-  labs(title = "Mean for match trials",
-       x="Identity",
-       y="mean")
+  ggplot2::facet_wrap(~DV, scales = "free_y") +
+  ggplot2::labs(title = "Mean for match trials",
+                x="Identity",
+                y="mean")
 ```
 
 .panel[.panel-name[figure]
@@ -359,13 +359,12 @@ s1 &lt;- df.match.sum %&gt;%
                       group = Valence,
                       color = Valence)) +
   ggplot2::geom_line(position = position_dodge(0.5)) +
-  ggplot2::geom_point(size = 5,
+  ggplot2::geom_point(size = 3,
                       position = position_dodge(0.5)) + 
   ggplot2::geom_errorbar(aes(ymin=grand_mean_RT-SE_RT,
                              ymax=grand_mean_RT+SE_RT),
                          width=.1,
-                         position = position_dodge(0.5),
-                         ) +
+                         position = position_dodge(0.5)) +
   ggplot2::scale_y_continuous(limits = c(0.4, 0.9)) + #选取能纳入全部散点的范围
   papaja::theme_apa()
 ```
@@ -384,9 +383,9 @@ s1 &lt;- df.match.sum %&gt;%
 ```r
 s2 &lt;- s1 +
   ggplot2::geom_point(data = df.match.subj,
-                       aes(x = Identity,
-                           y = RT_mean,
-                           group = Valence))
+                      aes(x = Identity,
+                          y = RT_mean,
+                          group = Valence))
 ```
 
 &lt;img src="chapter_12_files/figure-html/unnamed-chunk-28-1.png" width="70%" style="display: block; margin: auto;" /&gt;
@@ -474,7 +473,7 @@ s6 &lt;- s1 +
                      size=0.8,
                      color="#000000",
                      alpha=0.05) +
-  labs(y = "RT")
+  ggplot2::labs(y = "RT")
 ```
 
 .panel[.panel-name[figure]
@@ -495,96 +494,128 @@ s6 &lt;- s1 +
 ## 合并图片
 
 ```r
-s6 + s8 + plot_layout(guides = "collect")
+s9 &lt;- s6 + s8 + plot_layout(guides = "collect")
+s9
 ```
 
 &lt;img src="chapter_12_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
 
 ---
+# 12.2 进阶——细节调整(目标图片1)
+## 保存图片
+
+```r
+# 保存为pdf更加清晰
+ggplot2::ggsave(filename = "./picture/chp12/p1.pdf", 
+                plot = s9, 
+                width = 5, 
+                height = 4)
+```
+
+---
 # 12.2 进阶——细节调整
 ## 问题2：可视化层级模型的random effect
 ## 目标图片2
-&lt;img src="picture/chp12/target2.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp12/target2.png" width="100%" style="display: block; margin: auto;" /&gt;
+
 
 ---
 # 12.2 进阶——细节调整(目标图片2)
-## 数据预处理
+## 预测
 .panelset[
 .panel[.panel-name[data preprocessing]
 
 ```r
-# 此处选择12个被试是为了在展示的时候更清晰
+#此处选择12个被试是为了在展示的时候更清晰
 sublist &lt;- unique(df.match.trial$Sub)
 target2 &lt;- df.match.trial %&gt;% 
-  filter(Sub == sublist[1:12]) %&gt;%
-  mutate(Label = factor(Label, levels = c("moralSelf", "moralOther", "immoralSelf", "immoralOther")),
-         Sub = factor(Sub))
+  dplyr::filter(Sub == sublist[1:12]) %&gt;%
+  dplyr::mutate(Label = factor(Label, levels = c("moralSelf", "moralOther", "immoralSelf", "immoralOther")),
+                Sub = factor(Sub))
 
-# random slope
 model &lt;- lme4::lmer(data = target2,
-                    RT ~ Label + (Label|Sub)) 
+                    RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
 
-# 数据清洗
 target2.subj &lt;- target2 %&gt;%
-  dplyr::group_by(Sub, Label) %&gt;%
+  dplyr::group_by(Sub, Identity, Valence) %&gt;%
   dplyr::summarise(RT_mean = mean(RT)) %&gt;%
   dplyr::ungroup()
+
+target2.subj$pred &lt;- stats::predict(model, newdata = target2.subj)
 ```
+
 .panel[.panel-name[data visualization]
 
 ```r
-# 查看原始数据
-ggplot(target2.subj, aes(x = Label, y = RT_mean, group = Sub, color = Sub)) +
-  geom_point() +
-  geom_line() +
-  labs(y = "RT") +
+# 观察数据和预测数据一起画出
+ggplot2::ggplot(data = target2.subj, aes(x = Identity, y = RT_mean, color = Valence)) +
+  ggplot2::geom_point() + # 实际的观察数据
+  ggplot2::geom_line(aes(y = pred, group = interaction(Sub,Valence))) + # 预测的数据线
+  ggplot2::labs(y = "RT") +
+  ggplot2::facet_wrap(~ Sub) + # 按照对象分面
   papaja::theme_apa()
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-42-1.png" width="70%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-43-1.png" width="65%" /&gt;
+
 
 ]]]
+
 
 ---
 # 12.2 进阶——细节调整(目标图片2)
-## 可视化
+## 随机效应森林图
 .panelset[
-.panel[.panel-name[提取画图所需的斜率与截距]
+.panel[.panel-name[data preprocessing]
 
 ```r
-# 提取模型的截距和斜率并转为数据框
-random_slopes &lt;- as.data.frame(t(apply(ranef(model)$Sub, 1,function(x) fixef(model) + x)))
+# 提取随机效应
+ranef_df &lt;- as.data.frame(ranef(model)$Sub)
+ranef_df$Sub &lt;- row.names(ranef_df)
 
-# 获得每个被试的预测线：Intercept + Slope * Label
-pre_slope &lt;- melt(apply(random_slopes, 1, function(x) x[1] + x[2]*1:4), value.name = "RT_mean")
-
-names(pre_slope)[1:2] &lt;- c("Label","Sub")
-
-pre_slope$Label &lt;- as.factor(pre_slope$Label)
-levels(pre_slope$Label) &lt;- levels(target2.subj$Label)
-
-pre_slope$Sub &lt;- as.factor(pre_slope$Sub)
+# 将数据重新塑造为长格式,添加置信区间
+ranef_melt &lt;- reshape::melt(ranef_df, id.vars = 'Sub')
+ranef_melt$se &lt;- sqrt(diag(vcov(model)))
+ranef_melt$upper &lt;- ranef_melt$value + (1.96 * ranef_melt$se)
+ranef_melt$lower &lt;- ranef_melt$value - (1.96 * ranef_melt$se)
 ```
 
-.panel[.panel-name[figure]
+.panel[.panel-name[forest]
 
 ```r
-z1 &lt;- ggplot(pre_slope, aes(x = Label, y = RT_mean, group = factor(Sub), color = factor(Sub))) +
-  geom_line() +
-  geom_point(data = target2.subj, aes(x = Label, y = RT_mean)) +
-  labs(y = "RT") +
-  facet_wrap(~Sub,nrow=3) +
-  papaja::theme_apa() 
+# 绘制森林图
+ggplot2::ggplot(ranef_melt, aes(x=value, y=Sub)) +
+  ggplot2::geom_point(aes(color = variable), size = 2) +
+  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), height = .2, color = 'grey') +
+  ggplot2::geom_vline(xintercept = 0, linetype = 2) +
+  ggplot2::facet_wrap(~ variable, nrow = 1) + # 按照对象分面
+  papaja::theme_apa()
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-45-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-45-1.png" width="65%" /&gt;
 
-]]]
+.panel[.panel-name[forest-certain]
+
+```r
+# 某个特定随机效应的森林图
+ranef_melt %&gt;%
+  dplyr::filter(Sub == "7305" &amp; variable == "IdentityOther") %&gt;%
+  ggplot2::ggplot(., aes(x=value, y=Sub)) +
+  ggplot2::geom_point(aes(color = variable), size = 5) +
+  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), height = .2, color = 'grey') +
+  ggplot2::geom_vline(xintercept = 0, linetype = 2) +
+  ggplot2::theme_bw()
+```
+
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-46-1.png" width="65%" /&gt;
+
+
+]]]]
 
 ---
 # 12.2 进阶——细节调整
-## 问题3：使用云雨图呈现数据的分布状态
-## 云雨图将不在PPT中出现，感兴趣的同学可以自行回到rmd文件运行chunk
+## 问题3：使用雨云图(Raincloud plot)呈现数据的分布
+## 雨云图将不在PPT中出现，感兴趣的同学可以自行回到rmd文件运行chunk
 ## 目标图片3
 &lt;img src="picture/chp12/target3.png" width="80%" style="display: block; margin: auto;" /&gt;
 
@@ -741,7 +772,7 @@ img %&gt;% magick::image_info()
 img %&gt;% magick::image_crop('850x480+10+10')
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-52-1.png" width="80%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-53-1.png" width="80%" /&gt;
 
 .panel[.panel-name[图片剪裁与合并]
 
@@ -761,7 +792,7 @@ img3 %&gt;% print()
 ## 1 PNG     1740    488 sRGB       FALSE        0 72x72
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-53-1.png" width="80%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-54-1.png" width="80%" /&gt;
 
 .panel[.panel-name[其他]
 
