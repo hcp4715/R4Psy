@@ -117,6 +117,7 @@ df.match.trial <- bruceR::import(here::here('data','match','match_raw.csv')) %>%
                 Match == 'match',
                 (!Sub %in% c(7302,7303,7338))) 
 ```
+
 ```{r echo=FALSE}
 head(df.match.trial, 4) %>% DT::datatable()
 ```
@@ -225,7 +226,9 @@ knitr::include_graphics('./picture/chp12/adjust.png')
 ```{r}
 # 以柱状图为例
 p2 <- p1 +
-  ggplot2::scale_y_continuous(expand=c(0, 0), breaks = seq(0, 0.75, 0.25), limits = c(0, 0.75)) +
+  ggplot2::scale_y_continuous(expand=c(0, 0), 
+                              breaks = seq(0, 0.75, 0.25), 
+                              limits = c(0, 0.75)) +
   ggplot2::labs(title = "Mean RT for match trials", y = "RT") +
   papaja::theme_apa()
 ```
@@ -239,10 +242,12 @@ p2
 
 ---
 # 12.1 ggplot2基础
-## 可选图层
 ## 同理可以得到ACC的图
 ```{r echo=FALSE}
-p3 <- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_ACC, fill = Valence)) +
+p3 <- ggplot2::ggplot(data = df.match.sum, 
+                      aes(x = Identity, 
+                          y = grand_mean_ACC, 
+                          fill = Valence)) +
   ggplot2::geom_bar(stat = "Identity",
                     position = "dodge") +
   ggplot2::geom_errorbar(data = df.match.sum,
@@ -250,7 +255,9 @@ p3 <- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_ACC,
                              ymax = grand_mean_ACC + SE_ACC),
                          width=.1,
                          position = position_dodge(.9)) +
-  ggplot2::scale_y_continuous(expand=c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1)) +
+  ggplot2::scale_y_continuous(expand=c(0, 0), 
+                              breaks = seq(0, 1, 0.25), 
+                              limits = c(0, 1)) +
   ggplot2::labs(title = "Mean ACC for match trials", y = "ACC") +
   papaja::theme_apa()
 
@@ -274,17 +281,17 @@ knitr::include_graphics('./picture/chp12/facet.png')
 df1 <- df.match.sum[,-c(6, 7, 8)]%>%
   dplyr::rename(grand_mean = grand_mean_RT,
                 SD = SD_RT,
-                SE = SE_RT)
-df1$DV = "RT"
+                SE = SE_RT) %>%
+  dplyr::mutate(DV = "RT")
 
-df2 <- df.match.sum[,-c(3, 4, 5)] %>%
+df.match.sum.long <- df.match.sum[,-c(3, 4, 5)] %>%
   dplyr::rename(grand_mean = grand_mean_ACC,
                 SD = SD_ACC,
-                SE = SE_ACC)
-df2$DV = "ACC"
+                SE = SE_ACC) %>%
+  dplyr::mutate(DV = "ACC") %>%
+  rbind(df1,.)
 
-df.match.sum.long <- rbind(df1, df2)
-rm(df1, df2)
+rm(df1)
 ```
 
 ```{r echo=FALSE}
@@ -307,7 +314,7 @@ p4 <- df.match.sum.long %>%
                          position = position_dodge(.9)) +
   papaja::theme_apa() +
   ggplot2::facet_wrap(~DV, scales = "free_y") +
-  ggplot2::labs(title = "Mean for match trials",
+  ggplot2::labs(title = "Summary data for matching trials",
                 x="Identity",
                 y="mean")
 ```
@@ -572,16 +579,16 @@ ggplot2::ggsave(filename = "./picture/chp12/p1.pdf",
 # 12.2 进阶——细节调整
 ## 问题2：可视化层级模型的random effect
 ## 目标图片2
-```{r echo = F,out.width="100%", fig.align='center'}
+```{r echo = F,out.width="80%", fig.align='center'}
 knitr::include_graphics('picture/chp12/target2.png')
 ```
 
 
 ---
 # 12.2 进阶——细节调整(目标图片2)
-## 预测
+## 模型拟合
 .panelset[
-.panel[.panel-name[data preprocessing]
+.panel[.panel-name[使用一个简单的模型]
 ```{r}
 #此处选择12个被试是为了在展示的时候更清晰
 sublist <- unique(df.match.trial$Sub)
@@ -591,29 +598,11 @@ target2 <- df.match.trial %>%
                 Sub = factor(Sub))
 
 model <- lme4::lmer(data = target2,
-                    RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
+                    RT ~ Identity * Valence + (1 |Sub)) 
 
-target2.subj <- target2 %>%
-  dplyr::group_by(Sub, Identity, Valence) %>%
-  dplyr::summarise(RT_mean = mean(RT)) %>%
-  dplyr::ungroup()
-
-target2.subj$pred <- stats::predict(model, newdata = target2.subj)
 ```
 
-.panel[.panel-name[data visualization]
-```{r out.width="65%"}
-# 观察数据和预测数据一起画出
-ggplot2::ggplot(data = target2.subj, aes(x = Identity, y = RT_mean, color = Valence)) +
-  ggplot2::geom_point() + # 实际的观察数据
-  ggplot2::geom_line(aes(y = pred, group = interaction(Sub,Valence))) + # 预测的数据线
-  ggplot2::labs(y = "RT") +
-  ggplot2::facet_wrap(~ Sub) + # 按照对象分面
-  papaja::theme_apa()
-```
-
-
-]]]
+]]
 
 
 ---
@@ -621,43 +610,34 @@ ggplot2::ggplot(data = target2.subj, aes(x = Identity, y = RT_mean, color = Vale
 ## 随机效应森林图
 .panelset[
 .panel[.panel-name[data preprocessing]
+
 ```{r}
 # 提取随机效应
-ranef_df <- as.data.frame(ranef(model)$Sub)
-ranef_df$Sub <- row.names(ranef_df)
+ranef_df <- as.data.frame(ranef(model)$Sub) %>%
+  dplyr::mutate(Sub = row.names(.)) %>%
+  dplyr::rename(Intercept = "(Intercept)") %>%
+  dplyr::mutate(se = sqrt(diag(vcov(model))[1]),
+                lower = Intercept - 1.96 *se,
+                upper = Intercept + 1.96 *se) %>%
+  dplyr::arrange(Intercept) %>%
+  dplyr::mutate(Sub = factor(Sub, levels = .$Sub))
 
-# 将数据重新塑造为长格式,添加置信区间
-ranef_melt <- reshape::melt(ranef_df, id.vars = 'Sub')
-ranef_melt$se <- sqrt(diag(vcov(model)))
-ranef_melt$upper <- ranef_melt$value + (1.96 * ranef_melt$se)
-ranef_melt$lower <- ranef_melt$value - (1.96 * ranef_melt$se)
 ```
 
 .panel[.panel-name[forest]
 ```{r out.width="65%"}
 # 绘制森林图
-ggplot2::ggplot(ranef_melt, aes(x=value, y=Sub)) +
-  ggplot2::geom_point(aes(color = variable), size = 2) +
-  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), height = .2, color = 'grey') +
+ranef_df %>% 
+  ggplot2::ggplot(., aes(x=Intercept, y=Sub)) +
+  ggplot2::geom_point(size = 2) +
+  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), 
+                          height = .2, color = 'grey') +
   ggplot2::geom_vline(xintercept = 0, linetype = 2) +
-  ggplot2::facet_wrap(~ variable, nrow = 1) + # 按照对象分面
+  # ggplot2::facet_wrap(~ variable, nrow = 1) + # 按照对象分面
   papaja::theme_apa()
 ```
 
-.panel[.panel-name[forest-certain]
-```{r out.width="65%"}
-# 某个特定随机效应的森林图
-ranef_melt %>%
-  dplyr::filter(Sub == "7305" & variable == "IdentityOther") %>%
-  ggplot2::ggplot(., aes(x=value, y=Sub)) +
-  ggplot2::geom_point(aes(color = variable), size = 5) +
-  ggplot2::geom_errorbarh(aes(xmax = upper, xmin = lower), height = .2, color = 'grey') +
-  ggplot2::geom_vline(xintercept = 0, linetype = 2) +
-  ggplot2::theme_bw()
-```
-
-
-]]]]
+]]]
 
 ---
 # 12.2 进阶——细节调整
@@ -970,7 +950,9 @@ class: center, middle
 <br>
 <br>
 <br>
-ggplot生成的图像有时需要使用PPT或者PS等软件进行进一步修改（如调整分辨率、修改图片格式(jpg转png)、图片拼接与剪裁等），也有可能会遇到对于图像进行批量修改的情况，这时，我们仍然可以考虑使用R来处理。
+ggplot生成的图像有时需要进一步手动修改（如修改图片格式、图片拼接等），也可能需要批量修改。
+
+R仍然可以处理。
 
 magick包可以应用于所有常见图片操作(甚至包括PDF)，具体功能可以参考相关文档 $^*$，在这里我们仅以图片剪裁与拼接为例。
 ]]
