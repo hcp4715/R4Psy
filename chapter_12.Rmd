@@ -571,7 +571,7 @@ s9
 # 保存为pdf更加清晰
 ggplot2::ggsave(filename = "./picture/chp12/p1.pdf", 
                 plot = s9, 
-                width = 5, 
+                width = 8, 
                 height = 4)
 ```
 
