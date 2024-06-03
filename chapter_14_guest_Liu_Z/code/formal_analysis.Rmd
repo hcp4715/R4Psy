@@ -1,0 +1,205 @@
+---
+title: "Rcourse_Meta_analysis_code"
+author: "HelenLiu"
+output: html_document
+---
+### This script is used to perform effect size calculation,ramdom effect model of effect size, sensitivity analysis, test for publication bias and subgroup analysis ##
+
+# 加载所需R包
+```{r import pakage}
+# Packages
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+ 
+pacman::p_load(tidyverse, esc, metafor, meta)
+```
+
+# 单个效应量转化
+
+## 研究报告Mean, SD
+### 例：Dutke et al. (2016): … The final sample comprised n=29 students in the personalized text condition and n=30 students in the standard text condition. Standard Group (mean: 87.1 sd:7.6) and (Personalized Group: mean:87 sd:7.3).
+
+```{r}
+esc_mean_sd(
+  grp1m = 87, grp1sd = 7.3, grp1n = 29, #第一组（干预组）的Mean,SD和人数
+  grp2m = 87.1, grp2sd = 7.6, grp2n = 30, #第二组（控制组）的Mean,SD和人数
+  es.type="g")#效应量的种类
+```
+
+## 研究报告Mean, SE
+### 例：假如Dutke et al. (2016)的研究报告的SD其实是SE
+
+```{r}
+esc_mean_se( #摘录时看清楚SD和SE非常重要！
+  grp1m = 87, grp1se = 7.3, grp1n = 29,
+  grp2m = 87.1, grp2se = 7.6, grp2n = 30,
+  es.type="g")
+```
+
+## 研究报告t检验结果
+### 例：Ginns and Fraser (2010) : “The personalized group scored higher on the terminology test than the non-personalized group, t(38) = 2.98, p = 0.005, d = 0.92 [0.27–1.58].
+
+```{r}
+esc::esc_t(
+  t = 2.98, #t值
+  totaln = 40, #总被试数
+  es.type="g") #效应量的种类
+
+```
+
+## 研究报告非标准化回归系数b
+
+```{r}
+esc::esc_B(
+  b=3.3, #非标准化回归系数
+  sdy=5, #因变量的SD
+  grp1n = 100, #第一组的人数
+  grp2n = 150, #第二组的人数
+  es.type = "g") #效应量的种类
+```
+
+## 研究报告标准化回归系数beta
+
+```{r}
+esc_beta(
+  beta=0.7, #标准化回归系数
+  sdy=3, #因变量的SD
+  grp1n=100, #第一组的人数
+  grp2n=150, #第二组的人数
+  es.type = "g") #效应量的种类
+```
+
+# 综合效应量
+## 首先进行数据导入和清洗
+
+```{r import df}
+#set working directory
+cur <- getwd()
+setwd(cur)
+
+#import 
+effect_size <- read.csv("../datasheets/effect_size.csv") %>%
+  dplyr::select(
+    id, #独立研究编号
+    Information, #作者信息
+    N, #被试数
+    ES, #刚刚计算的每个研究的效应量
+    VI, #刚刚计算的，效应量的variance
+    "Cohort"   = subgroup1,
+    "Context"   = subgroup2,
+    "Materials"  = subgroup3,
+    "Valence" = subgroup4
+  ) %>%
+  dplyr::filter(row_number() %in% c(1:20)) 
+head(effect_size)
+```
+
+## 数据预处理
+
+```{r pre-process}
+#数据预处理
+df <- metafor::escalc( #转换成escalc的格式
+  measure="SMD",  
+  data = effect_size,
+  yi= ES, #指定每个研究的效应量是哪列
+  vi = VI,  #指定每个研究的效应量的variance是哪列
+  slab = paste("Study ID:", id)) #注明研究的label
+
+#按效应量大小进行排序，方便后续画图展示
+df <- df[order(df$yi), ]
+head(df)
+```
+
+## 用metafor进行效应量合并
+
+```{r metafor-combine effect size}
+res <- metafor::rma(
+  yi,#每个研究的效应量
+  vi,#每个研究的效应量的variance
+  method = "REML", #method="REML" is the default
+  data = df)
+res
+```
+
+## 用meta进行效应量合并
+
+```{r meta-combine effect size}
+res1 <- meta::metagen(
+  TE = yi,#每个研究的效应量
+  seTE = sqrt(vi), #每个研究的效应量的标准误
+  data = df,
+  studlab = df$id,
+  fixed = FALSE,
+  random = TRUE, #选择随机效应模型
+  prediction = TRUE, #是否需要CI
+  sm = "SMD")
+res1
+```
+
+## 绘制森林图
+
+```{r forest plot}
+#储存图像的代码
+# tiff(file="forest_overall.tiff",
+# res=800,width = 9000,height = 4800)#save tiff
+
+metafor::forest(
+  res,
+  slab = paste(df$Information),
+  header="Author(s) and Year" )
+  
+# dev.off() 
+#储存图像的代码 
+```
+
+# 敏感性分析-去1法
+
+```{r leave 1 out method}
+l1o <- metafor::leave1out(res)
+#可视化
+metafor::forest(
+  l1o$estimate,
+  sei = l1o$se,
+  header = "Ommited Study",
+  slab = paste(df$Information),
+  xlab = "Leave One Out Estimate",
+  refline = coef(res))
+```
+
+# 调节效应检验-亚组分析
+### 例子：我们想考察材料附带的情感价值（负性/非负性）是否会影响教学效果。
+
+```{r subgroup analysis}
+valence_subgroup <- stats::update(
+  res1,  
+  subgroup = Valence, #亚组标记 
+  random = TRUE,
+  fixed = FALSE) 
+valence_subgroup
+```
+
+# 调节效应检验-元回归 
+### 例子：我们想考察被试量(N)是否影响效应量大小。
+
+```{r meta regression}
+N_metareg <- meta::metareg(
+  res1,
+  N)
+N_metareg
+```
+# 发表偏倚检验
+## 漏斗图
+ 
+```{r funnel plot}
+metafor::funnel(
+  res,
+  xlab = "Hedges' g")
+```
+
+## Egger test
+
+```{r Egger test}
+metafor::regtest(res, model = "lm")
+```
+
