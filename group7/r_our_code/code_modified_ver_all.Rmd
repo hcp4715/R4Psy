@@ -1,0 +1,400 @@
+---
+title: "code_modified_ver"
+output: html_document
+date: "2024-06-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+
+pacman::p_load(
+  # Call the packages used in this study
+  dplyr, tidyverse, ggplot2, ggstatsplot, ggpubr, summarytools, psych, randomForest, randomForestExplainer, effectsize, car, afex, DT, papaja, ggrepel, lme4, lmerTest, MuMIn, lmtest, randomForest, randomForestExplainer, ppcor, knitr)
+
+options(scipen=99999,digits = 5)
+```
+
+---
+
+--------------------------------------Experiment 1------------------------------------------------
+
+```{r}
+#--------------------------------Import Data------------------------------------------------
+#Import Intact Line Drawings Data
+LD1 <- read.csv("data/experiment1/LD1.csv",stringsAsFactors=TRUE)
+#Import Color Photo Data
+CP <- read.csv("data/experiment1/CP.csv",,stringsAsFactors=TRUE)
+
+```
+
+```{r}
+# Function to calculate the mean and the standard deviation for each group
+data_summary <- function(data, varname, groupnames){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+```
+
+```{r}
+#Average ratings by category (raw scores)
+by(LD1$pleasure_m,factor(LD1$category),describe)
+
+#Average ratings by category (normalized scores)
+by(LD1$Z_pleasure,factor(LD1$category),describe)
+```
+
+```{r }
+#combined color and LD dataset 
+LD <- subset.data.frame(LD1, select = c("ImageName","pleasure_m"))  #Extract the "ImageName" and "pleasure_m" columns from the LD1 dataframe and store the result in a new dataframe LD
+
+CPLD <- merge(x=CP,y=LD,by.x="imageName",by.y="ImageName",all.x=TRUE) #merge the CP and LD dataframes based on the image name
+
+#Create two new columns, pleasure_LD and pleasure_CP, which contain the data from the pleasure_m column of the original LD dataframe and the mean_pleasure column of the CP dataframe
+CPLD$pleasure_LD <- CPLD$pleasure_m
+CPLD$pleasure_CP <- CPLD$mean_pleasure     
+library(reshape2)
+CPLD_long <- melt(CPLD, id.vars=c("imageName"), 
+                  measure.vars=c("pleasure_LD", "pleasure_CP"),
+                  variable.name="ImageType",
+                  value.name="response")
+```
+
+```{r}
+#add category information
+CPLD_long <- CPLD_long %>% mutate(category = case_when(
+  str_detect(.$imageName, "mountains_") ~ "mountains",
+  str_detect(.$imageName, "city_") ~ "city",
+  str_detect(.$imageName, "forests_") ~ "forests",
+  str_detect(.$imageName, "beaches_") ~ "beaches",
+  str_detect(.$imageName, "highways_") ~ "highways",
+  str_detect(.$imageName, "offices_") ~ "offices",
+  TRUE ~ as.character(.$imageName)))  # Convert the category column to a factor variable
+CPLD_long$category <- as.factor(CPLD_long$category)       
+
+```
+
+```{r }
+#add category information
+CP <- CP %>% mutate(category = case_when(
+  str_detect(.$imageName, "mountains_") ~ "mountains",
+  str_detect(.$imageName, "city_") ~ "city",
+  str_detect(.$imageName, "forests_") ~ "forests",
+  str_detect(.$imageName, "beaches_") ~ "beaches",
+  str_detect(.$imageName, "highways_") ~ "highways",
+  str_detect(.$imageName, "offices_") ~ "offices",
+  TRUE ~ as.character(.$imageName)))  # Convert the category column to a factor variable
+CP$category <- as.factor(CP$category)    
+```
+
+```{r}
+#Average ratings by category (raw scores)
+by(CP$mean_pleasure,factor(CP$category),describe)
+#Average ratings by category (normalized scores)
+by(CP$Z_pleasure,factor(CP$category),describe)
+
+```
+
+-------------------------------Fig.3 c: modified ver-------------------------------------------------
+
+
+```{r}
+# Set colors
+group.colors2 <- c("Line Drawings" = "black", "Photographs" = "mediumturquoise")
+
+# Data summary
+CPLD_summary <- data_summary(CPLD_long, varname="response", groupnames=c("ImageType", "category"))
+
+# Assign fixed x-values for each type and tweak to avoid points near the edges
+CPLD_summary$xpos <- ifelse(CPLD_summary$ImageType == "pleasure_LD", 2, 3)  # Appropriately increase x-coordinate
+
+# Convert ImageType to more understandable labels
+CPLD_summary$ImageType <- factor(CPLD_summary$ImageType, levels = c("pleasure_LD", "pleasure_CP"),
+                                 labels = c("Line Drawings", "Photographs"))
+
+# Plot
+p <- ggplot(CPLD_summary, aes(x=xpos, y=response, group=category, color=ImageType)) +
+  geom_point(size=4) +  # Draw points
+  geom_line(aes(group=category), linewidth=1, color="grey") +  # Connecting lines
+  geom_text_repel(aes(label=category, x=ifelse(ImageType == "Line Drawings", xpos - 0.3, xpos + 0.3), hjust=ifelse(ImageType == "Line Drawings", 1, 0)), vjust=0, show.legend = FALSE, nudge_y=0.1, direction="y", segment.color = NA) +  # Add category labels, adjust position
+  scale_color_manual(values=group.colors2) +
+  labs(title="Experiment 1: LD - CP", y="Mean Aesthetic Value", color=NULL) +  # Remove legend title
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank(), 
+    axis.title.x = element_blank(), 
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor.x = element_blank(),  # Clear x-axis related elements
+    panel.grid.major.y = element_blank(),  # Remove major horizontal grid lines
+    panel.grid.minor.y = element_blank(),  # Remove minor horizontal grid lines
+    axis.line.x = element_line(color = "black"),  # Add x-axis line
+    axis.line.y = element_line(color = "black")   # Add y-axis line
+  ) +
+  scale_x_continuous(breaks = c(2, 3), labels = c("Line Drawings", "Photographs"), limits = c(1, 4))  # Adjust x-axis range and labels
+  papaja::theme_apa()  # Apply APA style theme
+  
+# Display plot
+print(p)
+```
+
+---
+
+--------------------------------------Experiment 2------------------------------------------------
+
+```{r}
+#--------------------------------Import Data------------------------------------------------
+#Import half-split data
+df2 <- read.csv("data/experiment2/LD2.csv",stringsAsFactors=TRUE)
+
+```
+
+```{r}
+# Function to calculate the mean and the standard deviation for each group
+data_summary <- function(data, varname, groupnames){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+```
+
+```{r }
+#mean and sd for top and bottom-ranked contours
+by(df2$response,factor(df2$condition),describe)
+
+#make dataframe for paired samples t-test
+df2_paired <- df2 %>%
+  dplyr::select(Imageidentity,stimulusitem1,response,condition) %>%
+  dplyr::group_by(condition,Imageidentity)%>%
+  dplyr::summarize(response = mean(response))
+#paired t statistic
+t.test(df2_paired$response[df2_paired$condition=="top"],df2_paired$response[df2_paired$condition=="bottom"],paired=TRUE)
+#effect size (cohen's d)
+effsize::cohen.d(df2_paired$response, factor(df2_paired$condition))
+
+```
+
+-------------------------------Fig.4 c left: modified ver-------------------------------------------------
+
+```{r}
+# Remap condition labels
+df2_paired$condition <- dplyr::recode(df2_paired$condition, "bottom" = "Low", "top" = "High")
+
+# Set colors
+group.colors <- c("Low" = "steelblue", "High" = "darkred")
+
+# Calculate means
+low_mean <- mean(df2_paired$response[df2_paired$condition == "Low"])
+high_mean <- mean(df2_paired$response[df2_paired$condition == "High"])
+
+# Plot violin and scatter plot
+ggp <- ggplot(df2_paired, aes(x=condition, y=response, fill=condition)) +            
+  geom_violin(trim=FALSE, bw=0.2, position="identity", alpha=0.5) +
+  geom_jitter(aes(color=condition), width=0.4, height=0, alpha=0.5) +  # Add scatter points
+  geom_boxplot(width=0.1, position=position_dodge(0.9), outlier.shape=NA, alpha=0.5) +
+  scale_fill_manual(values=group.colors) +
+  scale_color_manual(values=group.colors) +
+  ylim(0, 5) +
+  theme_minimal() +
+  labs(x="Contour Condition", y="Observed Aesthetic Value") +
+  theme(legend.position="none") +  # Hide legend
+  geom_segment(aes(x=1, xend=2, y=low_mean, yend=high_mean), linetype="dashed", color="black") +  # Add dashed line
+  annotate("text", x=1.5, y=(low_mean + high_mean) / 2 + 0.2, label="*", size=6)  # Add asterisk
+  papaja::theme_apa() # Apply APA style theme
+  
+# Display plot
+print(ggp)
+
+```
+
+-------------------------------Fig.4 c right: modified ver-------------------------------------------------
+
+```{r}
+df2_mean <- df2 %>%
+  dplyr::group_by(condition, category) %>%
+  dplyr::summarise(response = mean(response), sd = sd(response), .groups = 'drop') %>%
+  mutate(
+    xpos = ifelse(condition == "bottom", 1, 3),  # Set x position for Low and High
+    text_xpos = xpos + ifelse(condition == "bottom", -0.15, 0.15)  # Adjust label x position
+  )
+
+# Create plot
+p <- ggplot(df2_mean, aes(x=xpos, y=response, group=condition)) +
+  geom_point(aes(color=condition), size=3) +
+  geom_line(aes(group=category), color="grey") +  # Draw connecting lines for categories
+  geom_text_repel(
+    aes(x=text_xpos, label=category, hjust=ifelse(condition=="bottom", 1, 0)),
+    size=3, color="black", box.padding = 0.35, point.padding = 0.5,
+    max.overlaps = Inf, direction = "y"  # Limit label adjustments to vertical direction
+  ) +
+  scale_x_continuous(name="Condition", breaks=c(1, 3), labels=c("Low", "High"), limits=c(0.5, 3.5)) +
+  scale_y_continuous(name="Observed Aesthetic Value", limits=c(1.4, 3.4)) +  # Set y-axis range from 1.4 to 3.4
+  labs(y = "Observed Aesthetic Value", title="Category and Condition") +
+  theme_minimal() +
+  scale_color_manual(values=c("bottom"="steelblue", "top"="darkred")) +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+        legend.position = "none")  # Hide legend
+  papaja::theme_apa() # Apply APA style theme
+
+# Display plot
+print(p)
+
+```
+
+```{r}
+mod_fac_slp_exp2 <- lmer(response ~ condition + DATscore + training_response+ PositiveAffectScore+
+                           NegativeAffectScore + regionpast_response + gender_response +experience_response
+                         + age_response + (1+condition|subject),
+                         na.action = "na.exclude", data = df2,REML=T)
+summary(mod_fac_slp_exp2)
+anova(mod_fac_slp_exp2)
+#confidence intervals
+#confint(mod_fac_slp_exp2)  # Running the code for confidence intervals here takes a long time, so it is labeled and hidden here
+r.squaredGLMM(mod_fac_slp_exp2)
+```
+
+---
+
+--------------------------------------Experiment 3------------------------------------------------
+
+```{r}
+#--------------------------------Import Data-----------------------------------
+#Import data
+df3 <- read.csv("data/experiment3/LD3.csv", stringsAsFactors=TRUE)
+#Import random forest model residual data
+cross <- read.csv("data/experiment3/cross.csv")
+
+```
+
+```{r}
+by(df3$response,factor(df3$cond),describe)
+
+df3 <- df3 %>% mutate(category = case_when(
+  str_detect(.$stimulusitem1, "mountains_") ~ "mountains",
+  str_detect(.$stimulusitem1, "city_") ~ "city",
+  str_detect(.$stimulusitem1, "forests_") ~ "forests",
+  str_detect(.$stimulusitem1, "beaches_") ~ "beaches",
+  str_detect(.$stimulusitem1, "highways_") ~ "highways",
+  str_detect(.$stimulusitem1, "offices_") ~ "offices",
+  TRUE ~ as.character(.$stimulusitem1)))
+df3$category <- as.factor(df3$category)
+
+by(df3$response,factor(df3$category),describe)
+
+```
+
+```{r}
+interaction.plot(df3$cond,df3$manipulation,df3$response)
+
+mod <- aov(response~cond+manipulation+cond:manipulation, data = df3)
+anova(mod)
+
+#mean comparisons
+print(TukeyHSD(mod))
+cohens_f(mod)
+```
+
+-------------------------------Fig.8 b: modified ver-------------------------------------------------
+
+```{r}
+# Create a comprehensive data frame containing upright and inverted data
+df3_combined <- df3 %>%
+  mutate(condition = ifelse(manipulation == "upright", "Upright", "Inverted")) %>%
+  dplyr::group_by(image, cond, condition) %>%
+  dplyr::summarise(mean_response = mean(response))
+
+# Ensure the correct order of Upright and Inverted
+df3_combined$condition <- factor(df3_combined$condition, levels = c("Upright", "Inverted"))
+
+# Define colors
+group.colors <- c("bottom" = "steelblue", "top" = "darkred")
+
+# Create a combined chart
+ggp_combined <- ggplot(df3_combined, aes(cond, mean_response, fill = cond)) +            
+  geom_violin(trim=FALSE, bw=0.2, position = "identity") + 
+  scale_fill_manual(values=group.colors) + 
+  ylim(0,5) +
+  theme_minimal() + 
+  geom_boxplot(width=0.1, position=position_dodge(.9), outlier.shape = NA) +
+  theme_minimal() +
+  theme(legend.position = "none") + # Remove the legend
+  xlab(NULL) + 
+  ylab("Observed Aesthetic Value") +
+  facet_wrap(~condition, scales = "free_x") +
+  theme(strip.text.x = element_text(size=12, face="bold")) # Add labels and adjust font size
+  papaja::theme_apa() # Apply APA style theme
+
+# Display plot
+print(ggp_combined)
+
+```
+
+```{r}
+mod_fac_slp_exp3 <- lmer(response ~ cond + PositiveAffectScore+ CB + IAE + AA +
+                           NegativeAffectScore + region + gender +
+                           + age + (1+cond|subject),
+                         na.action = "na.exclude", data = df3,REML=T)
+summary(mod_fac_slp_exp3)
+anova(mod_fac_slp_exp3)
+#confint(mod_fac_slp_exp3) #Running the code for confidence intervals here takes a long time, so it is labeled and hidden here
+r.squaredGLMM(mod_fac_slp_exp3)
+
+```
+
+-------------------------------Model Comparison: modified ver-------------------------------------------------
+
+```{r}
+#Y column values are the predictions from intact line drawing model in experiment 1
+#Y1 column values are predictions from experiment 2
+#Y2 column values are predictions from experiment 3
+mod <- lm(cross$Y ~ cross$Y1 + cross$Y2) #Evaluate the predictive values of Experiment 2 (Y1) and Experiment 3 (Y2) for the total variance explained by the predictive values of Experiment 1 (Y)
+mod1 <- lm(cross$Y ~ cross$Y1) #Evaluate the independent variance explained by Experiment 2 for the predictive values of Experiment 1
+mod2 <- lm(cross$Y ~ cross$Y2) #Evaluate the independent variance explained by Experiment 3 for the predictive values of Experiment 1
+
+# Calculate and display the detailed statistics of mod1
+summary(mod1)
+
+# Calculate and display the detailed statistics of mod2
+summary(mod2)
+
+# Extract the R-squared value
+r_squared_mod1 <- summary(mod1)$r.squared
+r_squared_mod2 <- summary(mod2)$r.squared
+
+# Extract the F-statistics value
+f_stat_mod1 <- summary(mod1)$fstatistic
+f_stat_mod2 <- summary(mod2)$fstatistic
+```
+
+```{r}
+#partial correlation
+r_partial <- pcor(cross)$estimate[3,c('Y1','Y2')] # The partial correlation coefficient and its square between the predicted values of Experiment 2 (Y1) and Experiment 3 (Y2)
+r_partial2<-r_partial^2
+r_partial 
+r_partial2
+```
+
+```{r}
+#semipartial correlation
+r_part <- spcor(cross)$estimate[3,c('Y1','Y2')] # The semipartial correlation coefficient and its square between the predicted values of Experiment 2 (Y1) and Experiment 3 (Y2)
+r_part^2
+```
