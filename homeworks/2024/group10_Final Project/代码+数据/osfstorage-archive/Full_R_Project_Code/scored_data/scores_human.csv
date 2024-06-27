@@ -1,0 +1,86 @@
+task,item,source,trial_state,model,score1,score2,score3,score4,score5,score6,score7,score8,score9,score10,score11,score12,score13,score14,score15,score16,score17,score18,score19,score20,score21,score22,score23,score24,score25,score26,score27,score28,score29,score30,score31,score32,score33,score34,score35,score36,score37,score38,score39,score40,score41,score42,score43,score44,score45,score46,score47,score48,score49,score50,score51
+Hinting,1,old,-,Human,0,0,0,NA,0,0,0,NA,0,0,0,0,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,0,1,0,0,1,0,0,1,1,0,1,1,1,0,1,1,0,0,NA
+Hinting,2,old,-,Human,1,1,0,NA,1,0,1,NA,1,1,1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,3,old,-,Human,1,0,0,NA,1,0,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,4,old,-,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,5,old,-,Human,1,1,1,NA,1,0,1,NA,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,0,1,1,NA
+Hinting,6,old,-,Human,1,1,0,NA,1,0,1,NA,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,NA
+Hinting,7,old,-,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,8,old,-,Human,1,1,0,NA,1,1,1,NA,1,1,1,1,0,0,1,1,0,1,0,1,1,0,1,1,1,0,1,1,0,1,1,1,0,0,1,1,0,1,0,0,0,1,1,1,0,1,0,0,1,1,NA
+Hinting,9,old,-,Human,1,1,1,NA,1,0,1,NA,1,1,0,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,NA
+Hinting,10,old,-,Human,1,1,1,NA,1,0,1,NA,1,1,1,1,0,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,NA
+Hinting,11,new,-,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,12,new,-,Human,1,0,0,NA,1,1,1,NA,1,1,1,0,0,1,1,1,0,1,0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,NA
+Hinting,13,new,-,Human,1,1,1,NA,1,0,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,14,new,-,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+Hinting,15,new,-,Human,1,1,1,NA,1,0,1,NA,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,NA
+Hinting,16,new,-,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA
+False Belief A,1,old,T,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,2,old,T,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,3,old,F,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,4,old,F,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,5,new,T,Human,0,1,1,NA,1,1,1,NA,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,6,new,F,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,7,new,FC,Human,0,1,1,NA,1,1,1,NA,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,8,new,T,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief A,9,new,FC,Human,1,1,1,NA,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+False Belief B,1,old,F,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+False Belief B,2,old,F,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+False Belief B,3,old,T,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+False Belief B,4,old,T,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+False Belief B,5,new,F,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+False Belief B,6,new,T,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+False Belief B,7,new,FC,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,0,1,0,0,1,1,0,1,0,1
+False Belief B,8,new,F,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1
+False Belief B,9,new,TC,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+Faux Pas,1,old,-,Human,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1
+Faux Pas,2,old,-,Human,1,0,1,0,0,0,1,0,1,1,1,0,0,1,1,0,1,1,0,1,1,0,0,1,0,1,0,1,1,1,1,0,0,1,0,1,1,1,1,1,1,0,0,0,1,0,1,1,1,0,1
+Faux Pas,3,old,-,Human,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1
+Faux Pas,4,old,-,Human,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1
+Faux Pas,5,old,-,Human,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Faux Pas,6,old,-,Human,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+Faux Pas,7,old,-,Human,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1
+Faux Pas,8,old,-,Human,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+Faux Pas,9,old,-,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Faux Pas,10,old,-,Human,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Faux Pas,11,new,-,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Faux Pas,12,new,-,Human,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+Faux Pas,13,new,-,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+Faux Pas,14,new,-,Human,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+Faux Pas,15,new,-,Human,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Strange Stories,1,old,-,Human,0.5,1,0.5,0.5,0.5,1,0.5,1,1,1,0,1,1,1,1,0.5,1,1,0.5,1,0.5,1,1,0.5,1,1,0,0.5,1,1,1,1,0.5,0.5,1,1,1,1,0,1,0.5,0.5,0,1,1,1,1,1,0.5,1,NA
+Strange Stories,2,old,-,Human,1,1,1,0,1,1,0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,0.5,1,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,1,1,0,1,1,1,NA
+Strange Stories,3,old,-,Human,0.5,0.5,1,0,1,0.5,0.5,0.5,1,1,1,1,0,0.5,0.5,0,0.5,0,0.5,0.5,1,0,1,0,1,0.5,0.5,0,0.5,1,1,0.5,0.5,1,0.5,0,0.5,1,0,1,0,1,1,0,1,1,0.5,1,0,1,NA
+Strange Stories,4,old,-,Human,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,1,1,0,0,0,1,1,0,1,1,1,1,0.5,1,1,1,1,0.5,1,0,1,0,1,1,0.5,1,1,0.5,1,0.5,1,NA
+Strange Stories,5,old,-,Human,1,1,1,0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,1,1,0.5,1,1,1,1,1,1,1,1,1,NA
+Strange Stories,6,old,-,Human,1,1,1,0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,1,1,1,1,1,0.5,1,1,1,NA
+Strange Stories,7,old,-,Human,1,1,1,0.5,1,0.5,1,1,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,0.5,1,1,0.5,0.5,1,1,1,1,1,0.5,1,1,1,0.5,1,0.5,0.5,0.5,0.5,1,1,0.5,1,1,0.5,1,0.5,1,NA
+Strange Stories,8,old,-,Human,1,1,1,0,1,1,0,1,1,1,1,1,1,1,0.5,1,1,1,1,1,1,0.5,1,1,1,1,0.5,1,1,1,1,1,1,1,1,0.5,1,1,0,1,0,1,0,1,1,1,1,1,0.5,1,NA
+Strange Stories,9,new,-,Human,0.5,0.5,1,0.5,1,1,0.5,1,1,1,1,1,1,1,1,0.5,1,1,0.5,1,1,0.5,1,1,1,1,1,1,1,1,1,0.5,1,1,1,0.5,1,1,0.5,1,1,1,0.5,1,1,1,1,1,0.5,1,NA
+Strange Stories,10,new,-,Human,1,0.5,1,1,1,0,0.5,1,1,1,1,0,1,0.5,1,0.5,1,1,0.5,1,1,1,1,1,1,0.5,0.5,1,1,1,1,1,1,0.5,1,1,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,1,1,1,1,0.5,NA
+Strange Stories,11,new,-,Human,1,0.5,1,0.5,1,0.5,0.5,1,1,1,1,0.5,1,0.5,1,0.5,1,1,0.5,0.5,0.5,0.5,1,0.5,1,1,0.5,0.5,1,1,1,0.5,1,0.5,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,1,1,0.5,0.5,1,NA
+Strange Stories,12,new,-,Human,0.5,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0.5,1,1,1,1,1,0.5,1,1,1,0.5,1,1,0.5,1,1,1,1,1,0.5,1,1,1,1,0.5,1,1,1,1,1,0.5,1,NA
+Irony A,1,old,I,Human,1,1,1,1,0,0,0,0,0,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,2,old,I,Human,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,3,old,N,Human,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,4,old,I,Human,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,5,old,I,Human,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,6,old,N,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,7,old,I,Human,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,8,old,N,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,9,old,N,Human,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,10,old,N,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,11,old,I,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony A,12,old,N,Human,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Irony B,1,old,N,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,2,old,N,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,3,old,I,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,0,1,0,1,1,1,NA,0,1,1,1,0,1,1,1,0,1,1,0,1,1,0,0,1
+Irony B,4,old,N,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1
+Irony B,5,old,N,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1
+Irony B,6,old,I,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,7,old,N,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,8,old,I,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,9,old,I,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,10,old,I,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,11,old,N,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,0,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Irony B,12,old,I,Human,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1

@@ -1,0 +1,561 @@
+---
+title: "ToM-LLM by ourselves"
+author: "ph"
+date: "2024-06-25"
+output: html_document
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+
+# 设置输出选项:将输出的小数点后保留两位
+options(scipen = 1, digits = 2)
+
+# 在Markdown输出中抑制警告信息
+options(warn = -1)
+
+# 禁用dplyr包的汇总提示信息
+options(dplyr.summarise.inform = FALSE)
+
+# 说明 
+# 1. scipen = 1 控制科学记数法的使用。值越大，越不倾向于使用科学记数法。例如，1234会显示为1234而不是1.234e+3
+# 2. digits = 2 设置数字输出的精度，即小数点后保留两位数字。例如，123.456会显示为123.46
+# 3. warn = -1 抑制所有警告信息，使其不显示在Markdown输出中。这可以使最终的文档更加整洁
+# 4. dplyr.summarise.inform = FALSE：在使用dplyr包中的summarise函数时，不显示提示信息。这可以减少不必要的控制台输出。
+```
+
+本文档包含分析和绘制Strachan等人（2023年）在Testing Theory of Mind in GPT Models and Humans中报告的数据的代码。它还包含主文本中引用的补充材料和分析内容。这个文件是R项目的一部分，提供了可重复的环境，包括运行代码所需的所有包和依赖项。关于R环境的所有信息都可以在`renv.lock`文件中找到。
+
+_*注意:* 报告的每个文本回复都使用字母数字代码进行标识，以便与已发布的数据集进行交叉检查。代码由任务的两字母代码（HT：提示任务；FA/FB：错误信念（对照列表A或B）；FP：Faux Pas；SS：奇怪故事；IA/IB：讽刺理解（对照列表A或B））、生成回复的模型（3：GPT-3.5；4：GPT-4；L：LLaMA2-70B；H：人类）、会话或参与者编号（LLMs为1-15；人类为1-51）以及测试中的项目索引组成。例如，HT-3.2.5表示GPT-3.5在第二次测试中对提示任务的第五项的回复。
+
+# 结果 {.tabset .unnumbered}
+
+## 全局设置和绘图美学 {.unnumbered}
+<h2>全局设置</h2>
+
+在这里定义绘图时使用的全局设置和绘图美学。
+
+加载R包和主数据文件
+
+```{r, warning=FALSE, message=FALSE}
+
+# 加载所需的R包
+library(dplyr) # 数据操作
+library(tidyr) # 数据整理
+library(ggplot2) # 绘图
+library(ggpubr) # 改善绘图美学的工具
+library(rstatix) # 在图中添加计划比较
+library(kableExtra) # 制作表格
+library(gt) # 制作表格
+library(boot)  # 引导法计算
+library(coin) # 统计测试
+
+# 加载主数据
+df_file <- read.csv(file = 'scored_data/scores_gpt.csv', header = T)
+df_human <- read.csv(file = 'scored_data/scores_human.csv', header = T)
+
+df <- df_file %>% filter(! trial_state %in% c('FC','TC')) # 移除不属于当前研究的两个错误信念试验
+dfh <- df_human %>% filter(! trial_state %in% c('FC','TC')) # 移除不属于当前研究的两个错误信念试验
+```
+
+```{r}
+# 生成一个从白色到指定基础颜色的逐渐变暗的颜色序列的函数
+#   base:   用作序列主要端的基础颜色（例如 'red'）
+#   white:  序列另一端的颜色。默认是白色，但可以更改
+#   n:      生成的颜色数量（例如 n=3 生成3个从浅到深颜色均匀分布的颜色）
+#   rev:    布尔值，决定颜色是按强度升序（F：默认）还是降序（T）排列
+createColourValues <- function(base, white = 'white', n = 4, rev = F) {
+  # 生成两种颜色之间的颜色范围
+  colour_range <- ifelse(rev, colorRampPalette(c(white,base)), colorRampPalette(c(base,white)))
+  
+  # 从颜色范围中生成颜色
+  colours <- colour_range(n+2)
+  colours <- colours[1:n+1]
+  
+  return(colours)
+}
+```
+
+全局绘图美学
+
+```{r}
+# 定义颜色调色板
+cp <- data.frame(
+  ChatGPT = '#48b5c4',
+  GPT4 = '#115f9a',
+  LLaMA = '#43b768',
+  Human = '#9158b5',
+  success = 'darkgreen',
+  mixed = 'goldenrod',
+  failure = 'firebrick',
+  FB_False = '#fe7fd2',
+  FB_True = '#7f3d69',
+  StrangeStories = 'black',
+  fauxpas = '#d7658b',
+  neutral = '#dedad2',
+  knowImp = '#54bebe'
+)
+
+# 设置全局主题为 ggpubr:: 提供的主题
+theme_set(theme_pubr())
+
+# 设置间距
+sig_spacing <- 0.05  # 显著性标记的垂直间距
+dodge_spacing <- 0.7 # 分组数据的间距
+
+# 设置大小
+fs <- 10       # 字体大小
+fs_s <- fs-1  # 字体大小（较小）
+ps <- 1       # 点大小
+lw <- 0.5     # 线宽
+
+ps_l <- ps*2  # 大点大小
+lw_l <- lw*2  # 大线宽
+
+text <- element_text(size = fs, family = 'sans')
+axis_text <- element_text(size = fs_s, family = 'sans')
+
+# 定义全局主题细节
+th <- theme(
+  legend.position = 'top',
+  legend.title = element_blank(),
+  axis.text.x = axis_text,
+  axis.text.y = axis_text,
+  axis.title.x = text,
+  axis.title.y = text,
+  strip.text.x = element_text(size = fs, family = 'sans', face = 'bold'),
+  strip.text.y = element_text(size = fs, family = 'sans', face = 'bold'),
+  strip.background = element_blank()
+)
+
+sc <- scale_colour_manual(values = c(cp$GPT4, cp$ChatGPT, cp$LLaMA))
+sf <- scale_fill_manual(values = c(cp$GPT4, cp$ChatGPT, cp$LLaMA))
+
+# 多重比较校正方法
+mccor <- 'holm'
+```
+
+```{css, include=F}
+.tabset h2 {display: none;}    /* 不显示标题 */  headers */ 
+```
+
+## 正文 {.unnumbered}
+<h2>正文</h2>
+从这里开始，你将找到正文中所有分析和绘图的代码
+
+### 心理理论测试中的表现 
+目标：
+
+* 将GPT和人类的数据整理成每个心理理论测试的每个会话/参与者的标准化分数，并将它们合并到一个数据框中
+* 比较每种条件下每个LLM与人类基线的表现
+* 绘制每种条件的置信区间 [哑铃图]
+* 比较原始项目与新项目的表现，以控制训练集的包含情况
+* 绘制每个会话/参与者的个体数据，以便直观比较人类和GPT在每个测试中的表现 [小提琴图]
+
+注意：
+* 一旦新生成的项目作为对照进行测试，后续分析将仅关注原始、已验证的项目
+* 在错误信念或讽刺任务中，不区分项目类型（即错误/正确；讽刺/非讽刺）
+
+```{r}
+# 创建一个包含GPT数据的数据框
+df1 <- df %>%
+  #filter(source == 'old') %>%     # 获取旧项目
+  mutate(
+    # 处理任务名称，去掉 ' A' 或 ' B'
+    task = apply(., 1, function(x) ifelse(grepl(' A', x['task']) | grepl(' B', x['task']), substr(x['task'], 1, nchar(x['task'])-2), x['task'])),
+    # 将 source 列转换为因子并重新命名级别
+    source = factor(source, levels = c('old','new'), labels = c('Original', 'New'))) %>% 
+  # 将宽数据转换为长数据格式
+  gather(trial, score, -task, -item, -source, -trial_state, -model) %>% 
+  # 将 trial 列转换为因子
+  mutate(trial = factor(trial, levels = sprintf('score%s',c(1:15)))) %>%
+  # 过滤掉得分为NA的行
+  filter(!is.na(score)) %>%
+  # 按任务、试验、来源和模型分组，并计算平均得分
+  group_by(task, trial, source, model) %>%
+  summarise(score = mean(score, na.rm = T))
+# 创建一个包含Humans数据的数据框
+df1h <- dfh %>%
+    #filter(source == 'old') %>%     # 获取旧项目
+    mutate(
+      # 处理任务名称，去掉 ' A' 或 ' B'
+      task = apply(., 1, function(x) ifelse(grepl(' A', x['task']) | grepl(' B', x['task']), substr(x['task'], 1, nchar(x['task'])-2), x['task'])),
+      # 将 source 列转换为因子并重新命名级别
+      source = factor(source, levels = c('old','new'), labels = c('Original', 'New'))) %>% 
+    # 将宽数据转换为长数据格式
+    gather(trial, score, -task, -item, -source, -trial_state, -model) %>% 
+    # 将 trial 列转换为因子
+    mutate(trial = factor(trial, levels = sprintf('score%s',c(1:51)))) %>%
+    # 过滤掉得分为NA的行并将得分转换为数值型
+    filter(!is.na(score)) %>% mutate(score = as.numeric(score)) %>%
+    # 按任务、试验、来源和模型分组，并计算平均得分
+    group_by(task, trial, source, model) %>%
+    summarise(score = mean(score, na.rm = T))
+
+# 为绘图和分析设置任务的显示顺序
+# 这里的最佳选项是根据人类表现的好坏进行排序，以便了解类似人类的反应模式
+order <- df1h %>% 
+  group_by(task) %>% 
+  summarise(mean = mean(score)) %>% 
+  ungroup() %>%
+  arrange(., -mean) %>% 
+  mutate(task_narrow = ifelse(grepl(' ', task), gsub(' ','\n', task), as.character(task)))
+
+# 将所有数据合并到一个数据框中
+df1 <- rbind(df1,df1h) 
+df1$model <- factor(df1$model, levels = c('Human','GPT-4','GPT-3.5','LLaMA-70B'), labels =c('Human','GPT-4','GPT-3.5','LLaMA2-70B'))
+df1$task <- factor(df1$task, levels = order$task)
+```
+
+#### 分析 - 人类与大语言模型（LLM）的配对测试
+
+下一步是使用两独立样本Wilcoxon秩和检验比较每种条件下LLM与人类基线的表现。多重比较校正在“全局设置”中定义为Holm校正。错误信念得分没有进行比较，因为其表现产生了天花板效应，变异不足以应用统计检验。
+
+```{r}
+###以下为小组成员自己编写的代码。
+# 加载必要的库
+library(dplyr)
+library(rstatix)
+
+# 假设 df1 是完整的数据框
+
+# 过滤原始数据，计算平均得分，排除“False Belief”任务
+comps <- df1 %>%
+  filter(source == 'Original') %>%
+  group_by(task, trial, model) %>%
+  summarise(score = mean(score, na.rm = TRUE)) %>%
+  filter(task != 'False Belief') %>%
+  ungroup() %>%
+  mutate(task = factor(ifelse(grepl(' ', task), gsub(' ', '\n', task), as.character(task)))) # 将任务名称中的空格替换为换行符
+
+# 对每个任务进行Wilcoxon秩和检验
+tasks <- unique(comps$task)
+models <- setdiff(unique(comps$model), "Human")
+results_list <- list()
+
+for (task in tasks) {
+  for (model in models) {
+    task_data <- comps %>% filter(task == !!task)
+    if (n_distinct(task_data$model) > 1) { # 确保模型种类大于1，才能进行检验
+      human_scores <- task_data %>% filter(model == "Human") %>% pull(score)
+      model_scores <- task_data %>% filter(model == !!model) %>% pull(score)
+      if(length(human_scores) > 0 && length(model_scores) > 0) {
+        test_result <- wilcox.test(human_scores, model_scores, exact = FALSE)
+        n1 <- length(human_scores)
+        n2 <- length(model_scores)
+        z_value <- (test_result$statistic - n1*n2/2) / sqrt(n1*n2*(n1+n2+1)/12)
+        test_df <- data.frame(
+          task = task,
+          model1 = "Human",
+          model2 = model,
+          stat = round(z_value, 2), # 保留 Z 值两位小数
+          p = formatC(test_result$p.value, format = "f", digits = 3) # 保留 p 值三位小数，不使用科学计数法
+        )
+        results_list[[paste(task, model, sep = "_")]] <- test_df
+      }
+    }
+  }
+}
+
+# 合并所有结果
+wilcox_results <- bind_rows(results_list)
+
+# 调整 p 值并添加显著性标记
+wilcox_results <- wilcox_results %>%
+  mutate(p.adj = p.adjust(as.numeric(as.character(p)), method = "holm")) %>%
+  mutate(p.adj = formatC(p.adj, format = "f", digits = 3)) %>%
+  mutate(p.adj.signif = ifelse(as.numeric(as.character(p.adj)) < .001, '***', ifelse(as.numeric(as.character(p.adj)) < .01, '**', ifelse(as.numeric(as.character(p.adj)) < .05, '*', ''))))
+
+# 显示分析结果
+print(wilcox_results)
+```
+```{r}
+###以下为原代码
+# 按任务进行模型比较
+# comps <- df1 %>%
+#  filter(source == 'Original') %>%  # 只选择原始数据
+#  group_by(task, trial, model) %>%
+#  summarise(score = mean(score, na.rm = T)) %>%  # 计算每个任务、试验和模型的平均得分
+#  filter(task != 'False Belief') %>%   # 由于大多数条件下的100%准确率，排除“错误信念”任务
+#  ungroup() %>% 
+#  rowwise() %>%
+#  mutate(task = factor(ifelse(grepl(' ', task), gsub(' ','\n', task), as.character(task)))) %>%  # 将任务名称中的空格替换为换行符
+#  ungroup() %>%
+#  group_by(task) %>%
+#  wilcox_test(score ~ model, detailed = T) %>%  # 进行Wilcoxon秩和检验
+#  filter(group1 == 'Human') %>%  # 只选择与人类比较的结果
+#  adjust_pvalue(method = mccor) %>%  # 进行多重比较校正（Holm校正）
+#  mutate(p.adj.signif = ifelse(p.adj < .001,'***',ifelse(p.adj < .01, '**', ifelse(p.adj < .05, '\\*','')))) %>%  # 添加显著性标记
+#  select(-.y., -method, -alternative, -p, -n1, -n2)  # 移除不需要的列
+```
+
+####  Fig 1A - 小提琴图
+小提琴图展示了每个测试在原始测试项目上的比例得分分布，显示了各个会话和参与者的测试得分分布。彩色点表示单个测试会话（GPT）或参与者（人类）在原始项目上的比例得分（某个测试的所有项目的平均值）。黑色点表示每种条件的平均值。
+
+```{r, out.width='100%'}
+
+# 生成图 1A: 小提琴图
+# 小提琴图展示了每个测试在原始测试项目上的比例得分分布，显示了各个LLM和人类的测试得分分布。
+
+# 确认 comps 数据框内容
+print(head(comps))
+
+# 数据预处理和转换
+f1A_violin <- df1 %>% 
+  filter(source == 'Original') %>%  # 仅选择原始数据
+  rowwise() %>% 
+  mutate(task = factor(ifelse(grepl(' ', task), gsub(' ','\n', task), as.character(task)), levels = order$task_narrow)) %>%  # 将任务名称中的空格替换为换行符，并按顺序排序
+  ungroup() %>% 
+  mutate(
+    # 添加显著性标记
+    psig = apply(., 1, function(x) {
+      sig <- comps$p.adj.signif[comps$group2 == x['model'] & comps$task == x['task']]
+      ifelse(length(sig) == 0, "", sig)
+    }),
+    psig = factor(psig, levels = c('***', '**', '*', '')),
+    # 设置y轴最大值
+    ymax = ifelse(
+      model == 'GPT-4', 1 + sig_spacing, ifelse(
+        model == 'GPT-3.5', 1 + 2 * sig_spacing, ifelse(
+          model == 'LLaMA2-70B', 1 + 3 * sig_spacing, NA))),
+    # 设置x轴位置偏移
+    xdodge = ifelse(
+      model == 'GPT-4', as.numeric(task) - dodge_spacing/4, ifelse(
+        model == 'GPT-3.5', as.numeric(task) - dodge_spacing/8, ifelse(
+          model == 'LLaMA2-70B', as.numeric(task), NA))),
+    xstart = as.numeric(task) - 3 * dodge_spacing/8,
+    xend = ifelse(psig == '', xstart, ifelse(
+      model == 'GPT-4', as.numeric(task) - dodge_spacing/8, ifelse(
+        model == 'GPT-3.5', as.numeric(task) + dodge_spacing/8, ifelse(
+          model == 'LLaMA2-70B', as.numeric(task) + 3 * dodge_spacing/8, NA))))) %>%
+  # 生成小提琴图
+  ggplot(aes(x = task, y = score, fill = model, colour = model)) + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.1, dodge.width = dodge_spacing)) +  # 添加散点图
+  geom_violin(alpha = .5, position = position_dodge(dodge_spacing), scale = 3) +  # 添加小提琴图
+  stat_summary(aes(group = model), geom = 'point', fun = median, position = position_dodge(dodge_spacing), colour = 'black') +  # 添加中位数点
+  xlab('任务') + ylab('响应得分（正确比例）') +  # 设置x轴和y轴标签
+  geom_text(aes(y = ymax + 0.01, x = xdodge, label = psig), colour = 'black') +  # 添加显著性标记
+  geom_segment(aes(x = xstart, xend = xend, y = ymax, yend = ymax)) +  # 添加显著性标记的横线
+  scale_y_continuous(limits = c(0, 1 + 4 * sig_spacing), breaks = c(0, 0.25, 0.50, 0.75, 1), labels = c(0, 0.25, 0.50, 0.75, 1)) +  # 设置y轴刻度和标签
+  theme_classic() +  # 设置主题样式
+  scale_colour_manual(values = c(cp$Human, cp$GPT4, cp$ChatGPT, cp$LLaMA)) + 
+  scale_fill_manual(values = c(cp$Human, cp$GPT4, cp$ChatGPT, cp$LLaMA)) +  # 设置颜色
+  theme(plot.margin = unit(c(2, 1, 1, 1), "cm"))  # 增加图形上方的空间
+
+# 打印图形
+print(f1A_violin)
+```
+
+#### 分析 - 原始项目与新项目
+测试中的天花板效应可能表明这些项目存在于这些LLM训练的原始数据集中（讽刺除外，因为在测试时该数据集未公开）。为了控制这一点，我们进行了一系列校正的Wilcoxon检验，比较模型在每个测试中的原始项目与新项目的表现，看看它们是否在新项目上的表现显著更差。我们再次排除了错误信念条件，因为两种模型的表现都非常完美。
+
+
+```{r}
+###以下为小组成员自己编写的代码。原代码未计算r值与95%CI。
+# 安装并加载所需的包
+# install.packages(c("rstatix", "dplyr", "gt", "boot", "coin"))
+library(rstatix)
+library(dplyr)
+library(gt)
+library(boot)
+library(coin)
+
+# 定义计算r值的函数
+calculate_r <- function(z, n) {
+  return(z / sqrt(n))
+}
+
+# 定义引导函数来计算效果大小的置信区间
+boot_r <- function(data, indices) {
+  d <- data[indices, ]
+  test <- wilcox_test(score ~ source, data = d, distribution = "approximate")
+  z <- statistic(test)
+  n <- nrow(d)
+  return(calculate_r(z, n))
+}
+
+# 比较不同模型在原始项目和新项目上的表现
+comps_new <- df1 %>%
+  filter(task != 'Irony' & task != 'False Belief') %>%
+  group_by(task, model) %>%
+  do({
+    test <- wilcox_test(score ~ source, data = ., distribution = "approximate")
+    z <- statistic(test)
+    p <- pvalue(test)
+    n1 <- sum(.$source == unique(.$source)[1])
+    n2 <- sum(.$source == unique(.$source)[2])
+    data.frame(
+      estimate = median(.$score[.$source == unique(.$source)[1]]) - median(.$score[.$source == unique(.$source)[2]]),
+      statistic = as.numeric(z),
+      p.value = as.numeric(p),
+      n1 = n1,
+      n2 = n2,
+      r = calculate_r(as.numeric(z), n1 + n2)
+    )
+  }) %>%
+  mutate(p.adj = p.adjust(p.value, method = "holm")) %>%  # 使用 Holm 校正方法进行多重比较校正
+  mutate(p.adj.signif = case_when(
+    p.adj < .001 ~ '***',
+    p.adj < .01 ~ '**',
+    p.adj < .05 ~ '*',
+    TRUE ~ ''
+  ))
+
+# 计算置信区间
+ci_results <- comps_new %>%
+  group_by(task, model) %>%
+  do({
+    boot_result <- boot(data = df1[df1$task == unique(.$task) & df1$model == unique(.$model), ], statistic = boot_r, R = 1000)
+    ci <- boot.ci(boot_result, type = "perc")
+    data.frame(
+      ci_lower = ci$percent[4],
+      ci_upper = ci$percent[5]
+    )
+  })
+
+# 将置信区间结果合并回原始数据框
+comps_new <- comps_new %>%
+  left_join(ci_results, by = c("task", "model"))
+
+# 打印比较结果表，移除不需要的列并进行表格美化
+comps_new %>%
+  select(task, model, estimate, statistic, p.value, p.adj, p.adj.signif, r, ci_lower, ci_upper) %>%
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "white"),
+      cell_borders(sides = "all", color = "black", weight = px(1))
+    ),
+    locations = cells_body()
+  ) %>%
+  tab_header(
+    title = "Comparison of Models on Original and New Projects",
+    subtitle = "Wilcoxon Test Results with Multiple Comparison Correction"
+  ) %>%
+  cols_label(
+    task = "Task",
+    model = "Model",
+    estimate = "Estimate",
+    statistic = "Z Statistic",
+    p.value = "P Value",
+    p.adj = "Adjusted P Value",
+    p.adj.signif = "Significance",
+    r = "Effect Size (r)",
+    ci_lower = "95% CI Lower",
+    ci_upper = "95% CI Upper"
+  ) %>%
+  fmt_number(
+    columns = c(estimate, statistic),
+    decimals = 2
+  ) %>%
+  fmt_number(
+    columns = c(p.value, p.adj),
+    decimals = 3,
+    drop_trailing_zeros = FALSE
+  ) %>%
+  fmt_scientific(
+    columns = c(p.value, p.adj),
+    decimals = 3
+  ) %>%
+  fmt_number(
+    columns = c(r),
+    decimals = 2
+  ) %>%
+  fmt_number(
+    columns = c(ci_lower, ci_upper),
+    decimals = 2
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightblue"),
+      cell_text(color = "black")
+    ),
+    locations = cells_body(
+      columns = c(p.adj.signif),
+      rows = p.adj.signif != ""
+    )
+  ) %>%
+  tab_options(
+    table.font.size = "small",
+    heading.title.font.size = 16,
+    heading.subtitle.font.size = 12,
+    table.border.top.width = px(2),
+    table.border.top.color = "black",
+    table.border.bottom.width = px(2),
+    table.border.bottom.color = "black",
+    heading.align = "center"
+  )
+
+```
+
+```{r eval=FALSE}
+###以下为原代码
+# 比较不同模型在原始项目和新项目上的表现
+
+# 过滤掉讽刺和错误信念任务，因为这些任务不在比较范围内
+#comps_new <- df1 %>% filter(task != 'Irony' & task != 'False Belief') %>%
+#    group_by(task,model) %>%  # 按任务和模型分组
+#    wilcox_test(score ~ source, detailed = T) %>%  # 进行Wilcoxon检验，比较原始项目和新项目的得分
+#    adjust_pvalue(method = mccor) %>%  # 进行多重比较校正（Holm校正）
+#    mutate(p.adj.signif = ifelse(p.adj < .001,'***',ifelse(p.adj < .01, '**', ifelse(p.adj < .05, '\\*',''))))  # 添加显著性标记
+
+# 打印比较结果表，移除不需要的列并进行表格美化
+#comps_new %>% 
+#  select(-.y., -method, -alternative, -p, -n1, -n2) %>%  # 移除不需要的列
+#  kable() %>%  # 使用kable生成表格
+#  kable_styling()  # 使用kable_styling美化表格
+```
+
+#### Fig 1B - 哑铃图
+展示人类（紫色）和两个大语言模型（GPT-3.5，浅蓝色；GPT-4，绿色）在一系列心智理论测试中的基准响应表现。哑铃图显示了每个模型在原始测试项目（深色）和新测试项目（浅色）上的得分。
+
+```{r, fig.width = 9, fig.height = 5, out.width='100%'}
+# 过滤掉缺失值和超出范围的值
+filtered_df1 <- df1 %>%
+  filter(!is.na(score) & score >= 0 & score <= 1)
+
+f1B_barbell <- filtered_df1 %>%
+  rowwise() %>%
+  ungroup() %>%
+  group_by(task, model, source) %>%
+  summarise(low = quantile(score, probs = 0.25, na.rm = TRUE),  # 计算第二分位数（25%分位数）
+            high = quantile(score, probs = 0.75, na.rm = TRUE), # 计算第四分位数（75%分位数）
+            median = median(score, na.rm = TRUE)) %>%  # 计算中位数
+  ungroup() %>%
+  mutate(
+    # 添加显著性标记，排除“错误信念”和“讽刺”任务
+    psig = factor(apply(., 1, function(x) ifelse(x['task'] %in% c('False Belief', 'Irony'), '', comps_new$p.adj.signif[comps_new$model == x['model'] & comps_new$task == x['task']])),
+                  levels = c('***','**','\\*',''),
+                  labels = c('***','**','*','')),
+    ymax = apply(., 1, function(x) max(high[model == x['model'] & task == x['task']]) + 0.05),  # 设置y轴最大值
+    col = factor(sprintf('%s_%s',model,source),
+                 levels = c('Human_New','Human_Original',
+                            'GPT-4_New','GPT-4_Original',
+                            'GPT-3.5_New','GPT-3.5_Original',
+                            'LLaMA2-70B_New','LLaMA2-70B_Original')),
+    source = factor(source, levels = c('Original','New'))) %>%
+  mutate(task = factor(ifelse(grepl(' ', task), gsub(' ','\n', task), as.character(task)), levels = order$task_narrow),
+         high = ifelse(task == 'Irony', NA, high),  # 排除“讽刺”任务的高分位数
+         low = ifelse(task == 'Irony', NA, low),    # 排除“讽刺”任务的低分位数
+         median = ifelse(task == 'Irony', NA, median)) %>%  # 排除“讽刺”任务的中位数
+  ggplot(aes(x = model, y = median, group = source)) +
+  geom_errorbar(aes(ymin = low, ymax = high), width = .1, position = position_dodge(0.5)) +  # 添加误差条
+  geom_point(aes(y = low, colour = col), size = ps_l, position = position_dodge(0.5)) +  # 添加低分位数点
+  geom_point(aes(y = high, colour = col), size = ps_l, position = position_dodge(0.5)) +  # 添加高分位数点
+  geom_point(aes(y = median, colour = col), size = ps_l, shape = 5, position = position_dodge(0.5)) +  # 添加中位数点
+  scale_colour_manual(values = c(createColourValues(cp$Human)[3],cp$Human,
+                                 createColourValues(cp$GPT4)[3],cp$GPT4,
+                                 createColourValues(cp$ChatGPT)[3],cp$ChatGPT,
+                                 createColourValues(cp$LLaMA)[3],cp$LLaMA)) +
+  xlab('') + ylab('响应得分（正确比例）') +
+  scale_y_continuous(limits = c(0,1.05), breaks = c(0, 0.25, 0.5, 0.75, 1), labels = c(0, 0.25, 0.5, 0.75, 1)) +
+  facet_grid(.~task, switch = 'both') +
+  th + theme(axis.line.y = element_blank(), axis.text.x = element_blank(), axis.line.x = element_blank(), axis.ticks.x = element_blank(), panel.border = element_rect(colour = 'grey', fill = NA)) +
+  geom_text(aes(y = ymax, label = psig))
+
+# 打印图形
+print(f1B_barbell)
+```
