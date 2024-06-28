@@ -1,0 +1,126 @@
+---
+title: "S1"
+output: html_document
+---
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+#loading packages
+library('dplyr')
+library(psych)
+library(ggplot2)
+library(jtools)
+library('interactions')
+library(ltm)
+library(car)
+library(MBESS)
+library(lme4)
+
+#loading data
+BR <- read.csv("./Study 1 Data.csv")
+
+```
+
+#Key Variable Names
+ * IS = Incentive Salience manipulation condition (1 = high, -1 = low)激励显著性操纵条件
+ * Charity = Prosocial Motivation manipulation condition (1 = high, -1 = low)亲社会动机操纵条件
+ * ISMC = Incentive Salience manipulation check (7-point scale)激励显著性操纵检查
+ * PMMC = Prosocial Motivation manipulation check (7-point scale)亲社会动机操纵检查
+ * DV_likely = Donation likelihood (7-point scale)捐赠可能性
+
+#Demographic
+```{r}
+#Gender and age
+BR$gender <- factor(BR$gender)
+levels(BR$gender) <- c('female', 'non-binary', 'male')
+BR  %>% count(gender)
+describe(BR[, c("age","ISMC", "PMMC")], range=TRUE) #比原代码增加了一个激励显著性操纵检查
+```
+
+#Manpulation check
+```{r}
+#Incentive salience激励显著
+t.test(ISMC ~ IS, data=BR, var.equal=TRUE) #比较两个独立样本均值的差异
+tapply(BR$ISMC,BR$IS,sd) #SD 对ISMC进行分组计算每个组的标准差
+BR  %>% count(IS)
+ci.smd(ncp= 4.3847, n.1=399, n.2=409, conf.level=.95) #ISMC
+
+#One-sample for IS: all above the midpoint 激励显著性的操作后：全部高于中点
+# 分别对IS等于1和-1的情况进行单样本t检验，检验ISMC的均值是否显著不同于4
+with(BR%>%filter(IS==1), t.test(ISMC, mu=4))
+with(BR%>%filter(IS==-1), t.test(ISMC, mu=4))
+
+#Low IS condition's median计算低IS条件下ISMC列的中位数
+BR.low <- BR%>%filter(IS==-1)
+median(BR.low$ISMC)
+
+#Charity manipulation比较不同Charity条件下PMMC的均值差异
+t.test(PMMC ~ Charity, data=BR, var.equal=TRUE)
+tapply(BR$PMMC,BR$Charity,sd) #SD
+BR  %>% count(Charity)
+ci.smd(ncp= 10.63, n.1=405, n.2=403, conf.level=.95) #CharityMC  计算标准化均值差异（SMD）的置信区间
+
+#Reliability for Charity MC 
+# 将BR数据框中的PMMC_1、PMMC_2和PMMC_3列合并为一个新的数据框PMMC。然后使用cronbach.alpha函数计算这些变量的Cronbach's alpha值，这是一种衡量内部一致性的指标。
+PMMC <- as.data.frame(cbind(BR$PMMC_1,BR$PMMC_2,BR$PMMC_3))
+cronbach.alpha(PMMC, CI=FALSE)
+```
+# Donation Likelihood DV
+```{r}
+m1 = glm(DV_likely ~ IS*Charity, data=BR)
+summ(m1, digit=4)
+sim_slopes(m1, pred=IS, modx = Charity, digits = 5)
+
+#Charity内的IS效应可能随个体而变化
+m_mixed1 <- lmer(DV_likely ~ IS * Charity + (IS|Charity), data=BR) 
+summary(m_mixed1)
+
+m_mixed2 <- lmer(DV_likely ~ IS * Charity + (1|Charity), data=BR)
+summary(m_mixed2)
+
+anova(m_mixed1, m_mixed2) 
+
+#新增方差分析进行复现
+anova_model <- aov(DV_likely ~ IS * Charity, data = BR)
+summary(anova_model)
+
+# 进行简单效应分析
+# 低亲社会动机下的激励显着性效应
+low_prosocial <- subset(BR, Charity == "low")
+anova_low_prosocial <- aov(DV_likely ~ IS, data = low_prosocial)
+summary(anova_low_prosocial)
+
+# 高亲社会动机下的激励显着性效应
+high_prosocial <- subset(BR, Charity == "high")
+anova_high_prosocial <- aov(DV_likely ~ IS, data = high_prosocial)
+summary(anova_high_prosocial)
+
+# 低激励显着性下的亲社会动机效应
+low_incentive <- subset(BR, IS == "low")
+anova_low_incentive <- aov(DV_likely ~ Charity, data = low_incentive)
+summary(anova_low_incentive)
+
+# 高激励显着性下的亲社会动机效应
+high_incentive <- subset(BR, IS == "high")
+anova_high_incentive <- aov(DV_likely ~ Charity, data = high_incentive)
+summary(anova_high_incentive)
+```
+Means and SDs
+```{r}
+#包含了按Charity和IS分组的DV_likely变量的均值、标准差、样本大小和标准误（SE）
+Means.Table<-BR %>%
+  group_by(Charity, IS) %>%
+  summarise(N=n(),
+            Means=mean(DV_likely),
+            SD=sd(DV_likely),
+            SE=SD/N^.5)
+print(Means.Table)
+
+```
+Graph
+```{r}
+BR %>%
+  ggplot(aes(x = Charity, y = DV_likely, color = factor(IS))) +
+  geom_smooth(method = "glm", se = FALSE) +
+  labs(title = "", x = "PM", color = "Inc Salience")
+
+```

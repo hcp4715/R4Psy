@@ -1,0 +1,305 @@
+---
+title: "Study 3"
+output:
+  html_document: default
+---
+
+# Data
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+#loading packages
+library('dplyr')
+library(psych)
+library(ggplot2)
+library(jtools)
+library('interactions')
+library(ltm)
+library(car)
+#library(MBESS)
+
+#loading data
+S3t <- read.csv("~/Study 3 Data.csv")
+```
+
+```{r}
+S3t <- S3t %>% filter(duplicate==0) #n = 2
+S3t <- S3t %>% filter(Clicks>0) #n = 0
+mean(S3t$Clicks) + 3*sd(S3t$Clicks)
+S3 <- S3t %>% filter(Clicks<753.0183) #n = 4
+S3$PM2 <- scale(S3$PM)
+```
+#Key Variable Names
+ * IS = Incentive Salience manipulation condition (1 = high, -1 = low)
+ * Charity = Prosocial Motivation manipulation condition (1 = high, -1 = low)
+ * ISMC = Incentive Salience manipulation check (7-point scale)
+ * PMMC = Prosocial Motivation manipulation check (7-point scale)
+ * DV_likely = Donation likelihood (7-point scale)
+
+# Demographics
+```{r}
+#Gender, age and click cound data distribution
+S3$gender <- factor(S3$gender)
+levels(S3$gender) <- c('female', 'non-binary', 'male')
+S3  %>% count(gender)
+describe(S3[, c("age", "Clicks", "PM")], range=TRUE) #Clicks for skewness and kurtosis
+```
+# Reliability
+```{r}
+#Consideration of self-interest items
+CS <- as.data.frame(cbind(S3$Focus_self,S3$inc1,S3$inc2, S3$inc3))
+cronbach.alpha(CS, CI=FALSE)
+
+#Consideration of other-regarding benefits items
+CO <- as.data.frame(cbind(S3$Focus_helping, S3$charity1,S3$charity2, S3$charity3))
+cronbach.alpha(CO, CI=FALSE)
+
+#Prosocial motivation items
+Pm <- as.data.frame(cbind(S3$pm1,S3$pm2, S3$pm3))
+cronbach.alpha(Pm, CI=FALSE)
+```
+
+# Manpulation check
+```{r}
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(MC),
+            SD=sd(MC),
+            Medians=median(MC),
+            SE=SD/N^.5)
+print(Means.Table)
+
+t.test(MC ~ IS, data=S3, var.equal=TRUE)
+```
+```{r}
+S3  %>% count(IS)
+```
+```{r}
+ci.smd(ncp= 9.3574, n.1=312, n.2=317, conf.level=.95)
+```
+## SOM checking for crossover
+```{r}
+t.test(PM ~ IS, data=S3, var.equal=TRUE)
+tapply(S3$PM,S3$IS,sd) #SD
+S3  %>% count(IS)
+ci.smd(ncp= -1.1414, n.1=312, n.2=317, conf.level=.95) #ISMC
+```
+
+# Preregistered regression analysis
+##Graph
+```{r}
+S3$RS <- factor(S3$IS)
+S3 %>%
+  ggplot(aes(x = PM, y = Clicks, color = RS)) +
+  geom_smooth(method = "glm", se = FALSE) +
+  labs(title = "", x = "PM", y = "Clicks", color = "Incentive Salience")
+
+```
+
+## Regression 
+```{r, echo=FALSE}
+#Standardized PM
+S3$PM2 <- scale(S3$PM)
+
+#Regression
+r1 <- glm(Clicks~PM2*IS, data=S3)
+summ(r1, digit=3)
+sim_slopes(r1, pred=IS, modx = PM2, johnson_neyman = TRUE, jnplot = FALSE, digit=5)#JN point
+```
+
+# Relative Consideration
+4 item merged together based on factor analyses (see the factor analyses files in OSF).
+```{r}
+S3$sumhelp <- (S3$Focus_helping + S3$charity1 + S3$charity2 + S3$charity3)
+S3$sumself <- (S3$Focus_self + S3$inc1 + S3$inc2 + S3$inc3)
+S3$sumlevel <- (S3$sumhelp + S3$sumself)
+S3$Relsum <- S3$sumself/(S3$sumhelp+S3$sumself)
+S3$Relsum2 <- scale(S3$Relsum)
+```
+
+```{r}
+#Relative sum 4-items to self
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(Relsum),
+            SD=sd(Relsum),
+            SE=SD/N^.5)
+print(Means.Table)
+t.test(Relsum ~ IS, data=S3, var.equal=TRUE)
+ci.smd(ncp= 3.8624, n.1=312, n.2=317, conf.level=.95)
+```
+# M14
+```{r}
+#source("~//process.R")
+process(data=S3, model=7, x="IS",m="Relsum2",y="Clicks",w="PM2", boot=10000, moments=1)
+```
+
+```{r}
+process(data=S3, model=14, x="IS",m="Relsum2",y="Clicks",w="PM2", boot=10000, moments=1)
+
+```
+
+##Additional analyses for the M14 figure
+```{r}
+r1 <- glm(Clicks~PM2*Relsum2+IS, data=S3)
+summ(r1, digit=3)
+sim_slopes(r1, pred=Relsum2, modx = PM2, johnson_neyman = TRUE, jnplot = FALSE, digit=5)#JN point
+
+r1 <- glm(Clicks~IS, data=S3)
+summ(r1, digit=3)
+```
+
+
+# Supplemental Materials
+## Additional manipulation check t-tests and reliabilities
+```{r}
+with(S3%>%filter(IS==-1), t.test(MC, mu=4))
+with(S3%>%filter(IS==1), t.test(MC, mu=4))
+median(S3$MC)
+```
+```{r}
+IncImp <- as.data.frame(cbind(S3$inc1,S3$inc2, S3$inc3))
+cronbach.alpha(IncImp, CI=FALSE)
+
+CharIm <- as.data.frame(cbind(S3$charity1,S3$charity2, S3$charity3))
+cronbach.alpha(CharIm, CI=FALSE)
+```
+
+## Importance
+```{r}
+#Incentive importance
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(IncImp),
+            SD=sd(IncImp),
+            SE=SD/N^.5)
+print(Means.Table)
+t.test(IncImp ~ IS, data=S3, var.equal=TRUE)
+ci.smd(ncp= 2.748, n.1=312, n.2=317, conf.level=.95)
+
+r1 <- glm(IncImp~PM2*IS, data=S3)
+summ(r1, digit=3) 
+
+#Char importance
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(CharImp),
+            SD=sd(CharImp),
+            SE=SD/N^.5)
+print(Means.Table)
+t.test(CharImp ~ IS, data=S3, var.equal=TRUE)
+ci.smd(ncp= 2.7715, n.1=312, n.2=317, conf.level=.95)
+
+r1 <- glm(CharImp~PM2*IS, data=S3)
+summ(r1, digit=3) 
+```
+## Attention
+```{r}
+#Attention to self
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(Focus_self),
+            SD=sd(Focus_self),
+            SE=SD/N^.5)
+print(Means.Table)
+t.test(Focus_self ~ IS, data=S3, var.equal=TRUE)
+ci.smd(ncp= 3.7493, n.1=312, n.2=317, conf.level=.95)
+
+r1 <- glm(Focus_self~PM2*IS, data=S3)
+summ(r1, digit=3) 
+
+#Attention to helping
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(Focus_helping),
+            SD=sd(Focus_helping),
+            SE=SD/N^.5)
+print(Means.Table)
+t.test(Focus_helping ~ IS, data=S3, var.equal=TRUE)
+ci.smd(ncp= 2.8002, n.1=312, n.2=317, conf.level=.95)
+
+r1 <- glm(Focus_helping~PM2*IS, data=S3)
+summ(r1, digit=3) 
+```
+```{r}
+#Relative Attention to self
+S3$RelAtt <- S3$Focus_self/(S3$Focus_self+S3$Focus_helping)
+S3$RelAtt2 <- scale(S3$RelAtt)
+  ##source("~//process.R")
+process(data=S3, model=14, x="IS",m="RelAtt2",y="Clicks",w="PM2", boot=10000, moments=1)
+```
+## Enjoyment
+```{r}
+#Enjoyment items
+Enjoyment <- as.data.frame(cbind(S3$IM_1,S3$IM_2, S3$IM_3, abs(S3$IM_4-8), abs(S3$IM_5-8)))
+cronbach.alpha(Enjoyment, CI=FALSE)
+
+#Means and SDs
+Means.Table<-S3 %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(Enjoyment),
+            SD=sd(Enjoyment),
+            SE=SD/N^.5)
+print(Means.Table)
+
+#Analyses
+t.test(Enjoyment ~ IS, data=S3, var.equal=TRUE)
+ci.smd(ncp= 1.7057, n.1=312, n.2=317, conf.level=.95)
+
+r1 <- glm(Clicks~PM2*IS+Enjoyment, data=S3)
+summ(r1, digit=3)
+```
+
+## SOM Additional graph
+```{r}
+#median split
+S3 <- S3t %>% filter(Clicks<753.0183) #n = 4
+S3$PM2 <- scale(S3$PM)
+median(S3$PM2)
+S3$median[S3$PM2 <=0.2582895] <- -1 #Low PM
+S3$median[S3$PM2 >0.2582895] <- 1 #High PM
+#S3$median <- as.numeric(S3$median)
+#S3$Clicks <- as.numeric(S3$Clicks)
+
+S3$IS <- as.numeric(S3$IS)
+r1 <- glm(Clicks~median*IS, data=S3)
+summ(r1, digit=3) 
+sim_slopes(r1, pred=IS, modx = median, johnson_neyman = TRUE, jnplot = FALSE, digit=5)#JN point
+
+S3$IS <- factor(S3$IS)
+#Bar graph
+library(tidyverse)
+```
+
+Prosocial motivation (median split) to categorize participants into high and low groups
+```{r}
+S3 <- S3 %>% mutate(median = factor(median)) %>%
+  mutate(median = forcats::fct_recode(median, "Low Prosocial Motivation" = "-1", "High Prosocial Motivation" = "1"), IS = forcats::fct_recode(IS, "Low Incentive Salience" = "-1", "High Incentive Salience" = "1"))
+# Calculate means and standard errors
+df <- S3 %>%
+  group_by(median, IS) %>%
+  summarize(mean_len = mean(Clicks),
+            se = sd(Clicks) / sqrt(n()))
+
+# Create the bar plot
+p <- ggplot(df, aes(x = median, y = mean_len, fill = IS)) +
+  geom_bar(stat = "identity", color="black", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymax = mean_len + se, ymin = mean_len - se), 
+                position = position_dodge(width = 0.8), width = 0.25) +
+  labs(title = "",
+       x = "Prosocial Motivation",
+       y = "Total Clicks",
+       fill = "IS") +  
+  
+  scale_fill_manual(values=c('white','lightgray')) + theme(legend.position="top") + theme_classic()
+#  scale_fill_grey() +    theme_classic()
+ # +theme_minimal()
+p + theme(legend.position="top") + theme(legend.title=element_blank()) + scale_y_continuous(expand = c(0,0)) 
+```
+
