@@ -1,0 +1,104 @@
+---
+#标题是“S2 Post-test 2: Breaking the ceiling”。
+title: "S2 Post-test 2: Breaking the ceiling"
+#输出格式是HTML文档。
+output: html_document
+---
+
+
+```{r}
+#设置了knitr包中代码块的选项。echo = TRUE意味着在输出文档中会显示R代码，这对于调试和理解分析过程很有帮助。knitr是一个R包，用于将R代码转换成各种格式的文档，如HTML、PDF等，并且可以在文档中嵌入R代码的执行结果。
+knitr::opts_chunk$set(echo = TRUE)
+#loading packages
+library('dplyr')
+library(psych)
+library(ggplot2)
+library(jtools)
+library('interactions')
+library(ltm)
+library(car)
+library(MBESS)
+
+#loading data
+#读取了位于指定路径的CSV文件，并将数据加载到变量ceil中。这里的路径是“C:\Users\32989\Desktop\study2\Study 2 Post-test 2 Data.csv”，文件名是“Study 2 Post-test 2 Data.csv”。
+ceil <- read.csv("C:\\Users\\32989\\Desktop\\study2\\Study 2 Post-test 2 Data.csv")
+```
+
+
+
+```{r}
+#通过管道操作过滤掉数据集中的重复记录。duplicate==0是一个条件，它会选择那些在变量duplicate上的值为0的行，即没有重复记录的行。注释#n=21 deleted表明执行这一操作后，数据集中有21个重复的记录被删除了。
+ceil <- ceil %>% filter(duplicate==0) #n=21 deleted
+#过滤掉数据集中Clicks变量值小于或等于0的记录。Clicks>0是一个条件，它会选择那些Clicks变量值大于0的行。注释#n=19 deleted表明执行这一操作后，数据集中有19个记录被删除了。
+ceil <- ceil %>% filter(Clicks>0) #n=19 deleted
+#计算了Clicks变量的均值加上三倍的标准差。这是用来定义异常值的一个常见方法。mean(ceil$Clicks)计算Clicks的平均值，sd(ceil$Clicks)计算Clicks的标准差。结果是将这个平均值加上三倍的标准差。
+mean(ceil$Clicks) + 3*sd(ceil$Clicks)
+#过滤掉数据集中Clicks变量值大于或等于2174.67的记录。Clicks<2174.67是一个条件，它会选择那些Clicks变量值小于2174.67的行。注释#n=2 deleted表明执行这一操作后，数据集中有2个记录被删除了。
+ceil <- ceil %>% filter(Clicks<2174.67) #n=2 deleted
+```
+#关键变量的名称
+#Key Variable Names
+#IS变量是一个关于激励显著性（Incentive Salience）操纵条件的变量。
+ * IS = Incentive Salience manipulation condition
+ #表示low水平的IS条件，即低激励显著性条件，其中激励水平被设定为较低。
+  - low = Low Incentive Salience condition
+  #示high水平的IS条件，即高激励显著性条件，其中激励水平被设定为较高。
+  - high = High Incentive Salience condition
+  #表示extra水平的IS条件，即在高激励显著性条件下还提供了绩效奖金，这可能是一种强化激励的措施。
+  - extra = High Incentive Salience with Performance Bonus condition
+  #一个衡量亲社会努力投入的变量，它以按键对的数量来计算。这可能意味着每个按键被计算为一次努力，并且 effort investment 被累积起来，以 keypress pairs（按键对）作为单位来衡量。
+ * Clicks = Prosocial effort investment, counted in keypress pairs
+
+
+
+#人口统计数据
+#Demographic
+#用于对数据集ceil中的性别、年龄和点击次数数据的分布进行探索性分析。
+```{r}
+#Gender, age and click cound data distribution
+#将ceil数据集中的gender变量转换为因子（factor）。
+ceil$gender <- factor(ceil$gender)
+#重新定义了ceil$gender变量的水平（levels），即将性别变量的分类重新排列。
+levels(ceil$gender) <- c('female', 'non-binary', 'male')
+#使用dplyr包的count函数对ceil数据集中的gender变量进行计数，计算每个性别分类的出现次数。
+ceil  %>% count(gender)
+#使用describe函数来总结ceil数据集中age和Clicks两个变量的统计信息。range=TRUE参数表示计算变量的范围（即最小值和最大值）。
+describe(ceil[, c("age", "Clicks")], range=TRUE) #Clicks for skewness and kurtosis
+```
+
+
+
+
+# Effort DV
+```{r}
+#主要包括对实验数据进行汇总、进行方差分析、计算效应大小以及进行成对样本t检验。
+#使用dplyr包中的group_by和summarise函数来对数据集ceil进行分组和汇总。IS是分组的依据，即不同的激励显著性条件。
+Means.Table<-ceil %>%
+  group_by(IS) %>%
+  summarise(N=n(),
+            Means=mean(Clicks),
+            SD=sd(Clicks),
+            Medians=median(Clicks),
+            SE=SD/N^.5)
+#打印出Means.Table数据框，即每个激励显著性条件的统计汇总。
+print(Means.Table)
+
+#使用lm()函数（线性混合模型）来计算一个方差分析。Clicks是因变量，IS是自变量，数据集是ceil。
+anova <- lm(Clicks ~ IS, data = ceil)
+#调用一个自定义的Anova函数或者包中的函数来计算ANOVA的F值和p值。
+Anova(anova, type=3)
+##使用effectsize包中的eta_squared函数来计算效应大小。
+library(effectsize)
+eta_squared(anova)
+
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+#使用rstatix包中的pairwise_t_test函数来进行成对样本t检验。Clicks ~ IS指定了检验的因变量和自变量，paired = FALSE表示不是成对数据，p.adjust.method = "bonferroni"指定了使用Bonferroni校正来调整多个比较的p值。
+pwc <- ceil %>%
+  pairwise_t_test(
+    Clicks ~ IS, paired = FALSE,
+    p.adjust.method = "bonferroni"
+  )
+pwc
+```

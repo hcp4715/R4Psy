@@ -1,0 +1,123 @@
+---
+#标题是"S2 Post-test，文档是关于第二次测试（S2）的后测试分析。
+title: "S2 Post-test 1: Using a circle"
+#这指定了文档的输出格式。在这个例子中，文档将被输出为HTML格式。
+output:  html_document: default
+---
+
+#Data
+```{r, include=FALSE}
+#是knitr包的语法，用于设置代码块的选项。echo = TRUE表示在输出文档中包含代码块的文本。这样，当导出文档时，代码和结果都会被包含在内。
+knitr::opts_chunk$set(echo = TRUE)
+#loading packages
+library('dplyr')
+library(psych)
+library(ggplot2)
+library(jtools)
+library('interactions')
+library(ltm)
+library(car)
+library(effectsize)
+library(MBESS)
+
+#loading data
+#函数从指定的CSV文件路径加载数据。这里的文件路径是"C:\Users\32989\Desktop\study2\Study 2 Post-test 1 Data.csv"，数据被读取到一个名为circle的变量中。
+circle <- read.csv("C:\\Users\\32989\\Desktop\\study2\\Study 2 Post-test 1 Data.csv")
+```
+
+```{r}
+#使用了R语言中的dplyr包，它是一个用于数据操作的工具包，提供了链式操作的语法。
+#这行代码使用了%>%管道操作符，将前面得到的结果传递给后面的函数。filter()函数用于筛选数据，这里筛选出duplicate变量等于0的行，即去除重复的行。注释# n=20表示筛选后数据的行数变为20。
+circle <- circle %>% filter(duplicate==0) # n=20
+#filter()函数用于筛选出Clicks变量大于0的行，注释# n=34表示筛选后数据的行数变为34。
+circle <- circle %>% filter(Clicks>0) # n=34
+#计算了circle数据框中Clicks列的平均值加上3倍的标准差，这通常用于确定异常值的范围，大于这个值的数据点可能被认为是异常值
+mean(circle$Clicks) + 3*sd(circle$Clicks)
+#filter()函数用于筛选出Clicks变量小于1222.029的行。注释#n=0表示筛选后数据的行数变为0，这意味着所有行的Clicks值都大于或等于1222.029，所以没有行被保留。
+circle <- circle %>% filter(Clicks<1222.029) # n=0
+```
+
+#关键变量的名称
+#Key Variable Names
+#IS是激励显著性（Incentive Salience）操控条件的变量，值为1表示高激励显著性条件，值为-1表示低激励显著性条件。
+ * IS = Incentive Salience manipulation condition (1 = high, -1 = low)
+ #Charity是亲社会动机（Prosocial Motivation）操控条件的变量，值为1表示高亲社会动机条件，值为-1表示低亲社会动机条件。
+ * Charity = Prosocial Motivation manipulation condition (1 = high, -1 = low)
+ #ISMC是激励显著性操控检查的变量，使用一个7点量表来评估激励显著性操控的效果，参与者会在这个量表上进行评分。
+ * ISMC = Incentive Salience manipulation check (7-point scale)
+ #亲社会动机操控检查的变量。这个变量同样使用一个7点量表来评估亲社会动机操控的效果，参与者会在这个量表上进行评分。
+ * CharityMC = Prosocial Motivation manipulation check (7-point scale)
+ #Clicks是亲社会努力投资的变量。这个变量记录了参与者为了完成某个任务而投入的亲社会努力，单位是按键对（keypress pairs）。这可能是指参与者为了某种亲社会行为而进行的操作次数，比如点击次数或者其他与键盘操作相关的努力。
+ * Clicks = Prosocial effort investment, counted in keypress pairs
+ 
+#Demographics
+```{r}
+#Gender, age and click cound data distribution
+#使用dplyr包和summarise函数对数据进行简单的统计描述。
+#将circle数据框中的gender列转换为因子（factor）。
+circle$gender <- factor(circle$gender)
+#重新定义了circle数据框中gender因子的水平（levels），将它们更改为male（男性）、female（女性）和non-binary（非二元性别）。
+levels(circle$gender) <- c('male', 'female', 'non-binary')
+#使用管道操作符%>%，将前面得到的结果传递给count()函数。count()函数用于计算每个性别分类的出现次数。结果将是一个新的数据框，列出了每个性别的计数和百分比。
+circle  %>% count(gender)
+#使用describe()函数来描述circle数据框中age（年龄）和Clicks（点击次数）两列的统计信息。range=TRUE参数请求返回范围（minimum和maximum）的统计数据。结果将包括这些列的计数、平均值、标准差、最小值、第一四分位数、中位数、第三四分位数和最大值。
+describe(circle[, c("age", "Clicks")], range=TRUE) #Clicks for skewness and kurtosis
+```
+#Manpulation check
+#操作检查
+```{r}
+#表明下面的代码与“激励显著性”有关。
+#Incentive salience
+#运行了一个t检验。在这个检验中，ISMC是因变量（结果变量），IS是自变量（解释变量）。
+t.test(ISMC ~ IS, data=circle, var.equal=TRUE)
+#使用tapply函数来计算每个IS类别中ISMC的标准差。这可以帮助了解不同自变量IS水平下因变量ISMC的变异性。
+tapply(circle$ISMC,circle$IS,sd) #SD
+#使用dplyr包的管道操作（%>%是管道操作符），计算每个IS类别的频数。
+circle  %>% count(IS)
+
+
+#表明下面的代码与“慈善操纵”有关。
+#Charity manipulation
+#运行了一个t检验，但这次CharityMC是因变量，Charity是自变量。
+t.test(CharityMC ~ Charity, data=circle, var.equal=TRUE)
+#计算每个Charity类别中CharityMC的标准差。
+tapply(circle$CharityMC,circle$Charity,sd) #SD
+#再次使用管道操作来计算每个Charity类别的频数。
+circle  %>% count(Charity)
+```
+
+```{r}
+#在计算Cohen’s d的置信区间（Confidence Intervals）
+#Cohen's ds
+#计算了“激励显著性”（ISMC）相关的标准化均值差异的95%置信区间。
+ci.smd(ncp= 5.5035, n.1=380, n.2=384, conf.level=.95) #ISMC
+#计算了“慈善操纵”（CharityMC）相关的标准化均值差异的95%置信区间。
+ci.smd(ncp= 16.429, n.1=383, n.2=381, conf.level=.95) #CharityMC
+```
+
+#回归
+#Regression
+```{r, echo=FALSE}
+#Means and SDs
+#使用了dplyr包的group_by()和summarise()函数来分组数据并计算每个组的统计量。echo=FALSE参数意味着在输出中不显示原始的R代码，只显示执行结果。
+Means.Table<-circle %>%
+  group_by(IS,Charity) %>%
+  summarise(N=n(),
+            Means=mean(Clicks),
+            SD=sd(Clicks),
+            SE=SD/N^.5)
+print(Means.Table)
+```
+
+
+
+```{r}
+#回归
+#Regression
+#使用R语言进行线性回归分析。执行了一个线性回归分析（lm函数），其中Clicks是因变量，IS和Charity是自变量。
+r1 <- lm(Clicks ~ IS * Charity, data = circle)
+#使用summ函数来总结r1中的回归模型结果。
+summ(r1, digits=4)
+#调用了sim_slopes函数来模拟IS在不同的Charity水平下的斜率（即IS对Clicks的影响在不同的Charity水平上的变化）。
+sim_slopes(r1, pred=IS, modx = Charity, johnson_neyman = TRUE, jnplot = FALSE, digits=3)
+```

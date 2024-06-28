@@ -1,0 +1,2891 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>r_ppt</title>
+    <meta charset="utf-8" />
+    <meta name="date" content="2024-06-19" />
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <link href="libs/htmltools-fill-0.5.8/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
+    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# r_ppt
+]
+.date[
+### 2024-06-19
+]
+
+---
+
+class: center, middle
+&lt;span style="font-size: 30px;"&gt;**Reproducibility Study Report on "Changing What You Like: Modifying Silhouette Characteristics Changes the Aesthetic Value of a Scene"**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 45px;"&gt;改变你喜欢的：修改轮廓属性改变场景的审美价值&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 17px;"&gt;Farzanfar, D., &amp; Walther, D. B. (2023). Changing What You Like: Modifying Contour Properties Shifts Aesthetic Valuations of Scenes. Psychological science, 34(10), 1101–1120. &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;汇报人: 郭凯彤   组员:邓心宇 霍依宁 史一诺 张燕&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-06-25&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+&lt;img src="./picture/title.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+
+&lt;style type="text/css"&gt;
+/* ---- extra.css ---- */
+.bigfont {
+  font-size: 25px;
+}
+
+.tit_font{
+font-size: 70px;
+}
+
+&lt;/style&gt;
+
+
+
+---
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.pull-left[
+
+## 1.Division of labor among members
+
+## 2.Literature introduction
+
+- Introduction
+
+- Methods
+
+- Results
+
+
+]
+
+.pull-right[
+
+## 3.Reproduce ideas and processes
+
+## 4.Reproducible results
+
+## 5.Discussions and conclusions of results
+
+]
+
+---
+# &lt;h3 lang="en"&gt;Division of labor among members&lt;/h3&gt;
+&lt;span style="font-size: 22px;"&gt;郭凯彤：Responsible for reviewing the literature and reporting the recurrence results; writing of written reports&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 22px;"&gt;邓心宇：Responsible for visual image reproduction of experiment 1, 2 and 3; partial inferential statistical reproduction; RMD collation and summary; writing html report and papaja code; writing of written reports&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 22px;"&gt;霍依宁：Responsible for the descriptive statistics of experiment 1 and 2; the reproduction of inferred statistics and RMD collation; writing of written reports&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 22px;"&gt;史一诺：Responsible for the matlab model and image processing of experiment 1, 2 and 3; the reproduction of partial inferential statistics; RMD collation; writing html report and papaja code; writing of written reports&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 22px;"&gt;张燕：Responsible for literature screening; the descriptive statistics and inferred statistics of experiments 1 and 3 and the RMD collated; writing of written reports&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 18px;"&gt;Discussion 1: Each person selected a literature and discussed the most suitable literature for repeatability research&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 18px;"&gt;Discussion 2: Division of labor for code reproduction &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 18px;"&gt;Discussion 3: Division of labor for the production and presentation of reports&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+---
+
+# &lt;h2 lang="en"&gt;Introduction of the literature&lt;/h2&gt;
+&lt;span style="font-size: 30px;"&gt;To what extent do aesthetic experiences arise from the human ability to perceive and extract meaning from visual features?&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;What is the nature of these visual features? &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;What role do they play in aesthetic judgments?&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;color:red;"&gt;This paper studies the effect of the visual features in scenes on observers’ aesthetic responses, and developed a contour model, allowing to predict aesthetic responses, and help to understand the causal relationship between contour properties and aesthetic valuation.&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+---
+# &lt;h2 lang="en"&gt;Methods and Results&lt;/h2&gt;
+&lt;span style="font-size: 30px;"&gt;The 1st experiment aims to investigate whether a model trained on contours properties can generate accurate aesthetic predictions.&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;The 2nd experiment aims to investigate the causal relationship between contour properties and aesthetic valuation.&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;The 3rd experiment aims to test whether the relationship still exists when semantic processing of the scenes is disrupted.&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;color:red;"&gt;Contour manipulations directly shift subjective aesthetic judgments, and this provides the evidence for a causal relationship between contour properties and aesthetic valuation.&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+---
+# &lt;h2 lang="en"&gt;Reproduction Content and Approach&lt;/h2&gt;
+&lt;span style="font-size: 35px;"&gt;Reproduction Content：&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 25px;"&gt;1.Descriptive Statistics&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 25px;"&gt;2.t-test, Linear Mixed-Effects Model, Correlation, Analysis of Variance&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 25px;"&gt;3.Image Visualization&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 35px;"&gt;Reproduction Approach：&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 25px;"&gt;Run Original Code from the Document → Compare Code Results with Data and Image Results from the Document → Modify and Run Code&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+---
+# &lt;h3 lang="en"&gt;Visual Aesthetics Research Based on MATLAB&lt;/h3&gt;
+&lt;span style="font-size: 25px;"&gt;Image Processing, Model Training, and Result Analysis&lt;/span&gt; &lt;br&gt;
+
+&lt;style&gt;.flex-container {
+  display: flex;justify-content: space-around;
+}.flex-item { margin: 10px;
+}
+&lt;/style&gt;
+&lt;div class="flex-container"&gt;
+&lt;div class="flex-item"&gt;
+&lt;details&gt;
+&lt;summary&gt;Experiment 1&lt;/summary&gt;
+&lt;p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="./picture/experiment1.png" alt="Experiment 1" width="50%" /&gt;
+&lt;p class="caption"&gt;Experiment 1&lt;/p&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div class="flex-item"&gt;
+&lt;details&gt;
+&lt;summary&gt;Experiment 2&lt;/summary&gt;
+&lt;p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="./picture/experiment2.png" alt="Experiment 2" width="50%" /&gt;
+&lt;p class="caption"&gt;Experiment 2&lt;/p&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div class="flex-item"&gt;
+&lt;details&gt;
+&lt;summary&gt;Experiment 3&lt;/summary&gt;
+ &lt;p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="./picture/experiment3.png" alt="Experiment 3" width="50%" /&gt;
+&lt;p class="caption"&gt;Experiment 3&lt;/p&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+---
+# &lt;h3 lang="en"&gt;Preliminary Organization&lt;/h3&gt;
+&lt;span style="font-size: 25px;"&gt;Call the packages used in this study&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+```r
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+
+pacman::p_load(
+  # Call the packages used in this study
+  dplyr, tidyverse, ggplot2, ggstatsplot, ggpubr, summarytools, psych, randomForest, randomForestExplainer, effectsize, car, afex, DT, papaja, ggrepel, lme4, lmerTest, MuMIn, lmtest, randomForest, randomForestExplainer, ppcor,   
+  # Generate HTML report
+  xaringan, xaringanthemer, xaringanExtra, knitr)
+
+options(scipen=99999,digits = 5)
+```
+
+---
+# &lt;h3 lang="en"&gt;1.Experiment 1&lt;/h3&gt;
+&lt;span style="font-size: 25px;"&gt;1.1 Import Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+```r
+#--------------------------------Set the Work Path------------------------------------------
+setwd("./data/experiment1")
+#--------------------------------Import Data------------------------------------------------
+#Import Intact Line Drawings Data
+LD1 &lt;- read.csv("LD1.csv",stringsAsFactors=TRUE)
+#Import Color Photo Data
+CP &lt;- read.csv("CP.csv",,stringsAsFactors=TRUE)
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-877d4082babebb286f3e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-877d4082babebb286f3e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["beaches_00115_LD.png","beaches_00117_LD.png","beaches_00119_LD.png","beaches_00126_LD.png","beaches_00149_LD.png","beaches_00154_LD.png"],[2.619047619,3.095238095,2.904761905,2.615384615,3.095238095,2.619047619],[2.523809524,3.772727273,3.333333333,2.974358974,3.666666667,3.19047619],[3.285714286,2.238095238,2.095238095,2.358974359,2.904761905,2.047619048],[-0.268737788,0.116772551,-0.037431585,-0.271703252,0.116772551,-0.268737788],[-1.001158625,0.134236734,-0.265217786,-0.5915625920000001,0.037816678,-0.395089698],[0.333324371,-0.551347023,-0.671984032,-0.449269555,0.011625682,-0.712196368],["beaches","beaches","beaches","beaches","beaches","beaches"],[15207.71618,11570.34504,7990.944745,10549.06833,15511.08717,6236.835482],["beaches_00115.jpg","beaches_00117.jpg","beaches_00119.jpg","beaches_00126.jpg","beaches_00149.jpg","beaches_00154.jpg"],[6956.315604,7865.875512,4770.559273,8682.579417999999,4397.633691,3476.243877],[2435.72037,627.0828019,646.4684493,682.8548393,1487.991235,608.5423843],[971.784124,144.1869003,313.3796406,178.2545679,1013.347767,77.49364396],[570.2317769,142.5596879,279.1783449,145.4967391,1044.022864,74.13153579999999],[762.4797998,193.5625834,576.8812464,282.7171415,4076.604652,168.4677984],[591.6646078,187.3055968,311.0581055,83.48937202,1307.97759,87.87990569],[776.8019004,261.2201065,272.5511711,117.276819,812.4009546,291.7354633],[2142.717999,2148.551849,820.8685148,376.3994305,1371.108419,1452.340873],[4.242640687,119.6985404,87.81736672,122.9489501,0,61.19803903],[31.54773111,167.4125042,164.3825733,119.2620287,64.77899483,126.475335],[509.0009765,236.6273463,323.5960349,73.13187264,979.6138807,79.03840481],[2447.476575,478.8828477,752.9494838000001,644.3479857999999,3479.834336,118.0407299],[4251.285989,1065.671419,1031.21619,1251.571655,3105.037746,1042.06408],[3442.412014,2686.146289,1464.625236,2385.655097,1122.44713,1319.986397],[2029.268292,3003.6446,1070.972059,2240.002144,2441.769942,2002.140467],[2492.481964,3812.26149,3095.385802,3712.148595,4317.605143,1487.89203],[5596.160237,7284.286699,4216.036339,7737.070109,5906.813955,3809.186753],[3410.616445,1943.177785,1285.511496,895.4940829,2306.79493,1087.059057],[2606.693435,994.1323649,1007.859705,803.4841013,2352.473993,519.3070226],[1752.250059,663.7771951,727.3809708,476.037522,1981.126941,451.0224926],[1206.258857,472.9739241,471.9139462,349.1645381,1736.492865,232.4863059],[432.2213759,175.1533017,222.9693006,180.4259163,860.244415,126.1682993],[184.3933563,32.84376685,50.03691994,96.50570786,329.6684663,11.60555128],[19.12241749,4,9.236067976999999,10.88634952,37.47160775,0],[19,7,5,14,54,3],[3,1,0,6,16,0],[4,0,1,4,20,1],[6,0,0,1,7,0],[1,0,1,1,1,0],[6,0,1,2,15,2],[7,1,0,2,9,0],[1,0,4,1,13,1],[4,1,2,2,15,0],[7,4,0,4,16,0],[7,1,0,12,20,1],[0,1,0,3,6,0],[1,0,0,0,4,0],[0.457420136,0.679830678,0.596995653,0.823065995,0.283515504,0.557373028],[0.160163455,0.054197416,0.080900128,0.06473129399999999,0.095930815,0.0975723],[0.063900727,0.012461763,0.039216845,0.01689766,0.065330544,0.012425154],[0.037496214,0.012321127,0.034936838,0.013792378,0.067308168,0.011886082],[0.050137693,0.016729197,0.07219187000000001,0.0268002,0.262818757,0.027011743],[0.038905553,0.016188419,0.038926324,0.007914383000000001,0.084325333,0.014090464],[0.051079458,0.022576691,0.034107503,0.011117268,0.052375501,0.0467762],[0.140896764,0.185694708,0.102724839,0.035680822,0.088395378,0.232865029],[0.000278979,0.010345287,0.01098961,0.011654958,0,0.009812354000000001],[0.002074456,0.014469102,0.020571106,0.011305456,0.004176303,0.020278767],[0.033469916,0.020451192,0.040495341,0.006932543,0.06315572,0.012672838],[0.160936497,0.041388813,0.09422534,0.061081033,0.224344967,0.018926382],[0.279547957,0.092103685,0.129048094,0.118642862,0.200181826,0.167082182],[0.226359565,0.232157838,0.183285617,0.226148416,0.072364182,0.211643613],[0.133436755,0.259598533,0.134023209,0.21234123,0.157420941,0.321018644],[0.163895876,0.329485549,0.387361683,0.351893502,0.278356062,0.23856522],[0.367981633,0.629565209,0.527601738,0.733436344,0.380812376,0.610756331],[0.224268812,0.16794467,0.160871028,0.084888452,0.1487191,0.174296574],[0.171405976,0.08592071900000001,0.126125225,0.076166357,0.15166403,0.083264506],[0.115221118,0.057368833,0.091025654,0.045126025,0.127723281,0.07231591900000001],[0.07931887,0.040878118,0.059056089,0.033099088,0.111951719,0.037276325],[0.028421189,0.015138123,0.027902746,0.017103493,0.055459969,0.020229538],[0.012124987,0.002838616,0.006261703,0.009148267999999999,0.02125373,0.001860808],[0.001257415,0.000345711,0.001155817,0.001031973,0.002415795,0]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>StimulusItem1<\/th>\n      <th>pleasure_m<\/th>\n      <th>fluency_m<\/th>\n      <th>complexity_m<\/th>\n      <th>Z_pleasure<\/th>\n      <th>Z_fluency<\/th>\n      <th>Z_complexity<\/th>\n      <th>category<\/th>\n      <th>sumOri_pixels<\/th>\n      <th>ImageName<\/th>\n      <th>ori_1<\/th>\n      <th>ori_2<\/th>\n      <th>ori_3<\/th>\n      <th>ori_4<\/th>\n      <th>ori_5<\/th>\n      <th>ori_6<\/th>\n      <th>ori_7<\/th>\n      <th>ori_8<\/th>\n      <th>len_1<\/th>\n      <th>len_2<\/th>\n      <th>len_3<\/th>\n      <th>len_4<\/th>\n      <th>len_5<\/th>\n      <th>len_6<\/th>\n      <th>len_7<\/th>\n      <th>len_8<\/th>\n      <th>curv_1<\/th>\n      <th>curv_2<\/th>\n      <th>curv_3<\/th>\n      <th>curv_4<\/th>\n      <th>curv_5<\/th>\n      <th>curv_6<\/th>\n      <th>curv_7<\/th>\n      <th>curv_8<\/th>\n      <th>juncType_T<\/th>\n      <th>juncType_Y<\/th>\n      <th>juncType_X<\/th>\n      <th>juncType_Arrow<\/th>\n      <th>juncType_Star<\/th>\n      <th>juncAngle_1<\/th>\n      <th>juncAngle_2<\/th>\n      <th>juncAngle_3<\/th>\n      <th>juncAngle_4<\/th>\n      <th>juncAngle_5<\/th>\n      <th>juncAngle_6<\/th>\n      <th>juncAngle_7<\/th>\n      <th>juncAngle_8<\/th>\n      <th>Norm_ori_1<\/th>\n      <th>Norm_ori_2<\/th>\n      <th>Norm_ori_3<\/th>\n      <th>Norm_ori_4<\/th>\n      <th>Norm_ori_5<\/th>\n      <th>Norm_ori_6<\/th>\n      <th>Norm_ori_7<\/th>\n      <th>Norm_ori_8<\/th>\n      <th>Norm_len_1<\/th>\n      <th>Norm_len_2<\/th>\n      <th>Norm_len_3<\/th>\n      <th>Norm_len_4<\/th>\n      <th>Norm_len_5<\/th>\n      <th>Norm_len_6<\/th>\n      <th>Norm_len_7<\/th>\n      <th>Norm_len_8<\/th>\n      <th>Norm_curv_1<\/th>\n      <th>Norm_curv_2<\/th>\n      <th>Norm_curv_3<\/th>\n      <th>Norm_curv_4<\/th>\n      <th>Norm_curv_5<\/th>\n      <th>Norm_curv_6<\/th>\n      <th>Norm_curv_7<\/th>\n      <th>Norm_curv_8<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"StimulusItem1","targets":1},{"name":"pleasure_m","targets":2},{"name":"fluency_m","targets":3},{"name":"complexity_m","targets":4},{"name":"Z_pleasure","targets":5},{"name":"Z_fluency","targets":6},{"name":"Z_complexity","targets":7},{"name":"category","targets":8},{"name":"sumOri_pixels","targets":9},{"name":"ImageName","targets":10},{"name":"ori_1","targets":11},{"name":"ori_2","targets":12},{"name":"ori_3","targets":13},{"name":"ori_4","targets":14},{"name":"ori_5","targets":15},{"name":"ori_6","targets":16},{"name":"ori_7","targets":17},{"name":"ori_8","targets":18},{"name":"len_1","targets":19},{"name":"len_2","targets":20},{"name":"len_3","targets":21},{"name":"len_4","targets":22},{"name":"len_5","targets":23},{"name":"len_6","targets":24},{"name":"len_7","targets":25},{"name":"len_8","targets":26},{"name":"curv_1","targets":27},{"name":"curv_2","targets":28},{"name":"curv_3","targets":29},{"name":"curv_4","targets":30},{"name":"curv_5","targets":31},{"name":"curv_6","targets":32},{"name":"curv_7","targets":33},{"name":"curv_8","targets":34},{"name":"juncType_T","targets":35},{"name":"juncType_Y","targets":36},{"name":"juncType_X","targets":37},{"name":"juncType_Arrow","targets":38},{"name":"juncType_Star","targets":39},{"name":"juncAngle_1","targets":40},{"name":"juncAngle_2","targets":41},{"name":"juncAngle_3","targets":42},{"name":"juncAngle_4","targets":43},{"name":"juncAngle_5","targets":44},{"name":"juncAngle_6","targets":45},{"name":"juncAngle_7","targets":46},{"name":"juncAngle_8","targets":47},{"name":"Norm_ori_1","targets":48},{"name":"Norm_ori_2","targets":49},{"name":"Norm_ori_3","targets":50},{"name":"Norm_ori_4","targets":51},{"name":"Norm_ori_5","targets":52},{"name":"Norm_ori_6","targets":53},{"name":"Norm_ori_7","targets":54},{"name":"Norm_ori_8","targets":55},{"name":"Norm_len_1","targets":56},{"name":"Norm_len_2","targets":57},{"name":"Norm_len_3","targets":58},{"name":"Norm_len_4","targets":59},{"name":"Norm_len_5","targets":60},{"name":"Norm_len_6","targets":61},{"name":"Norm_len_7","targets":62},{"name":"Norm_len_8","targets":63},{"name":"Norm_curv_1","targets":64},{"name":"Norm_curv_2","targets":65},{"name":"Norm_curv_3","targets":66},{"name":"Norm_curv_4","targets":67},{"name":"Norm_curv_5","targets":68},{"name":"Norm_curv_6","targets":69},{"name":"Norm_curv_7","targets":70},{"name":"Norm_curv_8","targets":71}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script><div class="datatables html-widget html-fill-item" id="htmlwidget-a32f4d1e453b8af3314e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a32f4d1e453b8af3314e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["beaches_00115.jpg","beaches_00117.jpg","beaches_00119.jpg","beaches_00126.jpg","beaches_00149.jpg","beaches_00154.jpg"],[0.754907958,0.488741829,0.528384355,0.169621679,0.960856167,0.661808705],[50.76232971,62.28701732,57.62839232,63.29815103,57.98658803,47.6529925],[653.888147,180.8341717,384.1986093,236.2394109,873.4630850999999,158.5886242],[-0.495644254,-1.460938458,-1.406069131,-0.469064368,-0.701051099,0.798508843],[-0.96249891,0.639170735,1.605098453,2.734090552,-2.936955974,5.086669283],[35.74449873,7.540033584,11.7553036,74.29325279,23.9326978,25.62776796],[-0.581013684,-0.91310674,-1.100442938,0.399198177,0.079229882,0.021346647],[-5.591377783,-1.156456444,1.602332798,-0.021756171,-2.241394582,-16.24959987],[210.5133091,97.6541182,157.5950523,623.6902319,197.9124212,506.6037317],[-0.480161312,0.706891484,0.164367017,0.518113479,0.216906495,0.163205457],[0.065880226,0.227097135,0.364142159,0.526691636,-0.028644615,-0.439314458],[-0.238817507,-0.552252224,-0.403086359,0.492432604,-0.155687567,0.340427916],[0.208507994,0.312852512,0.477820831,0.902245473,0.4413696,-0.067267617],[2.789794757,103.4528703,109.8961006,116.5495818,0,98.12354231],[20.74455542,144.6910215,205.7110624,113.0545608,41.76302673,202.7876723],[334.6991556,204.5119187,404.9534132,69.32543269999999,631.5572015,126.7283786],[1609.364973,413.8881306,942.2533978,610.8103254,2243.449667,189.2638185],[2795.47957,921.0368536,1290.480941,1186.428617,2001.818255,1670.821818],[2263.595646,2321.578381,1832.856167,2261.484164,723.6418167,2116.436133],[1334.367546,2595.985332,1340.232092,2123.4123,1574.209412,3210.186436],[1638.958759,3294.855493,3873.616826,3518.935018,2783.56062,2385.652202],[4574.20136,6798.30678,5969.956525,8230.659949000001,2835.155036,5573.730279],[1601.634552,541.9741588000001,809.0012757,647.3129362,959.3081508,975.7230025],[639.0072726,124.6176322,392.1684489,168.9765981,653.3054425,124.2515442],[374.9621377,123.2112677,349.3683835,137.9237812,673.0816818,118.8608165],[501.3769264,167.2919716,721.9187027,268.0020005,2628.187571,270.1174319],[389.0555299,161.8841929,389.2632416,79.14383472,843.2533294999999,140.9046398],[510.7945803,225.7669116,341.075029,111.1726793,523.7550054,467.7619991],[1408.967641,1856.947085,1027.248393,356.8082212,883.9537833000001,2328.650287],[3679.816331,6295.652097,5276.017384,7334.363443,3808.123756,6107.563305],[2242.688122,1679.446705,1608.71028,848.8845225,1487.191004,1742.96574],[1714.05976,859.2071902,1261.252251,761.6635672,1516.640302,832.6450555],[1152.211179,573.6883325,910.2565391000001,451.2602509,1277.232807,723.1591948],[793.1886961,408.7811751,590.5608926,330.9908773,1119.517185,372.7632493],[284.21189,151.381226,279.0274589,171.03493,554.5996908,202.2953782],[121.2498669,28.38616026,62.61702656,91.48268346,212.5373049,18.60807666],[12.57415464,3.457113843,11.55816774,10.31972605,24.15795059,0],[12.49365768,6.049949226,6.257082435,13.27131417,34.81380731,4.81013169],[2.630243721,0,1.251416487,3.791804049,12.89400271,1.60337723],[1.972682791,0.8642784610000001,0,5.687706074,10.31520217,0],[3.945365582,0,0,0.947951012,4.512900948,0],[130.8546251,116.6775922,226.5063841,109.0143664,210.1722441,144.3039507],[206.4741321,201.3768814,316.6083712,89.10739516,404.871685,149.1140824],[348.507293,148.6558953,354.1508658,136.5049458,533.8117121,150.7174596],[706.8780001,241.1336906,515.5835926,273.9578426,774.9295627,230.8863211],[1171.116017,375.9611305,685.7762348,322.3033442,1159.170843,570.8022939],[2268.585209,1086.398025,1545.499361,989.6608569,1611.750338,1718.820391],[2863.677851,3675.776294,2813.184263,3033.443239,2293.843082,3549.877188],[1782.647682,3890.117352,3178.597877,4938.824774,2473.069719,3105.741695],[1073.796999,828.8430439,1092.486593,1629.52779,1743.913866,2552.57655],[917.9550587,1341.360171,778.3810549,1582.13024,1332.59518,1487.93407],[1714.261345,1280.860679,1315.238728,1855.140131,1335.81868,1707.59675],[1892.460357,888.4782577,1480.425704,1125.217852,1683.956754,960.4229609],[1749.769635,1453.716371,1371.55247,1657.966321,1370.632488,950.8026975],[1582.091598,2439.858095,1860.856316,1047.485869,1045.70362,1377.301041],[401.1121675,1395.809714,1536.739446,927.0960901,757.5226591000001,335.1058411],[147.2936484,107.1705291,200.2266379,68.25247289000001,186.9630393,243.713339],[0.65756093,2.592835383,3.754249461,16.11516721,6.447001354,8.016886151],[5.260487442,2.592835383,18.7712473,18.95902025,23.85390501,20.84390399],[106.5248707,52.72098611,97.61048598000001,46.4495996,188.8971397,48.1013169],[298.5326623,107.1705291,251.5347139,177.2668393,475.1439998,250.1268479],[1488.717946,534.1240888,817.174966,354.5336786,1609.816238,479.4097918],[3445.619275,1465.81627,2103.631115,612.376354,3178.371667,1951.310089],[3074.097349,2239.345492,3209.883289,3261.899433,3113.256954,3726.248683],[1059.330659,5331.733825,3133.546883,5405.216672,865.8322818,3136.205862],[4.052631579,3.6,3.75,3.368421053,4.184210526,3.8]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>imageName<\/th>\n      <th>Z_pleasure<\/th>\n      <th>Lmean<\/th>\n      <th>Lvar<\/th>\n      <th>Lskew<\/th>\n      <th>Amean<\/th>\n      <th>Avar<\/th>\n      <th>Askew<\/th>\n      <th>Bmean<\/th>\n      <th>Bvar<\/th>\n      <th>BSkew<\/th>\n      <th>corrLA<\/th>\n      <th>corrLB<\/th>\n      <th>corrAB<\/th>\n      <th>len_1<\/th>\n      <th>len_2<\/th>\n      <th>len_3<\/th>\n      <th>len_4<\/th>\n      <th>len_5<\/th>\n      <th>len_6<\/th>\n      <th>len_7<\/th>\n      <th>len_8<\/th>\n      <th>ori_1<\/th>\n      <th>ori_2<\/th>\n      <th>ori_3<\/th>\n      <th>ori_4<\/th>\n      <th>ori_5<\/th>\n      <th>ori_6<\/th>\n      <th>ori_7<\/th>\n      <th>ori_8<\/th>\n      <th>curv_1<\/th>\n      <th>curv_2<\/th>\n      <th>curv_3<\/th>\n      <th>curv_4<\/th>\n      <th>curv_5<\/th>\n      <th>curv_6<\/th>\n      <th>curv_7<\/th>\n      <th>curv_8<\/th>\n      <th>juncType_T<\/th>\n      <th>juncType_X<\/th>\n      <th>juncType_Y<\/th>\n      <th>juncType_Arrow<\/th>\n      <th>par_1<\/th>\n      <th>par_2<\/th>\n      <th>par_3<\/th>\n      <th>par_4<\/th>\n      <th>par_5<\/th>\n      <th>par_6<\/th>\n      <th>par_7<\/th>\n      <th>par_8<\/th>\n      <th>sep_1<\/th>\n      <th>sep_2<\/th>\n      <th>sep_3<\/th>\n      <th>sep_4<\/th>\n      <th>sep_5<\/th>\n      <th>sep_6<\/th>\n      <th>sep_7<\/th>\n      <th>sep_8<\/th>\n      <th>mir_1<\/th>\n      <th>mir_2<\/th>\n      <th>mir_3<\/th>\n      <th>mir_4<\/th>\n      <th>mir_5<\/th>\n      <th>mir_6<\/th>\n      <th>mir_7<\/th>\n      <th>mir_8<\/th>\n      <th>mean_pleasure<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"imageName","targets":1},{"name":"Z_pleasure","targets":2},{"name":"Lmean","targets":3},{"name":"Lvar","targets":4},{"name":"Lskew","targets":5},{"name":"Amean","targets":6},{"name":"Avar","targets":7},{"name":"Askew","targets":8},{"name":"Bmean","targets":9},{"name":"Bvar","targets":10},{"name":"BSkew","targets":11},{"name":"corrLA","targets":12},{"name":"corrLB","targets":13},{"name":"corrAB","targets":14},{"name":"len_1","targets":15},{"name":"len_2","targets":16},{"name":"len_3","targets":17},{"name":"len_4","targets":18},{"name":"len_5","targets":19},{"name":"len_6","targets":20},{"name":"len_7","targets":21},{"name":"len_8","targets":22},{"name":"ori_1","targets":23},{"name":"ori_2","targets":24},{"name":"ori_3","targets":25},{"name":"ori_4","targets":26},{"name":"ori_5","targets":27},{"name":"ori_6","targets":28},{"name":"ori_7","targets":29},{"name":"ori_8","targets":30},{"name":"curv_1","targets":31},{"name":"curv_2","targets":32},{"name":"curv_3","targets":33},{"name":"curv_4","targets":34},{"name":"curv_5","targets":35},{"name":"curv_6","targets":36},{"name":"curv_7","targets":37},{"name":"curv_8","targets":38},{"name":"juncType_T","targets":39},{"name":"juncType_X","targets":40},{"name":"juncType_Y","targets":41},{"name":"juncType_Arrow","targets":42},{"name":"par_1","targets":43},{"name":"par_2","targets":44},{"name":"par_3","targets":45},{"name":"par_4","targets":46},{"name":"par_5","targets":47},{"name":"par_6","targets":48},{"name":"par_7","targets":49},{"name":"par_8","targets":50},{"name":"sep_1","targets":51},{"name":"sep_2","targets":52},{"name":"sep_3","targets":53},{"name":"sep_4","targets":54},{"name":"sep_5","targets":55},{"name":"sep_6","targets":56},{"name":"sep_7","targets":57},{"name":"sep_8","targets":58},{"name":"mir_1","targets":59},{"name":"mir_2","targets":60},{"name":"mir_3","targets":61},{"name":"mir_4","targets":62},{"name":"mir_5","targets":63},{"name":"mir_6","targets":64},{"name":"mir_7","targets":65},{"name":"mir_8","targets":66},{"name":"mean_pleasure","targets":67}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+&lt;span style="font-size: 25px;"&gt;1.2 Calculate M and SD for each group&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+```r
+# Function to calculate the mean and the standard deviation for each group
+data_summary &lt;- function(data, varname, groupnames){
+  require(plyr)
+  summary_func &lt;- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum&lt;-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum &lt;- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+```
+
+
+---
+
+&lt;span style="font-size: 25px;"&gt;1.3 Summarize LD Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+```r
+#Average ratings by category (raw scores)
+by(LD1$pleasure_m,factor(LD1$category),describe)
+```
+
+```
+## factor(LD1$category): beaches
+##    vars  n mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 80 3.04 0.52      3    3.03 0.61 2.02 4.17  2.14 0.23       -1 0.06
+## ------------------------------------------------------------ 
+## factor(LD1$category): city
+##    vars  n mean   sd median trimmed mad  min max range  skew kurtosis   se
+## X1    1 79 3.39 0.43   3.46    3.39 0.4 2.18 4.6  2.42 -0.11     0.21 0.05
+## ------------------------------------------------------------ 
+## factor(LD1$category): forests
+##    vars  n mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 80 2.46 0.34   2.41    2.44 0.32 1.79 3.38  1.59 0.54      0.1 0.04
+## ------------------------------------------------------------ 
+## factor(LD1$category): highways
+##    vars  n mean   sd median trimmed  mad min  max range skew kurtosis   se
+## X1    1 80 3.06 0.38   3.05    3.05 0.35 2.1 3.95  1.86  0.2    -0.02 0.04
+## ------------------------------------------------------------ 
+## factor(LD1$category): mountains
+##    vars  n mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 76 2.65 0.42   2.63    2.65 0.41 1.35 3.76  2.41 0.06     0.51 0.05
+## ------------------------------------------------------------ 
+## factor(LD1$category): offices
+##    vars  n mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 80 3.07 0.37   3.08    3.09 0.41 2.18 3.74  1.56 -0.3    -0.48 0.04
+```
+
+```r
+#Average ratings by category (normalized scores)
+by(LD1$Z_pleasure,factor(LD1$category),describe)
+```
+
+```
+## factor(LD1$category): beaches
+##    vars  n mean   sd median trimmed mad   min  max range skew kurtosis   se
+## X1    1 80 0.07 0.42   0.04    0.06 0.5 -0.75 0.98  1.73 0.23       -1 0.05
+## ------------------------------------------------------------ 
+## factor(LD1$category): city
+##    vars  n mean   sd median trimmed  mad   min  max range  skew kurtosis   se
+## X1    1 79 0.36 0.35   0.41    0.36 0.32 -0.62 1.33  1.96 -0.11     0.21 0.04
+## ------------------------------------------------------------ 
+## factor(LD1$category): forests
+##    vars  n mean   sd median trimmed  mad   min  max range skew kurtosis   se
+## X1    1 80 -0.4 0.28  -0.44   -0.41 0.26 -0.94 0.35  1.29 0.54      0.1 0.03
+## ------------------------------------------------------------ 
+## factor(LD1$category): highways
+##    vars  n mean  sd median trimmed  mad   min  max range skew kurtosis   se
+## X1    1 80 0.09 0.3   0.08    0.08 0.28 -0.69 0.81   1.5  0.2    -0.02 0.03
+## ------------------------------------------------------------ 
+## factor(LD1$category): mountains
+##    vars  n  mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 76 -0.24 0.34  -0.26   -0.24 0.33 -1.3 0.66  1.95 0.06     0.51 0.04
+## ------------------------------------------------------------ 
+## factor(LD1$category): offices
+##    vars  n mean  sd median trimmed  mad   min  max range skew kurtosis   se
+## X1    1 80  0.1 0.3   0.11    0.11 0.33 -0.62 0.64  1.26 -0.3    -0.48 0.03
+```
+
+
+---
+
+&lt;span style="font-size: 25px;"&gt;1.4 Match LD with Color Photo Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[Combined color and LD dataset]
+
+```r
+#combined color and LD dataset 
+LD &lt;- subset.data.frame(LD1, select = c("ImageName","pleasure_m"))  #Extract the "ImageName" and "pleasure_m" columns from the LD1 dataframe and store the result in a new dataframe LD
+
+CPLD &lt;- merge(x=CP,y=LD,by.x="imageName",by.y="ImageName",all.x=TRUE) #merge the CP and LD dataframes based on the image name
+
+#Create two new columns, pleasure_LD and pleasure_CP, which contain the data from the pleasure_m column of the original LD dataframe and the mean_pleasure column of the CP dataframe
+CPLD$pleasure_LD &lt;- CPLD$pleasure_m
+CPLD$pleasure_CP &lt;- CPLD$mean_pleasure     
+library(reshape2)
+CPLD_long &lt;- melt(CPLD, id.vars=c("imageName"), 
+                  measure.vars=c("pleasure_LD", "pleasure_CP"),
+                  variable.name="ImageType",
+                  value.name="response")
+```
+
+
+
+.panel[.panel-name[Add category information]
+
+
+```r
+#add category information
+CPLD_long &lt;- CPLD_long %&gt;% mutate(category = case_when(
+  str_detect(.$imageName, "mountains_") ~ "mountains",
+  str_detect(.$imageName, "city_") ~ "city",
+  str_detect(.$imageName, "forests_") ~ "forests",
+  str_detect(.$imageName, "beaches_") ~ "beaches",
+  str_detect(.$imageName, "highways_") ~ "highways",
+  str_detect(.$imageName, "offices_") ~ "offices",
+  TRUE ~ as.character(.$imageName)))  # Convert the category column to a factor variable
+CPLD_long$category &lt;- as.factor(CPLD_long$category)       
+```
+
+.panel[.panel-name[Add category information]
+
+```r
+#add category information
+CP &lt;- CP %&gt;% mutate(category = case_when(
+  str_detect(.$imageName, "mountains_") ~ "mountains",
+  str_detect(.$imageName, "city_") ~ "city",
+  str_detect(.$imageName, "forests_") ~ "forests",
+  str_detect(.$imageName, "beaches_") ~ "beaches",
+  str_detect(.$imageName, "highways_") ~ "highways",
+  str_detect(.$imageName, "offices_") ~ "offices",
+  TRUE ~ as.character(.$imageName)))  # Convert the category column to a factor variable
+CP$category &lt;- as.factor(CP$category)    
+```
+]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;1.5 Summarize Color Photo Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+```r
+#Average ratings by category (raw scores)
+by(CP$mean_pleasure,factor(CP$category),describe)
+```
+
+```
+## factor(CP$category): beaches
+##    vars  n mean   sd median trimmed  mad  min  max range  skew kurtosis   se
+## X1    1 80 3.78 0.42   3.85     3.8 0.46 2.47 4.65  2.18 -0.48    -0.16 0.05
+## ------------------------------------------------------------ 
+## factor(CP$category): city
+##    vars  n mean  sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 79 2.79 0.5   2.79    2.79 0.39 1.55 4.14  2.59 0.23     0.57 0.06
+## ------------------------------------------------------------ 
+## factor(CP$category): forests
+##    vars  n mean   sd median trimmed  mad  min max range  skew kurtosis   se
+## X1    1 80  3.5 0.37   3.55    3.51 0.33 2.63 4.3  1.67 -0.24    -0.44 0.04
+## ------------------------------------------------------------ 
+## factor(CP$category): highways
+##    vars  n mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 80 2.28 0.36   2.21    2.26 0.31 1.62 3.35  1.73 0.68     0.23 0.04
+## ------------------------------------------------------------ 
+## factor(CP$category): mountains
+##    vars  n mean   sd median trimmed  mad  min  max range  skew kurtosis   se
+## X1    1 76 3.98 0.31      4    3.99 0.28 3.11 4.58  1.47 -0.38    -0.11 0.04
+## ------------------------------------------------------------ 
+## factor(CP$category): offices
+##    vars  n mean   sd median trimmed  mad  min max range skew kurtosis   se
+## X1    1 80    2 0.44   1.94    1.98 0.47 1.26 3.1  1.84 0.51    -0.38 0.05
+```
+
+```r
+#Average ratings by category (normalized scores)
+by(CP$Z_pleasure,factor(CP$category),describe)
+```
+
+```
+## factor(CP$category): beaches
+##    vars  n mean   sd median trimmed  mad   min  max range  skew kurtosis   se
+## X1    1 80 0.58 0.34   0.62     0.6 0.35 -0.41 1.25  1.67 -0.45    -0.47 0.04
+## ------------------------------------------------------------ 
+## factor(CP$category): city
+##    vars  n  mean   sd median trimmed  mad   min  max range skew kurtosis   se
+## X1    1 79 -0.18 0.41   -0.2   -0.19 0.34 -1.13 0.94  2.07 0.31      0.2 0.05
+## ------------------------------------------------------------ 
+## factor(CP$category): forests
+##    vars  n mean   sd median trimmed  mad   min  max range  skew kurtosis   se
+## X1    1 80 0.35 0.29   0.36    0.36 0.28 -0.27 0.98  1.25 -0.08    -0.54 0.03
+## ------------------------------------------------------------ 
+## factor(CP$category): highways
+##    vars  n  mean   sd median trimmed  mad   min  max range skew kurtosis   se
+## X1    1 80 -0.62 0.29  -0.69   -0.65 0.22 -1.13 0.36  1.49 1.06     1.06 0.03
+## ------------------------------------------------------------ 
+## factor(CP$category): mountains
+##    vars  n mean   sd median trimmed  mad  min  max range skew kurtosis   se
+## X1    1 76 0.71 0.26   0.68    0.71 0.27 0.03 1.34  1.31 0.02    -0.27 0.03
+## ------------------------------------------------------------ 
+## factor(CP$category): offices
+##    vars  n  mean   sd median trimmed  mad   min   max range skew kurtosis   se
+## X1    1 80 -0.84 0.31   -0.9   -0.86 0.34 -1.34 -0.02  1.33 0.58    -0.29 0.03
+```
+
+---
+
+&lt;span style="font-size: 25px;"&gt;1.6 Descriptive Statistics Results&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[Reproduce Results]
+&lt;img src="./picture/e1_msd.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[Comparison with Literature Results]
+&lt;img src="./picture/e1paper_msd.jpg" width="50%" style="display: block; margin: auto;" /&gt;
+]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;1.7 Fig.3 c: Comparison of Reproduced Results with Literature Results&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+.panelset[
+.panel[.panel-name[pre-1]
+
+```r
+group.colors2 &lt;- c(LD_pleasure = "steelblue", CP_pleasure = "darkred")
+#dataframe summary
+CPLD_summary &lt;- data_summary(CPLD_long, varname="response", 
+                            groupnames=c("ImageType", "category"))
+```
+
+.panel[.panel-name[pre-2]
+
+```r
+#raw version of Figure 3C
+p&lt;- ggplot(CPLD_summary, aes(x=category, y=response, group=ImageType)) + 
+  geom_line(aes(linetype=ImageType)) +
+  geom_point(aes(shape=ImageType))
+p+labs(title="Experiment 1: LD - CP", x="Category", y = "Response")+
+  theme_classic() 
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-16-1.png" width="50%" /&gt;
+
+.panel[.panel-name['Fig.3c' from the literature]
+&lt;img src="./picture/figure3c.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[post-1]
+
+```r
+# Set colors
+group.colors2 &lt;- c("Line Drawings" = "black", "Photographs" = "mediumturquoise")
+
+# Data summary
+CPLD_summary &lt;- data_summary(CPLD_long, varname="response", groupnames=c("ImageType", "category"))
+
+# Assign fixed x-values for each type and tweak to avoid points near the edges
+CPLD_summary$xpos &lt;- ifelse(CPLD_summary$ImageType == "pleasure_LD", 2, 3)  # Appropriately increase x-coordinate
+
+# Convert ImageType to more understandable labels
+CPLD_summary$ImageType &lt;- factor(CPLD_summary$ImageType, levels = c("pleasure_LD", "pleasure_CP"),
+                                 labels = c("Line Drawings", "Photographs"))
+```
+
+.panel[.panel-name[post-2]
+
+```r
+# Plot
+p &lt;- ggplot(CPLD_summary, aes(x=xpos, y=response, group=category, color=ImageType)) +
+  geom_point(size=4) +  # Draw points
+  geom_line(aes(group=category), linewidth=1, color="grey") +  # Connecting lines
+  geom_text_repel(aes(label=category, x=ifelse(ImageType == "Line Drawings", xpos - 0.3, xpos + 0.3), hjust=ifelse(ImageType == "Line Drawings", 1, 0)), vjust=0, show.legend = FALSE, nudge_y=0.1, direction="y", segment.color = NA) +  # Add category labels, adjust position
+  scale_color_manual(values=group.colors2) +
+  labs(title="Experiment 1: LD - CP", y="Mean Aesthetic Value", color=NULL) +  # Remove legend title
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank(), 
+    axis.title.x = element_blank(), 
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor.x = element_blank(),  # Clear x-axis related elements
+    panel.grid.major.y = element_blank(),  # Remove major horizontal grid lines
+    panel.grid.minor.y = element_blank(),  # Remove minor horizontal grid lines
+    axis.line.x = element_line(color = "black"),  # Add x-axis line
+    axis.line.y = element_line(color = "black")   # Add y-axis line
+  ) +
+  scale_x_continuous(breaks = c(2, 3), labels = c("Line Drawings", "Photographs"), limits = c(1, 4))  # Adjust x-axis range and labels
+  papaja::theme_apa()  # Apply APA style theme
+```
+
+```
+## List of 136
+##  $ line                            :List of 6
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ lineend      : chr "butt"
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ rect                            :List of 5
+##   ..$ fill         : chr "white"
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ text                            :List of 11
+##   ..$ family       : chr ""
+##   ..$ face         : chr "plain"
+##   ..$ colour       : chr "black"
+##   ..$ size         : num 12
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : num 0.5
+##   ..$ angle        : num 0
+##   ..$ lineheight   : num 0.9
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ title                           : NULL
+##  $ aspect.ratio                    : NULL
+##  $ axis.title                      : NULL
+##  $ axis.title.x                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 12points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.top                :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 12points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.bottom             : NULL
+##  $ axis.title.y                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num 90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 12points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.y.left               : NULL
+##  $ axis.title.y.right              :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num -90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 12points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text                       :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : chr "grey30"
+##   ..$ size         : 'rel' num 0.9
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 6points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.top                 :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 2.4points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.bottom              : NULL
+##  $ axis.text.y                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 1
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 6points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.y.left                : NULL
+##  $ axis.text.y.right               :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 6points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.theta                 : NULL
+##  $ axis.text.r                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 2.4points 0points 2.4points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.ticks                      :List of 6
+##   ..$ colour       : chr "grey20"
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.ticks.x                    : NULL
+##  $ axis.ticks.x.top                : NULL
+##  $ axis.ticks.x.bottom             : NULL
+##  $ axis.ticks.y                    : NULL
+##  $ axis.ticks.y.left               : NULL
+##  $ axis.ticks.y.right              : NULL
+##  $ axis.ticks.theta                : NULL
+##  $ axis.ticks.r                    : NULL
+##  $ axis.minor.ticks.x.top          : NULL
+##  $ axis.minor.ticks.x.bottom       : NULL
+##  $ axis.minor.ticks.y.left         : NULL
+##  $ axis.minor.ticks.y.right        : NULL
+##  $ axis.minor.ticks.theta          : NULL
+##  $ axis.minor.ticks.r              : NULL
+##  $ axis.ticks.length               : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ axis.ticks.length.x             : NULL
+##  $ axis.ticks.length.x.top         : NULL
+##  $ axis.ticks.length.x.bottom      : NULL
+##  $ axis.ticks.length.y             : NULL
+##  $ axis.ticks.length.y.left        : NULL
+##  $ axis.ticks.length.y.right       : NULL
+##  $ axis.ticks.length.theta         : NULL
+##  $ axis.ticks.length.r             : NULL
+##  $ axis.minor.ticks.length         : 'rel' num 0.75
+##  $ axis.minor.ticks.length.x       : NULL
+##  $ axis.minor.ticks.length.x.top   : NULL
+##  $ axis.minor.ticks.length.x.bottom: NULL
+##  $ axis.minor.ticks.length.y       : NULL
+##  $ axis.minor.ticks.length.y.left  : NULL
+##  $ axis.minor.ticks.length.y.right : NULL
+##  $ axis.minor.ticks.length.theta   : NULL
+##  $ axis.minor.ticks.length.r       : NULL
+##  $ axis.line                       :List of 6
+##   ..$ colour       : NULL
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.line.x                     : NULL
+##  $ axis.line.x.top                 : NULL
+##  $ axis.line.x.bottom              : NULL
+##  $ axis.line.y                     : NULL
+##  $ axis.line.y.left                : NULL
+##  $ axis.line.y.right               : NULL
+##  $ axis.line.theta                 : NULL
+##  $ axis.line.r                     : NULL
+##  $ legend.background               :List of 5
+##   ..$ fill         : NULL
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.margin                   : 'margin' num [1:4] 16points 16points 16points 16points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing                  : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing.x                : NULL
+##  $ legend.spacing.y                : NULL
+##  $ legend.key                      :List of 5
+##   ..$ fill         : logi NA
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.key.size                 : 'simpleUnit' num 1.2lines
+##   ..- attr(*, "unit")= int 3
+##  $ legend.key.height               : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.width                : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing              : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing.x            : NULL
+##  $ legend.key.spacing.y            : NULL
+##  $ legend.frame                    : NULL
+##  $ legend.ticks                    : NULL
+##  $ legend.ticks.length             : 'rel' num 0.2
+##  $ legend.axis.line                : NULL
+##  $ legend.text                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 0.8
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.text.position            : NULL
+##  $ legend.title                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.title.position           : NULL
+##  $ legend.position                 : chr "right"
+##  $ legend.position.inside          : NULL
+##  $ legend.direction                : NULL
+##  $ legend.byrow                    : NULL
+##  $ legend.justification            : chr "center"
+##  $ legend.justification.top        : NULL
+##  $ legend.justification.bottom     : NULL
+##  $ legend.justification.left       : NULL
+##  $ legend.justification.right      : NULL
+##  $ legend.justification.inside     : NULL
+##  $ legend.location                 : NULL
+##  $ legend.box                      : NULL
+##  $ legend.box.just                 : NULL
+##  $ legend.box.margin               : 'margin' num [1:4] 0cm 0cm 0cm 0cm
+##   ..- attr(*, "unit")= int 1
+##  $ legend.box.background           : list()
+##   ..- attr(*, "class")= chr [1:2] "element_blank" "element"
+##  $ legend.box.spacing              : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##   [list output truncated]
+##  - attr(*, "class")= chr [1:2] "theme" "gg"
+##  - attr(*, "complete")= logi TRUE
+##  - attr(*, "validate")= logi TRUE
+```
+
+.panel[.panel-name[post-3]
+
+```r
+# Display plot
+print(p)
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-20-1.png" width="50%" /&gt;
+
+]]]]]]]
+
+---
+
+# &lt;h3 lang="en"&gt;2.Experiment 2&lt;/h3&gt;
+&lt;span style="font-size: 25px;"&gt;2.1 Import Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+```r
+#--------------------------------Set the Work Path------------------------------------------
+setwd("./data/experiment2")
+#--------------------------------Import Data------------------------------------------------
+#Import half-split data
+df2 &lt;- read.csv("LD2.csv",stringsAsFactors=TRUE)
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-31359faa3fce585f8499" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-31359faa3fce585f8499">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["5ae76daca740ff0001937dad","5ae76daca740ff0001937dad","5ae76daca740ff0001937dad","5ae76daca740ff0001937dad","5ae76daca740ff0001937dad","5ae76daca740ff0001937dad"],["main","main","main","main","main","main"],[3,3,3,3,3,3],["pleasure","pleasure","pleasure","pleasure","pleasure","pleasure"],[1,1,1,1,1,1],["city_00218_top.png","city_00218_top.png","city_00218_top.png","city_00218_top.png","city_00218_top.png","city_00218_top.png"],[4,4,4,4,4,4],[11608,11608,11608,11608,11608,11608],["top","top","top","top","top","top"],["city","city","city","city","city","city"],[1.46424541,1.46424541,1.46424541,1.46424541,1.46424541,1.46424541],["city_00218","city_00218","city_00218","city_00218","city_00218","city_00218"],[82,82,82,82,82,82],[12,12,12,12,12,12],[17,17,17,17,17,17],["Female","Female","Female","Female","Female","Female"],[1,1,1,1,1,1],[7,7,7,7,7,7],[5,5,5,5,5,5],["Rural","Rural","Rural","Rural","Rural","Rural"],[32,32,32,32,32,32],["Yes","Yes","Yes","Yes","Yes","Yes"],[92.14468058999999,92.14468058999999,92.14468058999999,92.14468058999999,92.14468058999999,92.14468058999999]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>subject<\/th>\n      <th>blockcode<\/th>\n      <th>blocknum<\/th>\n      <th>trialcode<\/th>\n      <th>trialnum<\/th>\n      <th>stimulusitem1<\/th>\n      <th>response<\/th>\n      <th>latency<\/th>\n      <th>condition<\/th>\n      <th>category<\/th>\n      <th>Z_pleasure<\/th>\n      <th>Imageidentity<\/th>\n      <th>X.y<\/th>\n      <th>PositiveAffectScore<\/th>\n      <th>NegativeAffectScore<\/th>\n      <th>gender_response<\/th>\n      <th>training_response<\/th>\n      <th>experience_response<\/th>\n      <th>education_response<\/th>\n      <th>regionpast_response<\/th>\n      <th>age_response<\/th>\n      <th>languageoption1_response<\/th>\n      <th>DATscore<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[3,5,7,8,11,13,14,15,17,18,19,21,23]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"subject","targets":1},{"name":"blockcode","targets":2},{"name":"blocknum","targets":3},{"name":"trialcode","targets":4},{"name":"trialnum","targets":5},{"name":"stimulusitem1","targets":6},{"name":"response","targets":7},{"name":"latency","targets":8},{"name":"condition","targets":9},{"name":"category","targets":10},{"name":"Z_pleasure","targets":11},{"name":"Imageidentity","targets":12},{"name":"X.y","targets":13},{"name":"PositiveAffectScore","targets":14},{"name":"NegativeAffectScore","targets":15},{"name":"gender_response","targets":16},{"name":"training_response","targets":17},{"name":"experience_response","targets":18},{"name":"education_response","targets":19},{"name":"regionpast_response","targets":20},{"name":"age_response","targets":21},{"name":"languageoption1_response","targets":22},{"name":"DATscore","targets":23}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+&lt;span style="font-size: 25px;"&gt;2.2 Calculate M and SD for each group&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+```r
+# Function to calculate the mean and the standard deviation for each group
+data_summary &lt;- function(data, varname, groupnames){
+  require(plyr)
+  summary_func &lt;- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum&lt;-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum &lt;- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+```
+
+---
+
+&lt;span style="font-size: 25px;"&gt;2.3 T-test&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[Summarize Data]
+
+```r
+#mean and sd for top and bottom-ranked contours
+by(df2$response,factor(df2$condition),describe)
+```
+
+```
+## factor(df2$condition): bottom
+##    vars      n mean   sd median trimmed  mad min max range skew kurtosis se
+## X1    1 113800 2.37 1.18      2    2.28 1.48   1   5     4  0.5    -0.73  0
+## ------------------------------------------------------------ 
+## factor(df2$condition): top
+##    vars      n mean   sd median trimmed  mad min max range skew kurtosis se
+## X1    1 113640 2.72 1.22      3    2.67 1.48   1   5     4 0.17       -1  0
+```
+
+
+.panel[.panel-name[Top vs Bottom Mean Diff]
+
+
+```r
+#make dataframe for paired samples t-test
+df2_paired &lt;- df2 %&gt;%
+  dplyr::select(Imageidentity,stimulusitem1,response,condition) %&gt;%
+  dplyr::group_by(condition,Imageidentity)%&gt;%
+  dplyr::summarize(response = mean(response))
+#paired t statistic
+t.test(df2_paired$response[df2_paired$condition=="top"],df2_paired$response[df2_paired$condition=="bottom"],paired=TRUE)
+```
+
+```
+## 
+## 	Paired t-test
+## 
+## data:  df2_paired$response[df2_paired$condition == "top"] and df2_paired$response[df2_paired$condition == "bottom"]
+## t = 15.7, df = 398, p-value &lt;0.0000000000000002
+## alternative hypothesis: true mean difference is not equal to 0
+## 95 percent confidence interval:
+##  0.30288 0.38942
+## sample estimates:
+## mean difference 
+##         0.34615
+```
+
+```r
+#effect size (cohen's d)
+effsize::cohen.d(df2_paired$response, factor(df2_paired$condition))
+```
+
+```
+## 
+## Cohen's d
+## 
+## d estimate: -0.69008 (medium)
+## 95 percent confidence interval:
+##    lower    upper 
+## -0.83313 -0.54703
+```
+
+.panel[.panel-name[Reproduce Results]
+&lt;img src="./picture/e2_t.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[Comparison with Literature Results]
+&lt;img src="./picture/e2paper_t.jpg" width="70%" style="display: block; margin: auto;" /&gt;
+
+]]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;2.4 Fig.4 c left: Comparison of Reproduced Results with Literature Results&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[pre-1]
+
+```r
+group.colors &lt;- c(bottom = "steelblue", top = "darkred")
+#dataframe summary
+df2_summary &lt;- data_summary(df2, varname="response", 
+                            groupnames=c("condition", "category"))
+```
+
+.panel[.panel-name[pre-2]
+
+```r
+#violin plot Figure 4C Left
+ggp &lt;- ggplot(df2_summary, aes(condition, response, fill = condition)) +            
+  geom_violin(trim=FALSE, bw=0.2, position = "identity") + geom_jitter(alpha=0.1)
+ggp &lt;- ggp + scale_fill_manual(values=group.colors) + ylim(0,5)
+ggp &lt;- ggp + theme_minimal() + geom_boxplot(width=0.1, position=position_dodge(.9),outlier.shape = NA)
+ggp + xlab("Contour Condition") + ylab("Mean Aesthetic Response") + theme_minimal()
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-28-1.png" width="50%" /&gt;
+
+
+.panel[.panel-name['Fig.4c left' from the literature]
+&lt;img src="./picture/figure4cleft.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[post-1]
+
+```r
+# Remap condition labels
+df2_paired$condition &lt;- dplyr::recode(df2_paired$condition, "bottom" = "Low", "top" = "High")
+
+# Set colors
+group.colors &lt;- c("Low" = "steelblue", "High" = "darkred")
+
+# Calculate means
+low_mean &lt;- mean(df2_paired$response[df2_paired$condition == "Low"])
+high_mean &lt;- mean(df2_paired$response[df2_paired$condition == "High"])
+```
+
+.panel[.panel-name[post-2]
+
+```r
+# Plot violin and scatter plot
+ggp &lt;- ggplot(df2_paired, aes(x=condition, y=response, fill=condition)) +            
+  geom_violin(trim=FALSE, bw=0.2, position="identity", alpha=0.5) +
+  geom_jitter(aes(color=condition), width=0.4, height=0, alpha=0.5) +  # Add scatter points
+  geom_boxplot(width=0.1, position=position_dodge(0.9), outlier.shape=NA, alpha=0.5) +
+  scale_fill_manual(values=group.colors) +
+  scale_color_manual(values=group.colors) +
+  ylim(0, 5) +
+  theme_minimal() +
+  labs(x="Contour Condition", y="Observed Aesthetic Value") +
+  theme(legend.position="none") +  # Hide legend
+  geom_segment(aes(x=1, xend=2, y=low_mean, yend=high_mean), linetype="dashed", color="black") +  # Add dashed line
+  annotate("text", x=1.5, y=(low_mean + high_mean) / 2 + 0.2, label="*", size=6)  # Add asterisk
+  papaja::theme_apa() # Apply APA style theme
+```
+
+```
+## List of 136
+##  $ line                            :List of 6
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ lineend      : chr "butt"
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ rect                            :List of 5
+##   ..$ fill         : chr "white"
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ text                            :List of 11
+##   ..$ family       : chr ""
+##   ..$ face         : chr "plain"
+##   ..$ colour       : chr "black"
+##   ..$ size         : num 12
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : num 0.5
+##   ..$ angle        : num 0
+##   ..$ lineheight   : num 0.9
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ title                           : NULL
+##  $ aspect.ratio                    : NULL
+##  $ axis.title                      : NULL
+##  $ axis.title.x                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 12points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.top                :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 12points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.bottom             : NULL
+##  $ axis.title.y                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num 90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 12points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.y.left               : NULL
+##  $ axis.title.y.right              :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num -90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 12points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text                       :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : chr "grey30"
+##   ..$ size         : 'rel' num 0.9
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 6points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.top                 :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 2.4points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.bottom              : NULL
+##  $ axis.text.y                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 1
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 6points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.y.left                : NULL
+##  $ axis.text.y.right               :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 6points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.theta                 : NULL
+##  $ axis.text.r                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 2.4points 0points 2.4points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.ticks                      :List of 6
+##   ..$ colour       : chr "grey20"
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.ticks.x                    : NULL
+##  $ axis.ticks.x.top                : NULL
+##  $ axis.ticks.x.bottom             : NULL
+##  $ axis.ticks.y                    : NULL
+##  $ axis.ticks.y.left               : NULL
+##  $ axis.ticks.y.right              : NULL
+##  $ axis.ticks.theta                : NULL
+##  $ axis.ticks.r                    : NULL
+##  $ axis.minor.ticks.x.top          : NULL
+##  $ axis.minor.ticks.x.bottom       : NULL
+##  $ axis.minor.ticks.y.left         : NULL
+##  $ axis.minor.ticks.y.right        : NULL
+##  $ axis.minor.ticks.theta          : NULL
+##  $ axis.minor.ticks.r              : NULL
+##  $ axis.ticks.length               : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ axis.ticks.length.x             : NULL
+##  $ axis.ticks.length.x.top         : NULL
+##  $ axis.ticks.length.x.bottom      : NULL
+##  $ axis.ticks.length.y             : NULL
+##  $ axis.ticks.length.y.left        : NULL
+##  $ axis.ticks.length.y.right       : NULL
+##  $ axis.ticks.length.theta         : NULL
+##  $ axis.ticks.length.r             : NULL
+##  $ axis.minor.ticks.length         : 'rel' num 0.75
+##  $ axis.minor.ticks.length.x       : NULL
+##  $ axis.minor.ticks.length.x.top   : NULL
+##  $ axis.minor.ticks.length.x.bottom: NULL
+##  $ axis.minor.ticks.length.y       : NULL
+##  $ axis.minor.ticks.length.y.left  : NULL
+##  $ axis.minor.ticks.length.y.right : NULL
+##  $ axis.minor.ticks.length.theta   : NULL
+##  $ axis.minor.ticks.length.r       : NULL
+##  $ axis.line                       :List of 6
+##   ..$ colour       : NULL
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.line.x                     : NULL
+##  $ axis.line.x.top                 : NULL
+##  $ axis.line.x.bottom              : NULL
+##  $ axis.line.y                     : NULL
+##  $ axis.line.y.left                : NULL
+##  $ axis.line.y.right               : NULL
+##  $ axis.line.theta                 : NULL
+##  $ axis.line.r                     : NULL
+##  $ legend.background               :List of 5
+##   ..$ fill         : NULL
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.margin                   : 'margin' num [1:4] 16points 16points 16points 16points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing                  : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing.x                : NULL
+##  $ legend.spacing.y                : NULL
+##  $ legend.key                      :List of 5
+##   ..$ fill         : logi NA
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.key.size                 : 'simpleUnit' num 1.2lines
+##   ..- attr(*, "unit")= int 3
+##  $ legend.key.height               : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.width                : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing              : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing.x            : NULL
+##  $ legend.key.spacing.y            : NULL
+##  $ legend.frame                    : NULL
+##  $ legend.ticks                    : NULL
+##  $ legend.ticks.length             : 'rel' num 0.2
+##  $ legend.axis.line                : NULL
+##  $ legend.text                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 0.8
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.text.position            : NULL
+##  $ legend.title                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.title.position           : NULL
+##  $ legend.position                 : chr "right"
+##  $ legend.position.inside          : NULL
+##  $ legend.direction                : NULL
+##  $ legend.byrow                    : NULL
+##  $ legend.justification            : chr "center"
+##  $ legend.justification.top        : NULL
+##  $ legend.justification.bottom     : NULL
+##  $ legend.justification.left       : NULL
+##  $ legend.justification.right      : NULL
+##  $ legend.justification.inside     : NULL
+##  $ legend.location                 : NULL
+##  $ legend.box                      : NULL
+##  $ legend.box.just                 : NULL
+##  $ legend.box.margin               : 'margin' num [1:4] 0cm 0cm 0cm 0cm
+##   ..- attr(*, "unit")= int 1
+##  $ legend.box.background           : list()
+##   ..- attr(*, "class")= chr [1:2] "element_blank" "element"
+##  $ legend.box.spacing              : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##   [list output truncated]
+##  - attr(*, "class")= chr [1:2] "theme" "gg"
+##  - attr(*, "complete")= logi TRUE
+##  - attr(*, "validate")= logi TRUE
+```
+
+.panel[.panel-name[post-3]
+
+```r
+# Display plot
+print(ggp)
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-32-1.png" width="50%" /&gt;
+
+]]]]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;2.5 Fig.4 c right: Comparison of Reproduced Results with Literature Results&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[pre-1]
+
+```r
+#line plot Figure 4C right
+df2_mean &lt;- df2 %&gt;%
+  dplyr::group_by(condition,category) %&gt;%
+  dplyr::summarise(response = mean(response),
+                   sd = sd(response))
+```
+
+.panel[.panel-name[pre-2]
+
+```r
+p&lt;- ggplot(df2_mean, aes(x=category, y=response, group=condition)) + geom_line(aes(linetype=condition))+
+  geom_point(aes(shape=condition)) 
+p+labs(title="Study 2: Category and Condition", x="Category", y = "Response")+ theme_classic() + scale_fill_manual(values=group.colors)
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-34-1.png" width="50%" /&gt;
+
+.panel[.panel-name['Fig.4c right' from the literature]
+&lt;img src="./picture/figure4cright.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[post-1]
+
+```r
+df2_mean &lt;- df2 %&gt;%
+  dplyr::group_by(condition, category) %&gt;%
+  dplyr::summarise(response = mean(response), sd = sd(response), .groups = 'drop') %&gt;%
+  mutate(
+    xpos = ifelse(condition == "bottom", 1, 3),  # Set x position for Low and High
+    text_xpos = xpos + ifelse(condition == "bottom", -0.15, 0.15)  # Adjust label x position
+  )
+```
+
+.panel[.panel-name[post-2]
+
+```r
+# Create plot
+p &lt;- ggplot(df2_mean, aes(x=xpos, y=response, group=condition)) +
+  geom_point(aes(color=condition), size=3) +
+  geom_line(aes(group=category), color="grey") +  # Draw connecting lines for categories
+  geom_text_repel(
+    aes(x=text_xpos, label=category, hjust=ifelse(condition=="bottom", 1, 0)),
+    size=3, color="black", box.padding = 0.35, point.padding = 0.5,
+    max.overlaps = Inf, direction = "y"  # Limit label adjustments to vertical direction
+  ) +
+  scale_x_continuous(name="Condition", breaks=c(1, 3), labels=c("Low", "High"), limits=c(0.5, 3.5)) +
+  scale_y_continuous(name="Observed Aesthetic Value", limits=c(1.4, 3.4)) +  # Set y-axis range from 1.4 to 3.4
+  labs(y = "Observed Aesthetic Value", title="Category and Condition") +
+  theme_minimal() +
+  scale_color_manual(values=c("bottom"="steelblue", "top"="darkred")) +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+        legend.position = "none")  # Hide legend
+  papaja::theme_apa() # Apply APA style theme
+```
+
+```
+## List of 136
+##  $ line                            :List of 6
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ lineend      : chr "butt"
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ rect                            :List of 5
+##   ..$ fill         : chr "white"
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ text                            :List of 11
+##   ..$ family       : chr ""
+##   ..$ face         : chr "plain"
+##   ..$ colour       : chr "black"
+##   ..$ size         : num 12
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : num 0.5
+##   ..$ angle        : num 0
+##   ..$ lineheight   : num 0.9
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ title                           : NULL
+##  $ aspect.ratio                    : NULL
+##  $ axis.title                      : NULL
+##  $ axis.title.x                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 12points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.top                :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 12points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.bottom             : NULL
+##  $ axis.title.y                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num 90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 12points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.y.left               : NULL
+##  $ axis.title.y.right              :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num -90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 12points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text                       :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : chr "grey30"
+##   ..$ size         : 'rel' num 0.9
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 6points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.top                 :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 2.4points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.bottom              : NULL
+##  $ axis.text.y                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 1
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 6points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.y.left                : NULL
+##  $ axis.text.y.right               :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 6points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.theta                 : NULL
+##  $ axis.text.r                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 2.4points 0points 2.4points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.ticks                      :List of 6
+##   ..$ colour       : chr "grey20"
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.ticks.x                    : NULL
+##  $ axis.ticks.x.top                : NULL
+##  $ axis.ticks.x.bottom             : NULL
+##  $ axis.ticks.y                    : NULL
+##  $ axis.ticks.y.left               : NULL
+##  $ axis.ticks.y.right              : NULL
+##  $ axis.ticks.theta                : NULL
+##  $ axis.ticks.r                    : NULL
+##  $ axis.minor.ticks.x.top          : NULL
+##  $ axis.minor.ticks.x.bottom       : NULL
+##  $ axis.minor.ticks.y.left         : NULL
+##  $ axis.minor.ticks.y.right        : NULL
+##  $ axis.minor.ticks.theta          : NULL
+##  $ axis.minor.ticks.r              : NULL
+##  $ axis.ticks.length               : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ axis.ticks.length.x             : NULL
+##  $ axis.ticks.length.x.top         : NULL
+##  $ axis.ticks.length.x.bottom      : NULL
+##  $ axis.ticks.length.y             : NULL
+##  $ axis.ticks.length.y.left        : NULL
+##  $ axis.ticks.length.y.right       : NULL
+##  $ axis.ticks.length.theta         : NULL
+##  $ axis.ticks.length.r             : NULL
+##  $ axis.minor.ticks.length         : 'rel' num 0.75
+##  $ axis.minor.ticks.length.x       : NULL
+##  $ axis.minor.ticks.length.x.top   : NULL
+##  $ axis.minor.ticks.length.x.bottom: NULL
+##  $ axis.minor.ticks.length.y       : NULL
+##  $ axis.minor.ticks.length.y.left  : NULL
+##  $ axis.minor.ticks.length.y.right : NULL
+##  $ axis.minor.ticks.length.theta   : NULL
+##  $ axis.minor.ticks.length.r       : NULL
+##  $ axis.line                       :List of 6
+##   ..$ colour       : NULL
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.line.x                     : NULL
+##  $ axis.line.x.top                 : NULL
+##  $ axis.line.x.bottom              : NULL
+##  $ axis.line.y                     : NULL
+##  $ axis.line.y.left                : NULL
+##  $ axis.line.y.right               : NULL
+##  $ axis.line.theta                 : NULL
+##  $ axis.line.r                     : NULL
+##  $ legend.background               :List of 5
+##   ..$ fill         : NULL
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.margin                   : 'margin' num [1:4] 16points 16points 16points 16points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing                  : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing.x                : NULL
+##  $ legend.spacing.y                : NULL
+##  $ legend.key                      :List of 5
+##   ..$ fill         : logi NA
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.key.size                 : 'simpleUnit' num 1.2lines
+##   ..- attr(*, "unit")= int 3
+##  $ legend.key.height               : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.width                : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing              : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing.x            : NULL
+##  $ legend.key.spacing.y            : NULL
+##  $ legend.frame                    : NULL
+##  $ legend.ticks                    : NULL
+##  $ legend.ticks.length             : 'rel' num 0.2
+##  $ legend.axis.line                : NULL
+##  $ legend.text                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 0.8
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.text.position            : NULL
+##  $ legend.title                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.title.position           : NULL
+##  $ legend.position                 : chr "right"
+##  $ legend.position.inside          : NULL
+##  $ legend.direction                : NULL
+##  $ legend.byrow                    : NULL
+##  $ legend.justification            : chr "center"
+##  $ legend.justification.top        : NULL
+##  $ legend.justification.bottom     : NULL
+##  $ legend.justification.left       : NULL
+##  $ legend.justification.right      : NULL
+##  $ legend.justification.inside     : NULL
+##  $ legend.location                 : NULL
+##  $ legend.box                      : NULL
+##  $ legend.box.just                 : NULL
+##  $ legend.box.margin               : 'margin' num [1:4] 0cm 0cm 0cm 0cm
+##   ..- attr(*, "unit")= int 1
+##  $ legend.box.background           : list()
+##   ..- attr(*, "class")= chr [1:2] "element_blank" "element"
+##  $ legend.box.spacing              : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##   [list output truncated]
+##  - attr(*, "class")= chr [1:2] "theme" "gg"
+##  - attr(*, "complete")= logi TRUE
+##  - attr(*, "validate")= logi TRUE
+```
+
+.panel[.panel-name[post-3]
+
+```r
+# Display plot
+print(p)
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-38-1.png" width="50%" /&gt;
+
+]]]]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;2.6 Linear Mixed Effects Model&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[LMM]
+
+```r
+mod_fac_slp_exp2 &lt;- lmer(response ~ condition + DATscore + training_response+ PositiveAffectScore+
+                           NegativeAffectScore + regionpast_response + gender_response +experience_response
+                         + age_response + (1+condition|subject),
+                         na.action = "na.exclude", data = df2,REML=T)
+summary(mod_fac_slp_exp2)
+```
+
+```
+## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+## lmerModLmerTest]
+## Formula: 
+## response ~ condition + DATscore + training_response + PositiveAffectScore +  
+##     NegativeAffectScore + regionpast_response + gender_response +  
+##     experience_response + age_response + (1 + condition | subject)
+##    Data: df2
+## 
+## REML criterion at convergence: 629475
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -3.314 -0.715 -0.087  0.634  3.947 
+## 
+## Random effects:
+##  Groups   Name         Variance Std.Dev. Corr 
+##  subject  (Intercept)  0.4726   0.687         
+##           conditiontop 0.0544   0.233    -0.09
+##  Residual              0.9286   0.964         
+## Number of obs: 227440, groups:  subject, 77
+## 
+## Fixed effects:
+##                             Estimate Std. Error       df t value
+## (Intercept)                  0.14276    1.11553 67.01388    0.13
+## conditiontop                 0.33276    0.02692 76.52096   12.36
+## DATscore                     0.00744    0.01261 67.01721    0.59
+## training_response            0.04995    0.08505 66.99787    0.59
+## PositiveAffectScore          0.03639    0.02372 66.99724    1.53
+## NegativeAffectScore          0.05284    0.02033 67.00662    2.60
+## regionpast_responseSuburban  0.20716    0.23719 67.00047    0.87
+## regionpast_responseUrban     0.17048    0.22784 67.00624    0.75
+## gender_responseMale         -0.07404    0.16314 67.00611   -0.45
+## experience_response         -0.00940    0.04278 66.99747   -0.22
+## age_response                 0.01286    0.01311 67.00056    0.98
+##                                        Pr(&gt;|t|)    
+## (Intercept)                               0.899    
+## conditiontop                &lt;0.0000000000000002 ***
+## DATscore                                  0.557    
+## training_response                         0.559    
+## PositiveAffectScore                       0.130    
+## NegativeAffectScore                       0.011 *  
+## regionpast_responseSuburban               0.386    
+## regionpast_responseUrban                  0.457    
+## gender_responseMale                       0.651    
+## experience_response                       0.827    
+## age_response                              0.330    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) cndtnt DATscr trnng_ PstvAS NgtvAS rgnp_S rgnp_U gndr_M
+## conditiontp -0.007                                                        
+## DATscore    -0.877  0.000                                                 
+## trnng_rspns -0.265  0.000  0.212                                          
+## PstvAffctSc -0.269  0.000  0.076 -0.015                                   
+## NgtvAffctSc -0.213  0.000 -0.054 -0.049  0.098                            
+## rgnpst_rspS -0.028  0.000 -0.113  0.062 -0.231  0.161                     
+## rgnpst_rspU -0.186  0.000  0.004  0.082 -0.153  0.301  0.689              
+## gndr_rspnsM -0.039  0.000  0.012  0.076 -0.166 -0.032 -0.012  0.002       
+## exprnc_rspn -0.015  0.000 -0.007 -0.528 -0.025 -0.065 -0.112 -0.169  0.132
+## age_respons -0.202  0.000 -0.015  0.066 -0.339  0.041  0.140  0.150 -0.032
+##             exprn_
+## conditiontp       
+## DATscore          
+## trnng_rspns       
+## PstvAffctSc       
+## NgtvAffctSc       
+## rgnpst_rspS       
+## rgnpst_rspU       
+## gndr_rspnsM       
+## exprnc_rspn       
+## age_respons -0.066
+```
+
+```r
+anova(mod_fac_slp_exp2)
+```
+
+```
+## Type III Analysis of Variance Table with Satterthwaite's method
+##                     Sum Sq Mean Sq NumDF DenDF F value              Pr(&gt;F)    
+## condition            141.9   141.9     1  76.5  152.83 &lt;0.0000000000000002 ***
+## DATscore               0.3     0.3     1  67.0    0.35               0.557    
+## training_response      0.3     0.3     1  67.0    0.34               0.559    
+## PositiveAffectScore    2.2     2.2     1  67.0    2.35               0.130    
+## NegativeAffectScore    6.3     6.3     1  67.0    6.75               0.011 *  
+## regionpast_response    0.7     0.4     2  67.0    0.40               0.671    
+## gender_response        0.2     0.2     1  67.0    0.21               0.651    
+## experience_response    0.0     0.0     1  67.0    0.05               0.827    
+## age_response           0.9     0.9     1  67.0    0.96               0.330    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+```r
+#confidence intervals
+#confint(mod_fac_slp_exp2)  # Running the code for confidence intervals here takes a long time, so it is labeled and hidden here
+r.squaredGLMM(mod_fac_slp_exp2)
+```
+
+```
+##           R2m     R2c
+## [1,] 0.068785 0.38834
+```
+
+.panel[.panel-name[Reproduce Results]
+&lt;img src="./picture/e2_LMM.jpg" width="70%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[Comparison with Literature Results]
+&lt;img src="./picture/e2paper_LMM.jpg" width="30%" style="display: block; margin: auto;" /&gt;
+
+]]]]
+
+---
+
+# &lt;h3 lang="en"&gt;3.Experiment 3&lt;/h3&gt;
+&lt;span style="font-size: 25px;"&gt;3.1 Import Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+```r
+#--------------------------------Set the Work Path-----------------------------
+setwd("./data/experiment3")
+#--------------------------------Import Data-----------------------------------
+#Import data
+df3 &lt;- read.csv("LD3.csv", stringsAsFactors=TRUE)
+#Import random forest model residual data
+cross &lt;- read.csv("cross.csv")
+```
+
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-858d452623870d0ccfa2" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-858d452623870d0ccfa2">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["58051593bd8a970001fdf4e5","58051593bd8a970001fdf4e5","58051593bd8a970001fdf4e5","58051593bd8a970001fdf4e5","58051593bd8a970001fdf4e5","58051593bd8a970001fdf4e5"],["highways_20081106_00098_top.png","city_00619_top.png","city_00430_bottom.png","mountains_20081106_00023_bottom.png","mountains_00306_bottom_inverted.png","highways_20081106_00088_top.png"],[3,4,3,1,1,1],[4758,4362,3562,1369,1418,7287],["e4","e4","e4","e4","e4","e4"],["top","top","bottom","bottom","inverted_B","top"],["highways_20081106","city_00619","city_00430","mountains_20081106","mountains_00306","highways_20081106"],["top","top","bottom","bottom","bottom","top"],["upright","upright","upright","upright","inverted","upright"],[0.522366903,1.308948835,0.522366903,-1.050796962,-1.050796962,-1.050796962],[26,26,26,26,26,26],[10,10,10,10,10,10],[7,7,7,7,7,7],[43,43,43,43,43,43],[42,42,42,42,42,42],[11,11,11,11,11,11],["Male","Male","Male","Male","Male","Male"],[42,42,42,42,42,42],[16,16,16,16,16,16],["Suburban","Suburban","Suburban","Suburban","Suburban","Suburban"]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>subject<\/th>\n      <th>stimulusitem1<\/th>\n      <th>response<\/th>\n      <th>latency<\/th>\n      <th>source<\/th>\n      <th>condition<\/th>\n      <th>image<\/th>\n      <th>cond<\/th>\n      <th>manipulation<\/th>\n      <th>Z_response<\/th>\n      <th>AA<\/th>\n      <th>IAE<\/th>\n      <th>CB<\/th>\n      <th>AReA<\/th>\n      <th>PositiveAffectScore<\/th>\n      <th>NegativeAffectScore<\/th>\n      <th>gender<\/th>\n      <th>age<\/th>\n      <th>education<\/th>\n      <th>region<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[3,4,10,11,12,13,14,15,16,18,19]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"subject","targets":1},{"name":"stimulusitem1","targets":2},{"name":"response","targets":3},{"name":"latency","targets":4},{"name":"source","targets":5},{"name":"condition","targets":6},{"name":"image","targets":7},{"name":"cond","targets":8},{"name":"manipulation","targets":9},{"name":"Z_response","targets":10},{"name":"AA","targets":11},{"name":"IAE","targets":12},{"name":"CB","targets":13},{"name":"AReA","targets":14},{"name":"PositiveAffectScore","targets":15},{"name":"NegativeAffectScore","targets":16},{"name":"gender","targets":17},{"name":"age","targets":18},{"name":"education","targets":19},{"name":"region","targets":20}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script><div class="datatables html-widget html-fill-item" id="htmlwidget-03e7cb20875de2722811" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-03e7cb20875de2722811">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],[-0.14017413,-0.030830518,-0.06353049099999999,-0.108290761,0.07806294499999999,-0.175142457],[-0.210963067,-0.032415413,-0.069504441,-0.105629304,0.061667674,-0.151310068],[-0.268737788,0.116772551,-0.037431585,-0.271703252,0.116772551,-0.268737788]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Y1<\/th>\n      <th>Y2<\/th>\n      <th>Y<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Y1","targets":1},{"name":"Y2","targets":2},{"name":"Y","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+&lt;span style="font-size: 25px;"&gt;3.2 Summarize Data&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[group the data by condition]
+
+
+```r
+by(df3$response,factor(df3$cond),describe)
+```
+
+```
+## factor(df3$cond): bottom
+##    vars     n mean   sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 16749 2.11 1.23      2    1.94 1.48   1   5     4 0.86    -0.37 0.01
+## ------------------------------------------------------------ 
+## factor(df3$cond): top
+##    vars     n mean   sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 16749 2.35 1.26      2    2.22 1.48   1   5     4 0.58    -0.76 0.01
+```
+
+.panel[.panel-name[creates a new category column]
+
+
+```r
+df3 &lt;- df3 %&gt;% mutate(category = case_when(
+  str_detect(.$stimulusitem1, "mountains_") ~ "mountains",
+  str_detect(.$stimulusitem1, "city_") ~ "city",
+  str_detect(.$stimulusitem1, "forests_") ~ "forests",
+  str_detect(.$stimulusitem1, "beaches_") ~ "beaches",
+  str_detect(.$stimulusitem1, "highways_") ~ "highways",
+  str_detect(.$stimulusitem1, "offices_") ~ "offices",
+  TRUE ~ as.character(.$stimulusitem1)))
+df3$category &lt;- as.factor(df3$category)
+```
+
+.panel[.panel-name[group the data by category]
+
+
+```r
+by(df3$response,factor(df3$category),describe)
+```
+
+```
+## factor(df3$category): beaches
+##    vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 5628 2.23 1.34      2    2.07 1.48   1   5     4 0.72    -0.79 0.02
+## ------------------------------------------------------------ 
+## factor(df3$category): city
+##    vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 5574 2.82 1.25      3    2.78 1.48   1   5     4 0.13    -1.01 0.02
+## ------------------------------------------------------------ 
+## factor(df3$category): forests
+##    vars    n mean  sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 5628 1.98 1.2      2     1.8 1.48   1   5     4 0.99    -0.17 0.02
+## ------------------------------------------------------------ 
+## factor(df3$category): highways
+##    vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 5628 2.31 1.14      2     2.2 1.48   1   5     4  0.6    -0.44 0.02
+## ------------------------------------------------------------ 
+## factor(df3$category): mountains
+##    vars    n mean   sd median trimmed mad min max range skew kurtosis   se
+## X1    1 5412 1.72 1.11      1    1.48   0   1   5     4 1.49     1.23 0.02
+## ------------------------------------------------------------ 
+## factor(df3$category): offices
+##    vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+## X1    1 5628 2.29 1.16      2    2.16 1.48   1   5     4 0.75    -0.29 0.02
+```
+]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;3.3 ANOVA (top vs bottom condition)&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[Interaction Plot]
+
+```r
+interaction.plot(df3$cond,df3$manipulation,df3$response)
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-46-1.png" width="50%" /&gt;
+
+.panel[.panel-name[Analysis of Variance]
+
+```r
+mod &lt;- aov(response~cond+manipulation+cond:manipulation, data = df3)
+anova(mod)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: response
+##                      Df Sum Sq Mean Sq F value              Pr(&gt;F)    
+## cond                  1    494     494  323.77 &lt;0.0000000000000002 ***
+## manipulation          1    573     573  375.81 &lt;0.0000000000000002 ***
+## cond:manipulation     1     12      12    8.01              0.0047 ** 
+## Residuals         33494  51081       2                                
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+.panel[.panel-name[Mean Comparison]
+
+```r
+#mean comparisons
+print(TukeyHSD(mod))
+```
+
+```
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = response ~ cond + manipulation + cond:manipulation, data = df3)
+## 
+## $cond
+##               diff     lwr     upr p adj
+## top-bottom 0.24282 0.21637 0.26927     0
+## 
+## $manipulation
+##                     diff     lwr     upr p adj
+## upright-inverted 0.40046 0.35997 0.44094     0
+## 
+## $`cond:manipulation`
+##                                   diff      lwr     upr   p adj
+## top:inverted-bottom:inverted   0.14012 0.040633 0.23960 0.00169
+## bottom:upright-bottom:inverted 0.34201 0.266956 0.41706 0.00000
+## top:upright-bottom:inverted    0.59902 0.523973 0.67407 0.00000
+## bottom:upright-top:inverted    0.20189 0.126838 0.27694 0.00000
+## top:upright-top:inverted       0.45891 0.383855 0.53396 0.00000
+## top:upright-bottom:upright     0.25702 0.220029 0.29400 0.00000
+```
+
+```r
+cohens_f(mod)
+```
+
+```
+## # Effect Size for ANOVA (Type I)
+## 
+## Parameter         | Cohen's f (partial) |      95% CI
+## -----------------------------------------------------
+## cond              |                0.10 | [0.09, Inf]
+## manipulation      |                0.11 | [0.10, Inf]
+## cond:manipulation |                0.02 | [0.01, Inf]
+## 
+## - One-sided CIs: upper bound fixed at [Inf].
+```
+
+.panel[.panel-name[Reproduce Results]
+&lt;img src="./picture/e3_anova.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[Comparison with Literature Results]
+&lt;img src="./picture/e3paper_anova.png" width="45%" style="display: block; margin: auto;" /&gt;
+]]]]]]
+
+---
+
+
+
+&lt;span style="font-size: 25px;"&gt;3.4 Fig.8 b: Comparison of Reproduced Results with Literature Results&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[pre-1]
+
+```r
+group.colors &lt;- c(bottom = "steelblue", top = "darkred")
+df3_upright &lt;- df3 %&gt;%
+  dplyr::filter(manipulation=="upright")
+
+df3_upright_mean &lt;- df3_upright %&gt;%
+  dplyr::group_by(image,cond) %&gt;%
+  dplyr::summarise(mean_response = mean(response))
+
+#upright condition
+ggp &lt;- ggplot(df3_upright_mean, aes(cond, mean_response, fill = cond)) +            
+  geom_violin(trim=FALSE, bw=0.2, position = "identity") + geom_jitter(alpha=0.1)
+ggp &lt;- ggp + scale_fill_manual(values=group.colors) + ylim(0,5)
+ggp &lt;- ggp + theme_minimal() + geom_boxplot(width=0.1, position=position_dodge(.9),outlier.shape = NA)
+ggp + xlab("Contour Condition") + ylab("Mean Aesthetic Response") + theme_minimal()
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-51-1.png" width="30%" /&gt;
+
+```r
+#inverted condition
+df3_inverted &lt;- df3 %&gt;%
+  dplyr::filter(manipulation=="inverted")
+
+df3_inverted_mean &lt;- df3_inverted %&gt;%
+  dplyr::group_by(image,cond) %&gt;%
+  dplyr::summarise(mean_response = mean(response))
+```
+
+.panel[.panel-name[pre-2]
+
+```r
+#plot
+ggp &lt;- ggplot(df3_inverted_mean, aes(cond, mean_response, fill = cond)) +            
+  geom_violin(trim=FALSE, bw=0.2, position = "identity") + geom_jitter(alpha=0.1)
+ggp &lt;- ggp + scale_fill_manual(values=group.colors) + ylim(0,5)
+ggp &lt;- ggp + theme_minimal() + geom_boxplot(width=0.1, position=position_dodge(.9),outlier.shape = NA)
+ggp + xlab("Contour Condition") + ylab("Mean Aesthetic Response") + theme_minimal()
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-52-1.png" width="30%" /&gt;
+
+.panel[.panel-name['Fig.8b' from the literature]
+&lt;img src="./picture/figure8b.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+
+.panel[.panel-name[post-1]
+
+```r
+# Create a comprehensive data frame containing upright and inverted data
+df3_combined &lt;- df3 %&gt;%
+  mutate(condition = ifelse(manipulation == "upright", "Upright", "Inverted")) %&gt;%
+  dplyr::group_by(image, cond, condition) %&gt;%
+  dplyr::summarise(mean_response = mean(response))
+
+# Ensure the correct order of Upright and Inverted
+df3_combined$condition &lt;- factor(df3_combined$condition, levels = c("Upright", "Inverted"))
+
+# Define colors
+group.colors &lt;- c("bottom" = "steelblue", "top" = "darkred")
+```
+
+.panel[.panel-name[post-2]
+
+```r
+# Create a combined chart
+ggp_combined &lt;- ggplot(df3_combined, aes(cond, mean_response, fill = cond)) +            
+  geom_violin(trim=FALSE, bw=0.2, position = "identity") + 
+  scale_fill_manual(values=group.colors) + 
+  ylim(0,5) +
+  theme_minimal() + 
+  geom_boxplot(width=0.1, position=position_dodge(.9), outlier.shape = NA) +
+  theme_minimal() +
+  theme(legend.position = "none") + # Remove the legend
+  xlab(NULL) + 
+  ylab("Observed Aesthetic Value") +
+  facet_wrap(~condition, scales = "free_x") +
+  theme(strip.text.x = element_text(size=12, face="bold")) # Add labels and adjust font size
+  papaja::theme_apa() # Apply APA style theme
+```
+
+```
+## List of 136
+##  $ line                            :List of 6
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ lineend      : chr "butt"
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ rect                            :List of 5
+##   ..$ fill         : chr "white"
+##   ..$ colour       : chr "black"
+##   ..$ linewidth    : num 0.545
+##   ..$ linetype     : num 1
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ text                            :List of 11
+##   ..$ family       : chr ""
+##   ..$ face         : chr "plain"
+##   ..$ colour       : chr "black"
+##   ..$ size         : num 12
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : num 0.5
+##   ..$ angle        : num 0
+##   ..$ lineheight   : num 0.9
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ title                           : NULL
+##  $ aspect.ratio                    : NULL
+##  $ axis.title                      : NULL
+##  $ axis.title.x                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 12points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.top                :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 12points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.x.bottom             : NULL
+##  $ axis.title.y                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num 90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 12points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.title.y.left               : NULL
+##  $ axis.title.y.right              :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : num -90
+##   ..$ lineheight   : 'rel' num 1.1
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 12points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text                       :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : chr "grey30"
+##   ..$ size         : 'rel' num 0.9
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 1
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 6points 0points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.top                 :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : NULL
+##   ..$ vjust        : num 0
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 2.4points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.x.bottom              : NULL
+##  $ axis.text.y                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 1
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 6points 0points 0points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.y.left                : NULL
+##  $ axis.text.y.right               :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 1
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 0points 0points 6points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.text.theta                 : NULL
+##  $ axis.text.r                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0.5
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : 'margin' num [1:4] 0points 2.4points 0points 2.4points
+##   .. ..- attr(*, "unit")= int 8
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ axis.ticks                      :List of 6
+##   ..$ colour       : chr "grey20"
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.ticks.x                    : NULL
+##  $ axis.ticks.x.top                : NULL
+##  $ axis.ticks.x.bottom             : NULL
+##  $ axis.ticks.y                    : NULL
+##  $ axis.ticks.y.left               : NULL
+##  $ axis.ticks.y.right              : NULL
+##  $ axis.ticks.theta                : NULL
+##  $ axis.ticks.r                    : NULL
+##  $ axis.minor.ticks.x.top          : NULL
+##  $ axis.minor.ticks.x.bottom       : NULL
+##  $ axis.minor.ticks.y.left         : NULL
+##  $ axis.minor.ticks.y.right        : NULL
+##  $ axis.minor.ticks.theta          : NULL
+##  $ axis.minor.ticks.r              : NULL
+##  $ axis.ticks.length               : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ axis.ticks.length.x             : NULL
+##  $ axis.ticks.length.x.top         : NULL
+##  $ axis.ticks.length.x.bottom      : NULL
+##  $ axis.ticks.length.y             : NULL
+##  $ axis.ticks.length.y.left        : NULL
+##  $ axis.ticks.length.y.right       : NULL
+##  $ axis.ticks.length.theta         : NULL
+##  $ axis.ticks.length.r             : NULL
+##  $ axis.minor.ticks.length         : 'rel' num 0.75
+##  $ axis.minor.ticks.length.x       : NULL
+##  $ axis.minor.ticks.length.x.top   : NULL
+##  $ axis.minor.ticks.length.x.bottom: NULL
+##  $ axis.minor.ticks.length.y       : NULL
+##  $ axis.minor.ticks.length.y.left  : NULL
+##  $ axis.minor.ticks.length.y.right : NULL
+##  $ axis.minor.ticks.length.theta   : NULL
+##  $ axis.minor.ticks.length.r       : NULL
+##  $ axis.line                       :List of 6
+##   ..$ colour       : NULL
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ lineend      : NULL
+##   ..$ arrow        : logi FALSE
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_line" "element"
+##  $ axis.line.x                     : NULL
+##  $ axis.line.x.top                 : NULL
+##  $ axis.line.x.bottom              : NULL
+##  $ axis.line.y                     : NULL
+##  $ axis.line.y.left                : NULL
+##  $ axis.line.y.right               : NULL
+##  $ axis.line.theta                 : NULL
+##  $ axis.line.r                     : NULL
+##  $ legend.background               :List of 5
+##   ..$ fill         : NULL
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.margin                   : 'margin' num [1:4] 16points 16points 16points 16points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing                  : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.spacing.x                : NULL
+##  $ legend.spacing.y                : NULL
+##  $ legend.key                      :List of 5
+##   ..$ fill         : logi NA
+##   ..$ colour       : logi NA
+##   ..$ linewidth    : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+##  $ legend.key.size                 : 'simpleUnit' num 1.2lines
+##   ..- attr(*, "unit")= int 3
+##  $ legend.key.height               : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.width                : 'simpleUnit' num 20points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing              : 'simpleUnit' num 6points
+##   ..- attr(*, "unit")= int 8
+##  $ legend.key.spacing.x            : NULL
+##  $ legend.key.spacing.y            : NULL
+##  $ legend.frame                    : NULL
+##  $ legend.ticks                    : NULL
+##  $ legend.ticks.length             : 'rel' num 0.2
+##  $ legend.axis.line                : NULL
+##  $ legend.text                     :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : 'rel' num 0.8
+##   ..$ hjust        : NULL
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi TRUE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.text.position            : NULL
+##  $ legend.title                    :List of 11
+##   ..$ family       : NULL
+##   ..$ face         : NULL
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ hjust        : num 0
+##   ..$ vjust        : NULL
+##   ..$ angle        : NULL
+##   ..$ lineheight   : NULL
+##   ..$ margin       : NULL
+##   ..$ debug        : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
+##  $ legend.title.position           : NULL
+##  $ legend.position                 : chr "right"
+##  $ legend.position.inside          : NULL
+##  $ legend.direction                : NULL
+##  $ legend.byrow                    : NULL
+##  $ legend.justification            : chr "center"
+##  $ legend.justification.top        : NULL
+##  $ legend.justification.bottom     : NULL
+##  $ legend.justification.left       : NULL
+##  $ legend.justification.right      : NULL
+##  $ legend.justification.inside     : NULL
+##  $ legend.location                 : NULL
+##  $ legend.box                      : NULL
+##  $ legend.box.just                 : NULL
+##  $ legend.box.margin               : 'margin' num [1:4] 0cm 0cm 0cm 0cm
+##   ..- attr(*, "unit")= int 1
+##  $ legend.box.background           : list()
+##   ..- attr(*, "class")= chr [1:2] "element_blank" "element"
+##  $ legend.box.spacing              : 'simpleUnit' num 12points
+##   ..- attr(*, "unit")= int 8
+##   [list output truncated]
+##  - attr(*, "class")= chr [1:2] "theme" "gg"
+##  - attr(*, "complete")= logi TRUE
+##  - attr(*, "validate")= logi TRUE
+```
+
+.panel[.panel-name[post-3]
+
+```r
+# Display plot
+print(ggp_combined)
+```
+
+&lt;img src="r_ppt_all_final_eng_files/figure-html/unnamed-chunk-56-1.png" width="40%" /&gt;
+
+]]]]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;3.5 Linear Mixed Effects Model&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[LMM]
+
+```r
+mod_fac_slp_exp3 &lt;- lmer(response ~ cond + PositiveAffectScore+ CB + IAE + AA +
+                           NegativeAffectScore + region + gender +
+                           + age + (1+cond|subject),
+                         na.action = "na.exclude", data = df3,REML=T)
+summary(mod_fac_slp_exp3)
+```
+
+```
+## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+## lmerModLmerTest]
+## Formula: 
+## response ~ cond + PositiveAffectScore + CB + IAE + AA + NegativeAffectScore +  
+##     region + gender + +age + (1 + cond | subject)
+##    Data: df3
+## 
+## REML criterion at convergence: 97799
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -2.603 -0.683 -0.195  0.595  3.516 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr 
+##  subject  (Intercept) 0.4072   0.638         
+##           condtop     0.0107   0.104    -0.18
+##  Residual             1.1098   1.053         
+## Number of obs: 33090, groups:  subject, 77
+## 
+## Fixed effects:
+##                     Estimate Std. Error       df t value             Pr(&gt;|t|)
+## (Intercept)          2.09079    0.55442 65.64477    3.77              0.00035
+## condtop              0.24515    0.01843 59.23259   13.30 &lt; 0.0000000000000002
+## PositiveAffectScore -0.01138    0.00515 65.33301   -2.21              0.03060
+## CB                   0.03459    0.02791 65.80451    1.24              0.21961
+## IAE                  0.05035    0.02766 65.87204    1.82              0.07322
+## AA                  -0.00993    0.01761 65.59166   -0.56              0.57486
+## NegativeAffectScore  0.01486    0.00636 65.41309    2.34              0.02255
+## regionSuburban      -0.57343    0.34030 65.59023   -1.69              0.09673
+## regionUrban         -0.64476    0.32452 65.50448   -1.99              0.05113
+## genderMale           0.32585    0.15773 65.81605    2.07              0.04278
+## genderOther         -0.41239    0.68425 66.29031   -0.60              0.54877
+## age                  0.00405    0.01218 66.15261    0.33              0.74018
+##                        
+## (Intercept)         ***
+## condtop             ***
+## PositiveAffectScore *  
+## CB                     
+## IAE                 .  
+## AA                     
+## NegativeAffectScore *  
+## regionSuburban      .  
+## regionUrban         .  
+## genderMale          *  
+## genderOther            
+## age                    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) condtp PstvAS CB     IAE    AA     NgtvAS rgnSbr rgnUrb
+## condtop     -0.019                                                        
+## PstvAffctSc -0.137 -0.007                                                 
+## CB           0.121 -0.001  0.114                                          
+## IAE          0.077  0.003  0.088 -0.105                                   
+## AA          -0.325 -0.005 -0.358 -0.429 -0.617                            
+## NgtvAffctSc -0.172 -0.003 -0.333 -0.090  0.019 -0.006                     
+## regionSbrbn -0.601  0.000  0.318 -0.167  0.083 -0.052  0.050              
+## regionUrban -0.573  0.000  0.249 -0.155  0.004 -0.066  0.041  0.868       
+## genderMale  -0.032 -0.002 -0.029  0.158  0.007  0.046 -0.019 -0.051 -0.169
+## genderOther  0.018 -0.001  0.136  0.054  0.117 -0.025 -0.097  0.021 -0.085
+## age         -0.601  0.003 -0.045  0.029 -0.078  0.026  0.090  0.076  0.163
+##             gndrMl gndrOt
+## condtop                  
+## PstvAffctSc              
+## CB                       
+## IAE                      
+## AA                       
+## NgtvAffctSc              
+## regionSbrbn              
+## regionUrban              
+## genderMale               
+## genderOther  0.203       
+## age         -0.234 -0.213
+```
+
+```r
+anova(mod_fac_slp_exp3)
+```
+
+```
+## Type III Analysis of Variance Table with Satterthwaite's method
+##                     Sum Sq Mean Sq NumDF DenDF F value              Pr(&gt;F)    
+## cond                 196.3   196.3     1  59.2  176.90 &lt;0.0000000000000002 ***
+## PositiveAffectScore    5.4     5.4     1  65.3    4.89               0.031 *  
+## CB                     1.7     1.7     1  65.8    1.54               0.220    
+## IAE                    3.7     3.7     1  65.9    3.31               0.073 .  
+## AA                     0.4     0.4     1  65.6    0.32               0.575    
+## NegativeAffectScore    6.1     6.1     1  65.4    5.46               0.023 *  
+## region                 4.4     2.2     2  65.8    1.98               0.147    
+## gender                 5.9     3.0     2  66.1    2.68               0.076 .  
+## age                    0.1     0.1     1  66.2    0.11               0.740    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+.panel[.panel-name[CI &amp; R²]
+
+```r
+#confint(mod_fac_slp_exp3) #Running the code for confidence intervals here takes a long time, so it is labeled and hidden here
+r.squaredGLMM(mod_fac_slp_exp3)
+```
+
+```
+##          R2m     R2c
+## [1,] 0.15959 0.38253
+```
+
+.panel[.panel-name[Reproduce Results]
+&lt;img src="./picture/e3_LMM.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[Comparison with Literature Result]
+&lt;img src="./picture/e3paper_LMM.jpg" width="30%" style="display: block; margin: auto;" /&gt;
+
+]]]]]
+
+---
+
+&lt;span style="font-size: 25px;"&gt;3.6 Model Comparison&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+.panelset[
+.panel[.panel-name[Variance Decomposition]
+
+```r
+#Y column values are the predictions from intact line drawing model in experiment 1
+#Y1 column values are predictions from experiment 2
+#Y2 column values are predictions from experiment 3
+mod &lt;- lm(cross$Y ~ cross$Y1 + cross$Y2) #Evaluate the predictive values of Experiment 2 (Y1) and Experiment 3 (Y2) for the total variance explained by the predictive values of Experiment 1 (Y)
+mod1 &lt;- lm(cross$Y ~ cross$Y1) #Evaluate the independent variance explained by Experiment 2 for the predictive values of Experiment 1
+mod2 &lt;- lm(cross$Y ~ cross$Y2) #Evaluate the independent variance explained by Experiment 3 for the predictive values of Experiment 1
+
+# Calculate and display the detailed statistics of mod1
+summary(mod1)
+```
+
+```
+## 
+## Call:
+## lm(formula = cross$Y ~ cross$Y1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.4859 -0.0952  0.0065  0.0860  0.6420 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -0.000729   0.006846   -0.11                0.92    
+## cross$Y1     1.323299   0.023417   56.51 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.149 on 473 degrees of freedom
+## Multiple R-squared:  0.871,	Adjusted R-squared:  0.871 
+## F-statistic: 3.19e+03 on 1 and 473 DF,  p-value: &lt;0.0000000000000002
+```
+
+```r
+# Calculate and display the detailed statistics of mod2
+summary(mod2)
+```
+
+```
+## 
+## Call:
+## lm(formula = cross$Y ~ cross$Y2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.5077 -0.0892  0.0052  0.0834  0.5632 
+## 
+## Coefficients:
+##             Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept)  0.00287    0.00711     0.4                0.69    
+## cross$Y2     1.29168    0.02390    54.0 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.155 on 473 degrees of freedom
+## Multiple R-squared:  0.861,	Adjusted R-squared:  0.86 
+## F-statistic: 2.92e+03 on 1 and 473 DF,  p-value: &lt;0.0000000000000002
+```
+
+```r
+# Extract the R-squared value
+r_squared_mod1 &lt;- summary(mod1)$r.squared
+r_squared_mod2 &lt;- summary(mod2)$r.squared
+
+# Extract the F-statistics value
+f_stat_mod1 &lt;- summary(mod1)$fstatistic
+f_stat_mod2 &lt;- summary(mod2)$fstatistic
+```
+
+.panel[.panel-name[Calculate partial correlations]
+
+```r
+#partial correlation
+r_partial &lt;- pcor(cross)$estimate[3,c('Y1','Y2')] # The partial correlation coefficient and its square between the predicted values of Experiment 2 (Y1) and Experiment 3 (Y2)
+r_partial2&lt;-r_partial^2
+r_partial 
+```
+
+```
+##      Y1      Y2 
+## 0.35927 0.24370
+```
+
+```r
+r_partial2
+```
+
+```
+##       Y1       Y2 
+## 0.129077 0.059391
+```
+
+.panel[.panel-name[Calculate semipartial correlations]
+
+```r
+#semipartial correlation
+r_part &lt;- spcor(cross)$estimate[3,c('Y1','Y2')] # The semipartial correlation coefficient and its square between the predicted values of Experiment 2 (Y1) and Experiment 3 (Y2)
+r_part^2
+```
+
+```
+##        Y1        Y2 
+## 0.0179851 0.0076622
+```
+
+.panel[.panel-name[Reproduce Results]
+&lt;img src="./picture/e3_comparemodel.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[Comparison with Literature Results]
+&lt;img src="./picture/e3paper_comparemodel.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+]]]]]]
+
+---
+
+class: middle,center
+.tit_font[
+Thanks！
+
+]
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "github",
+"countIncrementalSlides": false,
+"seal": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
