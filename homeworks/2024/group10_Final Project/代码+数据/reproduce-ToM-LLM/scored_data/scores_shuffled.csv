@@ -1,0 +1,391 @@
+task,trial,item,order,score
+Strange Stories,1,2,1,2
+Strange Stories,1,7,2,2
+Strange Stories,1,5,3,2
+Strange Stories,1,3,4,2
+Strange Stories,1,6,5,2
+Strange Stories,1,1,6,1
+Strange Stories,1,8,7,2
+Strange Stories,1,4,8,1
+Strange Stories,2,8,1,2
+Strange Stories,2,7,2,2
+Strange Stories,2,6,3,2
+Strange Stories,2,1,4,2
+Strange Stories,2,5,5,2
+Strange Stories,2,3,6,2
+Strange Stories,2,2,7,2
+Strange Stories,2,4,8,1
+Strange Stories,3,4,1,1
+Strange Stories,3,3,2,2
+Strange Stories,3,5,3,2
+Strange Stories,3,6,4,2
+Strange Stories,3,2,5,2
+Strange Stories,3,1,6,1
+Strange Stories,3,7,7,2
+Strange Stories,3,8,8,2
+Strange Stories,4,2,1,2
+Strange Stories,4,3,2,2
+Strange Stories,4,4,3,2
+Strange Stories,4,8,4,2
+Strange Stories,4,5,5,2
+Strange Stories,4,6,6,2
+Strange Stories,4,7,7,2
+Strange Stories,4,1,8,1
+Strange Stories,5,6,1,2
+Strange Stories,5,1,2,2
+Strange Stories,5,8,3,2
+Strange Stories,5,3,4,2
+Strange Stories,5,7,5,2
+Strange Stories,5,4,6,2
+Strange Stories,5,2,7,2
+Strange Stories,5,5,8,2
+Strange Stories,6,6,1,2
+Strange Stories,6,1,2,2
+Strange Stories,6,4,3,2
+Strange Stories,6,2,4,2
+Strange Stories,6,8,5,2
+Strange Stories,6,5,6,2
+Strange Stories,6,3,7,2
+Strange Stories,6,7,8,2
+Strange Stories,7,8,1,2
+Strange Stories,7,5,2,2
+Strange Stories,7,1,3,1
+Strange Stories,7,4,4,1
+Strange Stories,7,6,5,2
+Strange Stories,7,3,6,2
+Strange Stories,7,7,7,2
+Strange Stories,7,2,8,2
+Strange Stories,8,8,1,2
+Strange Stories,8,1,2,1
+Strange Stories,8,5,3,2
+Strange Stories,8,3,4,2
+Strange Stories,8,7,5,2
+Strange Stories,8,2,6,2
+Strange Stories,8,6,7,2
+Strange Stories,8,4,8,2
+Strange Stories,9,6,1,2
+Strange Stories,9,3,2,1
+Strange Stories,9,8,3,2
+Strange Stories,9,5,4,2
+Strange Stories,9,1,5,1
+Strange Stories,9,4,6,2
+Strange Stories,9,2,7,2
+Strange Stories,9,7,8,2
+Strange Stories,10,2,1,2
+Strange Stories,10,3,2,2
+Strange Stories,10,8,3,2
+Strange Stories,10,7,4,2
+Strange Stories,10,1,5,2
+Strange Stories,10,4,6,2
+Strange Stories,10,6,7,2
+Strange Stories,10,5,8,2
+Strange Stories,11,1,1,1
+Strange Stories,11,3,2,2
+Strange Stories,11,5,3,2
+Strange Stories,11,6,4,2
+Strange Stories,11,2,5,2
+Strange Stories,11,4,6,2
+Strange Stories,11,8,7,2
+Strange Stories,11,7,8,2
+Strange Stories,12,8,1,2
+Strange Stories,12,4,2,2
+Strange Stories,12,3,3,1
+Strange Stories,12,7,4,2
+Strange Stories,12,1,5,1
+Strange Stories,12,6,6,2
+Strange Stories,12,2,7,2
+Strange Stories,12,5,8,2
+Irony,1,12,1,0
+Irony,1,11,2,1
+Irony,1,10,3,1
+Irony,1,9,4,1
+Irony,1,8,5,1
+Irony,1,7,6,1
+Irony,1,6,7,1
+Irony,1,5,8,1
+Irony,1,4,9,1
+Irony,1,3,10,1
+Irony,1,2,11,1
+Irony,1,1,12,1
+Irony,2,5,1,1
+Irony,2,12,2,0
+Irony,2,3,3,1
+Irony,2,6,4,1
+Irony,2,7,5,1
+Irony,2,9,6,1
+Irony,2,1,7,1
+Irony,2,11,8,1
+Irony,2,4,9,1
+Irony,2,2,10,1
+Irony,2,8,11,1
+Irony,2,10,12,1
+Irony,3,9,1,0
+Irony,3,7,2,0
+Irony,3,12,3,0
+Irony,3,6,4,1
+Irony,3,4,5,1
+Irony,3,11,6,1
+Irony,3,8,7,1
+Irony,3,3,8,1
+Irony,3,5,9,1
+Irony,3,2,10,1
+Irony,3,1,11,1
+Irony,3,10,12,1
+Irony,4,10,1,1
+Irony,4,9,2,1
+Irony,4,4,3,1
+Irony,4,12,4,0
+Irony,4,5,5,1
+Irony,4,2,6,1
+Irony,4,11,7,1
+Irony,4,3,8,1
+Irony,4,7,9,1
+Irony,4,8,10,1
+Irony,4,1,11,1
+Irony,4,6,12,1
+Irony,5,7,1,0
+Irony,5,10,2,0
+Irony,5,12,3,0
+Irony,5,4,4,1
+Irony,5,9,5,0
+Irony,5,2,6,1
+Irony,5,1,7,0
+Irony,5,8,8,1
+Irony,5,6,9,1
+Irony,5,5,10,0
+Irony,5,11,11,1
+Irony,5,3,12,1
+Irony,6,5,1,1
+Irony,6,8,2,0
+Irony,6,4,3,1
+Irony,6,6,4,1
+Irony,6,7,5,1
+Irony,6,9,6,1
+Irony,6,12,7,0
+Irony,6,3,8,1
+Irony,6,10,9,1
+Irony,6,1,10,1
+Irony,6,2,11,1
+Irony,6,11,12,1
+Irony,7,9,1,0
+Irony,7,5,2,0
+Irony,7,12,3,0
+Irony,7,8,4,0
+Irony,7,1,5,0
+Irony,7,7,6,0
+Irony,7,11,7,1
+Irony,7,3,8,1
+Irony,7,6,9,1
+Irony,7,10,10,1
+Irony,7,4,11,1
+Irony,7,2,12,1
+Irony,8,10,1,0
+Irony,8,2,2,0
+Irony,8,7,3,1
+Irony,8,11,4,1
+Irony,8,3,5,1
+Irony,8,8,6,1
+Irony,8,1,7,1
+Irony,8,4,8,1
+Irony,8,5,9,1
+Irony,8,12,10,0
+Irony,8,6,11,1
+Irony,8,9,12,1
+Irony,9,10,1,0
+Irony,9,3,2,1
+Irony,9,7,3,1
+Irony,9,4,4,1
+Irony,9,9,5,1
+Irony,9,12,6,0
+Irony,9,2,7,1
+Irony,9,1,8,0
+Irony,9,5,9,1
+Irony,9,8,10,1
+Irony,9,11,11,1
+Irony,9,6,12,1
+Irony,10,2,1,0
+Irony,10,7,2,1
+Irony,10,6,3,1
+Irony,10,4,4,1
+Irony,10,11,5,1
+Irony,10,12,6,0
+Irony,10,9,7,1
+Irony,10,5,8,1
+Irony,10,10,9,1
+Irony,10,8,10,1
+Irony,10,1,11,1
+Irony,10,3,12,1
+Irony,11,9,1,0
+Irony,11,12,2,0
+Irony,11,7,3,0
+Irony,11,6,4,1
+Irony,11,2,5,1
+Irony,11,1,6,1
+Irony,11,8,7,1
+Irony,11,3,8,1
+Irony,11,4,9,1
+Irony,11,11,10,1
+Irony,11,10,11,1
+Irony,11,5,12,1
+Irony,12,6,1,0
+Irony,12,8,2,0
+Irony,12,5,3,1
+Irony,12,10,4,1
+Irony,12,3,5,1
+Irony,12,7,6,1
+Irony,12,1,7,0
+Irony,12,9,8,1
+Irony,12,4,9,1
+Irony,12,11,10,1
+Irony,12,12,11,0
+Irony,12,2,12,1
+Faux Pas,1,3,1,0
+Faux Pas,1,7,2,0
+Faux Pas,1,4,3,1
+Faux Pas,1,1,4,0
+Faux Pas,1,9,5,0
+Faux Pas,1,10,6,0
+Faux Pas,1,2,7,0
+Faux Pas,1,5,8,0
+Faux Pas,1,8,9,0
+Faux Pas,1,6,10,0
+Faux Pas,2,3,1,0
+Faux Pas,2,1,2,0
+Faux Pas,2,7,3,0
+Faux Pas,2,10,4,0
+Faux Pas,2,6,5,0
+Faux Pas,2,8,6,0
+Faux Pas,2,9,7,0
+Faux Pas,2,5,8,0
+Faux Pas,2,2,9,0
+Faux Pas,2,4,10,1
+Faux Pas,3,10,1,0
+Faux Pas,3,6,2,1
+Faux Pas,3,3,3,1
+Faux Pas,3,8,4,0
+Faux Pas,3,9,5,1
+Faux Pas,3,2,6,0
+Faux Pas,3,1,7,1
+Faux Pas,3,5,8,1
+Faux Pas,3,4,9,1
+Faux Pas,3,7,10,0
+Faux Pas,4,6,1,0
+Faux Pas,4,10,2,0
+Faux Pas,4,8,3,0
+Faux Pas,4,4,4,1
+Faux Pas,4,1,5,1
+Faux Pas,4,2,6,0
+Faux Pas,4,7,7,0
+Faux Pas,4,9,8,0
+Faux Pas,4,3,9,0
+Faux Pas,4,5,10,0
+Faux Pas,5,2,1,0
+Faux Pas,5,9,2,0
+Faux Pas,5,6,3,0
+Faux Pas,5,4,4,0
+Faux Pas,5,1,5,0
+Faux Pas,5,3,6,0
+Faux Pas,5,10,7,0
+Faux Pas,5,7,8,0
+Faux Pas,5,5,9,0
+Faux Pas,5,8,10,0
+Faux Pas,6,2,1,0
+Faux Pas,6,3,2,0
+Faux Pas,6,1,3,0
+Faux Pas,6,9,4,0
+Faux Pas,6,10,5,0
+Faux Pas,6,7,6,0
+Faux Pas,6,6,7,0
+Faux Pas,6,8,8,0
+Faux Pas,6,4,9,0
+Faux Pas,6,5,10,0
+Faux Pas,7,6,1,0
+Faux Pas,7,3,2,1
+Faux Pas,7,10,3,1
+Faux Pas,7,5,4,1
+Faux Pas,7,2,5,1
+Faux Pas,7,9,6,1
+Faux Pas,7,4,7,1
+Faux Pas,7,8,8,1
+Faux Pas,7,7,9,0
+Faux Pas,7,1,10,1
+Faux Pas,8,3,1,0
+Faux Pas,8,6,2,1
+Faux Pas,8,10,3,0
+Faux Pas,8,2,4,0
+Faux Pas,8,9,5,0
+Faux Pas,8,5,6,0
+Faux Pas,8,4,7,0
+Faux Pas,8,7,8,0
+Faux Pas,8,1,9,0
+Faux Pas,8,8,10,1
+Faux Pas,9,7,1,0
+Faux Pas,9,6,2,0
+Faux Pas,9,3,3,0
+Faux Pas,9,2,4,0
+Faux Pas,9,8,5,0
+Faux Pas,9,4,6,0
+Faux Pas,9,10,7,0
+Faux Pas,9,1,8,0
+Faux Pas,9,5,9,0
+Faux Pas,9,9,10,0
+Faux Pas,10,4,1,0
+Faux Pas,10,3,2,0
+Faux Pas,10,1,3,1
+Faux Pas,10,6,4,1
+Faux Pas,10,9,5,0
+Faux Pas,10,5,6,0
+Faux Pas,10,10,7,1
+Faux Pas,10,2,8,0
+Faux Pas,10,7,9,0
+Faux Pas,10,8,10,1
+Faux Pas,11,9,1,0
+Faux Pas,11,10,2,1
+Faux Pas,11,6,3,1
+Faux Pas,11,2,4,0
+Faux Pas,11,1,5,1
+Faux Pas,11,4,6,1
+Faux Pas,11,3,7,0
+Faux Pas,11,8,8,0
+Faux Pas,11,7,9,0
+Faux Pas,11,5,10,0
+Faux Pas,12,7,1,0
+Faux Pas,12,5,2,1
+Faux Pas,12,1,3,0
+Faux Pas,12,10,4,1
+Faux Pas,12,8,5,0
+Faux Pas,12,6,6,0
+Faux Pas,12,2,7,0
+Faux Pas,12,9,8,0
+Faux Pas,12,3,9,0
+Faux Pas,12,4,10,1
+Faux Pas,13,2,1,0
+Faux Pas,13,7,2,0
+Faux Pas,13,8,3,0
+Faux Pas,13,10,4,0
+Faux Pas,13,5,5,0
+Faux Pas,13,1,6,0
+Faux Pas,13,9,7,0
+Faux Pas,13,3,8,0
+Faux Pas,13,6,9,0
+Faux Pas,13,4,10,0
+Faux Pas,14,9,1,0
+Faux Pas,14,3,2,0
+Faux Pas,14,4,3,0
+Faux Pas,14,5,4,0
+Faux Pas,14,2,5,0
+Faux Pas,14,10,6,0
+Faux Pas,14,1,7,0
+Faux Pas,14,7,8,0
+Faux Pas,14,8,9,0
+Faux Pas,14,6,10,0
+Faux Pas,15,8,1,0
+Faux Pas,15,7,2,0
+Faux Pas,15,10,3,0
+Faux Pas,15,9,4,0
+Faux Pas,15,4,5,0
+Faux Pas,15,1,6,0
+Faux Pas,15,5,7,0
+Faux Pas,15,3,8,0
+Faux Pas,15,6,9,0
+Faux Pas,15,2,10,0
