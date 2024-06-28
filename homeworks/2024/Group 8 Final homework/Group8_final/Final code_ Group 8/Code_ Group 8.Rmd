@@ -1,0 +1,1044 @@
+---
+title: "Self-relevance predicts aesthetic appeal for real and synthetic artworks generated via neural style transfer. Psychological Science."
+author: "Qiu"
+date: "2024-06-25"
+output: html_document
+---
+```{r}
+rm(list = ls())
+install.packages("here")
+library(here)
+set_here()
+
+```
+```{r}
+
+install.packages("foreach")
+install.packages("doParallel")
+library(foreach)
+library(doParallel)
+packages <- c("tidyverse","magrittr","SciViews","ggpubr","tidyverse","lme4","lmerTest","ggplot2","PerformanceAnalytics","lmtest","olsrr","dplyr","easystats","domir","mediation","viridis","wesanderson")
+
+# 检查并安装缺失的包
+foreach(pkg = packages) %dopar% {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg)
+  }
+}
+
+```
+
+
+```{r setup, include=FALSE}
+#使用p_load来载入需要的包
+pacman::p_load("tidyverse","magrittr","SciViews","ggpubr","tidyverse","lme4","lmerTest","ggplot2"
+               ,"PerformanceAnalytics","lmtest","olsrr","dplyr")
+```
+##Question1:自我参照和审美之间的关系
+
+```{r}
+#读取数据，33个被试
+SRdata <- read_delim("data/Exp1A_Data.txt", delim = "\t", col_names = TRUE)
+```
+
+######################## Reliability Scores #######################################
+
+```{r}
+#信度分数的计算
+## Aesthetic第1组是148件艺术品的审美评级，第3block是20件艺术品的重测
+library(dplyr)
+b1 <- SRdata %>% 
+   dplyr::filter(Block == "1") %>% 
+   dplyr::select(Subj, Image, Rating)
+b3 <- SRdata %>% 
+ dplyr::filter(Block == "3") %>% 
+   dplyr::select(Subj, Image, Rating) 
+###按照有的重测数据即b3进行保留，至ft13，并按被试转换成list
+b1 %>% inner_join(b3, by = c("Subj", "Image")) %>%
+  group_by(Subj) %>%
+  group_split() -> ft13
+# 创建一个空矩阵，以建立相关
+ft13_cortib <- tibble(Subj = double(), Correlation_Coefficient = double())
+#循环函数填入信度系数
+for (i in 1:length(ft13)){
+  # Run the correlation and store it temporarily
+  cortab_temp <- cor(ft13[[i]]$Rating.x, ft13[[i]]$Rating.y, use = "complete.obs", method = "pearson")
+  # Add the relevant values to the tibble依次填充
+  ft13_cortib %<>% dplyr::add_row(Subj = i, Correlation_Coefficient = cortab_temp)
+}
+Correlation_Coefficients_Ae <- ft13_cortib %>%
+  rename(Corr_Coeff_Ae = Correlation_Coefficient)
+# plot it
+Correlation_Coefficients_Ae %>%
+  ggplot(aes(x = Corr_Coeff_Ae)) + geom_histogram(binwidth = 0.05)
+
+## Self-Relevance
+filtered_data2 <- SRdata %>% filter(Block == "2")
+b2 <- filtered_data2[, c("Subj", "Image", "Rating")]
+filtered_data4 <- SRdata %>% filter(Block == "4")
+b4 <- filtered_data4[, c("Subj", "Image", "Rating")]
+#按照第二次重测b4筛选数据
+b2 %>% inner_join(b4, by = c("Subj", "Image")) %>%
+  group_by(Subj) %>%
+  group_split() -> ft24
+# Create an empty tibble with two columns
+ft24_cortib <- tibble(Subj = double(), Correlation_Coefficient = double())
+
+for (i in 1:length(ft24)) {
+  # 计算 Rating.x 和 Rating.y 列的相关系数
+  cortab_temp <- cor(ft24[[i]]$Rating.x, ft24[[i]]$Rating.y, use = "complete.obs", method = "pearson")
+  
+  # 将相关系数添加到 tibble 中
+  ft24_cortib <- ft24_cortib %>% dplyr::add_row(Subj = i, Correlation_Coefficient = cortab_temp)
+}
+
+
+Correlation_Coefficients_SR <- ft24_cortib %>%
+  rename(Corr_Coeff_SR = Correlation_Coefficient)
+# plot it
+Correlation_Coefficients_SR %>%
+  ggplot(aes(x = Corr_Coeff_SR)) + geom_histogram(binwidth = 0.05)
+
+# 将数据合并在一起 
+library(psych)
+Reliability <- full_join(Correlation_Coefficients_Ae,Correlation_Coefficients_SR)
+Reliability <- mutate(Reliability,Avg_Rel= fisherz2r((fisherz(Corr_Coeff_Ae) + fisherz(Corr_Coeff_SR)) / 2))
+#plot it
+Reliability %>% ggplot(aes(x = Avg_Rel)) + geom_histogram(binwidth = 0.02)
+
+#排除信度系数过低的被试
+filter(Reliability,Avg_Rel < 0.5)
+##只有一个被试，3号被试
+
+#---------------------------------探索自我参照和审美的关系---------
+###过滤低信度被试(Subj#3)
+SRdata %>% filter(!Subj %in% c(3)) -> SRdata
+###开始对数据进行预处理（筛选、过滤、排序、重命名、合并等）
+##选取数据列
+SRdata %>% arrange(Subj, Block, Image) ->new_table 
+##filter only block 1 SR
+new_table %>% filter(Block =="1") -> block_table1 
+#filter only block 3  SR
+new_table %>% filter(Block == "3") -> block_table3 
+# Filter only the images from block 1 that are present in block 3 
+new_table %>% filter(Block == "1", Image%in%block_table3$Image) -> block_table1_2
+#filter only block 2
+new_table %>% filter(Block == "2") -> block_table2 
+#filter only block 4
+new_table %>% filter(Block == "4") -> block_table4 
+# Filter only the images from block 2 that are present in block 4
+new_table %>% filter(Block == "2", Image%in%block_table4$Image) -> block_table2_2
+
+#数据重命名
+block_table1 %>% 
+  rename(AE=Rating, AETime=Time, AETrial=Trial) %>%
+  dplyr::select(Subj, Image, AE, AETime, AETrial) %>%
+  right_join(block_table2 %>% 
+    rename(SR=Rating, SRTime=Time, SRTrial=Trial) %>%
+    dplyr::select(Subj, Image, SR, SRTime, SRTrial)) -> final_table
+
+# 使用rename函数重命名列
+block_table1 <- block_table1 %>% rename(AE=Rating,AETime=Time,AETrial=Trial)
+block_table1 <- block_table1[,c('Subj','Image','AE','AETime','AETrial')]
+block_table2 <- block_table2 %>% rename(SR=Rating,SRTime=Time,SRTrial=Trial)
+block_table2 <- block_table2[,c('Subj','Image','SR','SRTime','SRTrial')]
+final_table <- right_join(block_table1,block_table2)
+#将数据转换为因子型
+final_table$Subj <- as_factor(final_table$Subj)
+final_table$Image <- as_factor(final_table$Image)
+#时间点1 数据
+block_table1_2%>% 
+rename(AE=Rating,AETime=Time,AETrial=Trial) %>%
+  dplyr::select(Subj,Image,AE,AETime,AETrial)%>% 
+  right_join(block_table2_2%>% 
+               rename(SR=Rating,SRTime=Time,SRTrial=Trial)%>%
+               dplyr::select(Subj,Image,SR,SRTime,SRTrial)) -> tmpOut
+block_table1_2 <- block_table1_2 %>% rename(AE=Rating,AETime=Time,AETrial=Trial)
+block_table1_2 <- block_table1_2[,c('Subj','Image','AE','AETime','AETrial')]
+block_table2_2 <- block_table2_2 %>% rename(SR=Rating,SRTime=Time,SRTrial=Trial)
+block_table2_2 <- block_table2_2[,c('Subj','Image','SR','SRTime','SRTrial')]
+tmpOut <- right_join(block_table1_2,block_table2_2)
+##  时间点2的数据 
+block_table3%>%
+rename(AE2=Rating,AE2Time=Time,AE2Trial=Trial) %>%
+  dplyr::select(Subj,Image,AE2,AE2Time,AE2Trial)%>% 
+  right_join(block_table4%>%
+               rename(SR2=Rating,SR2Time=Time,SR2Trial=Trial) %>%
+               dplyr::select(Subj,Image,SR2,SR2Time,SR2Trial))  -> tmpOut2
+block_table3 <- block_table3 %>% rename(AE2=Rating,AE2Time=Time,AE2Trial=Trial)
+block_table3 <- block_table3[,c('Subj','Image','AE2','AE2Time','AE2Trial')]
+block_table4 <- block_table4 %>% rename(SR2=Rating,SR2Time=Time,SR2Trial=Trial)
+block_table4 <- block_table4[,c('Subj','Image','SR2','SR2Time','SR2Trial')]
+tmpOut2 <- right_join(block_table3,block_table4)
+
+
+tmpOut%>% right_join(tmpOut2) -> final_table2
+
+
+# LMM for how much SR explains AE + random intercepts for subj
+# NOTE: data is already rescaled to between 0 and 1
+AE_Test.model1 = lmer(AE ~ SR +(1|Subj), data=final_table)
+summary(AE_Test.model1)
+#specify the intercept per subj and different slopes (when done)
+#固定效应值和随机效应值
+coef(AE_Test.model1) 
+ranef(AE_Test.model1)
+# LMM for how much SR explains AE + random intercepts for SR/subj
+AE_Test.model2 = lmer(AE ~ SR +(SR|Subj), data=final_table)
+summary(AE_Test.model2)
+coef(AE_Test.model2)
+ranef(AE_Test.model2)
+
+
+# LMM for how much SR explains AE + random intercepts for SR/subj and image
+AE_Test.model3 = lmer(AE ~ SR + (SR|Subj)+(1|Image),data=final_table)
+summary(AE_Test.model3)
+coef(AE_Test.model3)
+ranef(AE_Test.model3)
+#计算置信区间
+confint.merMod(AE_Test.model3)
+anova(AE_Test.model3)
+
+# LMM for how much SR explains AE + random intercepts for subj + image
+#random slope model: different intercepts and slopes for the effect of SR
+AE_Test.model4 = lmer(AE ~ SR +(SR|Subj)+(SR|Image), data=final_table)
+summary(AE_Test.model4)
+coef(AE_Test.model4)
+ranef(AE_Test.model4)
+
+#COMPARE MODELS
+anova(AE_Test.model1,AE_Test.model2,AE_Test.model3,AE_Test.model4)
+#model 3 wins
+
+###常用的两个模型选择方法—— 赤池信息准则（Akaike Information Criterion，AIC）和贝叶斯信息准则（Bayesian Information Criterion，BIC）。
+#赤池信息量准则的方法是寻找可以最好地解释数据但包含最少自由参数的模型，优先考虑的模型应是AIC值最小的那一个。
+#AIC和BIC的原理是不同的，都是选择值最小的模型。AIC是从预测角度，选择一个好的模型用来预测，BIC是从拟合角度，选择一个对现有数据拟合最好的模型，从贝叶斯因子的解释来讲，就是边际似然最大的那个模型。
+#baseline model, intercept only基线
+AE_Test.model0 = lmer(AE ~ (1|Subj) + (1|Image),data=final_table)
+summary(AE_Test.model0)
+library(MuMIn)
+r.squaredGLMM(AE_Test.model3)
+
+##对重测数据进行建模 DATA ###
+AE_Retest.model = lmer(AE2 ~ SR2 + (SR2|Subj)+(1|Image),data=final_table2)
+summary(AE_Retest.model)
+coef(summary(AE_Retest.model))
+confint.merMod(AE_Retest.model)
+anova(AE_Retest.model)
+
+```
+```{r}
+##可以试试easystats对于模型比较部分存疑
+library(easystats)
+compare_performance(AE_Test.model1,AE_Test.model2,AE_Test.model3,AE_Test.model4,rank = T,verbose = F)
+#显示 4win
+```
+
+## Including Plots
+
+```{r pressure, echo=FALSE}
+######################### SPAGHETTI PLOTS #######################################
+library(gridExtra) #package to bind together different graphs
+#se = FALSE > turn off standard errors
+#group = 1 > group the model in one average line
+#对应figure1
+ggplot(final_table, aes(x=SR, y=AE, group=Subj))+
+  stat_smooth(method="lm", se=FALSE, size=.5, color="lightblue") + # slopes for different subjects
+  stat_smooth(aes(group=1), method="lm", color="blue", size=1.5)+  # average slope with SE
+  theme_classic() + 
+  #labs(title ="Linear Mixed Effect Model AR~SR")+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  labs(x = "Self-relevance Ratings", y = "Aesthetic Ratings")
+######### Loess Plots ############
+ggplot(final_table, aes(x=SR,y=AE))+
+  geom_point(color="#222222",size=.3)+
+  geom_smooth(method = "loess")+
+  labs(x="Self-Relevance", y="Aesthetic Appeal")+
+  theme_classic()
+
+
+###VCA相关指标的计算
+SRdata <- read_delim("data/Exp1A_Data.txt", delim = "\t", col_names = TRUE)
+#因子转换
+SRdata$Subj = as.factor(SRdata$Subj)
+SRdata$Block = as.factor(SRdata$Block)
+SRdata$Question = as.factor(SRdata$Question)
+SRdata$TestRe = as.factor(SRdata$TestRe)
+SRdata$Trial = as.factor(SRdata$Trial)
+SRdata$Image = as.factor(SRdata$Image)
+###############MM1 FOR AESTHETIC APPEAL#########################
+#create table with data spread for subj数据准备
+SRdata %>% filter(Block == "1") %>%
+  dplyr::select(Subj, Image, Rating)%>%
+  arrange(Image) %>%
+  spread(Subj, Rating) %>%
+  column_to_rownames(var = "Image")-> b1
+#first, create a table to input all the correlations per subject数据格式
+b1_cor <- tibble(Subj = double(), Correlation_Coefficient = double())
+#loop to compute correlation of Subject i with the averaged rating values of the other subjects
+for (i in 1:length(b1)) {
+  dplyr::select(b1, -i) -> tmp_table #create a temporary table with all subjects - 1
+  tmp_table %>%
+    mutate(mean_all = rowMeans(.)) ->tmp_mean # create a temporary table that include a column with the average across rating rows
+  cor(b1[,i], tmp_mean$mean_all, use = "complete.obs", method = "pearson") -> x #run correlation
+  b1_cor %<>% dplyr::add_row(Subj = i, Correlation_Coefficient = x) #compute in new table
+}
+
+#plot a histogram相关系数的直方图
+b1_cor%>%
+  ggplot(aes(x=Correlation_Coefficient))+
+  geom_histogram(binwidth = 0.05, color = "deepskyblue3", fill='lightcyan')+
+  labs(title ="Aesthetic Appeal (MM1)", x = "MM1 agreement (r)", y = "# Participants")+
+  theme_minimal() +theme(plot.title = element_text(hjust = 0.5, face = "bold")) + coord_cartesian(xlim=c(-1,1))
+#Convert r to z
+##如何转换的？为什么转换
+rz<- fisherz(b1_cor$Correlation_Coefficient) #convert r to z
+#calculate the CI 95%
+Lower_limit <-  mean(rz) - (1.96)*(sd(rz))  # (z(mean) -+ (1.96)*(SD))
+Upper_limit <-  mean(rz) + (1.96)*(sd(rz)) 
+MM1.ae = fisherz2r(mean(rz)) #convert z to r  
+MM1.aeCI=fisherz2r(Lower_limit)
+MM1.aeCI[2]=fisherz2r(Upper_limit) 
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+###############MM1 FOR SELF-RELEVANCE#########################
+
+SRdata %>% filter(Block == "2") %>% dplyr::select(Subj, Image, Rating)%>%
+  arrange(Image) %>%
+  spread(Subj, Rating) %>%
+  column_to_rownames(var = "Image")-> b2
+
+b2_cor <- tibble(Subj = double(), Correlation_Coefficient = double())
+
+for (i in 1:length(b2)) {
+  dplyr::select(b2, -i) -> tmp_table #create a temporary table with all subjects - 1从0开始计数吗
+  tmp_table %>%
+    mutate(mean_all = rowMeans(.)) ->tmp_mean # create a temporary table that include a column with the average across rating rows
+  cor(b2[,i], tmp_mean$mean_all, use = "complete.obs", method = "pearson") -> x #run correlation
+  b2_cor %<>% dplyr::add_row(Subj = i, Correlation_Coefficient = x) #compute in new table
+  
+}
+
+b2_cor%>%
+  ggplot(aes(x=Correlation_Coefficient))+
+  geom_histogram(binwidth = 0.05, color = "deepskyblue3", fill='lightpink2')+
+  labs(title ="Self-Relevance (MM1)", x = "MM1 Agreement (r)", y = "# Participants")+
+  theme_minimal() +theme(plot.title = element_text(hjust = 0.5, face = "bold")) + coord_cartesian(xlim=c(-1,1))
+
+#Convert r to z
+rz2<- fisherz(b2_cor$Correlation_Coefficient) #convert r to z
+#calculate the CI 95%
+Lower_limit <-  mean(rz2) - (1.96)*sd(rz2) # #(z(mean) -+ (1.96)*(SD))
+Upper_limit <-  mean(rz2) + (1.96)*sd(rz2) 
+MM1.sr=fisherz2r(mean(rz2)) #convert z to r 
+MM1.srCI=fisherz2r(Lower_limit) 
+MM1.srCI[2]=fisherz2r(Upper_limit) 
+
+
+## Variance partitioningVariance partitioning（方差分区）是统计学中的一种方法，用于分析不同因素对总变异性的贡献程度。
+#在多元回归分析、因子分析、结构方程模型等统计模型中，方差分区有助于理解各个自变量对因变量变异性的影响。
+
+#split data by question
+SRdata %>% dplyr::filter(Question == "1") %>% dplyr::select(-one_of("Block")) %>% rename(Sub=Subj,Obj=Image,Block=TestRe) -> SRdata.AEonly
+SRdata %>% dplyr::filter(Question == "2") %>% dplyr::select(-one_of("Block"))%>%rename(Sub=Subj,Obj=Image,Block=TestRe) -> SRdata.SRonly
+
+source("data/vca_exposure.r")#对模型拟合的值进行一个输出限制
+varparAE.model = lmer(Rating ~ 1 + ((1|Sub) + (1 |Obj) + (1|Sub:Obj) + (1|Block) + (1|Block:Sub) + (1|Block:Obj)),data=SRdata.AEonly)
+VCA.AE = VCA_exposure(varparAE.model,ci=F)
+##为什么要这样计算？
+Vind.AE = (VCA.AE[2,3] + VCA.AE[4,3] + VCA.AE[5,3])#EV fix
+Vshar.AE = 1 - Vind.AE
+Vrepeat.AE = 1 - VCA.AE[7,2]
+#进行SR的计算
+varparSR.model = lmer(Rating ~ 1 + ((1|Sub) + (1 |Obj) + (1|Sub:Obj) + (1|Block) + (1|Block:Sub) + (1|Block:Obj)),data=SRdata.SRonly)
+VCA.SR = VCA_exposure(varparSR.model,ci=F)
+
+Vind.SR = (VCA.SR[2,3] + VCA.SR[4,3] + VCA.SR[5,3]) #EV fix
+Vshar.SR = 1 - Vind.SR
+Vrepeat.SR = 1 - VCA.SR[7,2]
+
+```
+
+
+
+```{r}
+##---------------Exp1A_rcVCA_DA.R: Extend LMM-based to include image features as predictors; perform VCA analysis with self-relevance and image features; perform dominance analysis
+#load dataFrames:不同类型画的评分均值
+SRdata  = read_delim(sprintf("data/Exp1A_Data.txt"))
+IFdata  = read_csv(sprintf("data/Exp1A_ImageFeatures_148x19.csv"))
+IFdata = IFdata %>% rowid_to_column() %>% rename(Image = rowid)
+
+#merge dataframe
+data = merge(SRdata,IFdata, by = "Image", all  = T)
+
+#load functions to compute Variance Component Analysis (VCA) via mixed linear modeling (MLM)
+source("data/rcvca.r")
+source("data/vca_exposure.r")
+
+#Prepare data####数据预处理的部分可以删除了， 和之前的步骤一致
+#This part follows the Exp1_LinMixedModels.R
+#filter out Low Reliability Subjects (Subj#3)
+data %>%filter(!Subj %in% c(3)) -> data
+data %>% arrange(Subj, Block, Image) -> new_table #arrange variable according to Subj, Block and Image
+
+new_table %>%filter(Block =="1") -> block_table1 #filter only block 1
+new_table %>%filter(Block == "3") -> block_table3 #filter only block 3
+# Filter only the images from block 1 that are present in block 3
+new_table %>%filter(Block == "1", Image%in%block_table3$Image) -> block_table1_2
+new_table %>%filter(Block == "2") -> block_table2 #filter only block 2
+new_table %>%filter(Block == "4") -> block_table4 #filter only block 4
+# Filter only the images from block 2 that are present in block 4
+new_table %>% filter(Block == "2", Image%in%block_table4$Image) -> block_table2_2
+#organizing table names
+block_table1%>% 
+  rename(AE=Rating,AETime=Time,AETrial=Trial) %>%
+  dplyr::select(Subj,Image,AE,AETime,AETrial, hsv_h:Disorder)%>% 
+  right_join(block_table2%>% 
+               rename(SR=Rating,SRTime=Time,SRTrial=Trial)%>%
+              dplyr:: select(Subj,Image,SR,SRTime,SRTrial)) -> final_table
+
+#recode subject and image as factors
+final_table$Subj <- as_factor(final_table$Subj)
+final_table$Image <- as_factor(final_table$Image)
+
+block_table1_2%>% 
+  rename(AE=Rating,AETime=Time,AETrial=Trial) %>%
+  dplyr::select(Subj,Image,AE,AETime,AETrial:hsv_h:Disorder)%>% 
+  right_join(block_table2_2%>% 
+               rename(SR=Rating,SRTime=Time,SRTrial=Trial)%>%
+               dplyr::select(Subj,Image,SR,SRTime,SRTrial)) -> tmpOut
+
+block_table3%>%
+  rename(AE2=Rating,AE2Time=Time,AE2Trial=Trial) %>%
+  dplyr::select(Subj,Image,AE2,AE2Time,AE2Trial:hsv_h:Disorder)%>% 
+  right_join(block_table4%>%
+               rename(SR2=Rating,SR2Time=Time,SR2Trial=Trial) %>%
+               dplyr::select(Subj,Image,SR2,SR2Time,SR2Trial))  -> tmpOut2
+tmpOut%>% right_join(tmpOut2) -> final_table2
+
+
+##主要是final_table(1、2)和temOut（1、2）两种数据
+##Image Features####
+#LMM for how much SR & IF  explains AE + random intercepts for SR/subj and image
+#first check for highly correlated variables (quick way)
+cor(final_table %>% dplyr::select(hsv_h:spatialFreqCircularVariance))>.9 #hsv_v and rgbLuminance 
+#Select final IF为什么是去掉这两个？指标超过了
+names(final_table %>% dplyr::select(hsv_h:spatialFreqCircularVariance) %>% dplyr::select(-c(rgbLuminance, memorability))) -> IF
+length(IF)
+#Scale  IF from 0 to 1 to keep consistent with SR and AA
+scale01 <- function(x){(x - min(x)) / (max(x) - min(x))}
+final_table <- final_table %>% mutate_at(c(IF), scale01) 
+#check variables are properly scaled
+final_table %>% dplyr::select(AE:SR) %>%  summarise_all(range)
+#Select final IF这又是为什么？
+names(final_table %>% dplyr::select(hsv_h:Disorder) %>% dplyr::select(-c(rgbLuminance))) -> allIF
+length(allIF)
+
+
+#Fit LMM####
+#data for lmm (with exposure)
+SRdata %>%dplyr::filter(!Subj %in% c(3)) -> SRdata
+SRdata %>% dplyr::filter(Question == "1") %>% dplyr::select(-one_of("Block")) %>% rename(Sub=Subj,Obj=Image,Block=TestRe) -> SRdata.AEonly
+#relative contribution to VPC (rcVPC)####
+SRdata %>% 
+  dplyr::select(-one_of("Block")) %>% 
+  dplyr::select(-c(Time, Trial)) %>% 
+  pivot_wider(names_from = Question, values_from = Rating)  %>%
+  rename(Sub=Subj,Obj=Image,Block=TestRe,AE = `1`, SR = `2`) -> SRdata_extended
+merge(SRdata_extended,IFdata %>% rename(Obj = Image), by = "Obj", all  = T) -> SRIFdata_extended
+# Repeat scaling
+SRIFdata_extended %>% mutate_at(c(IF), scale01) -> SRIFdata_extended_scaled
+#check variables are properly scaled
+SRIFdata_extended_scaled %>% dplyr::select(AE:Disorder) %>%  summarise_all(range)
+
+#define null model for "observational-variance" (drop exposure term)
+varparAE.model_exposure = lmer(AE ~  1+ ((1|Sub) + (1 |Obj) + (1|Sub:Obj) + (1|Block) + (1|Block:Sub) + (1|Block:Obj)),data=SRIFdata_extended_scaled)
+varparSR.model_exposure = lmer(SR ~  1+ ((1|Sub) + (1 |Obj) + (1|Sub:Obj) + (1|Block) + (1|Block:Sub) + (1|Block:Obj)),data=SRIFdata_extended_scaled)
+varparAE.model = lmer(AE ~  1+ ((1|Sub) + (1 |Obj) + (1|Sub:Obj)),data=SRIFdata_extended_scaled)
+#sanity check that df are equivalent
+lmer(Rating ~ ((1|Sub) + (1 |Obj) + (1|Sub:Obj)),data=SRdata.AEonly)
+#Include fixed effects as predictors
+varparAE_SR.model = lmer(AE ~ SR  + ((1|Sub) + (1 |Obj) + (1|Sub:Obj)), data=SRdata_extended)
+LMM_IF <- paste0("AE ~", paste0(allIF, collapse = " + "), " +((1|Sub) + (1 |Obj) + (1|Sub:Obj))")
+LMM_SRIF <- paste0("AE ~ SR + ", paste0(allIF, collapse = " + "), " +((1|Sub) + (1 |Obj) + (1|Sub:Obj))")
+varparAE_IF.model =  lmer(LMM_IF, data=SRIFdata_extended_scaled)
+varparAE_SRIF.model =  lmer(LMM_SRIF, data=SRIFdata_extended_scaled)
+
+#check variance of the null
+summary(varparAE.model)$varcor %>% as.data.frame() %>% summarise(sum(vcov))
+var(SRIFdata_extended_scaled$AE)
+
+#check if variance of the random terms drops
+summary(varparAE_SR.model)$varcor %>% as.data.frame() %>% summarise(sum(vcov))
+summary(varparAE_IF.model)$varcor %>% as.data.frame() %>% summarise(sum(vcov))
+summary(varparAE_SRIF.model)$varcor %>% as.data.frame() %>% summarise(sum(vcov))
+
+##VCA####用于确定不同来源对总变异的贡献
+#Apply VCA to get an estimate of unique, shared and repeatable variance
+vca_null_exposure = VCA_exposure(varparAE.model_exposure,ci = F) %>% mutate(model = "varparAE")
+vca_null_SR_exposure = VCA_exposure(varparSR.model_exposure,ci = F) %>% mutate(model = "varparSR")
+
+##rcVCA####
+#Apply VCA functions to get cVCP (note that the term exposure and interactions are dropped)
+vca_null = rcVCA(varparAE.model) %>% mutate(model = "varparAE")
+vca_sr = rcVCA(varparAE_SR.model, null = F, nullmodel = varparAE.model) %>% mutate(model = "varparAE_SR")
+vca_if = rcVCA(varparAE_IF.model, null = F, nullmodel = varparAE.model) %>% mutate(model = "varparAE_IF")
+vca_srif = rcVCA(varparAE_SRIF.model, null = F, nullmodel = varparAE.model)  %>% mutate(model = "varparAE_SR&IF")
+
+#rename for simplicity
+colnames(vca_null)[2:4] = paste0(colnames(vca_null)[2:4], "_null")
+colnames(vca_sr)[2:4] = paste0(colnames(vca_sr)[2:4], "_sr")
+colnames(vca_if)[2:4] = paste0(colnames(vca_if)[2:4], "_if")
+colnames(vca_srif)[2:4] = paste0(colnames(vca_srif)[2:4], "_srif")
+vca_comparison = list(vca_null,vca_sr,vca_if,vca_srif) %>% reduce(inner_join, by='VPC')
+
+#create a df for plotting
+plot_vca_comparison = 
+  vca_comparison %>% 
+  mutate(null_m_SR = total_null-total_sr, # amount of random effects covarying with the fixed effect (SR)
+         null_m_IF = total_null-total_if, # amount of random effects covarying with the fixed effect (IF)
+         null_m_SRIF = total_null-total_srif) %>%   # amount of random effects covarying with the fixed effect (SR + IF)
+  mutate(SRIF_m_null_m_IF_SRIF = null_m_SRIF -null_m_SR, # amount of random effects specifically covarying with the fixed effect (SR)
+         SRIF_m_null_m_SR_SRIF = null_m_SRIF -null_m_IF) %>% # amount of random effects specifically covarying with the fixed effect (IF)
+  mutate(shared_SRIF = null_m_SRIF - (SRIF_m_null_m_SR_SRIF + SRIF_m_null_m_IF_SRIF)) %>% ## amount of random effects covarying with the shared fixed effects (SR + IF)
+  dplyr::select(VPC, total_null,total_sr, null_m_SR, total_if, null_m_IF, total_srif, SRIF_m_null_m_SR_SRIF, SRIF_m_null_m_IF_SRIF, shared_SRIF) %>% 
+  rename(null = total_null, SR = total_sr, IF =  total_if, SRIF = total_srif) %>% 
+  pivot_longer(names_to = "model", values_to = "value", c(null:shared_SRIF)) %>% 
+  mutate(VPC = ifelse(model == "null_m_SR", paste0(VPC,"_SR"), 
+                      ifelse(model == "null_m_IF", paste0(VPC,"_IF"),
+                             ifelse(model == "SRIF_m_null_m_SR_SRIF",paste0(VPC,"_SR"),
+                                    ifelse(model == "SRIF_m_null_m_IF_SRIF",paste0(VPC,"_IF"),
+                                           ifelse(model == "shared_SRIF",paste0(VPC,"_SRIF"), VPC))))),
+         lmm = ifelse(endsWith(model, '_IF'), "IF", ifelse(endsWith(model, 'SRIF'),"SR+IF",ifelse(endsWith(model, '_SR'), "SR", model))))
+
+#prepare for plotting后面的都是画图
+level_order = c(
+  "Residual",
+  "Stimulus",
+  "Stimulus_SR",
+  "Stimulus_SRIF",
+  "Stimulus_IF",
+  "Individual",
+  "Individual_SR",
+  "Stimulus*Individual",
+  "Stimulus*Individual_SR"
+)
+level_lmm = c(
+  "null",
+  "SR",
+  "IF",
+  "SR+IF"
+)
+
+library(viridis)
+library(wesanderson)
+color_VA = c(viridis::viridis(32), "lightGray")
+color_VA_explained = wesanderson::wes_palette("GrandBudapest2")
+c(viridis::viridis(32), "lightGray")
+
+#Rename VPC for ease of plotting
+plot_vca_comparison = plot_vca_comparison %>% 
+  mutate(VPC = ifelse(VPC == "Individual_IF","Individual_SR",
+                      ifelse(VPC == "Stimulus*Individual_IF","Stimulus*Individual_SR",VPC)))
+
+plot_vca_comparison_accounted = plot_vca_comparison %>% 
+  filter(lmm  == "SR" | lmm  == "IF" |lmm  == "SR+IF") %>% 
+  filter(str_detect(VPC, '_')) %>% group_by(lmm ) %>% 
+  summarise(value = sum(value, na.rm = T))
+
+##FS1 c####
+plot_vca_comparison %>% 
+  mutate(value = round(value,2)) %>% 
+  filter(value >0) %>% 
+  mutate(VPC = factor(VPC, levels = c(level_order))) %>% 
+  mutate(lmm = factor(lmm, levels = c(level_lmm))) %>% 
+  ggplot(aes(x = lmm, y = value, fill = VPC, label = round(value,2))) + 
+  geom_bar(stat = "identity", color = "black",  width = 0.5)  +
+  geom_text(size = 3, position = position_stack(vjust = 0.5), color = "white")+
+  scale_fill_manual(values = rev(color_VA[c(1,4,10,14, 21,24,27,30,33)])) +
+  theme_classic(base_size = 12)+
+  ylim(0,1)+
+  geom_hline(yintercept = sum(round(vca_null[1:3,]$total_null,2)), linetype = "dashed")+
+  geom_hline(yintercept = sum(round(vca_null[2:3,]$total_null,2)))+
+  geom_hline(yintercept = 0)+
+  labs(x = "Model",
+       y = "Prop. of Aesthetic Ratings' Var.",
+       fill = "VPC") +
+  theme(legend.spacing.y = unit(.1, 'cm'))  +
+  ## important additional element
+  guides(fill = guide_legend(byrow = TRUE))
+
+##FS1 d####
+plot_vca_comparison_accounted %>% 
+  filter(value >0) %>% 
+  mutate(lmm = factor(lmm, levels = c(level_lmm))) %>% 
+  ggplot(aes(x = lmm, y = value, fill = lmm, label = round(value,2))) + 
+  geom_bar(stat = "identity", color = "black",  width = 0.4)  +
+  geom_text(size = 3, position = position_stack(vjust = 0.5), color = "white")+
+  scale_fill_manual(values =color_VA_explained) +
+  theme_classic(base_size = 12)+
+  ylim(0,1)+
+  geom_hline(yintercept = sum(round(vca_null[1:3,]$total_null,2)), linetype = "dashed")+
+  geom_hline(yintercept = 0)+
+  labs(x = "Model",
+       y = "Prop. of Explained Aesthetic Ratings' Var.",
+       fill = "Model") +
+  theme(legend.spacing.y = unit(.1, 'cm'))  +
+  ## important additional element
+  guides(fill = guide_legend(byrow = TRUE))
+
+
+#CHECK####
+FE_final_table = final_table %>% group_by(Image) %>% dplyr::select(-c(Subj,AETime,AETrial,rgbLuminance)) %>% summarise_all(mean)
+##Quality checks
+#chek if VPC shared explained match with a simple linear model
+summary(lm(AE ~ SR, FE_final_table))
+#.50
+plot_vca_comparison %>%dplyr::filter(lmm == "SR") %>% dplyr::filter(VPC == "Stimulus_SR" ) %>% pull(value) / plot_vca_comparison %>%dplyr:: filter(lmm == "null") %>% dplyr::filter(VPC  == "Stimulus" ) %>% pull(value)
+#.46
+
+LMIF1 <- paste0("AE ~ ", paste0(allIF, collapse = " + "))
+summary(lm(LMIF1, FE_final_table))
+#.52
+plot_vca_comparison %>% dplyr::filter(lmm == "IF") %>% dplyr::filter(VPC == "Stimulus_IF" ) %>% pull(value) / plot_vca_comparison %>% dplyr::filter(lmm == "null") %>% dplyr::filter(VPC  == "Stimulus" ) %>% pull(value)
+#.52
+
+LMSRIF1 <- paste0("AE ~ SR +  ", paste0(allIF, collapse = " + "))
+summary(lm(LMSRIF1, FE_final_table))
+#.65
+sum(plot_vca_comparison %>% dplyr::filter(lmm == "SR+IF") %>%dplyr:: filter(VPC == "Stimulus_SR" | VPC == "Stimulus_SRIF" | VPC == "Stimulus_IF") %>% pull(value)) / plot_vca_comparison %>%dplyr:: filter(lmm == "null") %>% dplyr::filter(VPC  == "Stimulus" ) %>% pull(value)
+#.66
+
+
+#Dominance analysis####
+#Extend to dominance analysis
+#NOTE HERE WE FOCUS ONLY ON FIXED EFFECTS AND AVERAGED AE AND SR ACROSS SUBJECTS PER IMAGE
+LMIFall1 <- paste0("AE ~ SR + ", paste0(allIF, collapse = " + "))
+LMIF1 <- paste0("AE ~ ", paste0(allIF, collapse = " + "))
+LMIF1 <- paste0("SR ~ ", paste0(allIF, collapse = " + "))
+#get an idea of how this model perform
+summary(lm(AE ~ SR, FE_final_table))
+summary(lm(AE ~ SR + hsv_h + hsv_s + hsv_v + fourierSigma + fourierSlope + selfSimilarity + complexity + anisotropy + compressability + dimensionality + memorability + predictability + visualSaliency + rmsContrast + spatialFreqCenteroid + spatialFreqCircularVariance + Naturalness + Disorder, FE_final_table))
+#calculate relative importance for each predictor
+library(domir)
+
+dominALL =  ### takes a long time! ###
+  domir::domin(AE ~ SR + hsv_h + hsv_s + hsv_v + fourierSigma + fourierSlope + selfSimilarity + complexity + anisotropy + compressability + dimensionality + memorability + predictability + visualSaliency + rmsContrast + spatialFreqCenteroid + spatialFreqCircularVariance + Naturalness + Disorder, 
+               lm, 
+               list(summary, "r.squared"), 
+               data = FE_final_table)
+#Scatter plot of AE~SR#
+ggplot(FE_final_table, aes(x=SR, y=AE)) +
+  geom_point(color="lightGray")+
+  stat_smooth(aes(group=1), method="lm", color="blue", size=1.5)+
+  theme_classic(base_size = 12)+
+  #labs(title ="Linear Mixed Effect Model AR~SR")+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  labs(x = "Avg. Self-relevance Ratings", y = "Avg. Aesthetic Ratings")
+##BAR plot with multiple R2 (note that this is equal to the sum of all the dominance per predictor)
+dominALL$Fit_Statistic_Overall %>%
+  as.data.frame() %>% 
+  rownames_to_column()%>%
+  rename(R2 = rowname, fit_statistic = '.') %>% 
+  mutate(R2 = "") %>% 
+  ggplot(aes(x = R2, y = fit_statistic, fill = R2)) + 
+  geom_bar(stat = "identity", color = "black", fill = "#3d5a80",width = 0.5)  +
+  ylim(0,1)+
+  theme_classic(base_size = 12)+
+  labs(x = "",
+       y = expression("multiple-R"^"2"),
+       fill = "Predictors") 
+##BAR plot with overall contribution to fir statistics (R2) for AR~SR+ allIF
+dominALL$General_Dominance %>% 
+  as.data.frame() %>%
+  rownames_to_column()%>%
+  rename(predictor = rowname, contribution = '.') %>% 
+  arrange(contribution) %>% 
+  mutate(x = "") %>% 
+  mutate(predictor = factor(predictor, levels = c(predictor))) %>% 
+  ggplot(aes(x = x, y = contribution, fill = predictor)) + 
+  geom_bar(stat = "identity", color = "black",  width = 0.5)  +
+  scale_fill_viridis_d(option = "magma") +
+  ylim(0,1)+
+  theme_classic(base_size = 12)+
+  labs(x = "",
+       y = "General dominance",
+       fill = "Predictors")+
+  theme(legend.position = "bottom")
+```
+
+
+```{r}
+#-------------------------1B-----------------------------------#
+testData_Orig <- read_delim("data/Exp1B_ImgData_testSorted_243ss.csv",delim=",", col_names = TRUE)
+library(dplyr)
+#Filter out low reliability subjects, plus those that didn't pass attention check
+testData_Orig %>%
+  filter(!jatosResID %in% c(
+    1904,1908,2005,2011,2041,2055,2081,2090,2114,2117,2126,2132,2188,2199,2248,2256,
+    2273,2287,2300,2312,2371,2416,2426,2431,2458,2461,2484,2591,2594,2629,2700,
+    2163,2264,2299,2506
+  )) -> testData
+#Rename variables, convert Subj and image to factors
+testData %>% rename(Subj = jatosResID, Image = image) %>% 
+  mutate(Subj = as.factor(Subj), Image = as.factor(Image)) -> testData
+summary(testData)
+
+#Baseline model, intercept only
+moved.model0 = lmer(Moved ~ (1|Subj) + (1|Image),data=testData)
+summary(moved.model0)
+
+# Model with SR but no random slope
+moved.model1 = lmer(Moved ~ SelfRelev + (1|Subj),data=testData)
+summary(moved.model1) 
+
+# Model with SR and Subj Slope for SR
+moved.model2 = lmer(Moved ~ SelfRelev + (SelfRelev|Subj),data=testData)
+summary(moved.model2)
+
+# Primary model with SR and Subj Slope for SR, and Intercept for Image
+moved.model3 = lmer(Moved ~ SelfRelev + (SelfRelev|Subj)+(1|Image),data=testData)
+summary(moved.model3)
+
+#additional stats for paper
+anova(moved.model3)
+summary(moved.model3)
+confint.merMod(moved.model3)
+F_to_eta2(294.12,1,232.88)  #208 subjs
+
+moved.model4 = lmer(Moved ~ SelfRelev + (SelfRelev|Subj)+(SelfRelev|Image),data=testData)
+summary(moved.model4)
+coef(summary(moved.model4))
+anova(moved.model4)
+F_to_eta2(232.21,1,154.55)  #208 subjs
+confint.merMod(moved.model4)
+# Model comparison
+anova(moved.model1,moved.model2,moved.model3,moved.model4)
+
+
+#Spaghetti plot
+ggplot(testData, aes(x=SelfRelev, y=Moved, group=Subj))+
+  stat_smooth(method="lm", se=FALSE, size=.5, color="lightblue") + # slopes for different subjects
+  stat_smooth(aes(group=1), method="lm", color="blue", size=1.5)+  # average slope with SE
+  theme_classic() + 
+  #labs(title ="Linear Mixed Effect Model AR~SR")+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  labs(x = "Self-relevance Ratings", y = "Moved Ratings") + scale_y_continuous(breaks=c(0,0.25,.5,.75,1))
+
+
+## same for Beauty
+#Baseline model, intercept only
+beauty.model0 = lmer(Beauty ~ (1|Subj) + (1|Image),data=testData)
+summary(beauty.model0)
+# Model with SR but no random slope
+beauty.model1 = lmer(Beauty ~ SelfRelev + (1|Subj),data=testData)
+summary(beauty.model1)
+# Model with SR and Subj Slope for SR
+beauty.model2 = lmer(Beauty ~ SelfRelev + (SelfRelev|Subj),data=testData)
+summary(beauty.model2)
+# Primary model with SR and Subj Slope for SR, and Intercept for Image
+beauty.model3 = lmer(Beauty ~ SelfRelev + (SelfRelev|Subj)+(1|Image),data=testData)
+summary(beauty.model3)
+coef(summary(beauty.model3))
+anova(beauty.model3)
+confint.merMod(beauty.model3)
+
+F_to_eta2(469.67,1,230.98) #208 subj
+beauty.model4 = lmer(Beauty ~ SelfRelev + (SelfRelev|Subj)+(SelfRelev|Image),data=testData)
+summary(beauty.model4)
+coef(summary(beauty.model4))
+anova(beauty.model4)
+F_to_eta2(397.7,1,176.28) #208 subj
+confint.merMod(beauty.model4)
+
+# Model comparison
+anova(beauty.model1,beauty.model2,beauty.model3,beauty.model4)
+
+ggplot(testData, aes(x=SelfRelev, y=Beauty, group=Subj))+
+  stat_smooth(method="lm", se=FALSE, size=.5, color="lightblue") + # slopes for different subjects
+  stat_smooth(aes(group=1), method="lm", color="blue", size=1.5)+  # average slope with SE
+  theme_classic() + 
+  #labs(title ="Linear Mixed Effect Model AR~SR")+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  labs(x = "Self-relevance Ratings", y = "Beauty Ratings") + scale_y_continuous(breaks=c(0,0.25,.5,.75,1))
+
+
+###### Loess plots ######
+#局部加权回归平滑图）是一种统计图表，用于展示数据集中变量之间的关系，尤其是当这种关系不是线性的时。Loess是一种非参数回归方法，它通过对局部数据进行加权回归来估计变量的趋势。
+ggplot(testData, aes(x=SelfRelev,y=Moved))+
+  geom_point(color="#222222",size=.3)+
+  geom_smooth(method = "loess")+
+  labs(x="Self-Relevance", y="Being Moved")+
+  theme_classic()
+
+ggplot(testData, aes(x=SelfRelev,y=Beauty))+
+  geom_point(color="#222222",size=.3)+
+  geom_smooth(method = "loess")+
+  labs(x="Self-Relevance", y="Beauty")+
+  theme_classic()
+```
+
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(ggpubr)
+library(psych)
+library(ggplot2)
+```
+
+
+```{r}
+#################### Load raw rating data ###############################
+##open file###
+Ratings_AllSubj_raw <- read_delim("data/Exp2_Dataratings_Full.csv", delim = ";", col_names = TRUE)
+
+#full dataset
+Ratings_AllSubj_raw %>%
+  arrange(Subj, Block) -> Ratings_AllSubj
+
+```
+
+
+```{r}
+############Reliability test (test-retest) and hist plot for aesthetic appeal ##################
+
+#Use full dataset
+Ratings_AllSubj %>% dplyr::filter(Block == "b1") %>% dplyr::select(Subj, Trial, Response) -> b1
+Ratings_AllSubj %>% dplyr::filter(Block == "b2") %>% dplyr::select(Subj, Trial, Response) -> b2
+
+
+b1 %>% inner_join(b2, by = c("Subj", "Trial")) %>%
+  group_by(Subj) %>%
+  group_split() -> ft12
+
+# Create an empty tibble with two columns
+#ft12_cortib <- tibble(Subj = double(), Reliability_Coeff = double())
+ft12_cortib <- tibble(Subj = char(""), Reliability_Coeff = double())
+
+#loop to compute the reliability score (Pearson r)
+for (i in 1:length(ft12)){
+  # Run the correlation and store it temporarily
+  cortab_temp <- cor(ft12[[i]]$Response.x, ft12[[i]]$Response.y, use = "complete.obs", method = "pearson")
+  # Add the relevant values to the tibble
+  ft12_cortib %<>% dplyr::add_row(Subj = ft12[[i]]$Subj[1], Reliability_Coeff = cortab_temp)
+
+}
+
+rz<- fisherz(ft12_cortib$Reliability_Coeff) #convert r to z
+sd(rz) #get the SD for the z-scores 0.3286387
+mean(rz) #mean of z-scores 1.031765
+#calculate the CI 95%
+Lower_limit <-  mean(rz) - (1.96)*( sd(rz)) #  # (z(mean) -+ (1.96)*(SD))
+Upper_limit <-  mean(rz) + (1.96)*( sd(rz)) # 
+fisherz2r(mean(rz)) #convert z to r 0.77
+fisherz2r(Lower_limit) # 0.37
+fisherz2r(Upper_limit) #   0.93
+
+#histogram
+ft12_cortib %>%
+  ggplot(aes(x=Reliability_Coeff)) + theme_classic()+
+  geom_histogram(binwidth = 0.02, color = "thistle4", fill='thistle1')+
+  labs(title ="Aesthetic Ratings Reliability Test", x = "Correlation coefficient (r)", y = "# Participants")+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) + coord_cartesian(xlim=c(0,1))
+range(ft12_cortib$Reliability_Coeff)
+
+
+#Identify low reliability observers
+subset(ft12_cortib, Reliability_Coeff < 0.5)
+
+#NOTE: These 5 observers were excluded from Dataratings_Final.csv, which is used for the remaining analyses
+
+####### Compute average reliability again after removing these participants
+
+
+#Excluding subjs s23, s37, s42, s49 and s50 for reliability test below 0.5
+Ratings_AllSubj_raw %>%
+  arrange(Subj, Block) %>%
+  dplyr::filter(!Subj %in% c("s23", "s37", "s42", "s49", "s50")) -> Ratings_ReliableSubj
+
+#Use full dataset
+Ratings_ReliableSubj %>% dplyr::filter(Block == "b1") %>% dplyr::select(Subj, Trial, Response) -> b1r
+Ratings_ReliableSubj %>% dplyr::filter(Block == "b2") %>% dplyr::select(Subj, Trial, Response) -> b2r
+
+
+b1r %>% inner_join(b2r, by = c("Subj", "Trial")) %>%
+  group_by(Subj) %>%
+  group_split() -> ft12r
+
+# Create an empty tibble with two columns
+#ft12_cortib <- tibble(Subj = double(), Reliability_Coeff = double())
+ft12r_cortib <- tibble(Subj = char(""), Reliability_Coeff = double())
+
+#loop to compute the reliability score (Pearson r)
+for (i in 1:length(ft12r)){
+  # Run the correlation and store it temporarily
+  cortab_temp <- cor(ft12r[[i]]$Response.x, ft12r[[i]]$Response.y, use = "complete.obs", method = "pearson")
+  # Add the relevant values to the tibble
+  ft12r_cortib %<>% dplyr::add_row(Subj = ft12r[[i]]$Subj[1], Reliability_Coeff = cortab_temp)
+  
+}
+
+rzr<- fisherz(ft12r_cortib$Reliability_Coeff) #convert r to z
+sd(rzr) #get the SD for the z-scores 0.3286387
+mean(rzr) #mean of z-scores 1.031765
+#calculate the CI 95%
+Lower_limit_r <-  mean(rzr) - (1.96)*( sd(rz)) #  # (z(mean) -+ (1.96)*(SD))
+Upper_limit_r <-  mean(rz) + (1.96)*( sd(rz)) # 
+fisherz2r(mean(rzr)) #convert z to r 0.80
+fisherz2r(Lower_limit_r) # 0.43
+fisherz2r(Upper_limit_r) #   0.93
+
+# Estimate repeatable variance, using average of squared reliability scores
+mean((ft12r_cortib$Reliability_Coeff)^2)
+
+```
+
+
+```{r}
+#Load basic libraries
+library(tidyverse)
+library(multcomp)
+library(lme4)
+library(lmerTest)
+
+
+
+#Open data
+DR_final <- read_delim("data/Dataratings_Final.csv", delim = ";", col_names = TRUE)
+#Define Subj and Condition as factors
+DR_final %>% mutate(Subj = as.factor(Subj), Cat = as.factor(Cat)) -> DR_final
+
+############### Running linear mixed models #####################
+#Arrange data first (rename columns, Fam as factor, relevel factors)
+DR_final %>%
+  rename(Aes = b1, Aes2 = b2, SelfR = b3, Fam = b4, Condition = Cat, Image =Imgname) %>%
+  mutate(Fam = replace(Fam, Fam == 1, 1))%>%
+  mutate(Fam = replace(Fam, Fam == 2, 0.5))%>%
+  mutate(Fam = replace(Fam, Fam == 3, 0)) %>%
+  mutate(Subj = as.factor(Subj)) %>%
+  mutate(Condition = as.factor(Condition)) %>%
+  mutate(Condition = fct_relevel(Condition, "RA", "GA", "SR", "NR")) %>%
+  mutate(Fam = as.factor(Fam)) %>%
+  mutate(Fam = fct_relevel(Fam, "1", "0.5", "0")) %>%
+  mutate(SelfR = SelfR/100)%>%
+  mutate(Aes = Aes/100) ->DR_final
+
+
+DR_final %>%
+  filter(!Subj %in% c("s02", "s11")) -> DR_final2 #without Subjects 2 and 11, which didn't 
+                                                #understand the familiarity task
+
+# LMM for prediction of Aes by SelfR with random intercepts for Subjs and Condition
+aes_contin.model1 = lmer(Aes ~ SelfR + (1|Condition) +
+                     (1|Subj), 
+                   data=DR_final2)
+summary(aes_contin.model1)
+coef(aes_contin.model1)
+ranef(aes_contin.model1)
+
+#anova(aes_contin.model1)
+#F_to_eta2(607.61,1,2940.2)
+
+
+#Model for prediction of Aesthetic per SelfR and Familiarity as fixed effects
+#random intercepts for Subjs and Condition
+contrast_list <- rbind(REFAvUN = c(0.5, 0.5, -1), REvFA = c(1, -1, 0))
+cMat <- ginv(contrast_list) 
+colnames(cMat) <- c("REFAvUN", "REvFA")
+
+aes_contin.model2 = lmer(Aes ~ SelfR + Fam +
+                     (1|Subj) + (1|Condition), 
+                   data=DR_final2,
+                   contrasts = list(Fam = cMat))
+summary(aes_contin.model2)
+coef(aes_contin.model2)
+ranef(aes_contin.model2)
+
+#Model for prediction of Aesthetic by interaction of SelfR and Familiarity 
+#Random intercept for Subjs and Condition
+aes_contin.model3 = lmer(Aes ~ SelfR + Fam + 
+                     (SelfR|Condition) + (SelfR|Subj), 
+                   data=DR_final2, 
+                   contrasts = list(Fam = cMat))
+summary(aes_contin.model3)
+coef(aes_contin.model3)
+ranef(aes_contin.model3)
+
+############## Model comparisons ##########################
+
+anova(aes_contin.model1, aes_contin.model2) #model 2 is better
+
+anova(aes_contin.model2, aes_contin.model3) #model 3 is better
+
+
+##################### Spaghetti Plots ##########################
+ggplot(DR_final2, aes(y = Aes, x = SelfR, group=Subj))+ 
+  stat_smooth(method="lm", se=FALSE, size=.5, color="lightblue") + # slopes for different subjects
+  stat_smooth(aes(group=1), method="lm", color="blue", size=1.5)+  # average slope with Standard error
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  theme_classic() + 
+  xlab("Self-relevance Ratings") + ylab("Aesthetic Ratings") 
+
+
+ggplot(DR_final2, aes(y = Aes, x = Fam, group=Subj))+ 
+  stat_smooth(method="lm", se=FALSE, size=.5, color="lightpink3") + # slopes for different subjects
+  stat_smooth(aes(group=1), method="lm", color="brown1", size=1.5)+  # average slope with Standard error
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))+
+  theme_classic() + 
+  xlab("Familiarity Ratings") + ylab("Aesthetic Ratings") 
+
+##### Loess plots ###########
+
+ggplot(DR_final2, aes(x=SelfR,y=Aes))+
+  geom_point(color="#222222",size=.3)+
+  geom_smooth(method = "loess")+
+  labs(x="Self-Relevance", y="Aesthetic Appeal")+
+  theme_classic()
+
+```
+
+
+```{r}
+library(MASS)
+library(tidyverse)
+library(mediation)
+```
+
+
+```{r}
+#Open data
+DR_final <- read_delim("data/Dataratings_Final.csv", delim = ";", col_names = TRUE)
+#Define factors and rename columns
+DR_final %>% mutate(Subj = as.factor(Subj), Cat = as.factor(Cat))%>%
+  rename(Aes = b1, Aes2 = b2, SelfR = b3, Fam = b4, 
+         Condition = Cat, Image =Imgname) -> DR_final
+
+#Exclude further subjects
+DR_final %>%
+  filter(!Subj %in% c("s02", "s11")) -> DR_final2 #without Subjects 2 and 11, which didn't 
+
+#Re-scale Data
+DR_final2 %>%
+  mutate(Aes = Aes/100) %>%
+  mutate(SelfR = SelfR/100) %>%
+  mutate(Fam = replace(Fam, Fam == 1, 1))%>%
+  mutate(Fam = replace(Fam, Fam == 2, 0.5))%>%
+  mutate(Fam = replace(Fam, Fam == 3, 0)) -> DR_scaled
+
+
+#############################Mediation analysis####################################
+
+
+fitM <- lm(Fam ~ SelfR, data=DR_scaled) #Predict familiarity from self-relevance
+fitY <- lm(Aes ~ SelfR + Fam, data=DR_scaled) #predict aesth appeal from selfR and familiarity
+
+#Bootstrap
+fitMedBoot <- mediate(fitM, fitY, boot=TRUE, sims=1000, treat="SelfR", mediator="Fam")
+summary(fitMedBoot)
+plot(fitMedBoot)
+
+```
+
