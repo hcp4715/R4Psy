@@ -10,7 +10,7 @@ Teaching assistants (2024 Spring): Yiqun Chen; Jiahui Wen; Tingting Wu
 
 Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
-此仓库为南京师范大学心理学研究生课程，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook); 2024年春季课程的录屏见[这里](https://space.bilibili.com/252509184/lists/2314135)
+此仓库为南京师范大学心理学研究生课程相关课件，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook); 2024年春季课程的录屏见[这里](https://space.bilibili.com/252509184/lists/2314135)
 
 教师：胡传鹏博士(hcp4715 AT hotmail DOT com)
 
@@ -148,7 +148,7 @@ root_dir
 
 10.2 分析的流程
 
-#### 第十一章: R语言中实现回归模型(四) -- 中介分析
+#### 第十一章: R语言中实现回归模型(四) -- 因果推断简介
 
 11.1 中介效应与回归模型
 
@@ -156,8 +156,8 @@ root_dir
 
 #### 第十二章：如何得到可发表的图像 -- 数据可视化进阶
 
-#### 第十三章：特邀报告——网络分析
+#### 第十三章：特邀报告(待定)
 
-#### 第十四章：特邀报告——元分析
+#### 第十四章：特邀报告(待定)
 
-#### 第十五章：大作业
+#### 第十五课：大作业
