@@ -10,9 +10,11 @@ Teaching assistants (2024 Spring): Yiqun Chen; Jiahui Wen; Tingting Wu
 
 Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
 
-此仓库为南京师范大学心理学研究生课程，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook)。
+此仓库为南京师范大学心理学研究生课程，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook); 2024年春季课程的录屏见[这里](https://space.bilibili.com/252509184/lists/2314135)
 
-教师：胡传鹏(hcp4715 AT hotmail DOT com)
+教师：胡传鹏博士(hcp4715 AT hotmail DOT com)
+
+助教(2025 Spring)：?
 
 助教(2024 Spring)：陈逸群; 温佳慧；武婷婷
 
@@ -128,7 +130,7 @@ root_dir
 
 7.3 ggplot2的基本语法
 
-#### 第八章：R语言中实现回归模型(一)  -- *t*-test/ANOVA
+#### 第八章：R语言中实现回归模型(一)  -- 基本回归模型与常见统计检验(*t*-test/ANOVA)
 
 8.1 语法实现
 
