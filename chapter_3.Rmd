@@ -2,8 +2,8 @@
 title: "Lecture 3: Git & R Studio workflow"
 subtitle: "Version Control"
 author: "Chuan-Peng"
-institute: "NNU"
-date: "2024/03/10"
+institute: "NNUPsy"
+date: "2025/03/05"
 output:
   xaringan::moon_reader:
     css: [default, css/Font_Style.css]
@@ -20,13 +20,13 @@ class: center, middle
 <br>
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
-<span style="font-size: 30px;">2024/03/10</span> <br>
+<span style="font-size: 30px;">2025/03/05</span> <br>
 <br>
 <br>
 <br>
 <br>
 Reference: <br>
-Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the Git version control system. Advances in Methods and Practices in Psychological Science, 1(2), 219-236.
+Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the Git version control system. *Advances in Methods and Practices in Psychological Science, 1*(2), 219-236.
 ---
 <br>
 <br>
@@ -124,6 +124,7 @@ Reference: <br>
  <br>
 - Git是目前最常用的免费开源的版本控制的工具。 <br>
 - 首先，我们要下载Git(https://git-scm.com/downloads)。 <br>
+  - Macbook可能需要先安装homebrew，再安装git。
 
 ---
 ## <h1 lang="en">3.2.2 Git</h1> 
@@ -415,6 +416,22 @@ Reference: <br>
 - 也可以通过在Terminal输入git remote add origin https://github.com/username/reponame.git 与git push -u origin master实现将本地已有的Git repository与远程的GitHub repository建立连接，不需要移动文件位置。<br>
 
 ---
+
+## Summary
+
+- 项目管理：文件夹管理系统
+- Git & Github: 代码管理与版本控制
+- 使用R Studio与Git进行本地版本控制
+- 使用R Studio, Git与GitHub进行协作版本控制
+
+**相关资源**:
+
+去年B站网友推荐的视频：https://www.youtube.com/watch?v=bUoN85QvC10
+
+**注意事项**：
+- 第一次推送可能需要设置access token，可在GitHub的Settings->Developer settings->Personal access tokens中创建。
+
+---
 <br><img src="./picture/chp3/youTurn.gif" width="35%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
 <div style="text-align: center;">
@@ -423,13 +440,18 @@ Reference: <br>
 <br>
 
 ---
-## Summary
-- 项目管理：文件夹管理系统
-- Git & Github: 代码管理与版本控制
-- 使用R Studio与Git进行本地版本控制
-- 使用R Studio, Git与GitHub进行协作版本控制
+## 第一次小作业 
+### DDL:下次上课前
+**任务1**：创建github仓库并进行一次本地提交
+- 创建一个GitHub账号
+- 创建一个新的仓库
+- 将本地的一个文件夹与远程仓库连接
+- 在本地的文件夹中创建/更新README.md并推送到远程仓库
 
-
-## Homework 
-- ddl:下次上课前
-<img src="./picture/chp3/homework.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+**任务2**：完成一次fork、更新并pull request
+- Fork一个hcp4715/R4Psy的仓库
+- 在本地克隆该仓库
+- 在本地的文件夹的`homeworks`子文件夹中创建特定命名的txt文件
+  - 命名规则：学号后三位+姓名首字母（例如，张三123456的txt文件应为`456ZS.txt`）
+- 将该文件推送到远程仓库
+- 向hcp4715/R4Psy提交pull request
