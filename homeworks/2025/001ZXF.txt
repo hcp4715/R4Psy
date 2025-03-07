@@ -1,1 +1,4 @@
-Hello, this is my homework
+task1's repo:
+https://github.com/zxf1018/my-first-repo.git
+task2's repo:
+https://github.com/zxf1018/R4Psy.git
