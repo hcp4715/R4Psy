@@ -1,1 +1,3 @@
 This is my homework file for 2025.
+https://github.com/Ryne-Yu004/my-first-repo
+this is my repository
