@@ -1,5 +1,3 @@
-RWJ homework
-
 task1 repo:
 https://github.com/wenjrunnu/copyhcp4715.git
 
