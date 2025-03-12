@@ -1,0 +1,6 @@
+task1 repo:
+https://github.com/wenjrunnu/copyhcp4715.git
+
+
+task2 repo:
+https://github.com/wenjrunnu/R4Psy.git
