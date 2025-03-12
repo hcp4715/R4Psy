@@ -3,6 +3,7 @@
 .Rhistory
 .RData
 .Rproj.user
+*.Rproj
 
 ## Mac OS files
 .DS_Store
