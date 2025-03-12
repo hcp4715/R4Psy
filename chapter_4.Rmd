@@ -3,7 +3,7 @@ title: "Lecture 4"
 subtitle: "Importing data"
 author: "Hu Chuan-Peng (PhD)"
 institute: "Nanjing Normal University"
-date: "2024-03-20"
+date: "2025-03-12"
 output:
   xaringan::moon_reader:
     css: [default, css/zh-CN.css, css/Custumed_Style.css]
@@ -24,9 +24,21 @@ class: center, middle
 <span style="font-size: 20px;"> Created with Rmarkdown </span> <br>
 
 ---
-# Tips
+# Tip #1 
+
+## 如何使用最新的课件？
+
+首先，在github上，对forked的课件进行同步更新
+![sync_fork](picture/chp4/sync_fork.jpg)
+然后，让本地的文件夹（及隐藏的git仓库）与github上的仓库进行同步
+```
+git pull
+```
+---
+# Tip #2
 ## 将`Rstudio`中报错语言变为英文
-- <font size = 5.5>打开Rstudio后，输入如下命令，可以让当前的session报错为英文。
+- <font size = 5.5> 打开Rstudio后，输入如下命令，可以让当前的session报错为英文。
+
 ```{r local,echo=TRUE, eval=FALSE}
 # set local encoding to English
 if (.Platform$OS.type == 'windows') {
@@ -39,7 +51,7 @@ Sys.setenv(LANG = "en")
 ```
 
 ## loading packages
-```{r message=FALSE, warning=FALSE}
+```{r load bruceR, message=FALSE, warning=FALSE}
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
@@ -166,8 +178,9 @@ layout: false
 
 <br><br>
 
--   **对于 .rmd文件和.Rproj 文件来说，会默认将该文件所在的文件夹当做工作目录**，比如当前 rmd文件默认目录为：  
-```{r}
+-   **对于`.rmd`文件和`.Rproj`文件来说，会默认将该文件所在的文件夹当做工作目录**，比如当前 rmd文件默认目录为：  
+
+```{r getwd}
 getwd()
 ```
 
@@ -218,7 +231,7 @@ cat(first_path,"\n")
 normalized_path <- normalizePath(first_path, winslash = "\\")
 cat(normalized_path)
 ```
-<font size=5.5>**因此注意不要直接复制Windows地址栏中的地址**
+<font size=5.5> **因此注意不要直接复制Windows地址栏中的地址**
 
 <br>
 <font size = 5.5> 避免不同操纵系统中分割符切换的问题：`here()` </font>
@@ -241,17 +254,19 @@ here::here("data","penguin","penguin_rawdata.csv")
 -   <font size=5.5>手动档</font>
 
   使用 `setwd`输入具体路径，例如：
-```{r echo=TRUE, eval=FALSE}
-# setwd('D:/R4Psy/data/penguin/')
+  
+```{r setwd_example, echo=TRUE, eval=FALSE}
+setwd('D:/R4Psy/data/penguin/')
 # or 
-# setwd('D:\\R4Psy\\data\\penguin')
+setwd('D:\\R4Psy\\data\\penguin')
 ```
 
 --
 
 -   <font size=5.5>半自动档</font>
 <br><br>
-```{r echo=TRUE, eval=FALSE}
+
+```{r set_wd_gui, echo=TRUE, eval=FALSE}
 # 两个函数等价，ask = T设置弹出交互式窗口选择文件夹
 bruceR::set.wd(ask = T)
 bruceR::set_wd(ask = T)
@@ -279,28 +294,22 @@ bruceR::set_wd(ask = T)
 <span style="font-size: 20px;"> </span> <br>
 - <font size=6>通过相对路径读取数据，便于分享你的工作
   </font>
-  <font size=4.5>(*主要写起来省事儿*)</font><br>
+  <font size=5>(*写起来也更省事*)</font><br>
 
 
 ---
 
 ## 4.2 读取数据——手动档
 
-```{r Read_csv}
+```{r Read_first_csv}
 # 读取数据,命名为penguin_data
-penguin_data = import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
-# 查看头(head) 5 行，有头就有尾(tail)
-# head(penguin_data,n = 3)
-# tail(penguin_data,n = 3)
-ncol(penguin_data)
-nrow(penguin_data)
+penguin_data <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
 ```
 --
 
 -   <font size=5>由于已经加载bruceR，`bruceR::import()`可以简写为 `import()`，但不推荐；
 
 -   <font size=5>心理学中常用数据基本都可以使用该函数导入(使用`?bruceR::import()`查看支持导入哪些类型)。
-
 
 -   <font size=5>读取之后数据变量可以从Environment窗口中找到，变量名为penguin_data，点击会弹出窗口显示数据（也可在console中输入 `View(penguin_data)`查看）
 
@@ -317,9 +326,84 @@ nrow(penguin_data)
 ## 4.2 读取数据——自动挡
 <br>
 ![imp1](picture/chp4/imp2.png)
+---
+
+### 拆解第一个代码块
+```{r recap first code, eval=FALSE}
+penguin_data <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
+```
+
+`penguin_data`: 导入后的数据叫什么，可以理解为一个容器，里面装着数据；
+
+`<-`：赋值符号，将右边的数据赋值给左边的变量；
+
+`bruceR::import()`: 导入数据的函数，可以理解我们让R语言这个工具做的事情；
+
+大家可以尝试不加`penguin_data <-`，改变`penguin_data`的名字，或者改变`import()`里的文件路径，看看会发生什么。
 
 ---
-## 4.3 数据类型
+#### 赋值与变量
+
+在R中，使用赋值操作符`<-`或 `=` 给对象赋值。<br>
+
+比如：
+```{r obj1}
+object <- 10
+object
+```
+给对象“object”赋值为10。<br>
+赋值后可以对“object”进行操作，比如：<br>
+
+```{r obj2}
+object + 2
+```
+
+但注意此时的“object”本身并未发生改变。
+
+```{r obj3}
+
+object
+
+```
+---
+#### 赋值与变量
+![error1](picture/chp5/error1.png)
+<font size=5> 为什么会报错？<br>
+<br>
+--
+<font size=5> R中变量名是区分大小写的<br>
+--
+<br>
+![error2](picture/chp5/error2.png)
+<br>
+<br>
+<font size=5>  变量名可以由字母、数字、_和.组成。并且变量名的第一个字符不能为数字或者特殊符号，比如 +, -, *, /, ^, !, @, &。</font> <br>  
+<br>
+---
+#### 赋值与变量
+<font size="5">
+<br>
+<br>
+tips：<br>
+<br>
+&emsp;&emsp;变量名可以使用中文，但不推荐，可能出现这样的乱码：<br>
+&emsp;&emsp;鍙︿竴涓▼搴忔鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂��。<br>
+<br>
+&emsp;&emsp;命名对象最好有不错的可读性，比如“age”就要比“x”更易读。
+</font>
+
+---
+## 4.3 了解数据
+
+- <font size=5.5> 想要做什么？
+
+- <font size=5.5> 数据里有什么？
+
+- <font size=5.5> 能做什么达到目标?
+
+
+**思维的变化: 我们要了解数据一些“看不见”的属性。**
+
 <br><br>
 使用自动档读取penguin_rawdata.csv数据时，可以发现列名底下带有斜体字：
 
@@ -329,13 +413,39 @@ nrow(penguin_data)
 
 ---
 
+## 4.3 了解数据
+
+- <font size=5.5> 想要做什么？
+
+  - <font size=5> 基本信息 (被试人数、性别、年龄、国家分布 ...)
+  
+  - <font size=5> 数据预处理 (排除某些被试，反向记分 ...)
+
+  - <font size=5> 问卷得分相关分析(求和、相关分析、因子分析、信度分析...)
+
+
+**能好怎: 能用吗？好用吗？怎么用？**
+
+---
+
+## 4.3 了解数据
+
+- <font size=5.5> 数据里有什么？
+
+`str`: 查看R对象的结构
+
+```{r check with str}
+str(penguin_data)
+```
+
+---
+
 ## 4.3 数据类型(in Excel)
 
 
 <div class="center">
     <img src="picture/chp4/datatype.png" alt="emj1" style="zoom:45%;"/>
 </div>
-
 
 
 ---
@@ -353,7 +463,7 @@ nrow(penguin_data)
 
     包含小数(double)和整数型(int)
 
--   字符串(character):   
+-   字符串(character/string):   
   
     文字数据，在字符串的开头或结尾一定要有单引号或双引号；
 
@@ -361,16 +471,12 @@ nrow(penguin_data)
 
     比较大小或是否相等--TRUE(1)和FALSE(0)
 
--   因子(factor):
-
-    对顺序数据的编码(数字/字符串)
-
-
 ---
 ## 4.3 数据类型
 <br>
 使用`class()`函数可以查看数据类型：
-```{r}
+
+```{r check class}
 # getwd 返回当前工作目录，返回的数据类型是？
 class(getwd())
 # 字符串的数字与数值型的数字；
@@ -381,7 +487,44 @@ class(penguin_data)
 ```
 
 
+---
+## 4.3 数据类型对应的“操纵”
 
+![table](picture/chp5/table.png)
+<br>
+<br>
+<font size = 5>
+数学运算 <br>
+&emsp;+ - * / ^(加、减、乘、除、求幂)等 <br>
+<br>
+比较运算 <br>
+&emsp;>、<、>=、<=、==、!= <br>
+&emsp;identical(x,y) —— 判断两个对象是否严格相等 <br>
+<br>
+---
+## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
+```{r arithmetical1}
+3.14 + 2
+```
+
+数值型可以进行数学运算
+--
+
+```{r arithmetical2}
+TRUE * 3
+F ^ 2
+```
+
+逻辑型可以进行数学运算
+
+--
+
+```{r arithmetical3, eval=FALSE}
+"a" + 1
+```
+
+字符不能进行数学运算
 ---
 
 ## 4.4 数据结构
@@ -390,22 +533,22 @@ class(penguin_data)
 <br>
 
 
--   Vector(向量)  
+-   Vector (向量)  
 
--   Matrix(矩阵)  
+-   Matrix (矩阵)  
 
--   Array(数组)  
+-   Array (数组)  
 
--   Data frame(数据框)  
+-   Data frame (数据框)  
 
--   List(列表)  
+-   List (列表)  
 
 
 ---
 
 ## 4.4 数据结构
 <br>
-<font size=6>不同类型的数据进行组合，形成了不同的数据结构
+<font size=6>不同类型的数据进行组合，形成了更复杂结构的数据
 <br>
 
 .pull-left[
@@ -426,15 +569,83 @@ class(penguin_data)
 <p align="right"><font size=2>from http://venus.ifca.unican.es/Rintro/dataStruct.html</font></p>
 
 ---
+## 4.4 数据结构
+
+### 向量
+```{r creat the vector}
+#创建向量
+v1 <- c(1,2,3,4,5)  # 数值型向量
+v1
+v2 <- c('apple','pear','banana','strawberry','lemon') # 字符型向量
+v2
+v3 <- c(T,F,F,T,T) # 逻辑型向量
+v3
+v4 <- c(1:3) # 数值型向量
+v4
+```
+
+
+最常见的函数 `c()`，将多个元素组合成向量。
+
+---
+## 4.4 数据结构
+
+### 矩阵与数组
+```{r 5.4 creat the matrix}
+#创建矩阵
+m1 <- matrix(c(1:9), nrow=3)
+m1
+
+#创建三维数组
+a1 <- array(1:24, dim=c(3,4,2))
+a1
+```
+---
+## 4.4 数据结构
+
+### data frame
+
+```{r 5.4 creat the data.frame}
+#创建数据框(每个成分都是一个向量)
+d1 <- data.frame(v1,v2,v3)
+d1
+
+# d2 <- data.frame(v1,v2,v3,v4)
+```
+<font size = 5> 
+数据框每一列的元素数目要相同 <br>
+
+---
+## 4.4 数据结构
+
+### data frame
+</br>
+## 创建空的dataframe，但有列名。
+
+```{r create empty df}
+df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("name", "age", "gender")
+colnames(df) <- x
+```
+
+---
 ## 4.5.1 数据索引(中括号)
 <font size=5>中括号索引(data[row,col])  
 
 -   数字索引</font>  
-```{r}
-# 选取前 2 行以及前 3 列数据
-penguin_data[1:2,1:3]
+
+```{r index vector}
+v1[2]
+v2[3]
+```
+
+
+```{r index dataframe}
+# 根据行与列的编号
+penguin_data[1:2, 1:3]
+
 # 也可以使用减号
-penguin_data[1:2,-c(4:ncol(penguin_data))]
+penguin_data[1:2, -c(4:ncol(penguin_data))]
 ```
 
 ---
@@ -444,8 +655,9 @@ penguin_data[1:2,-c(4:ncol(penguin_data))]
 -   名称索引</font>  
 ```{r}
 # 同样选取前 2 行以及前 4 列数据
-penguin_data[1:2,c('age','ALEX1','ALEX2')]
+penguin_data[1:2, c('age','ALEX1','ALEX2')]
 ```
+
 TIP：输入字符串每次都要打很多引号会非常麻烦，因此可以使用bruceR::cc()，只需在首尾写冒号：
 ```{r}
 c('age','ALEX1','ALEX2') == cc('age,ALEX1,ALEX2')
@@ -470,11 +682,18 @@ class(penguin_data[,1])
 
 ```
 
-
-
 ---
 ## 4.5.3 数据索引(逻辑值)  
 <font size=5> 使用逻辑值进行索引，用于根据条件对数据进行筛选：</font>
+
+```{r}
+v5 <- v1 >=4
+
+v1[v5]
+
+# v1[v1>=4]
+```
+
 ```{r}
 ## 输出逻辑值
 head(penguin_data$age >1980)
@@ -532,10 +751,9 @@ class: center, middle
 
 -   <font size=5.5>报告（PPT或者HTML在课堂上展示）  </font><br>
 
-<font size=5.5>4、选题范围，以下期刊上发表有公开数据的论文：</font>  
+<font size=5.5>4、参考手册</font>  
 
--   <font size=5.5>Nature Human Behaviour; Nature communications; elife; Psychological Science, Cognition, JEG:General; Collabra: Psychology; Communications Psychology</font><br><br>
-
+-   <font size=5.5>“心理学院R编程语言课程可重复检验指南(2025版).docx”</font>  <br>
 
 ---
 
@@ -606,12 +824,9 @@ class: center, middle
 
 
 ---
-# 4.7  Trifles
+# 4.7  变量名与规范
 
 ## 4.7.1  变量命名
-
-
-
 
 -   大小写敏感  
 
@@ -670,7 +885,7 @@ is.character(x)
 
 - `getwd()`—返回当前工作目录。
 - `setwd()`—设置当前工作目录。
-- `list.files()`或`dir()`—查看目录中内容。 
+- `list.files()`或`dir()`—查看目录中内容。
 
     `list.files(pattern=’.*[.]r$’)`可以列出所有以“.r”结尾的文件。
 - `file.path()`—把目录和文件名组合得到文件路径。
