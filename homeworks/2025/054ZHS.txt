@@ -1,0 +1,5 @@
+task1's repo:
+https://github.com/Codezha-c/my_homework.git
+
+task2's repo:
+https://github.com/Codezha-c/R4Psy.git
