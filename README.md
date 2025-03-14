@@ -1,6 +1,6 @@
-# R语言在心理学研究中的应用 (R for psychological research)
+# R语言在心理学研究中的应用（R for psychological research）
 
-## 关于(About)
+## 关于（About）
 
 This is a repo for the R course for graduate students, School of Psychology, Nanjing Normal University, Nanjing, China.
 
@@ -12,16 +12,16 @@ Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiy
 
 此仓库为南京师范大学心理学研究生课程相关课件，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook); 2024年春季课程的录屏见[这里](https://space.bilibili.com/252509184/lists/2314135)
 
-教师：胡传鹏博士(hcp4715 AT hotmail DOT com)
+教师：胡传鹏博士（hcp4715 AT hotmail DOT com）
 
-助教(2025 Spring)：周方茹
+助教（2025 Spring）：周方茹
 
-助教(2024 Spring)：陈逸群; 温佳慧；武婷婷
+助教（2024 Spring）：陈逸群; 温佳慧；武婷婷
 
-助教(2023 Spring)：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
+助教（2023 Spring）：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
 
 
-## 版权与许可(License)
+## 版权与许可（License）
 
 本仓库中的代码与文字，均由胡传鹏教授与助教团队所创建，采用CC-BY-4.0的版本许可，如需要使用，请引用本仓库网址。
 
@@ -33,7 +33,7 @@ This work is licensed under a [Creative Commons Attribution 4.0 International Li
 
 [![CC BY 4.0](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
 
-## 本Repo的文件夹结构(folder structure of this repo)
+## 本Repo的文件夹结构（Folder structure of this repo）
 
 ```         
 root_dir
