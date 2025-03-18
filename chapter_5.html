@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
     <meta name="date" content="2024-03-27" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -37,7 +37,7 @@ class: center, middle
 &lt;span style="font-size: 60px;"&gt;R语言中的对象2: 函数&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-04-19&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-03-18&lt;/span&gt; &lt;br&gt;
 
 ---
 &lt;br&gt;
@@ -59,30 +59,23 @@ class: center, middle
 # &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
 - # &lt;font size = 5.5&gt; 绝对路径:对文件或目录位置的完整描述，从根目录开始 &lt;/font&gt;
 
-```r
+``` r
 paste(getwd(),"/data/penguin/penguin_rawdata.csv",sep = "")
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1/data/penguin/penguin_rawdata.csv"
+## [1] "E:/my programme/R/Rproject/R4Psy/data/penguin/penguin_rawdata.csv"
 ```
 - # &lt;font size = 5.5&gt; 相对路径:对文件或目录位置的部分描述，从当前工作目录开始。 &lt;/font&gt;
 "data/penguin/penguin_rawdata.csv"
 - # &lt;font size = 5.5&gt; 工作目录 &lt;/font&gt;
 
-```r
-getwd()#获取工作目录
-```
-
-```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
-```
 --
 - # &lt;font size = 5.5&gt;绝对路径=工作目录+相对路径&lt;/font&gt;
 - # &lt;font size = 5.5&gt;推荐使用相对路径&lt;/font&gt;
 ---
 
-```r
+``` r
 #下载、导入所需R包
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
@@ -91,7 +84,7 @@ pacman::p_load(bruceR,tidyverse)
 ```
 
 
-```r
+``` r
 #读取数据
 penguin_data = bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))#当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
 ```
@@ -103,7 +96,7 @@ penguin_data = bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv
 在R中，我们可以使用赋值操作符“&lt;-”或“=”给对象赋值。&lt;br&gt;
 比如：
 
-```r
+``` r
 object &lt;- 10
 object
 ```
@@ -114,7 +107,7 @@ object
 我们给对象“object”赋值为10。&lt;br&gt;
 赋值后可以对“object”进行操作，比如：&lt;br&gt;
 
-```r
+``` r
 object + 2
 ```
 
@@ -123,7 +116,7 @@ object + 2
 ```
 但注意此时的“object”本身并未发生改变。
 
-```r
+``` r
 object
 ```
 
@@ -167,7 +160,7 @@ tips：&lt;br&gt;
 - raw（原始型），用于存储原始字节数据&lt;/h3&gt;
 
 
-```r
+``` r
 object &lt;- 10
 class(object)#查看数据类型
 ```
@@ -176,7 +169,7 @@ class(object)#查看数据类型
 ## [1] "numeric"
 ```
 
-```r
+``` r
 a &lt;- 3.14
 class(a)
 ```
@@ -188,7 +181,7 @@ class(a)
 ---
 # &lt;h1 lang="zh-CN"&gt;5.3 基本数据类型&lt;/h1&gt;
 
-```r
+``` r
 b &lt;- T
 class(b)
 ```
@@ -197,7 +190,7 @@ class(b)
 ## [1] "logical"
 ```
 
-```r
+``` r
 c &lt;- 'R4Psy'
 class(c)
 ```
@@ -206,7 +199,7 @@ class(c)
 ## [1] "character"
 ```
 
-```r
+``` r
 d &lt;- 3+4i
 class(d)
 ```
@@ -215,7 +208,7 @@ class(d)
 ## [1] "complex"
 ```
 
-```r
+``` r
 e &lt;- charToRaw('hello')
 class(e)
 ```
@@ -236,7 +229,7 @@ class(e)
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
 
-```r
+``` r
 #创建向量
 v1 &lt;- c(1,2,3,4,5)#数值型向量
 v1
@@ -246,7 +239,7 @@ v1
 ## [1] 1 2 3 4 5
 ```
 
-```r
+``` r
 v2 &lt;- c('apple','pear','banana','strawberry','lemon')#字符型向量
 v2
 ```
@@ -255,7 +248,7 @@ v2
 ## [1] "apple"      "pear"       "banana"     "strawberry" "lemon"
 ```
 
-```r
+``` r
 v3 &lt;- c(T,F,F,T,T)#逻辑型向量
 v3
 ```
@@ -264,7 +257,7 @@ v3
 ## [1]  TRUE FALSE FALSE  TRUE  TRUE
 ```
 
-```r
+``` r
 v4 &lt;- c(1:3)#数值型向量
 v4
 ```
@@ -277,7 +270,7 @@ v4
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
 
-```r
+``` r
 #创建数据框(每个成分都是一个向量)
 d1 &lt;- data.frame(v1,v2,v3)
 d1
@@ -301,7 +294,7 @@ d1
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
 
-```r
+``` r
 #创建矩阵
 m1 &lt;- matrix(c(1:9),nrow=3)
 m1
@@ -314,7 +307,7 @@ m1
 ## [3,]    3    6    9
 ```
 
-```r
+``` r
 #创建三维数组
 a1 &lt;- array(1:24,dim=c(3,4,2))
 a1
@@ -342,7 +335,7 @@ a1
 ## 创建空的dataframe，但有列名。
 
 
-```r
+``` r
 df &lt;- data.frame(matrix(ncol = 3, nrow = 0))
 x &lt;- c("name", "age", "gender")
 colnames(df) &lt;- x
@@ -351,7 +344,7 @@ colnames(df) &lt;- x
 ---
 # &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
 
-```r
+``` r
 #创建列表
 l1 &lt;- list(1,c('a','b'),c(T,F))
 l1
@@ -368,7 +361,7 @@ l1
 ## [1]  TRUE FALSE
 ```
 
-```r
+``` r
 l2 &lt;- list(d1,m1)
 l2
 ```
@@ -399,7 +392,7 @@ R 提供了因子这一数据结构（容器），专门用来存放名义型和
 --
 
 
-```r
+``` r
 x &lt;- c('good','better','best','bad','worse','worst')
 sort(x)#排序
 ```
@@ -411,7 +404,7 @@ sort(x)#排序
 -
 
 
-```r
+``` r
 x1 &lt;- factor(x,levels = c('best','better','good','bad','worse','worst'))
 sort(x1)#排序
 ```
@@ -430,7 +423,7 @@ sort(x1)#排序
 -   数字索引&lt;/font&gt;  
 
 
-```r
+``` r
 # 选取前 2 行以及前 3 列数据
 penguin_data[1:2,1:3]
 ```
@@ -441,7 +434,7 @@ penguin_data[1:2,1:3]
 ## 2   Oxford 1940   1
 ```
 
-```r
+``` r
 # 也可以使用减号
 penguin_data[1:2,-c(4:ncol(penguin_data))]
 ```
@@ -456,7 +449,7 @@ penguin_data[1:2,-c(4:ncol(penguin_data))]
 -   名称索引&lt;/font&gt;  
 
 
-```r
+``` r
 # 同样选取前 2 行以及前 4 列数据
 penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ```
@@ -475,7 +468,7 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ![dataframe](picture/chp5/dataframe.png)
 
 
-```r
+``` r
 # gender &lt;- c(***)
 # gender1 &lt;- ***
 # score &lt;- c(***)
@@ -506,7 +499,7 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
 
 
-```r
+``` r
 3.14 + 2
 ```
 
@@ -518,7 +511,7 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 --
 
 
-```r
+``` r
 TRUE * 3
 ```
 
@@ -526,7 +519,7 @@ TRUE * 3
 ## [1] 3
 ```
 
-```r
+``` r
 F ^ 2
 ```
 
@@ -538,7 +531,7 @@ F ^ 2
 --
 
 
-```r
+``` r
 (3+1i)^2
 ```
 
@@ -556,7 +549,7 @@ F ^ 2
 ## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
 
 
-```r
+``` r
 c(1:5) ^ 2
 ```
 
@@ -564,7 +557,7 @@ c(1:5) ^ 2
 ## [1]  1  4  9 16 25
 ```
 
-```r
+``` r
 c(1:5) * c(6:10)
 ```
 
@@ -572,7 +565,7 @@ c(1:5) * c(6:10)
 ## [1]  6 14 24 36 50
 ```
 
-```r
+``` r
 c(T,F) / c(T,T)
 ```
 
@@ -580,7 +573,7 @@ c(T,F) / c(T,T)
 ## [1] 1 0
 ```
 
-```r
+``` r
 c(8+6i,7+4i) + c(3+2i,4+4i)
 ```
 
@@ -598,7 +591,7 @@ c(8+6i,7+4i) + c(3+2i,4+4i)
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
 
 
-```r
+``` r
 3 &lt; 5
 ```
 
@@ -606,7 +599,7 @@ c(8+6i,7+4i) + c(3+2i,4+4i)
 ## [1] TRUE
 ```
 
-```r
+``` r
 7.00 == 7
 ```
 
@@ -614,7 +607,7 @@ c(8+6i,7+4i) + c(3+2i,4+4i)
 ## [1] TRUE
 ```
 
-```r
+``` r
 T == TRUE
 ```
 
@@ -622,7 +615,7 @@ T == TRUE
 ## [1] TRUE
 ```
 
-```r
+``` r
 T &gt; F
 ```
 
@@ -636,7 +629,7 @@ T &gt; F
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
 
 
-```r
+``` r
 (3+4i) != (3-4i)
 ```
 
@@ -644,7 +637,7 @@ T &gt; F
 ## [1] TRUE
 ```
 
-```r
+``` r
 (1+1i) == (1+3i) 
 ```
 
@@ -659,7 +652,7 @@ T &gt; F
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
 
 
-```r
+``` r
 'a' == 'A'
 ```
 
@@ -667,7 +660,7 @@ T &gt; F
 ## [1] FALSE
 ```
 
-```r
+``` r
 'a' &lt;= 'b'
 ```
 
@@ -675,7 +668,7 @@ T &gt; F
 ## [1] TRUE
 ```
 
-```r
+``` r
 'abc'&gt;'a'
 ```
 
@@ -689,7 +682,7 @@ T &gt; F
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
 
 
-```r
+``` r
 3 &lt; c(1:5)
 ```
 
@@ -697,7 +690,7 @@ T &gt; F
 ## [1] FALSE FALSE FALSE  TRUE  TRUE
 ```
 
-```r
+``` r
 c(1:3) &lt; c(4:6)
 ```
 
@@ -705,7 +698,7 @@ c(1:3) &lt; c(4:6)
 ## [1] TRUE TRUE TRUE
 ```
 
-```r
+``` r
 3 %in% c(1:5)
 ```
 
@@ -713,7 +706,7 @@ c(1:3) &lt; c(4:6)
 ## [1] TRUE
 ```
 
-```r
+``` r
 c(1:3) %in% c(3:5)
 ```
 
@@ -721,7 +714,7 @@ c(1:3) %in% c(3:5)
 ## [1] FALSE FALSE  TRUE
 ```
 
-```r
+``` r
 c(T,F,T) != c(F,T,T)
 ```
 
@@ -736,7 +729,7 @@ c(T,F,T) != c(F,T,T)
 ## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
 
 
-```r
+``` r
 'apple' %in% c('apple','pear','banana','strawberry','lemon')
 ```
 
@@ -744,7 +737,7 @@ c(T,F,T) != c(F,T,T)
 ## [1] TRUE
 ```
 
-```r
+``` r
 c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
 ```
 
@@ -759,7 +752,7 @@ c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
 字符是否匹配的问题还可以具体为是否完全匹配、是否部分匹配&lt;br&gt;
 
 
-```r
+``` r
 #完全匹配
 'c' %in% c('abc','cd','c')
 ```
@@ -768,7 +761,7 @@ c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
 ## [1] TRUE
 ```
 
-```r
+``` r
 #部分匹配
 base::grepl('c',c('abc','cd','c'))
 ```
@@ -777,7 +770,7 @@ base::grepl('c',c('abc','cd','c'))
 ## [1] TRUE TRUE TRUE
 ```
 
-```r
+``` r
 #部分匹配之开头匹配
 base::startsWith(c('abc','cd','c'),'c')
 ```
@@ -786,7 +779,7 @@ base::startsWith(c('abc','cd','c'),'c')
 ## [1] FALSE  TRUE  TRUE
 ```
 
-```r
+``` r
 #部分匹配之结尾匹配
 base::endsWith(c('abc','cd','c'),'c')
 ```
@@ -820,7 +813,7 @@ R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
 ## 逻辑运算：| &amp; ! (或、与、非)等
 
 
-```r
+``` r
 !1
 ```
 
@@ -828,7 +821,7 @@ R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
 ## [1] FALSE
 ```
 
-```r
+``` r
 !0
 ```
 
@@ -836,7 +829,7 @@ R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
 ## [1] TRUE
 ```
 
-```r
+``` r
 1 &amp; 0
 ```
 
@@ -844,7 +837,7 @@ R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
 ## [1] FALSE
 ```
 
-```r
+``` r
 11 | 0
 ```
 
@@ -852,7 +845,7 @@ R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
 ## [1] TRUE
 ```
 
-```r
+``` r
 T &amp; F
 ```
 
@@ -860,7 +853,7 @@ T &amp; F
 ## [1] FALSE
 ```
 
-```r
+``` r
 !T
 ```
 
@@ -873,7 +866,7 @@ T &amp; F
 ## 逻辑运算：| &amp; ! (或、与、非)等
 
 
-```r
+``` r
 c(T,F,F) | T
 ```
 
@@ -881,7 +874,7 @@ c(T,F,F) | T
 ## [1] TRUE TRUE TRUE
 ```
 
-```r
+``` r
 c(T,F,F) | F
 ```
 
@@ -889,7 +882,7 @@ c(T,F,F) | F
 ## [1]  TRUE FALSE FALSE
 ```
 
-```r
+``` r
 c(T,F,F) &amp; c(T,T,F)
 ```
 
@@ -897,7 +890,7 @@ c(T,F,F) &amp; c(T,T,F)
 ## [1]  TRUE FALSE FALSE
 ```
 
-```r
+``` r
 c(1,2) &amp; c(0,1)
 ```
 
@@ -913,9 +906,9 @@ c(1,2) &amp; c(0,1)
 （首先创建一个包含数字1到20的向量，然后进行数学运算）&lt;br&gt;
 
 
-```r
-#a &lt;- ***
-#a3 &lt;- ***
+``` r
+a &lt;- c(1,20)
+a3 &lt;- a^3
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
@@ -925,7 +918,7 @@ c(1,2) &amp; c(0,1)
 ## 数据类型的判断:is族函数
 
 
-```r
+``` r
 is.numeric(1.0)#判断是否为数值型
 ```
 
@@ -933,7 +926,7 @@ is.numeric(1.0)#判断是否为数值型
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.numeric('a')
 ```
 
@@ -941,7 +934,7 @@ is.numeric('a')
 ## [1] FALSE
 ```
 
-```r
+``` r
 is.character(c('a','b'))#判断是否为字符型
 ```
 
@@ -949,7 +942,7 @@ is.character(c('a','b'))#判断是否为字符型
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.complex(1+1i)#判断是否为复数型
 ```
 
@@ -957,7 +950,7 @@ is.complex(1+1i)#判断是否为复数型
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.null(NULL)#判断是否为null值
 ```
 
@@ -965,7 +958,7 @@ is.null(NULL)#判断是否为null值
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.na(c(1,NA))#判断是否为NA值
 ```
 
@@ -979,7 +972,7 @@ is.na(c(1,NA))#判断是否为NA值
 &lt;font size = 5&gt; 转化为数值：as.numeric
 
 
-```r
+``` r
 as.numeric(c('1','2','3'))
 ```
 
@@ -987,7 +980,7 @@ as.numeric(c('1','2','3'))
 ## [1] 1 2 3
 ```
 
-```r
+``` r
 as.numeric(c('1','2','a'))
 ```
 
@@ -999,7 +992,7 @@ as.numeric(c('1','2','a'))
 ## [1]  1  2 NA
 ```
 
-```r
+``` r
 as.numeric(c(T,F))
 ```
 
@@ -1013,7 +1006,7 @@ as.numeric(c(T,F))
 &lt;font size = 5&gt; 转化为字符串：as.character
 
 
-```r
+``` r
 as.character(c(1,2,3))
 ```
 
@@ -1021,7 +1014,7 @@ as.character(c(1,2,3))
 ## [1] "1" "2" "3"
 ```
 
-```r
+``` r
 as.character(c(T,F))
 ```
 
@@ -1029,7 +1022,7 @@ as.character(c(T,F))
 ## [1] "TRUE"  "FALSE"
 ```
 
-```r
+``` r
 as.character(as.numeric(c('1','2','3')))
 ```
 
@@ -1044,7 +1037,7 @@ as.character(as.numeric(c('1','2','3')))
 R中用因子代表数据中分类变量, 如性别、省份、职业。
 
 
-```r
+``` r
 class(penguin_data$sex)
 ```
 
@@ -1052,7 +1045,7 @@ class(penguin_data$sex)
 ## [1] "integer"
 ```
 
-```r
+``` r
 unique(penguin_data$sex)
 ```
 
@@ -1060,7 +1053,7 @@ unique(penguin_data$sex)
 ## [1]  2  1 NA  3
 ```
 
-```r
+``` r
 sex1 &lt;- factor(penguin_data$sex,levels = c(1,2),labels = c('male','female'))
 unique(sex1)
 ```
@@ -1120,28 +1113,32 @@ unique(sex1)
 --
 
 
-```r
+``` r
 here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
+## [1] "E:/my programme/R/Rproject/R4Psy"
 ```
 
-```r
+``` r
 library(here)
 ```
 
 ```
-## here() starts at D:/Study/NNU/YAN2/2/R4Psy1
+## Warning: 程序包'here'是用R版本4.4.3 来建造的
 ```
 
-```r
+```
+## here() starts at E:/my programme/R/Rproject/R4Psy
+```
+
+``` r
 here()
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
+## [1] "E:/my programme/R/Rproject/R4Psy"
 ```
 
 ---
@@ -1149,7 +1146,7 @@ here()
 ## 函数调用
 
 
-```r
+``` r
 df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
                        header = T, 
                        sep=",",
@@ -1198,7 +1195,7 @@ file = './data/penguin/penguin_rawdata.csv':&lt;br&gt;
 --
 
 
-```r
+``` r
 #定义一个函数：输入x和y，返回3倍x和5倍y的和
 mysum &lt;- function(x,y){
   result = 3*x+5*y
@@ -1217,7 +1214,7 @@ mysum(1,2)
 ## [1] 13
 ```
 
-```r
+``` r
 mysum(y=1,x=2)
 ```
 
@@ -1232,7 +1229,7 @@ mysum(y=1,x=2)
 小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值&lt;br&gt;
 
 
-```r
+``` r
 #myabc &lt;- function(***){
 #  result = ***
 #  return(***)
@@ -1253,7 +1250,7 @@ mysum(y=1,x=2)
 &lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
 
 
-```r
+``` r
 mysum2 &lt;- function(x = 6,y = 7){
   result = 3*x+5*y
   return(result)
@@ -1265,7 +1262,7 @@ mysum2()
 ## [1] 53
 ```
 
-```r
+``` r
 mysum2(5)
 ```
 
@@ -1283,7 +1280,7 @@ mysum2(5)
 
 
 
-```r
+``` r
 #myabc &lt;- function(a = ***, b = ***, c = ***){
 #  result = ***
 #  return(***)
@@ -1312,7 +1309,7 @@ mysum2(5)
 ## 自定义函数
 
 
-```r
+``` r
 mysum3 &lt;- function(x = 6,y = 7){
   if(is.numeric(x) == T &amp; is.numeric(y) == T){
     result = 3*x+5*y
@@ -1329,7 +1326,7 @@ mysum3(5,6)
 ## [1] 45
 ```
 
-```r
+``` r
 mysum3('a','b')
 ```
 
@@ -1347,7 +1344,7 @@ mysum3('a','b')
 **&amp;emsp;当c为0时报错“c should not be 0”**
 
 
-```r
+``` r
 #myabc &lt;- function(***){
 #  if(***){
 #    result = ***
@@ -1363,7 +1360,7 @@ mysum3('a','b')
 # &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
 ## 自定义函数(小练习)
 
-```r
+``` r
 #示例
 myabc &lt;- function(a = 3, b = 2, c = 1){
   if(c!=0){

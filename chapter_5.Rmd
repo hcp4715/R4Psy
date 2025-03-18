@@ -46,7 +46,6 @@ paste(getwd(),"/data/penguin/penguin_rawdata.csv",sep = "")
 "data/penguin/penguin_rawdata.csv"
 - # <font size = 5.5> 工作目录 </font>
 ```{r 5.1 relative path}
-getwd()#获取工作目录
 ```
 --
 - # <font size = 5.5>绝对路径=工作目录+相对路径</font>
@@ -462,8 +461,8 @@ c(1,2) & c(0,1)
 （首先创建一个包含数字1到20的向量，然后进行数学运算）<br>
 
 ```{r 5.5 exercise}
-#a <- ***
-#a3 <- ***
+a <- c(1,20)
+a3 <- a^3
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
