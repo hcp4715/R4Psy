@@ -1,8 +1,0 @@
-学号：242302033
-姓名：杨婷婷
-作业提交时间：2024年3月8日
-task1's repo:
-https://github.com/duoduof1001/R4Psy_Homework.git
-
-task2's repo:
-https://github.com/duoduof1001/R4Psy.git

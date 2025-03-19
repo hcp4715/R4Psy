@@ -14,7 +14,7 @@ Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiy
 
 教师：胡传鹏博士(hcp4715 AT hotmail DOT com)
 
-助教(2025 Spring)：?
+助教(2025 Spring)：周方茹
 
 助教(2024 Spring)：陈逸群; 温佳慧；武婷婷
 
