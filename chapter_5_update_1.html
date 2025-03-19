@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 5</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Hu Chuan-Peng (PhD)" />
+    <meta name="date" content="2025-03-19" />
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Lecture 5
+]
+.subtitle[
+## Objects &amp; Function
+]
+.author[
+### Hu Chuan-Peng (PhD)
+]
+.institute[
+### Nanjing Normal University
+]
+.date[
+### 2025-03-19
+]
+
+---
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第五讲&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;R语言中的对象2: 函数&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-03-19&lt;/span&gt; &lt;br&gt;
+
+---
+&lt;br&gt;
+&lt;br&gt;
+# &lt;h1 lang="zh-CN"&gt;回顾&lt;/h1&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.1 数据导入与赋值&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.2 对数据进行选取&lt;/h2&gt;
+&lt;br&gt;
+&lt;br&gt;
+# &lt;h1 lang="zh-CN"&gt;本节课内容&lt;/h1&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.3 数据类型的判断与转换&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.4 数据间的运算&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.5 函数&lt;/h2&gt;
+
+---
+# 5.0 问题与回顾
+
+&lt;br&gt;
+
+##  问题: 
+
+- # &lt;font size = 5.5&gt; penguin 这一数据集中，包含来自多个站点的、多个变量的数据 &lt;/font&gt;
+
+- #  &lt;font size = 5.5&gt; 我们想要研究**清华站点**所收集样本在**压力**方面的体现 &lt;/font&gt;
+
+![task](picture/chp5/task.png)
+
+
+---
+##  回顾：
+- # &lt;font size = 5.5&gt; 导入 “penguin_rawdata.csv” &lt;/font&gt; 
+
+- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点的 “stress” 变量  &lt;/font&gt;
+
+![process1](picture/chp5/process1.png)
+
+--
+##  本节课内容：
+- # &lt;font size = 5.5&gt; 将所选变量转化为我们需要的数据类型(*double* / *int*) &lt;/font&gt; 
+
+- # &lt;font size = 5.5&gt; 对所选变量进行初步统计计算 &lt;/font&gt;
+
+![process2](picture/chp5/process2.png)
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.1 数据导入与赋值&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **首先，我们需要导入全部的问卷数据：Human Penguin Project** &lt;/font&gt;
+
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- 这一步在上一课详细讲述了，因此进行了简述 --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+
+-   &lt;font size=5.5&gt; 利用上节课学习的代码读取数据，并赋值给 “penguin_data” &lt;/font&gt;
+
+``` r
+# 读取数据,命名为penguin_data
+penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))#当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
+```
+
+--
+&lt;br&gt;
+-   &lt;font size=5.5&gt; 如何确定数据导入成功？&lt;/font&gt;
+-   &lt;font size=5.5&gt; Environment 中会显示已经创建好的变量 &lt;/font&gt;
+
+其中 “obs.” 表示数据集共有多少列(被试数量)，“variables” 表示数据共有多少行(变量数量)
+
+&lt;br&gt;&lt;img src="./picture/chp5/env.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.2 对数据进行选取&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **可以进一步筛选数据，将其范围缩小到特定的被试(行)或变量(列)** &lt;/font&gt;
+
+--
+# &lt;font size = 5.5&gt; 这需要用到我们上节课学习的索引 &lt;/font&gt;
+-   &lt;font size = 5&gt; 中括号索引&lt;/font&gt;  
+-   &lt;font size = 5&gt; 逻辑值索引&lt;/font&gt;  
+
+---
+## 5.2.1 数据索引(中括号)
+
+# &lt;font size = 5&gt; 确定变量名称或所在的行列时，可采用中括号索引**(data[row,col])** &lt;/font&gt;  
+
+--
+-   &lt;font size = 5&gt; 数字索引&lt;/font&gt;  
+
+
+``` r
+# 选取前 2 行以及前 3 列数据
+penguin_data[1:2,1:3]
+```
+
+```
+##       Site  age sex
+## 1 Tsinghua 1922   2
+## 2   Oxford 1940   1
+```
+
+``` r
+# 也可以使用减号
+penguin_data[1:2,-c(4:ncol(penguin_data))]
+```
+
+```
+##       Site  age sex
+## 1 Tsinghua 1922   2
+## 2   Oxford 1940   1
+```
+
+--
+&lt;br&gt;TIP：索引值为空(没有索引值)时会返回完整的原始向量
+
+``` r
+# 选取前 3 列数据
+head(penguin_data[ ,1:3])
+```
+
+```
+##       Site  age sex
+## 1 Tsinghua 1922   2
+## 2   Oxford 1940   1
+## 3   Oxford 1945   1
+## 4   Oxford 1948   2
+## 5    Chile 1948   2
+## 6  Bamberg 1951   1
+```
+
+---
+## 5.2.1 数据索引(中括号)
+
+# &lt;font size = 5&gt; 确定变量名称或所在的行列时，可采用中括号索引**(data[row,col])** &lt;/font&gt;  
+
+--
+-   &lt;font size = 5&gt; 名称索引&lt;/font&gt;  
+
+
+``` r
+# 同样选取前 2 行以及前 3 列数据
+penguin_data[1:2,c('age','ALEX1','ALEX2')]
+```
+
+```
+##    age ALEX1 ALEX2
+## 1 1922     2     2
+## 2 1940     1     1
+```
+
+--
+&lt;br&gt;TIP：输入字符串每次都要打很多引号会非常麻烦，因此可以使用bruceR::cc()，只需在首尾写冒号：
+
+``` r
+c('age','ALEX1','ALEX2') == bruceR::cc('age,ALEX1,ALEX2')
+```
+
+```
+## [1] TRUE TRUE TRUE
+```
+
+---
+## 5.2.1 数据索引(中括号)
+
+# &lt;font size = 5.5&gt; **小练习**：在 “penguin_data” 中，“stress” 这一变量的名称和所在的列可以确定，因此可以尝试用中括号索引对其进行选取 &lt;/font&gt;
+
+--
+-   &lt;font size = 5&gt; 首先可以colnames()函数查看数据集的列名称 &lt;/font&gt;
+
+``` r
+#colnames(penguin_data)
+
+#删去行首的“#”，运行改行代码
+```
+
+--
+&lt;br&gt;
+-   &lt;font size = 5&gt; 在确定名称或所在的列后，用数字索引或名称索引选取“Site”、 “stress1” 到 “stress14”等列的变量，赋值给新变量“stress_data” &lt;/font&gt;
+
+``` r
+# stress_data &lt;- penguin_data[***,***]
+# stress_data &lt;- penguin_data[ ,bruceR::cc(‘***’)]
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+---
+## 5.2.2 数据索引(逻辑值)
+
+# &lt;font size = 5&gt; **但有时也存在无法确定变量名称或所在的行列的情况(e.g. 如何筛选出所有来自清华站点的样本？)** &lt;/font&gt; 
+
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- 需要筛选出所有变量“site”为“Tsinghua”的被试，较难对应到具体某一行或某几行 --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+
+--
+# &lt;font size = 5&gt; 此时可以采用逻辑值索引，根据条件对数据进行筛选 &lt;/font&gt;
+
+--
+# &lt;font size = 5&gt; 这就需要对比较运算和逻辑运算进行简单复习 &lt;/font&gt;
+-   &lt;font size = 5&gt; 比较运算：&gt;、&lt;、&gt;=、&lt;=、==、!= &lt;/font&gt;
+-   &lt;font size = 5&gt; 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于) &lt;/font&gt;
+
+---
+## 5.2.2 数据索引(逻辑值)
+## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+
+![bijiao](./picture/chp5/bijiao.png)
+
+---
+# 5.2.2 数据索引(逻辑值)
+## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+TIP：当对字符进行比较运算时，是否匹配的问题还可以具体为是否完全匹配、是否部分匹配
+
+
+``` r
+#完全匹配
+'c' %in% c('abc','cd','c')
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+#部分匹配
+base::grepl('c',c('abc','cd','c'))
+```
+
+```
+## [1] TRUE TRUE TRUE
+```
+
+``` r
+#部分匹配之开头匹配
+base::startsWith(c('abc','cd','c'),'c')
+```
+
+```
+## [1] FALSE  TRUE  TRUE
+```
+
+``` r
+#部分匹配之结尾匹配
+base::endsWith(c('abc','cd','c'),'c')
+```
+
+```
+## [1]  TRUE FALSE  TRUE
+```
+
+---
+## 5.2.2 数据索引(逻辑值)
+## 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于)
+
+
+``` r
+!1
+```
+
+```
+## [1] FALSE
+```
+
+``` r
+!0
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+1 &amp; 0
+```
+
+```
+## [1] FALSE
+```
+
+``` r
+11 | 0
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+T &amp; F
+```
+
+```
+## [1] FALSE
+```
+
+``` r
+!T
+```
+
+```
+## [1] FALSE
+```
+
+---
+## 5.2.2 数据索引(逻辑值)
+## 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于)
+
+
+``` r
+c(T,F,F) | T
+```
+
+```
+## [1] TRUE TRUE TRUE
+```
+
+``` r
+c(T,F,F) | F
+```
+
+```
+## [1]  TRUE FALSE FALSE
+```
+
+``` r
+c(T,F) %in% c(T)
+```
+
+```
+## [1]  TRUE FALSE
+```
+
+``` r
+c(1,2) &amp; c(0,1)
+```
+
+```
+## [1] FALSE  TRUE
+```
+
+---
+# 5.2.2 数据索引(逻辑值)
+
+# &lt;font size = 5&gt; **但有时也存在无法确定变量名称或所在的行列的情况(e.g. 如何筛选出所有来自清华站点的样本？)** &lt;/font&gt; 
+
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- 需要筛选出所有变量“site”为“Tsinghua”的被试，较难对应到具体某一行或某几行 --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+
+--
+# &lt;font size = 5&gt; 此时可以采用逻辑值索引，根据条件对数据进行筛选： &lt;/font&gt;
+
+``` r
+## 输出逻辑值
+head(penguin_data$age &gt;1980)
+```
+
+```
+## [1] FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+
+``` r
+## 筛选出生年份大于 1980 且(&amp;)小于 1990 的数据
+agedata &lt;- penguin_data[
+  penguin_data$age &gt;1980 &amp; 
+  penguin_data$age &lt; 1990 ,]
+unique(agedata$age)
+```
+
+```
+##  [1] 1981 1982 1983 1984 1985 1986 1987 1988 1989   NA
+```
+
+``` r
+## 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于)
+```
+
+---
+## 5.2.2 数据索引(逻辑值)
+
+# &lt;font size = 5.5&gt; **小练习**：在 “stress_data” 中，可以尝试用逻辑值索引进一步筛选站点为清华的数据，赋值给“ThuStress_data" &lt;/font&gt;
+
+--
+-   &lt;font size = 5&gt; 首先，可以用 “==” 选出 “Site” 这一变量中值为 “Tsinghua” 的样本 &lt;/font&gt;
+
+``` r
+#ThuStress_data &lt;- stress_data[stress_data$Site == '***',]
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+--
+&lt;br&gt;
+-   &lt;font size = 5&gt; 也可以采用%in%逻辑运算来进行这一步骤 &lt;/font&gt;
+
+``` r
+#a %in% b 表示向量a中有多少元素属于向量b
+#ThuStress_data2 &lt;- stress_data[stress_data$Site %in% c('***'),]
+
+#比较与前一种方法生成的“ThuStress_data”是否一致 
+#ThuStress_data == ThuStress_data2
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.3 数据类型的判断与转换&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **在得到我们需要的数据集 “ThuStress_data” 后，需要确定其数据类型** &lt;/font&gt;
+
+--
+# &lt;font size = 5.5&gt; 在上节课中，我们学到了数据可以分为以下几种类型 &lt;/font&gt;
+-   &lt;font size = 5&gt; numeric（数值型），又分为 integer（整数型）和 double（浮点型）&lt;/font&gt;
+-   &lt;font size = 5&gt; logical（逻辑型），只有 TRUE 和 FALSE，或 T 和 F &lt;/font&gt;
+-   &lt;font size = 5&gt; character（字符型），引号括起来的若干字符 &lt;/font&gt;
+-   &lt;font size = 5&gt; complex（复数类型），复数 &lt;/font&gt;
+-   &lt;font size = 5&gt; raw（原始型），用于存储原始字节数据 &lt;/font&gt;
+
+--
+# &lt;font size = 5.5&gt; 如何确定我们数据集的变量属于哪种类型呢，存在两种方法： &lt;/font&gt;
+-   &lt;font size = 5&gt; 使用str()函数直接查看&lt;/font&gt;  
+-   &lt;font size = 5&gt; 使用is族函数进行判断&lt;/font&gt; 
+
+---
+
+## 5.3.1 数据类型的判断
+## str()函数
+
+
+``` r
+str(penguin_data)
+```
+
+```
+## 'data.frame':	1517 obs. of  232 variables:
+##  $ Site           : chr  "Tsinghua" "Oxford" "Oxford" "Oxford" ...
+##  $ age            : int  1922 1940 1945 1948 1948 1951 1952 1952 1952 1953 ...
+##  $ sex            : int  2 1 1 2 2 1 1 2 2 2 ...
+##  $ monogamous     : int  6 7 6 7 6 7 4 6 7 7 ...
+##  $ romantic       : int  2 1 1 1 1 1 1 2 2 2 ...
+##  $ health         : int  3 4 3 2 4 4 3 2 3 5 ...
+##  $ exercise       : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ eatdrink       : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ gluctot        : num  0 0 0 3 0 0 1 0.2 0 0 ...
+##  $ artgluctot     : num  0 0 8 0 0 0 3 0 0 0 ...
+##  $ smoke          : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ cigs           : num  0 NA NA NA 1 NA NA NA NA NA ...
+##  $ avgtemp        : num  36.8 35.4 35.1 36 36.1 ...
+##  $ Temperature_t1 : num  36.8 34.2 35 36.1 35.7 ...
+##  $ Temperature_t2 : num  36.7 36.6 35.2 35.8 36.4 ...
+##  $ DEQ            : num  26.9 51.8 51.8 51.8 42.1 ...
+##  $ AvgHumidity    : int  64 74 89 88 79 59 74 74 71 76 ...
+##  $ mintemp        : num  12 2.78 -1.67 -2.22 1 ...
+##  $ language       : int  7 5 5 5 2 1 5 5 5 4 ...
+##  $ langfamily     : int  3 1 1 1 1 1 1 1 1 1 ...
+##  $ SNI1           : int  2 3 1 1 5 1 5 4 4 4 ...
+##  $ SNI2           : int  1 8 6 3 4 3 2 3 2 2 ...
+##  $ SNI3           : int  0 4 4 3 4 3 2 3 2 2 ...
+##  $ SNI4           : int  1 1 2 1 1 1 1 2 1 2 ...
+##  $ SNI5           : int  1 NA 2 NA 1 NA NA 2 NA 2 ...
+##  $ SNI6           : int  5 2 1 1 1 1 1 1 1 5 ...
+##  $ SNI7           : int  0 2 NA NA NA NA NA NA NA NA ...
+##  $ SNI8           : int  6 1 1 4 6 7 1 2 1 3 ...
+##  $ SNI9           : int  2 NA NA 3 4 2 NA 2 NA 1 ...
+##  $ SNI10          : int  7 8 3 1 7 7 3 5 7 2 ...
+##  $ SNI11          : int  3 5 2 1 5 2 1 3 3 2 ...
+##  $ SNI12          : int  1 2 1 2 1 2 1 1 1 1 ...
+##  $ SNI13          : int  1 1 NA 8 NA 1 NA NA NA NA ...
+##  $ SNI14          : int  2 1 1 1 1 1 1 1 2 1 ...
+##  $ SNI15          : int  5 NA NA NA NA NA NA NA 4 NA ...
+##  $ SNI16          : int  3 2 1 1 1 1 1 1 2 2 ...
+##  $ SNI17          : int  1 1 NA NA NA NA NA NA 1 1 ...
+##  $ SNI18          : int  2 8 NA NA NA NA NA NA 7 1 ...
+##  $ SNI19          : int  3 1 4 3 4 2 2 3 4 1 ...
+##  $ SNI20          : int  2 1 1 2 1 2 1 1 1 2 ...
+##  $ SNI21          : int  1 NA NA 8 NA 8 NA NA NA 1 ...
+##  $ SNI22          : int  1 2 1 1 1 2 2 2 1 1 ...
+##  $ SNI23          : chr  "ʮ      վ" "Pensioners" NA NA ...
+##  $ SNI24          : chr  NA "Men/women with foreign spouses not in UK" NA NA ...
+##  $ SNI25          : chr  NA NA NA NA ...
+##  $ SNI26          : chr  NA NA NA NA ...
+##  $ SNI27          : chr  NA NA NA NA ...
+##  $ SNI28          : int  3 25 NA NA NA 7 12 10 NA NA ...
+##  $ SNI29          : int  NA 30 NA NA NA 2 5 10 NA NA ...
+##  $ SNI30          : int  NA NA NA NA NA NA 6 NA NA NA ...
+##  $ SNI31          : int  NA NA NA NA NA NA 1 NA NA NA ...
+##  $ SNI32          : int  NA NA NA NA NA NA 4 NA NA NA ...
+##  $ scontrol1      : int  3 3 4 3 2 4 2 2 4 3 ...
+##  $ scontrol2      : int  4 5 3 2 2 4 2 2 4 3 ...
+##  $ scontrol3      : num  4 2 4 4 3 3 4 2 4 3 ...
+##  $ scontrol4      : num  4 3 2 4 4 2 1 4 2 2 ...
+##  $ scontrol5      : num  4 2 2 2 4 2 2 2 3 3 ...
+##  $ scontrol6      : num  4 2 2 3 4 2 2 2 4 2 ...
+##  $ scontrol7      : num  2 5 3 4 3 2 2 3 2 5 ...
+##  $ scontrol8      : num  2 3 2 2 1 4 2 2 4 1 ...
+##  $ scontrol9      : num  4 4 3 2 5 3 3 3 4 4 ...
+##  $ scontrol10     : int  4 5 5 4 4 4 4 4 2 4 ...
+##  $ scontrol11     : int  4 5 3 4 4 4 4 3 5 2 ...
+##  $ scontrol12     : int  4 3 3 4 4 5 2 2 3 3 ...
+##  $ scontrol13     : int  4 4 4 2 4 2 3 2 4 4 ...
+##  $ stress1        : int  2 1 3 2 2 2 3 2 5 2 ...
+##  $ stress2        : int  4 1 3 2 2 3 4 3 3 3 ...
+##  $ stress3        : int  5 1 3 3 2 3 3 3 4 3 ...
+##  $ stress4        : int  3 1 2 2 3 3 3 2 3 1 ...
+##  $ stress5        : int  3 1 2 2 2 1 4 3 3 1 ...
+##  $ stress6        : int  1 1 2 1 1 2 3 3 3 1 ...
+##  $ stress7        : int  4 1 2 3 2 2 3 3 3 1 ...
+##  $ stress8        : int  2 1 2 2 2 3 3 3 5 2 ...
+##  $ stress9        : int  2 1 1 2 2 3 3 2 3 1 ...
+##  $ stress10       : int  3 1 2 2 3 2 3 3 3 2 ...
+##  $ stress11       : int  1 1 3 3 3 3 3 3 4 3 ...
+##  $ stress12       : int  5 5 3 3 3 2 2 4 5 3 ...
+##  $ stress13       : int  2 2 1 3 2 1 2 2 2 2 ...
+##  $ stress14       : int  1 1 2 3 2 2 2 3 5 1 ...
+##  $ phone1         : int  2 1 2 1 2 2 3 3 1 2 ...
+##  $ phone2         : int  3 1 2 3 2 4 4 3 1 2 ...
+##  $ phone3         : int  2 1 2 2 2 3 1 3 1 1 ...
+##  $ phone4         : int  3 1 1 4 2 4 4 3 1 1 ...
+##  $ phone5         : int  3 1 2 1 2 2 2 3 1 4 ...
+##  $ phone6         : int  2 1 1 2 1 1 2 3 1 2 ...
+##  $ phone7         : int  4 1 2 2 2 2 2 3 1 2 ...
+##  $ phone8         : int  4 1 2 4 4 3 3 3 1 3 ...
+##  $ phone9         : chr  "4" "1" "2" "4" ...
+##  $ onlineid1      : int  4 3 1 4 3 1 4 3 1 4 ...
+##  $ onlineid2      : int  4 1 2 1 3 2 4 3 1 4 ...
+##  $ onlineid3      : int  2 1 1 1 3 1 4 3 1 4 ...
+##  $ onlineid4      : int  4 1 1 2 3 1 3 3 1 4 ...
+##  $ onlineid5      : int  2 1 1 1 3 1 4 3 1 4 ...
+##  $ onlineid6      : int  2 1 1 1 1 1 2 3 1 1 ...
+##  $ onlineid7      : int  2 1 1 1 3 1 2 3 1 1 ...
+##  $ onlineid8      : int  2 1 2 1 3 1 2 3 1 1 ...
+##  $ onlineid9      : int  5 1 2 1 3 1 4 3 2 2 ...
+##  $ onlineid10     : int  1 1 1 1 1 1 2 3 1 1 ...
+##  $ onlineide11    : int  2 1 1 1 1 1 3 3 1 4 ...
+##   [list output truncated]
+```
+
+---
+## 5.3.1 数据类型的判断
+## is族函数
+
+
+``` r
+is.numeric(1.0)#判断是否为数值型
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+is.numeric('a')
+```
+
+```
+## [1] FALSE
+```
+
+``` r
+is.character(c('a','b'))#判断是否为字符型
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+is.complex(1+1i)#判断是否为复数型
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+is.null(NULL)#判断是否为null值
+```
+
+```
+## [1] TRUE
+```
+
+``` r
+is.na(c(1,NA))#判断是否为NA值
+```
+
+```
+## [1] FALSE  TRUE
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.3 数据类型的判断与转换&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **如果数据集 “ThuStress_data” 中的数据不是我们需要的类型(*double* / *int*)，还需要对其数据类型进行转化** &lt;/font&gt;
+
+--
+# &lt;font size = 5.5&gt; 此时，可以使用as函数 &lt;/font&gt;
+-   &lt;font size = 5&gt; 转化为数值：as.numeric &lt;/font&gt;  
+-   &lt;font size = 5&gt; 转化为字符串：as.character &lt;/font&gt;
+
+---
+## 5.3.2 数据类型的转化
+## 转化为数值：as.numeric
+
+
+``` r
+as.numeric(c('1','2','3'))
+```
+
+```
+## [1] 1 2 3
+```
+
+``` r
+as.numeric(c('1','2','a'))
+```
+
+```
+## Warning: NAs introduced by coercion
+```
+
+```
+## [1]  1  2 NA
+```
+
+``` r
+as.numeric(c(T,F))
+```
+
+```
+## [1] 1 0
+```
+
+---
+## 5.3.2 数据类型的转化
+## 转化为字符串：as.character
+
+
+``` r
+as.character(c(1,2,3))
+```
+
+```
+## [1] "1" "2" "3"
+```
+
+``` r
+as.character(c(T,F))
+```
+
+```
+## [1] "TRUE"  "FALSE"
+```
+
+``` r
+as.character(as.numeric(c('1','2','3')))
+```
+
+```
+## [1] "1" "2" "3"
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.3 数据类型的判断与转换&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **小练习**：判断 “ThuStress_data" 中的 “stress” 的数据是否为我们需要的类型(*double* / *int*)，如果不是，对其进行转化&lt;/font&gt;
+
+--
+-   &lt;font size = 5&gt; 首先，可以使用str()函数或is族函数进行数据类型的判断 &lt;/font&gt;
+
+``` r
+#str(ThuStress_data)
+#is.***(***) #请注意，此时需要选择“ThuStress_data”中具体的列
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+--
+&lt;br&gt;
+
+-   &lt;font size = 5&gt; 如果数据类型不符合要求，则可以使用as族函数对其进行转化 &lt;/font&gt;
+
+``` r
+#col_num &lt;- as.numeric(***) #将某列中的字符串数据转化为数值，赋值给col_num
+#ThuStress_data$*** &lt;- col_num #用转化为数值后的该列替换原本的该列
+
+#能否尝试将上面两行代码在一行代码中实现？
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.4 数据间的运算&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **最后，当我们得到需要的数据集，确定其数据类型符合我们的需求后，还需要对其中的数据进行初步计算** &lt;/font&gt;
+
+--
+-   &lt;font size = 5&gt; 这样的计算可能发生在一列数据内(e.g. 反向计分) &lt;/font&gt;  
+
+``` r
+# 创建一个新列表
+raw_data &lt;- data.frame(x = c(1, 2, 2, 4, 3), y = c(2, 3, 4, 1, 5))
+# 利用减法进行反向计分
+revert &lt;- rep(6, nrow(raw_data))
+raw_data['x_revert'] &lt;- revert - raw_data['x']
+print(raw_data)
+```
+
+```
+##   x y x_revert
+## 1 1 2        5
+## 2 2 3        4
+## 3 2 4        4
+## 4 4 1        2
+## 5 3 5        3
+```
+
+--
+-   &lt;font size = 5&gt; 也可能发生在几列数据间(e.g. 计算总分) &lt;/font&gt;  
+
+``` r
+# 利用加法进行计算总分
+raw_data['z'] &lt;- raw_data['y'] + raw_data['x_revert']
+print(raw_data)
+```
+
+```
+##   x y x_revert z
+## 1 1 2        5 7
+## 2 2 3        4 7
+## 3 2 4        4 8
+## 4 4 1        2 3
+## 5 3 5        3 8
+```
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- 上述操作有更简单的实现方法，此处主要为了演示数据间的计算 --&gt;
+&lt;!-- ##### --&gt;
+&lt;!-- ##### --&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.4 数据间的运算&lt;/h1&gt;
+
+# &lt;font size = 5.5&gt; **小练习**：对 “ThuStress_data" 中的 “stress_12” 进行反向计分，并计算"stress"的总分和平均分
+
+--
+-   &lt;font size = 5&gt; 反向计分：利用减法进行反向计分 &lt;/font&gt;
+
+``` r
+#revert &lt;- rep(***, ***）
+#ThuStress_data['stress_12_revert'] &lt;- *** - ***
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+--
+-   &lt;font size = 5&gt; 计算总分：利用加法进行总分的计算 &lt;/font&gt;
+
+``` r
+#ThuStress_data['stress_total'] &lt;- *** + *** 
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+--
+-   &lt;font size = 5&gt; 计算平均分：利用除法进行平均分的计算 &lt;/font&gt;
+
+``` r
+#total_nume &lt;- rep(14, nrow(ThuStress_data))
+#ThuStress_data['stress_meanl'] &lt;- *** / ****
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 什么是函数
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;sqrt()、getwd()、here()等都是R中的函数。
+&lt;br&gt;
+&amp;emsp;&amp;emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
+&lt;/font&gt;
+&lt;br&gt;
+--
+## 函数求助
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;如果我们不知道一个函数是什么，有什么用处。在R中，我们可以在Console中使用“?函数名”来打开帮助文档。
+--
+&lt;/font&gt;&lt;br&gt;
+![help](./picture/chp5/help.png)
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数示例
+![help](./picture/chp5/help2.png)
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数示例
+![help](./picture/chp5/help3.png)
+&lt;font size = 5&gt;
+参数可以分为形式参数和实际参数。这里给出的是形式参数，实际运行中输入的值为实际参数。（举例：求函数y(x)在x=2时的值，x为形式参数，2为实际参数。）
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数示例
+![help](./picture/chp5/help4.png)
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数调用
+&lt;font size=5&gt;
+-首先需要下载函数所在的R包（部分R包在下载R时已经自动下载）&lt;br&gt;
+&amp;emsp;&amp;emsp;install.pcakages("R包名称")&lt;br&gt;
+-然后需要加载R包&lt;br&gt;
+&amp;emsp;&amp;emsp;library(R包名称)&lt;br&gt;
+-已下载的R包，也可以直接 R包::函数名称 来调用函数&lt;br&gt;
+
+-不同的R包中可能会有相同的函数名，为了避免调用错误，推荐使用：R包::函数名称&lt;br&gt;
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数调用
+![error4](./picture/chp5/error4.png)
+&lt;font size = 5&gt;
+未加载时不能直接调用函数
+--
+
+
+``` r
+here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
+```
+
+```
+## [1] "E:/my programme/R/Rproject/R4Psy"
+```
+
+``` r
+library(here)
+```
+
+```
+## Warning: package 'here' was built under R version 4.4.3
+```
+
+```
+## here() starts at E:/my programme/R/Rproject/R4Psy
+```
+
+``` r
+here()
+```
+
+```
+## [1] "E:/my programme/R/Rproject/R4Psy"
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数调用
+
+
+``` r
+df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
+                       header = T, 
+                       sep=",",
+                       stringsAsFactors = FALSE) 
+```
+
+&amp;emsp;&amp;emsp;df.pg.raw 变量名 &lt;br&gt;
+&amp;emsp;&amp;emsp;utils 函数所在的R包 &lt;br&gt;
+&amp;emsp;&amp;emsp;read.csv 函数名 &lt;br&gt;
+&amp;emsp;&amp;emsp;file 参数：文件路径 &lt;br&gt;
+&amp;emsp;&amp;emsp;header 参数：是否将第一行作为列名 &lt;br&gt;
+&amp;emsp;&amp;emsp;sep 参数：指定分隔符 &lt;br&gt;
+&amp;emsp;&amp;emsp;stringsAsFactors 参数：是否将字符型数据转化为因子 &lt;br&gt;
+--
+&lt;br&gt;
+&lt;br&gt;
+&lt;font size = 5&gt;
+参数可分为形式参数（简称形参）和实际参数（简称实参）&lt;br&gt;
+file = './data/penguin/penguin_rawdata.csv':&lt;br&gt;
+&amp;emsp;&amp;emsp;file为形参&lt;br&gt;
+&amp;emsp;&amp;emsp;'./data/penguin/penguin_rawdata.csv'为实参&lt;br&gt;
+
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 函数分类
+&lt;font size=5&gt;
+已有函数&lt;br&gt;
+&amp;emsp;&amp;emsp;R base; &lt;br&gt;
+&amp;emsp;&amp;emsp;R packages; &lt;br&gt;
+&amp;emsp;&amp;emsp;functions from other sources&lt;br&gt;
+--
+&lt;font size=5&gt;
+自定义函数&lt;br&gt;
+&amp;emsp;&amp;emsp;自己命名和创建函数
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 自定义函数
+&lt;font size = 5&gt;
+函数定义通常由以下几个部分组成：&lt;br&gt;
+&amp;emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。&lt;br&gt;
+&amp;emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。&lt;br&gt;
+&amp;emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。&lt;br&gt;
+&amp;emsp;-返回值: 指定函数的输出结果，使用关键字return。&lt;br&gt;
+--
+
+
+``` r
+#定义一个函数：输入x和y，返回3倍x和5倍y的和
+mysum &lt;- function(x,y){
+  result = 3*x+5*y
+  return(result)
+}
+#mysum:自定义的函数名
+#x,y:形式参数
+#result = 3*x+5*y:函数体
+#return(result):返回值
+
+#调用函数,x=1,y=2
+mysum(1,2)
+```
+
+```
+## [1] 13
+```
+
+``` r
+mysum(y=1,x=2)
+```
+
+```
+## [1] 11
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 自定义函数（小练习）
+&lt;font size = 5&gt;
+小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值&lt;br&gt;
+
+
+``` r
+#myabc &lt;- function(***){
+#  result = ***
+#  return(***)
+#}
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 自定义函数
+&lt;font size = 5&gt;
+&lt;br&gt;我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
+--
+![error7](./picture/chp5/error7.png)
+--
+&lt;font size = 5&gt;
+&lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
+
+
+``` r
+mysum2 &lt;- function(x = 6,y = 7){
+  result = 3*x+5*y
+  return(result)
+}
+mysum2()
+```
+
+```
+## [1] 53
+```
+
+``` r
+mysum2(5)
+```
+
+```
+## [1] 50
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
+## 自定义函数(小练习)
+&lt;font size = 5&gt;
+小练习：&lt;br&gt;
+&amp;emsp;定义一个函数,输入值a,b,c,返回(a+b)/c;&lt;br&gt;
+**&amp;emsp;设置a、b、c的默认值为3、2、1&lt;br&gt;**
+
+
+
+``` r
+#myabc &lt;- function(a = ***, b = ***, c = ***){
+#  result = ***
+#  return(***)
+#}
+#myabc(***)
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 自定义函数
+&lt;font size = 5&gt;
+在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算&lt;br&gt;
+--
+![error8](./picture/chp5/error8.png)
+--
+&lt;font size = 5&gt;
+自定义函数时可以手动添加报错信息。&lt;br&gt;
+只有在输入的内容符合要求时才可以正常运行，否则报错。&lt;br&gt;
+此处判断是否符合要求本质上是一种逻辑判断。&lt;br&gt;
+--
+![if-else](./picture/chp5/if-else.png)
+---
+# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
+## 自定义函数
+
+
+``` r
+mysum3 &lt;- function(x = 6,y = 7){
+  if(is.numeric(x) == T &amp; is.numeric(y) == T){
+    result = 3*x+5*y
+    return(result)}
+  else{print("x and y must be number")}
+}
+#print：输出指定的内容
+#is.numeric:判断是否为数值型。是则返回T，否则返回F
+# &amp; : 表示“且”
+mysum3(5,6)
+```
+
+```
+## [1] 45
+```
+
+``` r
+mysum3('a','b')
+```
+
+```
+## [1] "x and y must be number"
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 自定义函数(小练习)
+&lt;font size = 5&gt;
+小练习：&lt;br&gt;
+&amp;emsp;定义一个函数,输入值a,b,c,返回(a+b)/c;&lt;br&gt;
+&amp;emsp;设置a、b、c的默认值为3、2、1;&lt;br&gt;
+**&amp;emsp;当c为0时报错“c should not be 0”**
+
+
+``` r
+#myabc &lt;- function(***){
+#  if(***){
+#    result = ***
+#    return(***)
+#  }
+#  else{print(***)}
+#}
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.5 函数&lt;/h1&gt;
+## 自定义函数(小练习)
+
+``` r
+#示例
+myabc &lt;- function(a = 3, b = 2, c = 1){
+  if(c!=0){
+    result = (a+b)/c
+    return(result)
+  }
+  else{print('c should not be 0')}
+}
+```
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
