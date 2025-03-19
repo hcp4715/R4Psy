@@ -55,7 +55,7 @@ getwd()#获取工作目录
 ```{r 5.1 R package}
 #下载、导入所需R包
 if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
+    install.packages('pacman',repos = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/")
 }
 pacman::p_load(bruceR,tidyverse)
 ```
