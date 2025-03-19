@@ -52,6 +52,8 @@ Sys.setenv(LANG = "en")
 
 ## loading packages
 ```{r load bruceR, message=FALSE, warning=FALSE}
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }

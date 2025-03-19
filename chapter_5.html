@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
     <meta name="date" content="2024-03-27" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -34,55 +34,58 @@ class: center, middle, inverse, title-slide
 
 class: center, middle
 &lt;span style="font-size: 60px;"&gt;第五讲&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 60px;"&gt;R语言中的对象2: 函数&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 60px;"&gt;了解R语言中的对象(二)&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-04-19&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-03-19&lt;/span&gt; &lt;br&gt;
 
 ---
 &lt;br&gt;
 &lt;br&gt;
 # &lt;h1 lang="zh-CN"&gt;回顾&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.1 数据导入&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.2 赋值&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.3 数据类型&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.4 数据结构&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.1 数据导入&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.2 赋值&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.3 数据类型及其操做&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.4 数据结构&lt;/h2&gt;
 &lt;br&gt;
 &lt;br&gt;
 # &lt;h1 lang="zh-CN"&gt;本节课内容&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.5 对数据的操纵&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.6 数据类型的判断与转换&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.7 函数&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.1 通过操纵R中的对象来了解数据&lt;/h2&gt;
+# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.2 了解用来操纵R对象的对：函数&lt;/h2&gt;
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.1 数据导入&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;回顾：数据导入&lt;/h1&gt;
 # &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
 - # &lt;font size = 5.5&gt; 绝对路径:对文件或目录位置的完整描述，从根目录开始 &lt;/font&gt;
 
-```r
+
+``` r
 paste(getwd(),"/data/penguin/penguin_rawdata.csv",sep = "")
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1/data/penguin/penguin_rawdata.csv"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy/data/penguin/penguin_rawdata.csv"
 ```
 - # &lt;font size = 5.5&gt; 相对路径:对文件或目录位置的部分描述，从当前工作目录开始。 &lt;/font&gt;
 "data/penguin/penguin_rawdata.csv"
 - # &lt;font size = 5.5&gt; 工作目录 &lt;/font&gt;
 
-```r
-getwd()#获取工作目录
+
+``` r
+getwd() # 获取工作目录
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
 ```
 --
 - # &lt;font size = 5.5&gt;绝对路径=工作目录+相对路径&lt;/font&gt;
 - # &lt;font size = 5.5&gt;推荐使用相对路径&lt;/font&gt;
 ---
 
-```r
+``` r
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 #下载、导入所需R包
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
@@ -91,141 +94,18 @@ pacman::p_load(bruceR,tidyverse)
 ```
 
 
-```r
-#读取数据
-penguin_data = bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))#当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
+``` r
+# 读取数据
+# 当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
+penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
+
+# 仅用基础包的做法：
+# penguin_data &lt;- read.csv('./data/penguin/penguin_rawdata.csv')
 ```
 --
 &lt;br&gt;&lt;img src="./picture/chp5/env.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
 ---
-# &lt;h1 lang="zh-CN"&gt;5.2 赋值与变量&lt;/h1&gt;
-
-在R中，我们可以使用赋值操作符“&lt;-”或“=”给对象赋值。&lt;br&gt;
-比如：
-
-```r
-object &lt;- 10
-object
-```
-
-```
-## [1] 10
-```
-我们给对象“object”赋值为10。&lt;br&gt;
-赋值后可以对“object”进行操作，比如：&lt;br&gt;
-
-```r
-object + 2
-```
-
-```
-## [1] 12
-```
-但注意此时的“object”本身并未发生改变。
-
-```r
-object
-```
-
-```
-## [1] 10
-```
----
-# &lt;h1 lang="zh-CN"&gt;5.2 赋值与变量&lt;/h1&gt;
-![error1](picture/chp5/error1.png)
-&lt;font size=5&gt; 为什么会报错？&lt;br&gt;
-&lt;br&gt;
---
-&lt;font size=5&gt; R中变量名是区分大小写的&lt;br&gt;
---
-&lt;br&gt;
-![error2](picture/chp5/error2.png)
-&lt;br&gt;
-&lt;br&gt;
-&lt;font size=5&gt;  变量名可以由字母、数字、_和.组成。并且变量名的第一个字符不能为数字或者特殊符号，比如 +, -, *, /, ^, !, @, &amp;。&lt;/font&gt; &lt;br&gt;  
-&lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;5.2 赋值与变量&lt;/h1&gt;
-&lt;font size="5"&gt;
-&lt;br&gt;
-&lt;br&gt;
-tips：&lt;br&gt;
-&lt;br&gt;
-&amp;emsp;&amp;emsp;变量名可以使用中文，但不推荐，可能出现这样的乱码：&lt;br&gt;
-&amp;emsp;&amp;emsp;鍙︿竴涓▼搴忔鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂��。&lt;br&gt;
-&lt;br&gt;
-&amp;emsp;&amp;emsp;命名对象最好有不错的可读性，比如“age”就要比“x”更易读。
-&lt;/font&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;5.3 基本数据类型&lt;/h1&gt;
-&lt;font size=5&gt; 
-- numeric（数值型），又分为 integer（整数型）和 double（浮点型）&lt;/h3&gt;
-- logical（逻辑型），只有 TRUE 和 FALSE，或 T 和 F&lt;/h3&gt;
-- character（字符型），引号括起来的若干字符&lt;/h3&gt;
-- complex（复数类型），复数&lt;/h3&gt;
-- raw（原始型），用于存储原始字节数据&lt;/h3&gt;
-
-
-```r
-object &lt;- 10
-class(object)#查看数据类型
-```
-
-```
-## [1] "numeric"
-```
-
-```r
-a &lt;- 3.14
-class(a)
-```
-
-```
-## [1] "numeric"
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.3 基本数据类型&lt;/h1&gt;
-
-```r
-b &lt;- T
-class(b)
-```
-
-```
-## [1] "logical"
-```
-
-```r
-c &lt;- 'R4Psy'
-class(c)
-```
-
-```
-## [1] "character"
-```
-
-```r
-d &lt;- 3+4i
-class(d)
-```
-
-```
-## [1] "complex"
-```
-
-```r
-e &lt;- charToRaw('hello')
-class(e)
-```
-
-```
-## [1] "raw"
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;回顾：数据结构&lt;/h1&gt;
 数据结构是为了便于存储相同或不同类型的数据而设计的数据容器。&lt;br&gt;
 常用数据结构&lt;br&gt;
 &amp;emsp;存放同类型数据：向量(Vector),矩阵(Matrix),多维数组(Array)&lt;br&gt;
@@ -233,187 +113,33 @@ class(e)
 &amp;emsp;因子(Factor)&lt;br&gt;
 ![data structure](https://devopedia.org/images/article/46/9213.1526125966.png)
 ---
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;回顾: 数据结构&lt;/h1&gt;
 
-
-```r
-#创建向量
-v1 &lt;- c(1,2,3,4,5)#数值型向量
-v1
-```
-
-```
-## [1] 1 2 3 4 5
-```
-
-```r
-v2 &lt;- c('apple','pear','banana','strawberry','lemon')#字符型向量
-v2
-```
-
-```
-## [1] "apple"      "pear"       "banana"     "strawberry" "lemon"
-```
-
-```r
-v3 &lt;- c(T,F,F,T,T)#逻辑型向量
-v3
-```
-
-```
-## [1]  TRUE FALSE FALSE  TRUE  TRUE
-```
-
-```r
-v4 &lt;- c(1:3)#数值型向量
-v4
-```
-
-```
-## [1] 1 2 3
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
-
-
-```r
-#创建数据框(每个成分都是一个向量)
-d1 &lt;- data.frame(v1,v2,v3)
-d1
-```
-
-```
-##   v1         v2    v3
-## 1  1      apple  TRUE
-## 2  2       pear FALSE
-## 3  3     banana FALSE
-## 4  4 strawberry  TRUE
-## 5  5      lemon  TRUE
-```
-
---
-![error3](picture/chp5/error3.png)
---
-&lt;font size = 5&gt; 
-数据框每一列的元素数目要相同 &lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
-
-
-```r
-#创建矩阵
-m1 &lt;- matrix(c(1:9),nrow=3)
-m1
-```
-
-```
-##      [,1] [,2] [,3]
-## [1,]    1    4    7
-## [2,]    2    5    8
-## [3,]    3    6    9
-```
-
-```r
-#创建三维数组
-a1 &lt;- array(1:24,dim=c(3,4,2))
-a1
-```
-
-```
-## , , 1
-## 
-##      [,1] [,2] [,3] [,4]
-## [1,]    1    4    7   10
-## [2,]    2    5    8   11
-## [3,]    3    6    9   12
-## 
-## , , 2
-## 
-##      [,1] [,2] [,3] [,4]
-## [1,]   13   16   19   22
-## [2,]   14   17   20   23
-## [3,]   15   18   21   24
-```
----
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
-
-&lt;/br&gt;
-## 创建空的dataframe，但有列名。
-
-
-```r
-df &lt;- data.frame(matrix(ncol = 3, nrow = 0))
-x &lt;- c("name", "age", "gender")
-colnames(df) &lt;- x
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
-
-```r
-#创建列表
-l1 &lt;- list(1,c('a','b'),c(T,F))
-l1
-```
-
-```
-## [[1]]
-## [1] 1
-## 
-## [[2]]
-## [1] "a" "b"
-## 
-## [[3]]
-## [1]  TRUE FALSE
-```
-
-```r
-l2 &lt;- list(d1,m1)
-l2
-```
-
-```
-## [[1]]
-##   v1         v2    v3
-## 1  1      apple  TRUE
-## 2  2       pear FALSE
-## 3  3     banana FALSE
-## 4  4 strawberry  TRUE
-## 5  5      lemon  TRUE
-## 
-## [[2]]
-##      [,1] [,2] [,3]
-## [1,]    1    4    7
-## [2,]    2    5    8
-## [3,]    3    6    9
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
-数据可分为：定量数据（数值型）、定性数据（分类型）；定性数据又可分为名义型（无好坏顺序之分，如性别）、有序型（有好坏顺序之分，如疗效）。&lt;br&gt;
+心理学研究中将数据分为：定量数据（数值型）、定性数据（分类型）；定性数据又可分为名义型（无好坏顺序之分，如性别）、有序型（有好坏顺序之分，如疗效）。&lt;br&gt;
 &lt;br&gt;
-R 提供了因子这一数据结构（容器），专门用来存放名义型和有序型的分类变量。&lt;br&gt;
+R 提供了因子(factor)这一数据类型，专门用来存放名义型和有序型的分类变量。&lt;br&gt;
 &lt;br&gt;
+
 直接用字符向量也可以表示分类变量，但它只有字母顺序，不能规定想要的顺序，也不能表达有序分类变量。&lt;br&gt;
 --
 
 
-```r
+``` r
 x &lt;- c('good','better','best','bad','worse','worst')
-sort(x)#排序
+sort(x) # 排序
 ```
 
 ```
 ## [1] "bad"    "best"   "better" "good"   "worse"  "worst"
 ```
 只会按照字母顺序排序
--
+
+--
 
 
-```r
-x1 &lt;- factor(x,levels = c('best','better','good','bad','worse','worst'))
-sort(x1)#排序
+``` r
+x1 &lt;- factor(x, levels = c('best','better','good','bad','worse','worst'))
+sort(x1) # 排序
 ```
 
 ```
@@ -423,14 +149,14 @@ sort(x1)#排序
 
 转化为因子之后可按照设置的方式排序
 ---
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;回顾: 数据的索引 &lt;/h1&gt;
 ## 索引&lt;br&gt;
 --
 &lt;font size = 5&gt;
 -   数字索引&lt;/font&gt;  
 
 
-```r
+``` r
 # 选取前 2 行以及前 3 列数据
 penguin_data[1:2,1:3]
 ```
@@ -441,7 +167,7 @@ penguin_data[1:2,1:3]
 ## 2   Oxford 1940   1
 ```
 
-```r
+``` r
 # 也可以使用减号
 penguin_data[1:2,-c(4:ncol(penguin_data))]
 ```
@@ -452,13 +178,24 @@ penguin_data[1:2,-c(4:ncol(penguin_data))]
 ## 2   Oxford 1940   1
 ```
 
+``` r
+# 取最后三列
+penguin_data[1:2, (ncol(penguin_data)-2):ncol(penguin_data)]
+```
+
+```
+##   STRAQ_56 STRAQ_57 socialdiversity
+## 1        4        2               8
+## 2        5        1               6
+```
+
 &lt;font size = 5&gt;
 -   名称索引&lt;/font&gt;  
 
 
-```r
+``` r
 # 同样选取前 2 行以及前 4 列数据
-penguin_data[1:2,c('age','ALEX1','ALEX2')]
+penguin_data[1:2, c('age','ALEX1','ALEX2')]
 ```
 
 ```
@@ -468,14 +205,14 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.4 数据结构&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;回顾: 数据结构&lt;/h1&gt;
 ## 小练习
 &lt;font size = 5&gt;
 尝试把以下表格中的内容创建为数据框，并把第一列改为因子
 ![dataframe](picture/chp5/dataframe.png)
 
 
-```r
+``` r
 # gender &lt;- c(***)
 # gender1 &lt;- ***
 # score &lt;- c(***)
@@ -488,278 +225,115 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
 &lt;br&gt;
+
+&lt;font size = 5&gt; 疑问: 为什么我们要了解这些关于数据操纵的细节？&lt;/font&gt;
 &lt;br&gt;
-&lt;font size = 5&gt;
-数学运算 &lt;br&gt;
-&amp;emsp;+ - * / ^(加、减、乘、除、求幂)等 &lt;br&gt;
+
+--
+&lt;font size = 5&gt; 回答：因为数据分析就是不断地重复这些基本的操作！&lt;/font&gt;
+
 &lt;br&gt;
-比较运算 &lt;br&gt;
-&amp;emsp;&gt;、&lt;、&gt;=、&lt;=、==、!= &lt;br&gt;
-&amp;emsp;identical(x,y) —— 判断两个对象是否严格相等 &lt;br&gt;
-&lt;br&gt;
-逻辑运算 &lt;br&gt;
-&amp;emsp;| &amp; ! (或、与、非)等 &lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
-
-
-```r
-3.14 + 2
-```
-
-```
-## [1] 5.14
-```
-
-数值型可以进行数学运算
 --
 
+## 假设的问题： 
 
-```r
-TRUE * 3
-```
+- #  &lt;font size = 5.5&gt; 了解Human Penguin Project数据中，**清华站点**数据的**主观压力(Perceived Stress Scale)**情况 &lt;/font&gt;
 
-```
-## [1] 3
-```
-
-```r
-F ^ 2
-```
-
-```
-## [1] 0
-```
-
-逻辑型可以进行数学运算
---
-
-
-```r
-(3+1i)^2
-```
-
-```
-## [1] 8+6i
-```
-
-复数型可以进行数学运算
---
-
-![error5](picture/chp5/error5.png)
+![task](picture/chp5/task.png)
 ---
+- # &lt;font size = 5.5&gt; 第一步: 导入 “penguin_rawdata.csv” &lt;/font&gt; 
 
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+- # &lt;font size = 5.5&gt; 第二步: 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
 
+![process2](picture/chp5/process2.png)
 
-```r
-c(1:5) ^ 2
-```
-
-```
-## [1]  1  4  9 16 25
-```
-
-```r
-c(1:5) * c(6:10)
-```
-
-```
-## [1]  6 14 24 36 50
-```
-
-```r
-c(T,F) / c(T,T)
-```
-
-```
-## [1] 1 0
-```
-
-```r
-c(8+6i,7+4i) + c(3+2i,4+4i)
-```
-
-```
-## [1] 11+8i 11+8i
-```
-
-![error6](picture/chp5/error6.png)
 ---
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
+# &lt;h1 lang="zh-CN"&gt;5.1 了解数据&lt;/h1&gt;
+
+- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
+
+--
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (2): 选择"Tsinghua”这个站点的行;&lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (3): 计算每个被试"stress"的总分;&lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (4): 计算所有被试的"stress"总分的均值与标准差.&lt;/font&gt;
+      &lt;br&gt;
+      
+---
+# &lt;h1 lang="zh-CN"&gt;5.1 了解数据&lt;/h1&gt;
+
+- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 数据框中**列**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (2): 选择"Tsinghua”这个站点的行;&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 数据框中**行**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (3): 计算每个被试"stress"的总分;&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 以**行**为单位的运算，得到新的列 &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (4): 计算所有被试的"stress"总分的均值与标准差.&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 以新的总分**列**为单位的运算 &lt;/font&gt;
+      &lt;br&gt;
+---
+# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
+
+- #  &lt;font size = 5&gt; 了解**主观压力(Perceived Stress Scale)**测量及其位置/列名 &lt;/font&gt;
+![pss](picture/chp5/scales.png)
+
+--
+-   &lt;font size = 5&gt; 用colnames()函数查看数据集的列名的特点 &lt;/font&gt;
+
+
+``` r
+# colnames(penguin_data)
+
+# 删去行首的“#”，运行改行代码
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
+&lt;br&gt;
+-   &lt;font size = 5&gt; 用数字索引或名称索引选取“Site”、 “stress1” 到 “stress14”等列的变量，赋值给新变量“stress_data” &lt;/font&gt;
+
+
+``` r
+# stress_data &lt;- penguin_data[***,***]
+# stress_data &lt;- penguin_data[ ,c(‘***’)]
+
+#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
+&lt;br&gt;
+-   &lt;font size = 5&gt; 压力的列名有规律: “stress1”, “stress2”, ...。能否使用规律？ &lt;/font&gt;
+
+--
+# &lt;font size = 5&gt; 逻辑值索引，将符合特定条件的列选择出来 &lt;/font&gt;
+
+--
+# &lt;font size = 5&gt; 这就需要对比较运算和逻辑运算进行简单复习 &lt;/font&gt;
+-   &lt;font size = 4.5&gt; 比较运算：&gt;、&lt;、&gt;=、&lt;=、==、!= &lt;/font&gt;
+-   &lt;font size = 4.5&gt; 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于) &lt;/font&gt;
+
+## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+
 ![bijiao](./picture/chp5/bijiao.png)
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
-
-
-```r
-3 &lt; 5
-```
-
-```
-## [1] TRUE
-```
-
-```r
-7.00 == 7
-```
-
-```
-## [1] TRUE
-```
-
-```r
-T == TRUE
-```
-
-```
-## [1] TRUE
-```
-
-```r
-T &gt; F
-```
-
-```
-## [1] TRUE
-```
-数值型和逻辑型可以进行比较运算
----
-
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
-
-
-```r
-(3+4i) != (3-4i)
-```
-
-```
-## [1] TRUE
-```
-
-```r
-(1+1i) == (1+3i) 
-```
-
-```
-## [1] FALSE
-```
-
-![errorCom](./picture/chp5/errorCom.png)
-复数型仅可以进行“==、!=”的比较运算
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
-
-
-```r
-'a' == 'A'
-```
-
-```
-## [1] FALSE
-```
-
-```r
-'a' &lt;= 'b'
-```
-
-```
-## [1] TRUE
-```
-
-```r
-'abc'&gt;'a'
-```
-
-```
-## [1] TRUE
-```
-
-字符型可以进行比较运算
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!= 
-
-
-```r
-3 &lt; c(1:5)
-```
-
-```
-## [1] FALSE FALSE FALSE  TRUE  TRUE
-```
-
-```r
-c(1:3) &lt; c(4:6)
-```
-
-```
-## [1] TRUE TRUE TRUE
-```
-
-```r
-3 %in% c(1:5)
-```
-
-```
-## [1] TRUE
-```
-
-```r
-c(1:3) %in% c(3:5)
-```
-
-```
-## [1] FALSE FALSE  TRUE
-```
-
-```r
-c(T,F,T) != c(F,T,T)
-```
-
-```
-## [1]  TRUE  TRUE FALSE
-```
-
-数值型和逻辑型向量可以进行比较运算。
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
+# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
+
+&lt;font size = 5&gt; 当对字符进行比较运算时，是否匹配的问题还可以分为完全匹配、部分匹配&lt;/font&gt;
 
 
-```r
-'apple' %in% c('apple','pear','banana','strawberry','lemon')
-```
-
-```
-## [1] TRUE
-```
-
-```r
-c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
-```
-
-```
-## [1]  TRUE FALSE
-```
-
-字符型向量可以进行比较运算
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
-字符是否匹配的问题还可以具体为是否完全匹配、是否部分匹配&lt;br&gt;
-
-
-```r
+``` r
 #完全匹配
 'c' %in% c('abc','cd','c')
 ```
@@ -768,7 +342,7 @@ c('apple', 'watermelon') %in% c('apple','pear','banana','strawberry','lemon')
 ## [1] TRUE
 ```
 
-```r
+``` r
 #部分匹配
 base::grepl('c',c('abc','cd','c'))
 ```
@@ -777,7 +351,7 @@ base::grepl('c',c('abc','cd','c'))
 ## [1] TRUE TRUE TRUE
 ```
 
-```r
+``` r
 #部分匹配之开头匹配
 base::startsWith(c('abc','cd','c'),'c')
 ```
@@ -786,7 +360,7 @@ base::startsWith(c('abc','cd','c'),'c')
 ## [1] FALSE  TRUE  TRUE
 ```
 
-```r
+``` r
 #部分匹配之结尾匹配
 base::endsWith(c('abc','cd','c'),'c')
 ```
@@ -796,136 +370,118 @@ base::endsWith(c('abc','cd','c'),'c')
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
-
-&lt;font size=5&gt;
-什么是通配符？&lt;br&gt;
---
-&amp;emsp;&amp;emsp;通配符是一种特殊字符，它可以在匹配文件名或其他文本字符串时代替其他字符。&lt;br&gt;
+# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
 &lt;br&gt;
+-   &lt;font size = 5&gt; 压力的列名有规律: “stress1”, “stress2”, ...。能否使用规律？ &lt;/font&gt;
+
 --
-R中常使用的通配符包括"*""?"和"[]"。&lt;br&gt;
---
-&amp;emsp;&amp;emsp;*：代表任意数量的字符，例如*.csv将匹配所有以.csv结尾的文件。&lt;br&gt;
-&amp;emsp;&amp;emsp;?：代表单个字符，例如file?.txt将匹配file1.txt，file2.txt等文件，但不会匹配file10.txt。&lt;br&gt;
-&amp;emsp;&amp;emsp;[]：用于匹配指定的一组字符。例如，file[123].txt将匹配file1.txt，file2.txt和file3.txt。
-&lt;/font&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-![table](picture/chp5/table.png)
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 逻辑运算：| &amp; ! (或、与、非)等
+# &lt;font size = 5&gt; 使用字符的部分匹配将以"stress"开头的列选择出来 &lt;/font&gt;
 
 
-```r
-!1
-```
+``` r
+# stress_data &lt;- penguin_data[***,***]
+selected_cols &lt;- c('Site', colnames(penguin_data)[base::startsWith(colnames(penguin_data),'stress')])
 
-```
-## [1] FALSE
-```
+stress_data &lt;- penguin_data[ , selected_cols]
 
-```r
-!0
-```
-
-```
-## [1] TRUE
-```
-
-```r
-1 &amp; 0
-```
-
-```
-## [1] FALSE
-```
-
-```r
-11 | 0
-```
-
-```
-## [1] TRUE
-```
-
-```r
-T &amp; F
-```
-
-```
-## [1] FALSE
-```
-
-```r
-!T
-```
-
-```
-## [1] FALSE
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 逻辑运算：| &amp; ! (或、与、非)等
-
-
-```r
-c(T,F,F) | T
-```
-
-```
-## [1] TRUE TRUE TRUE
-```
-
-```r
-c(T,F,F) | F
-```
-
-```
-## [1]  TRUE FALSE FALSE
-```
-
-```r
-c(T,F,F) &amp; c(T,T,F)
-```
-
-```
-## [1]  TRUE FALSE FALSE
-```
-
-```r
-c(1,2) &amp; c(0,1)
-```
-
-```
-## [1] FALSE  TRUE
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.5 对数据的操纵&lt;/h1&gt;
-## 小练习
-&lt;font size = 5&gt;
-创建一个向量，包含数字1到20的三次方&lt;br&gt;
-（首先创建一个包含数字1到20的向量，然后进行数学运算）&lt;br&gt;
-
-
-```r
-#a &lt;- ***
-#a3 &lt;- ***
+# alternative, 注意，grep返回的是列的序号
+stress_data &lt;- penguin_data[ , c(1, grep("^stress", names(penguin_data)))]
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
 
+# &lt;font size = 5.5&gt; 数据的选择中有多种方式达到同一目标 &lt;/font&gt;
+
 ---
-# &lt;h1 lang="zh-CN"&gt;5.6 数据类型的判断与转换&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt; (2): 选择"Tsinghua”这个站点的行&lt;/h1&gt;
+
+# &lt;font size = 5&gt; 使用字符的匹配将"Site"列中取值为"Tsinghua"的列选择出来 &lt;/font&gt;
+
+
+``` r
+stress_data_thu &lt;- stress_data[stress_data$Site == 'Tsinghua', ]
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt; (3): 计算每个被试"stress"的总分&lt;/h1&gt;
+
+# &lt;font size = 5&gt; 对数据的操纵 &lt;/font&gt;
+## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
+
+``` r
+c(1:5) ^ 2
+```
+
+```
+## [1]  1  4  9 16 25
+```
+
+``` r
+c(1:5) * c(6:10)
+```
+
+```
+## [1]  6 14 24 36 50
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt; (3): 计算每个被试"stress"的总分&lt;/h1&gt;
+
+
+
+``` r
+stress_data_thu$stress_sum &lt;- rowSums(stress_data_thu[,grep("^stress", names(stress_data_thu))])
+```
+
+
+---
+# &lt;h1 lang="zh-CN"&gt; (4): 计算所有被试的"stress"总分的均值与标准差&lt;/h1&gt;
+
+
+
+``` r
+mean(stress_data_thu$stress_sum, na.rm = TRUE)
+```
+
+```
+## [1] 39.97024
+```
+
+``` r
+sd(stress_data_thu$stress_sum, na.rm = TRUE)
+```
+
+```
+## [1] 6.627312
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;了解R的对象是达成数据分析目的的基础&lt;/h1&gt;
+
+- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 数据框中**列**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (2): 选择"Tsinghua”这个站点的行;&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 数据框中**行**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (3): 计算每个被试"stress"的总分;&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 以**行**为单位的运算，得到新的列 &lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (4): 计算所有被试的"stress"总分的均值与标准差.&lt;/font&gt;
+      - ### &lt;font size = 4.0&gt; 以新的总分**列**为单位的运算 &lt;/font&gt;
+      &lt;br&gt;
+
+![table](picture/chp5/table.png)
+
+---
+# &lt;h1 lang="zh-CN"&gt;5.2数据类型的判断与转换&lt;/h1&gt;
 ## 数据类型的判断:is族函数
 
 
-```r
+``` r
 is.numeric(1.0)#判断是否为数值型
 ```
 
@@ -933,7 +489,7 @@ is.numeric(1.0)#判断是否为数值型
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.numeric('a')
 ```
 
@@ -941,7 +497,7 @@ is.numeric('a')
 ## [1] FALSE
 ```
 
-```r
+``` r
 is.character(c('a','b'))#判断是否为字符型
 ```
 
@@ -949,7 +505,7 @@ is.character(c('a','b'))#判断是否为字符型
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.complex(1+1i)#判断是否为复数型
 ```
 
@@ -957,7 +513,7 @@ is.complex(1+1i)#判断是否为复数型
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.null(NULL)#判断是否为null值
 ```
 
@@ -965,7 +521,7 @@ is.null(NULL)#判断是否为null值
 ## [1] TRUE
 ```
 
-```r
+``` r
 is.na(c(1,NA))#判断是否为NA值
 ```
 
@@ -974,12 +530,12 @@ is.na(c(1,NA))#判断是否为NA值
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.6 数据类型的判断与转换&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.2 数据类型的判断与转换&lt;/h1&gt;
 ## 数据类型的转化:as族函数
 &lt;font size = 5&gt; 转化为数值：as.numeric
 
 
-```r
+``` r
 as.numeric(c('1','2','3'))
 ```
 
@@ -987,19 +543,19 @@ as.numeric(c('1','2','3'))
 ## [1] 1 2 3
 ```
 
-```r
+``` r
 as.numeric(c('1','2','a'))
 ```
 
 ```
-## Warning: 强制改变过程中产生了NA
+## Warning: NAs introduced by coercion
 ```
 
 ```
 ## [1]  1  2 NA
 ```
 
-```r
+``` r
 as.numeric(c(T,F))
 ```
 
@@ -1008,12 +564,12 @@ as.numeric(c(T,F))
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.6 数据类型的判断与转换&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.2 数据类型的判断与转换&lt;/h1&gt;
 ## 数据类型的转化
 &lt;font size = 5&gt; 转化为字符串：as.character
 
 
-```r
+``` r
 as.character(c(1,2,3))
 ```
 
@@ -1021,7 +577,7 @@ as.character(c(1,2,3))
 ## [1] "1" "2" "3"
 ```
 
-```r
+``` r
 as.character(c(T,F))
 ```
 
@@ -1029,7 +585,7 @@ as.character(c(T,F))
 ## [1] "TRUE"  "FALSE"
 ```
 
-```r
+``` r
 as.character(as.numeric(c('1','2','3')))
 ```
 
@@ -1038,13 +594,13 @@ as.character(as.numeric(c('1','2','3')))
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.6 数据类型的判断与转换&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.2 数据类型的判断与转换&lt;/h1&gt;
 ## 数据类型的转化
 &lt;font size = 5&gt; 转化为因子(factor)：factor&lt;br&gt;
 R中用因子代表数据中分类变量, 如性别、省份、职业。
 
 
-```r
+``` r
 class(penguin_data$sex)
 ```
 
@@ -1052,7 +608,7 @@ class(penguin_data$sex)
 ## [1] "integer"
 ```
 
-```r
+``` r
 unique(penguin_data$sex)
 ```
 
@@ -1060,7 +616,7 @@ unique(penguin_data$sex)
 ## [1]  2  1 NA  3
 ```
 
-```r
+``` r
 sex1 &lt;- factor(penguin_data$sex,levels = c(1,2),labels = c('male','female'))
 unique(sex1)
 ```
@@ -1071,10 +627,10 @@ unique(sex1)
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
 ## 什么是函数
 &lt;font size=5&gt;
-&amp;emsp;&amp;emsp;sqrt()、getwd()、here()等都是R中的函数。
+&amp;emsp;&amp;emsp;sqrt()、getwd()、here()、mean()等都是R中的函数。
 &lt;br&gt;
 &amp;emsp;&amp;emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
 &lt;/font&gt;
@@ -1120,28 +676,28 @@ unique(sex1)
 --
 
 
-```r
+``` r
 here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
 ```
 
-```r
+``` r
 library(here)
 ```
 
 ```
-## here() starts at D:/Study/NNU/YAN2/2/R4Psy1
+## here() starts at /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy
 ```
 
-```r
+``` r
 here()
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
 ```
 
 ---
@@ -1149,7 +705,7 @@ here()
 ## 函数调用
 
 
-```r
+``` r
 df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
                        header = T, 
                        sep=",",
@@ -1198,7 +754,7 @@ file = './data/penguin/penguin_rawdata.csv':&lt;br&gt;
 --
 
 
-```r
+``` r
 #定义一个函数：输入x和y，返回3倍x和5倍y的和
 mysum &lt;- function(x,y){
   result = 3*x+5*y
@@ -1217,7 +773,7 @@ mysum(1,2)
 ## [1] 13
 ```
 
-```r
+``` r
 mysum(y=1,x=2)
 ```
 
@@ -1232,7 +788,7 @@ mysum(y=1,x=2)
 小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值&lt;br&gt;
 
 
-```r
+``` r
 #myabc &lt;- function(***){
 #  result = ***
 #  return(***)
@@ -1253,7 +809,7 @@ mysum(y=1,x=2)
 &lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
 
 
-```r
+``` r
 mysum2 &lt;- function(x = 6,y = 7){
   result = 3*x+5*y
   return(result)
@@ -1265,7 +821,7 @@ mysum2()
 ## [1] 53
 ```
 
-```r
+``` r
 mysum2(5)
 ```
 
@@ -1283,7 +839,7 @@ mysum2(5)
 
 
 
-```r
+``` r
 #myabc &lt;- function(a = ***, b = ***, c = ***){
 #  result = ***
 #  return(***)
@@ -1308,11 +864,11 @@ mysum2(5)
 --
 ![if-else](./picture/chp5/if-else.png)
 ---
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
 ## 自定义函数
 
 
-```r
+``` r
 mysum3 &lt;- function(x = 6,y = 7){
   if(is.numeric(x) == T &amp; is.numeric(y) == T){
     result = 3*x+5*y
@@ -1329,7 +885,7 @@ mysum3(5,6)
 ## [1] 45
 ```
 
-```r
+``` r
 mysum3('a','b')
 ```
 
@@ -1338,7 +894,7 @@ mysum3('a','b')
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
 ## 自定义函数(小练习)
 &lt;font size = 5&gt;
 小练习：&lt;br&gt;
@@ -1347,7 +903,7 @@ mysum3('a','b')
 **&amp;emsp;当c为0时报错“c should not be 0”**
 
 
-```r
+``` r
 #myabc &lt;- function(***){
 #  if(***){
 #    result = ***
@@ -1360,10 +916,10 @@ mysum3('a','b')
 ```
 
 ---
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
+# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
 ## 自定义函数(小练习)
 
-```r
+``` r
 #示例
 myabc &lt;- function(a = 3, b = 2, c = 1){
   if(c!=0){
