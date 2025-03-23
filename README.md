@@ -2,6 +2,7 @@
 
 ## 关于(About)
 
+ZZXshiyanyici
 This is a repo for the R course for graduate students, School of Psychology, Nanjing Normal University, Nanjing, China.
 
 Instructor: Prof. Hu Chuan-Peng
