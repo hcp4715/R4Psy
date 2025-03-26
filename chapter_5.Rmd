@@ -140,12 +140,13 @@ penguin_data[1:2, c('age','ALEX1','ALEX2')]
 ![dataframe](picture/chp5/dataframe.png)
 
 ```{r 5.4 exercise}
-# gender <- c(***)
-# gender1 <- ***
-# score <- c(***)
-# letter <- c(***)
-# logic <- c(***)
-# data <- ***(***)
+gender <- c("男","女","女","男")
+gender1 <- as.factor(gender)
+score <- c(97,99,95,96)
+letter <- c("A","A","B","B")
+logic <- c("T","F","T","F")
+data <- data.frame(gender1, score, letter, logic)
+print(data)
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
