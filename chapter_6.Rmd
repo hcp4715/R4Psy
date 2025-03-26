@@ -297,7 +297,7 @@ library(tidyverse)
 ```{r tidyverse reverse coding}
 # 将4, 12, 14, 16题反向计分，计算ALEX，保存为ALEX
 df2 <- df1 %>%
-      dplyr::mutate(df1,
+      dplyr::mutate(
             # 使用 casewhen反向计分：6减去原始值
             ALEX4 = case_when(TRUE ~ 6 - ALEX4),
             ALEX12 = case_when(TRUE ~ 6 - ALEX12),
@@ -317,8 +317,7 @@ df2 <- df1 %>%
 <span style="font-size: 30px;">关键函数：mutate,case_when</span></center><br>
 ```{r, eval=FALSE}
 df2 <- df1 %>%
-      dplyr::mutate(df2,
-            ALEX4 = case_when(TRUE ~ 6 - ALEX4),
+      dplyr::mutate(ALEX4 = case_when(TRUE ~ 6 - ALEX4),
             ALEX12 = case_when(TRUE ~ 6 - ALEX12),
             ALEX14 = case_when(TRUE ~ 6 - ALEX14),
             ALEX16 = case_when(TRUE ~ 6 - ALEX16)
@@ -532,7 +531,18 @@ _数据的预处理主要依赖`dplyr`包，常见函数总结如下_
 # <h1 lang="en">6.2 基于Tidyverse处理问卷数据</h1>
 <span style="font-size: 30px;">练习</span></center><br>
 
-1. 按照langfamily进行分组计算DEQ, CSI的均值
+1. 按照langfamily进行分组计算DEQ, CSI(变量名“socialdiversity”)的均值
+
+```{r}
+# prac1 <- df1 %>%
+#   dplyr::select(***) %>%
+#   dplyr::filter(!is.na(***) &!is.na(***)) %>%
+#   dplyr::group_by(***) %>%
+#   dplyr::summarise(mean_DEQ = mean(***),
+#                    mean_CSI = mean(***)) %>%
+#   dplyr::ungroup()
+
+```
 
 ---
 # <h1 lang="en">6.3 反应时数据</h1>
