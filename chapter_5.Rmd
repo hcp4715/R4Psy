@@ -284,7 +284,7 @@ selected_cols <- c('Site', colnames(penguin_data)[base::startsWith(colnames(peng
 stress_data <- penguin_data[ , selected_cols]
 
 # alternative, 注意，grep返回的是列的序号
-stress_data <- penguin_data[ , c(1, grep("^stress", names(penguin_data)))]
+stress_data2 <- penguin_data[ , c(1, grep("^stress", names(penguin_data)))]
 
 #将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
 ```
