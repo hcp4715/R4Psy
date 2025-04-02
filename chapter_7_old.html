@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>chapter_7.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pac_B" />
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="libs/datatables-binding-0.30/datatables.js"></script>
+    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2024-04-19&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+
+
+
+&lt;style type="text/css"&gt;
+/* ---- extra.css ---- */
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 20px;
+}
+.tit_font{
+font-size: 60px;
+}
+
+&lt;/style&gt;
+
+
+
+
+---
+# Packages
+
+```r
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
+  # 生成课件
+  xaringan,xaringanthemer,xaringanExtra)
+```
+
+
+---
+class: inverse center middle
+.tit_font[
+回顾
+]
+
+???
+-   回顾
+
+-   数据探索与描述统计
+
+-   为什么可视化
+
+-   为什么用 ggplot 画图
+
+-   ggplot 绘图的原理
+
+-   基本图形简介
+  -   散点图
+  -   柱状图
+  -   密度图
+  -   
+
+
+---
+## 7.0.1  批量导入数据
+
+
+
+.panelset[
+.panel[.panel-name[获取地址]
+
+```r
+# 所有数据路径
+*files &lt;- list.files(
+  ## &lt;- &amp; =
+  here::here("data", "match"), 
+  pattern = "data_exp7_rep_match_.*\\.out$", 
+  full.names = TRUE)
+```
+
+
+
+.panel[.panel-name[数据类型转换]
+
+
+```r
+convert_data_types &lt;- function(df) {
+  df &lt;- df %&gt;% 
+    dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),Age = as.numeric(Age),
+                  Sex = as.character(Sex),Hand = as.character(Hand),
+                  Block = as.numeric(Block),Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),Shape = as.character(Shape),
+                  Label = as.character(Label),Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),RT = as.numeric(RT))
+  return(df)
+}
+```
+
+.panel[.panel-name[批量合并]
+
+```r
+df3 &lt;- data.frame() 
+
+for (i in seq_along(files)) {
+  # 读取
+  df &lt;- read.table(files[i], header = TRUE) %&gt;%  
+    dplyr::filter(Date != "Date") %&gt;%  
+    convert_data_types() 
+  # 合并
+  df3 &lt;- dplyr::bind_rows(df3, df) 
+}
+# 删除临时变量
+rm(df, files, i)
+```
+
+.panel[.panel-name[保存数据]
+
+
+```r
+## NOT RUN
+## 上节课介绍了write.csv,也可使用bruceR::export
+bruceR::export(
+  df3, 
+  file = here::here("data", "match","match_raw.csv"))
+
+## 当然，export 不仅可以保存数据，也可以输出模型结果
+```
+
+.panel[.panel-name[修改列名-rename]
+
+```r
+## 修改第一列列名 Date 为小写 date
+df3 %&gt;% dplyr::rename(  ## new_name = old_name
+  date = Date
+) %&gt;% colnames()  
+```
+
+```
+##  [1] "date"     "Prac"     "Sub"      "Age"      "Sex"      "Hand"    
+##  [7] "Block"    "Bin"      "Trial"    "Shape"    "Label"    "Match"   
+## [13] "CorrResp" "Resp"     "ACC"      "RT"
+```
+
+```r
+## 将全部列名都变成小写
+df3 %&gt;% dplyr::rename_with(
+  ## 将字符向量全部变成小写； ~ 声明这是一个函数，.代表前面的数据(df3)传到.所在的位置
+* ~tolower(.)
+  ## 即使用 tolower()对所有列名进行批量处理
+  ##
+) %&gt;% colnames()
+```
+
+```
+##  [1] "date"     "prac"     "sub"      "age"      "sex"      "hand"    
+##  [7] "block"    "bin"      "trial"    "shape"    "label"    "match"   
+## [13] "corrresp" "resp"     "acc"      "rt"
+```
+
+
+
+]
+]
+]
+]
+]
+]
+
+???
+-   解释 变量赋值与参数接受符号差别
+
+-   代码规范性，R 对缩进换行不敏感
+
+-   export 函数
+
+
+---
+## 7.0.2  代码书写规范
+
+
+```r
+## 看起来如何？
+iris %&gt;% group_by(Species) %&gt;% summarize_all(mean) %&gt;%
+ungroup %&gt;% gather(measure, value, -Species) %&gt;%
+arrange(value)
+```
+
+--
+
+```r
+### 是不是更整洁一些
+iris %&gt;%
+  dplyr::group_by(Species) %&gt;%
+  dplyr::summarize_if(is.numeric, mean) %&gt;%
+  dplyr::ungroup() %&gt;%
+  tidyr::gather(measure, value, -Species) %&gt;%
+  dplyr::arrange(value)
+## 有没有自动挡…
+```
+
+
+.footnote[
+-----
+参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
+]
+
+
+
+---
+## 7.0.2  代码书写规范
+
+
+
+```r
+## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
+## 或者点击 Code --&gt; Reformat Code (快捷键冲突)
+## 自动增加空格与缩进
+## 选中下面代码看看效果，尽管效果有限
+## 还是平时养成书写习惯更好
+
+files&lt;-list.files(
+here::here("data","match"), 
+pattern="data_exp7_rep_match_.*\\.out$", 
+full.names=TRUE)
+```
+
+
+
+.footnote[
+-----
+参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
+]
+
+
+---
+## 7.0.3  数据清洗
+.pull-left[
+### 列操作
+-   增加、修改、删除(mutate)
+-   列筛选(select &amp; tidyseletion)
+
+### 行操作
+
+-   条件过滤(filter)
+-   行索引(slice)
+
+### 数据框
+-   列/行合并：
+    bind_cols &amp; bind_rows
+
+-   匹配合并：
+    left_join, right_join, full_join
+
+-   修改列名：
+    rownames or dplyr::rename
+    
+-   长/宽数据转换：
+    pivot_longer, pivot_wider
+]
+
+
+.pull-right[
+
+### 分组计算
+
+-   group_by/ungroup
+
+-   summarise
+
+-   rowMeans or bruceR::MEAN(or SUM)
+
+-   case_when()
+
+-   多列选取：across()
+
+&lt;br&gt;
+### 字符串(stringr package)
+-   str_xxx()系列  
+
+&lt;br&gt;
+### 函数式编程(purrr package)
+
+-   map()系列，类似 apply() 系列  
+
+]
+
+
+
+---
+class: center,middle
+
+
+&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
+
+
+---
+class: inverse,center,middle
+
+.bigfont[
+数据已经清洗完成，下面应该做的是……]
+--
+.bigfont[
+&lt;br&gt;
+查看数据内容？
+&lt;br&gt;
+建模分析？
+&lt;br&gt;
+......
+]
+
+
+--
+.bigfont[
+先看一个数据(quartets::datasaurus_dozen)
+]
+
+
+
+---
+
+.panelset[
+.panel[.panel-name[view]
+
+```r
+quartets::datasaurus_dozen %&gt;%  ## 包中的数据
+  head(10)
+```
+
+```
+## # A tibble: 10 × 3
+##    dataset     x     y
+##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+##  1 dino     55.4  97.2
+##  2 dino     51.5  96.0
+##  3 dino     46.2  94.5
+##  4 dino     42.8  91.4
+##  5 dino     40.8  88.3
+##  6 dino     38.7  84.9
+##  7 dino     35.6  79.9
+##  8 dino     33.1  77.6
+##  9 dino     29.0  74.5
+## 10 dino     26.2  71.4
+```
+
+.panel[.panel-name[`str()`]
+
+```r
+quartets::datasaurus_dozen %&gt;%  ## 包中的数据
+  str()
+```
+
+```
+## tibble [1,846 × 3] (S3: tbl_df/tbl/data.frame)
+##  $ dataset: chr [1:1846] "dino" "dino" "dino" "dino" ...
+##  $ x      : num [1:1846] 55.4 51.5 46.2 42.8 40.8 ...
+##  $ y      : num [1:1846] 97.2 96 94.5 91.4 88.3 ...
+##  - attr(*, "spec")=
+##   .. cols(
+##   ..   dataset = col_character(),
+##   ..   x = col_double(),
+##   ..   y = col_double()
+##   .. )
+```
+
+
+.panel[.panel-name[`summary()`]
+
+```r
+summary(datasaurus_dozen)
+```
+
+```
+##    dataset                x               y           
+##  Length:1846        Min.   :15.56   Min.   : 0.01512  
+##  Class :character   1st Qu.:41.07   1st Qu.:22.56107  
+##  Mode  :character   Median :52.59   Median :47.59445  
+##                     Mean   :54.27   Mean   :47.83510  
+##                     3rd Qu.:67.28   3rd Qu.:71.81078  
+##                     Max.   :98.29   Max.   :99.69468
+```
+
+
+]]]]
+
+
+---
+class: middle,center
+.tit_font[
+好像没什么问题…  
+
+]
+
+--
+.tit_font[
+&lt;br&gt;
+作图看看呢
+]
+
+---
+## 
+
+
+&lt;img src="picture/chp7/dino.gif" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+
+
+
+---
+layout: true
+# 7.1  探索性数据分析
+
+---
+
+.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
+**探索性数据分析(Exploratory Data Analysis, EDA)**
+]
+
+&gt; In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
+
+
+&lt;img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
+
+.pull-left[
+.bigfont[
+-   有哪些变量？
+-   变量的类型？
+-   变量的分布？
+-   变量间关系？
+]
+]
+
+
+.pull-right[
+
+
+```r
+# 读取数据
+pg_raw &lt;- bruceR::import(here::here(
+  "data", "penguin","penguin_rawdata.csv"))
+
+mt_raw &lt;- bruceR::import(here::here(
+  "data", "match","match_raw.csv")) 
+```
+
+]
+
+---
+.panelset[
+.panel[.panel-name[`head`]
+
+```r
+DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
+```
+
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-26dcb7370cc352016475" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-26dcb7370cc352016475">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10"],["Exp","Exp","Exp"],[7302,7302,7302],[22,22,22],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[1,2,3],["immoralSelf","moralOther","immoralOther"],["immoralOther","moralSelf","moralOther"],["mismatch","mismatch","mismatch"],["n","n","n"],["m","n","n"],[0,1,1],[0.7561,0.7043,0.9903000000000001]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+.panel[.panel-name[`str`]
+
+```r
+mt_raw %&gt;% 
+  str() 
+```
+
+```
+## 'data.frame':	25920 obs. of  16 variables:
+##  $ Date    : chr  "02-May-2018_14:23:06" "02-May-2018_14:23:08" "02-May-2018_14:23:10" "02-May-2018_14:23:13" ...
+##  $ Prac    : chr  "Exp" "Exp" "Exp" "Exp" ...
+##  $ Sub     : int  7302 7302 7302 7302 7302 7302 7302 7302 7302 7302 ...
+##  $ Age     : int  22 22 22 22 22 22 22 22 22 22 ...
+##  $ Sex     : chr  "female" "female" "female" "female" ...
+##  $ Hand    : chr  "R" "R" "R" "R" ...
+##  $ Block   : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Bin     : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Trial   : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Shape   : chr  "immoralSelf" "moralOther" "immoralOther" "moralSelf" ...
+##  $ Label   : chr  "immoralOther" "moralSelf" "moralOther" "immoralSelf" ...
+##  $ Match   : chr  "mismatch" "mismatch" "mismatch" "mismatch" ...
+##  $ CorrResp: chr  "n" "n" "n" "n" ...
+##  $ Resp    : chr  "m" "n" "n" NA ...
+##  $ ACC     : int  0 1 1 -1 1 1 1 1 1 1 ...
+##  $ RT      : num  0.756 0.704 0.99 1.042 0.821 ...
+```
+
+]]]
+
+---
+## 常用函数
+
+.panelset[
+.panel[.panel-name[`summary`]
+
+```r
+summary(mt_raw) %&gt;% 
+  knitr::kable() # 注：kable函数只为了输出
+```
+
+
+
+|   |    Date         |    Prac         |     Sub      |     Age      |    Sex          |    Hand         |    Block     |     Bin      |    Trial     |   Shape         |   Label         |   Match         |  CorrResp       |    Resp         |     ACC        |      RT       |
+|:--|:----------------|:----------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:----------------|:----------------|:----------------|:----------------|:----------------|:---------------|:--------------|
+|   |Length:25920     |Length:25920     |Min.   : 7302 |Min.   :18.00 |Length:25920     |Length:25920     |Min.   :1.000 |Min.   :1.000 |Min.   : 1.00 |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Min.   :-1.0000 |Min.   :0.1060 |
+|   |Class :character |Class :character |1st Qu.: 7313 |1st Qu.:19.00 |Class :character |Class :character |1st Qu.:1.000 |1st Qu.:1.000 |1st Qu.: 6.75 |Class :character |Class :character |Class :character |Class :character |Class :character |1st Qu.: 1.0000 |1st Qu.:0.6104 |
+|   |Mode  :character |Mode  :character |Median : 7324 |Median :20.00 |Mode  :character |Mode  :character |Median :1.000 |Median :2.000 |Median :12.50 |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Median : 1.0000 |Median :0.7019 |
+|   |NA               |NA               |Mean   : 8853 |Mean   :20.83 |NA               |NA               |Mean   :1.611 |Mean   :2.417 |Mean   :12.50 |NA               |NA               |NA               |NA               |NA               |Mean   : 0.7959 |Mean   :0.7150 |
+|   |NA               |NA               |3rd Qu.: 7336 |3rd Qu.:22.00 |NA               |NA               |3rd Qu.:2.000 |3rd Qu.:3.000 |3rd Qu.:18.25 |NA               |NA               |NA               |NA               |NA               |3rd Qu.: 1.0000 |3rd Qu.:0.8053 |
+|   |NA               |NA               |Max.   :73370 |Max.   :28.00 |NA               |NA               |Max.   :3.000 |Max.   :5.000 |Max.   :24.00 |NA               |NA               |NA               |NA               |NA               |Max.   : 2.0000 |Max.   :1.1831 |
+
+
+.panel[.panel-name[`skimr::skim()--1`]
+
+```r
+skimr::skim(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[1:12]
+```
+
+```
+##  [1] "── Data Summary ────────────────────────"
+##  [2] "                           Values"       
+##  [3] "Name                       mt_raw"       
+##  [4] "Number of rows             25920 "       
+##  [5] "Number of columns          16    "       
+##  [6] "_______________________          "       
+##  [7] "Column type frequency:           "       
+##  [8] "  character                9     "       
+##  [9] "  numeric                  7     "       
+## [10] "________________________         "       
+## [11] "Group variables            None  "       
+## [12] ""
+```
+
+.panel[.panel-name[`skimr::skim()--2`]
+
+
+```r
+skimr::skim(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[13:24]
+```
+
+```
+##  [1] "── Variable type: character ────────────────────────────────────────────────────"
+##  [2] "  skim_variable n_missing complete_rate min max empty n_unique whitespace"       
+##  [3] "1 Date                  0         1      20  20     0    24362          0"       
+##  [4] "2 Prac                  0         1       3   3     0        1          0"       
+##  [5] "3 Sex                   0         1       1   6     0        4          0"       
+##  [6] "4 Hand                  0         1       1   1     0        2          0"       
+##  [7] "5 Shape                 0         1       9  12     0        4          0"       
+##  [8] "6 Label                 0         1       9  12     0        4          0"       
+##  [9] "7 Match                 0         1       5   8     0        2          0"       
+## [10] "8 CorrResp              0         1       1   1     0        2          0"       
+## [11] "9 Resp                658         0.975   1   5     0        9          0"       
+## [12] ""
+```
+
+
+.panel[.panel-name[`skimr::skim()--3`]
+
+```r
+skimr::skim(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[25:41]
+```
+
+```
+##  [1] "── Variable type: numeric ──────────────────────────────────────────────────────"
+##  [2] "  skim_variable n_missing complete_rate     mean       sd       p0      p25"     
+##  [3] "1 Sub                   0             1 8853.    9932.    7302     7313    "     
+##  [4] "2 Age                   0             1   20.8      2.48    18       19    "     
+##  [5] "3 Block                 0             1    1.61     0.803    1        1    "     
+##  [6] "4 Bin                   0             1    2.42     1.36     1        1    "     
+##  [7] "5 Trial                 0             1   12.5      6.92     1        6.75 "     
+##  [8] "6 ACC                   0             1    0.796    0.464   -1        1    "     
+##  [9] "7 RT                    0             1    0.715    0.151    0.106    0.610"     
+## [10] "       p50      p75     p100 hist "                                              
+## [11] "1 7324     7336     73370    ▇▁▁▁▁"                                              
+## [12] "2   20       22        28    ▇▂▁▁▁"                                              
+## [13] "3    1        2         3    ▇▁▃▁▃"                                              
+## [14] "4    2        3         5    ▇▇▃▃▃"                                              
+## [15] "5   12.5     18.2      24    ▇▇▆▇▇"                                              
+## [16] "6    1        1         2    ▁▂▁▇▁"                                              
+## [17] "7    0.702    0.805     1.18 ▁▂▇▅▁"
+```
+
+.panel[.panel-name[`bruceR::Describe()`]
+
+
+```r
+bruceR::Describe(mt_raw) %&gt;% 
+  capture.output() %&gt;% 
+  .[2:17] ## 可以使用 file参数输出 Word
+```
+
+```
+##  [1] "────────────────────────────────────────────────────────────────────────────────────"
+##  [2] "               N (NA)     Mean      SD |   Median     Min      Max Skewness Kurtosis"
+##  [3] "────────────────────────────────────────────────────────────────────────────────────"
+##  [4] "Date*      25920      12218.64 6999.30 | 12220.50    1.00 24362.00     0.00    -1.19"
+##  [5] "Prac*      25920          1.00    0.00 |     1.00    1.00     1.00      NaN      NaN"
+##  [6] "Sub        25920       8852.59 9931.83 |  7324.00 7302.00 73370.00     6.34    38.22"
+##  [7] "Age        25920         20.83    2.48 |    20.00   18.00    28.00     1.09     0.35"
+##  [8] "Sex*       25920          3.27    0.65 |     3.00    1.00     4.00    -0.84     1.58"
+##  [9] "Hand*      25920          1.98    0.15 |     2.00    1.00     2.00    -6.34    38.22"
+## [10] "Block      25920          1.61    0.80 |     1.00    1.00     3.00     0.82    -0.97"
+## [11] "Bin        25920          2.42    1.36 |     2.00    1.00     5.00     0.67    -0.82"
+## [12] "Trial      25920         12.50    6.92 |    12.50    1.00    24.00     0.00    -1.20"
+## [13] "Shape*     25920          2.50    1.12 |     2.50    1.00     4.00     0.00    -1.36"
+## [14] "Label*     25920          2.49    1.11 |     2.00    1.00     4.00     0.02    -1.35"
+## [15] "Match*     25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
+## [16] "CorrResp*  25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
+```
+
+
+]]]]]]
+
+
+
+---
+layout: false
+class: inverse middle center
+
+
+.tit_font[
+但是...&lt;br&gt;还不够
+]
+
+---
+# 7.2  数据可视化
+## 7.2.1 可视化的重要性
+
+.pull-left[
+.size5[
+Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
+
+-   A quick and easy way to check our data make sense, and to identify any unusual trends.
+
+-   A way to honestly present the features of our data to anyone who reads our research.
+]
+]
+
+--
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-25-1.png" width="90%" /&gt;
+
+]
+&lt;br&gt;
+&lt;br&gt;
+
+.size5[
+绘图的方式有很多，如 Base graphics, grid, lattice,plotly...为什么使用&lt;span style="color: red;"&gt;ggplot2&lt;/span&gt;?
+]
+
+
+
+---
+# 7.2  数据可视化
+## 7.2.2 为何使用 ggplot2?
+&lt;br&gt;
+.size5[
+* 化繁为简：大量的默认值
+
+* 精准定制：所有元素均可控
+
+* 易于叠加：丰富的信息
+
+* 日益丰富的生态系统 [https://r-graph-gallery.com/](https://r-graph-gallery.com/)
+
+]
+
+
+.bigfont[
+总之，好看、业界标杆，举个例子:
+]
+
+---
+## 7.2.2 为何使用 ggplot?
+
+&lt;img src="picture/chp7/exmp2.png" width="63%" style="display: block; margin: auto;" /&gt;
+
+
+---
+## 7.2.2 为何使用 ggplot?
+
+&lt;img src="picture/chp7/exmp1.png" width="63%" style="display: block; margin: auto;" /&gt;
+
+
+.footnote[
+-----
+Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker circulation over the past millennium. Nature 622, 93–100 (2023). https://doi.org/10.1038/s41586-023-06447-0
+]
+
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+.left-column[
+.bigfont[
+-   数据映射
+]
+]
+
+.right-column[
+&lt;img src="picture/chp7/mapping.jpg" width="75%" /&gt;
+]
+
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+
+.left-column[
+.bigfont[
+-   数据映射
+
+-   图层叠加
+]
+]
+
+.right-column[
+&lt;img src="https://psyteachr.github.io/data-skills-v1/images/layers.png" width="70%" /&gt;
+]
+
+
+---
+## 7.2.3 ggplot2 的逻辑
+
+.left-column[
+.bigfont[
+-   数据映射
+
+-   图层叠加
+
+-   Code展示
+]]
+
+.right-column[
+.panelset[
+.panel[.panel-name[数据映射]
+
+```r
+# 以penguin问卷中前后体温为例
+
+p1 &lt;- pg_raw %&gt;% 
+  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
+             y = Temperature_t2)) 
+p1 ## 坐标轴名称已对应，虽然图片为空
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-30-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[添加图层-散点]
+
+```r
+p1 + geom_point()
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-31-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+.panel[.panel-name[添加图层-拟合曲线]
+
+```r
+p1 + geom_point() + geom_smooth(method = 'lm')
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[改变映射]
+
+```r
+pg_raw %&gt;% 
+  drop_na(Temperature_t1,Temperature_t2,sex) %&gt;% 
+  ggplot(aes(x = Temperature_t1, 
+             y = Temperature_t2,
+             color = factor(sex))) +
+  geom_point() + geom_smooth()  
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-33-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+]]]]]]
+
+
+???
+-   映射与添加图层是两个概念，映射后可以不进行绘图
+
+-   图层的添加使用 + 
+
+-   除了 x 和 y，仍然有其他变量进行映射，如 color
+
+---
+## 7.2.4 单个图片的组成
+
+&lt;img src="picture/chp7/comps1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+## 7.2.4 单个图片的组成
+
+&lt;img src="picture/chp7/comps2.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+layout: true
+# 7.3 常用图形
+
+
+---
+## 直方图
+&lt;font size=5&gt;
+对于连续变量，我们可以使用直方图进行可视化。
+以认知实验中被试的反应时数据为例。
+&lt;/font&gt;
+&lt;br&gt;
+
+.pull-left[
+
+```r
+pic_his &lt;- mt_raw %&gt;% 
+  # 确定映射到x轴的变量
+  ggplot(aes(x = RT)) + 
+  geom_histogram(bins = 40) +
+  theme_classic()
+```
+]
+
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-37-1.png" width="100%" /&gt;
+]
+
+
+---
+## 密度图
+&lt;font size=5&gt;
+&amp;emsp;&amp;emsp;同样的我们可以使用密度图来描述反应时的分布情况。
+&lt;/font&gt;
+
+.pull-left[
+
+```r
+pic_dens &lt;- mt_raw %&gt;% ggplot()+
+  # 绘制密度曲线
+  geom_density(aes(x = RT)) +
+  theme_classic()
+```
+]
+
+.pull-right[
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
+]
+
+---
+## 直方图 + 密度图
+
+.pull-left[
+
+```r
+## 尝试将两个图层叠加在一起
+mt_raw %&gt;% ggplot(aes(x = RT))+
+  geom_histogram(bins = 40) + 
+  geom_density() +
+  theme_classic()
+```
+]
+
+
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-41-1.png" width="100%" /&gt;
+似乎密度曲线没有显示…
+原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
+如果仔细观察 x 坐标轴还是能看到细微差异的。
+]
+
+
+
+---
+## 直方图 + 密度图
+.pull-left[
+
+```r
+pic_mix &lt;- mt_raw %&gt;% 
+  ggplot(aes(x = RT,
+  ## 直方图的统计结果通过after_stat(density)传递给了密度图
+*       y = after_stat(density))) +
+  geom_histogram() +
+  geom_density() +
+  theme_classic()
+# 设定绘图风格
+```
+]
+
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-43-1.png" width="100%" /&gt;
+]
+
+---
+## 箱线图
+
+除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。这里我们利用箱线图看看不同Label的RT如何。
+
+
+.pull-left[
+
+```r
+pic_box &lt;- mt_raw %&gt;% ggplot(aes(
+  x = Label,
+  y = RT)) +
+  geom_boxplot(staplewidth = 1) +
+  # 绘制箱线图并添加上下边缘线
+  theme_classic()
+```
+
+
+]
+.pull-right[
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-45-1.png" width="100%" /&gt;
+]
+
+.footnote[
+----
+矩形中间线为中位数，上下两条线分别为上四分位数和下四分位数；
+1.5个四分位距(Q3-Q1)以外的值为离群值；geom_boxplot默认使用1.5IQR
+]
+---
+layout: true
+# 7.4 Explore data with DataExplorer
+
+---
+
+
+
+```r
+ DataExplorer::plot_str(mt_raw)
+```
+
+&lt;img src="picture/chp7/plotstr.png" width="65%" /&gt;
+
+---
+
+
+```r
+DataExplorer::plot_intro(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-48-1.png" width="70%" /&gt;
+
+
+---
+
+
+```r
+ DataExplorer::plot_missing(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-49-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+ DataExplorer::plot_bar(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-50-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+ DataExplorer::plot_bar(mt_raw, by="Match")
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-51-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+DataExplorer::plot_histogram(mt_raw)
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-52-1.png" width="70%" /&gt;
+
+
+---
+
+
+```r
+ DataExplorer::plot_qq(pg_raw[,2:10])
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-53-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
+```
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-54-1.png" width="70%" /&gt;
+
+---
+## 使用ggpairs
+
+.panelset[
+.panel[.panel-name[Code]
+
+```r
+## 以 penguin project 数据中 ALEX, stress和 ECR 为例
+pg_raw %&gt;% 
+  mutate(
+    # 计算均值
+    m_ALEX = bruceR::MEAN(.,
+      var = 'ALEX',items = 1:16,rev = c(4,12,14,16)),
+    m_stress = bruceR::MEAN(.,
+      var = 'stress',items = 1:14,rev = c(4:7,9,10,13)
+    ),
+    m_ECR = bruceR::MEAN(.,
+      var = 'ECR',items = 1:36
+    )
+  ) %&gt;% 
+  select(contains('m_')) %&gt;% 
+  GGally::ggpairs()
+```
+
+
+
+]
+
+.panel[.panel-name[Output]
+
+&lt;img src="chapter_7_files/figure-html/unnamed-chunk-55-1.png" width="100%" /&gt;
+
+]
+
+]
+
+---
+layout: false
+#练习
+.bigfont[
+1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
+
+2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
+
+3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
+ 
+]
+
+#探索
+.bigfont[
+1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
+
+2. 学会使用大语言模型进行学习，进行精准地提问。
+]
+
+---
+# 参考阅读
+.bigfont[
+-   [R Graphics Cookbook](https://r-graphics.org/)
+
+-   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "github",
+"countIncrementalSlides": false,
+"seal": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

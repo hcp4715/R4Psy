@@ -1,0 +1,106 @@
+---
+title: "修改"
+output:
+   xaringan::moon_reader:
+    css: [default, css/Font_Style.css]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+date: "2025-03-24"
+---
+<!-- ##### -->
+<!-- ##### -->
+<!-- 之前这个练习的操作重复了 -->
+<!-- ##### -->
+<!-- ##### -->
+
+# <h1 lang="en">6.1 Tidyverse</h1>
+<span style="font-size: 30px;">小练习</span></center><br>
+
+- 请基于tidyverse的管道操作符合并下面三段代码，省去中间变量
+```{r, task1}
+# 创建dataframe
+data <- data.frame(
+  "grammer" = c("R","SPSS","Python","R",NA,"Matlab","Python","R"),
+  "score" = c(4,2,5,4.5,5,4,2,5),
+  "popularity" = c(1,2,NA,4,5,6,7,10)
+  )
+# 提取含字符串"R"的行
+filtered_data <- data[data$grammer == 'R', ]
+# 按照“popularity”进行排序
+arranged_data <- filtered_data[order(factor(filtered_data$poplarity)),]
+
+```
+
+- 提示
+```{r, message=FALSE}
+# 不要忘记加载包
+library(tidyverse)
+
+# 补全下列代码,可以使用刚刚举例的filter()和arrange()函数
+# arranged_data <- data %>%
+```
+
+---
+# <h1 lang="en">6.3 反应时数据</h1>
+<span style="font-size: 30px;">练习</span></center><br>
+
+计算不同Shape情况下(immoralself，moralself，immoralother，moralother)<br>
+基于信号检测论match与mismatch(match为信号，mismatch噪音)之间的d'<br>
+
+提示：<br> 
+- 1 $d′$ = ${Z_{击中率}−Z_{虚报率}}$ = $\frac{M_{SN}-M_N}{\sigma_N}$ <br><br>
+- 2 $击中率$ = $\frac{击中次数}{信号总次数}$ <br><br>
+- 3 $虚报率$ = $\frac{虚报次数}{噪音总次数}$ 
+<br>
+
+---
+- 1 以下是计算击中(hit)、虚报(fa)、漏报(miss)和正确否定(cr)的代码<br>
+```{r, 6.3_prec, eval=FALSE}
+# 去掉下面#的部分，将***替换成合适的变量，补全代码
+dplyr::summarise(
+      # *** = length(ACC[Match == "match" & ACC == 1]),
+      # *** = length(ACC[Match == "mismatch" & ACC == 0]),
+      # *** = length(ACC[Match == "match" & ACC == 0]),
+      # *** = length(ACC[Match == "mismatch" & ACC == 1]),
+```
+- 2 以下是计算 $d′$ 的代码<br>
+```{r, 6.3_prec2, eval=FALSE}
+        Dprime = qnorm(
+        ifelse(hit / (hit + miss) < 1,
+               hit / (hit + miss),
+               1 - 1 / (2 * (hit + miss))
+              )
+        ) 
+             - qnorm(
+        ifelse(fa / (fa + cr) > 0,
+              fa / (fa + cr),
+              1 / (2 * (fa + cr))
+              )
+                    )
+      ) 
+```
+---
+# <h1 lang="en">6.3 反应时数据</h1>
+<span style="font-size: 30px;">6.3.3 小结</span></center><br>
+- **练习思路**<br>
+<br>
+Step1: 选择需要的变量 <br>
+<br>
+Step2: 基于Sub, Shape分组[extract,filter] <br>
+<br>
+Step3: 使用计算公式，计算d值 <br>
+<br>
+Step4: 删除击中、虚报、误报、正确拒绝 <br>
+<br>
+Step5: 长转宽，得到每个Shape情况下的信号检测论d值[pivot_wide] <br>
+
+
+---
+# <h1 lang="en">6.3 反应时数据</h1>
+<span style="font-size: 30px;">6.3.3 小结</span></center><br>
+- **答案参考**<br>
+<br>
+<img src="./picture/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
