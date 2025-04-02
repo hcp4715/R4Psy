@@ -15,7 +15,7 @@ output:
 ---
 class: center, middle
 <span style="font-size: 60px;">第七讲</span> <br>
-<span style="font-size: 50px;">实验数据预处理与函数</span> <br>
+<span style="font-size: 50px;">Tidyverse数据预处理与函数</span> <br>
 <br>
 <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
@@ -30,8 +30,8 @@ class: center, middle
 <br>
 <span style="font-size: 40px;">问卷数据的处理</span></center> <br>
 <br>
-<span style="font-size: 30px;">&emsp; Step1: 选择变量[select]<br>
-<span style="font-size: 30px;">&emsp; Step2: 检查数据类型[glimpse, as族函数]<br>
+<span style="font-size: 30px;">&emsp; Step1：选择变量[select]<br>
+<span style="font-size: 30px;">&emsp; Step2：检查数据类型[glimpse, as族函数]<br>
 <span style="font-size: 30px;">&emsp; Step3：处理缺失值[filter, is.na]<br>
 <span style="font-size: 30px;">&emsp; Step4：反向计分[mutate, case_when]<br>
 <span style="font-size: 30px;">&emsp; Step5：计算所需变量[mutate]<br>
@@ -158,7 +158,7 @@ write.csv(df3,
 ---
 <h1 lang="en" style="font-size: 60px;">Contents</h1>
 <br>
-<span style="font-size: 40px;">7.1 基于Tidyverse处理反应时数据</span></center> <br>
+<span style="font-size: 40px;">7.1 基于Tidyverse的数据预处理（续）</span></center> <br>
 <span style="font-size: 30px;">&emsp;7.1.1 研究问题 & 数据情况回顾</span></center> <br>
 <span style="font-size: 30px;">&emsp;7.1.2 操作步骤 (tidyr)</span></center> <br>
 <span style="font-size: 30px;">&emsp;7.1.3 小结 </span></center> <br>
@@ -193,6 +193,7 @@ Shape/Label: 屏幕呈现的图形代表的概念<br>
 Match: 图形与呈现的标签是否匹配<br>
 ACC: 被试的判断是否正确，1 = "正确", 0 = "错误", -1, 2表示未按键或按了两个键的情况，属于无效作答<br>
 RT: 被试做出判断的反应时，[200,1500]的反应时纳入分析<br>
+
 ```{r example of singal rawdata_matchtask DT, echo=FALSE}
 a1 <- utils::read.table("data/match/data_exp7_rep_match_7302.out", header = TRUE)
 DT::datatable(head(a1),
@@ -220,13 +221,13 @@ DT::datatable(head(a1),
 # 选择我们需要的变量
 df4 <- dplyr::select(df3,
                      Sub, Age, Sex, Hand, #人口统计学
-                     Block, Bin, Trial, # 试次
+                     Block, Bin, Trial,   # 试次
                      Shape, Label, Match, # 刺激
-                     Resp, ACC, RT) # 反应结果
+                     Resp, ACC, RT)       # 反应结果
 ```
 
 ```{r example of total part1 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 24),
+DT::datatable(head(df4, 10),
               fillContainer = TRUE, options = list(pageLength = 5))
 ```
 
@@ -346,27 +347,21 @@ df4 <- df3 %>%
   dplyr::select(Sub, Age, Sex, Hand, #人口统计学
                 Block, Bin, Trial,   # 试次
                 Shape, Label, Match, # 刺激
-                Resp, ACC, RT,       # 反应结果
-                ) %>% 
-  tidyr::drop_na() %>%                  #删除缺失值
-  dplyr::filter(Hand == "R",          # 选择右利手被试
-                ACC == 0 | ACC == 1 , # 排除无效应答（ACC = -1 OR 2)
-                RT >= 0.2 & RT <= 1.5 # 选择RT属于[200,1500]
-                ) %>%
-  dplyr::group_by(Sub, 
-                  Shape, Label, Match) %>%
-  dplyr::summarise(mean_ACC = mean(ACC),
-                   mean_RT = mean(RT)) %>%
+                Resp, ACC, RT) %>%  # 反应结果
+  tidyr::drop_na() %>%               #删除缺失值
+  dplyr::filter(Hand == "R",         # 选择右利手被试
+                ACC == 0 | ACC == 1, # 排除无效应答（ACC = -1 OR 2)
+                RT >= 0.2 & RT <= 1.5) %>%  # 选择RT属于[200,1500]
+  dplyr::group_by(Sub,Shape, Label, Match) %>%
+  dplyr::summarise(mean_ACC = mean(ACC), mean_RT = mean(RT)) %>%
   dplyr::ungroup() %>%
   tidyr::extract(Shape, into = c("Valence", "Identity"),
-                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>%
+              regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>%
   dplyr::filter(Match == "match" & Valence == "moral") %>%
   dplyr::select(Sub, Identity, mean_RT) %>%
-  tidyr::pivot_wider(names_from = "Identity", values_from = "mean_RT") %>%
-  dplyr::mutate(moral_SPE = Self - Other) %>%
-  dplyr::select(Sub, moral_SPE) 
+  tidyr::pivot_wider(names_from="Identity", values_from="mean_RT") %>%
+  dplyr::mutate(moral_SPE=Self - Other)
 ```
-
 ---
 # <h1 lang="en">7.1 反应时数据</h1>
 <span style="font-size: 30px;">7.1.3 小结</span></center><br>
@@ -444,13 +439,13 @@ df.pg.raw <- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
                        stringsAsFactors = FALSE) 
 ```
 
-&emsp;&emsp;df.pg.raw 变量名 <br>
-&emsp;&emsp;utils 函数所在的R包 <br>
-&emsp;&emsp;read.csv 函数名 <br>
-&emsp;&emsp;file 参数：文件路径 <br>
-&emsp;&emsp;header 参数：是否将第一行作为列名 <br>
-&emsp;&emsp;sep 参数：指定分隔符 <br>
-&emsp;&emsp;stringsAsFactors 参数：是否将字符型数据转化为因子 <br>
+&emsp;&emsp;`df.pg.raw` 变量名 <br>
+&emsp;&emsp;`utils` 函数所在的R包 <br>
+&emsp;&emsp;`read.csv` 函数名 <br>
+&emsp;&emsp;`file` 参数：文件路径 <br>
+&emsp;&emsp;`header` 参数：是否将第一行作为列名 <br>
+&emsp;&emsp;`sep` 参数：指定分隔符 <br>
+&emsp;&emsp;`stringsAsFactors` 参数：是否将字符型数据转化为因子 <br>
 
 ---
 # <h1 lang="zh-CN">7.2 函数</h1>
@@ -460,31 +455,30 @@ df.pg.raw <- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
 &emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。<br>
 &emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。<br>
 &emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。<br>
-&emsp;-返回值: 指定函数的输出结果，使用关键字return。<br>
+&emsp;-返回值: 指定函数的输出结果，使用关键字`return`。<br>
 --
 
 ```{r 5.7 mysum}
-#定义一个函数：输入x和y，返回3倍x和5倍y的和
+# 定义一个函数：输入x和y，返回3倍x和5倍y的和
 mysum <- function(x,y){
   result = 3*x+5*y
   return(result)
 }
-#mysum:自定义的函数名
-#x,y:形式参数
-#result = 3*x+5*y:函数体
-#return(result):返回值
+# mysum: 自定义的函数名
+# x,y:  形式参数
+# result = 3*x+5*y: 函数体
+# return(result): 返回值
 
 #调用函数,x=1,y=2
-mysum(1,2)
-mysum(y=1,x=2)
+mysum(1, 2)
+mysum(y=1, x=2)
 ```
 
 ---
 # <h1 lang="zh-CN">7.2 函数</h1>
 ## 7.2.3 自定义函数（小练习）
 <font size = 5>
-- 小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值<br>
-- 通过这个练习，你将学习如何定义一个函数，接受多个参数，并在函数体内执行基本的算术运算
+- 小练习: 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。计算a = 1, b = 2, c = 3时返回的值<br>
 
 ```{r 5.7 myabc}
 # 自定义函数：计算 (a+b)/c
@@ -517,24 +511,23 @@ mysum2 <- function(x = 6,y = 7){
 mysum2()
 mysum2(5)
 ```
-
 ---
 # <h1 lang="zh-CN">7.2 函数</h1>
 ## 7.2.3 自定义函数(小练习)
 <font size = 5>
 - 小练习：<br>
-&emsp;1 定义一个函数,输入值a,b,c,返回(a+b)/c;<br>
+&emsp;1 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。<br>
 **&emsp;2 设置a、b、c的默认值为3、2、1<br>**
 - 通过这个练习，你将学习如何为函数添加默认值
 
 ```{r 5.7 myabc2}
-#myabc <- function(a = ***, b = ***, c = ***){
-#  result = ***
-#  return(***)
-#}
-#myabc(***)
+# myabc <- function(a = ***, b = ***, c = ***){
+#   result = ***
+#   return(***)
+# }
+# myabc(***)
 
-#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+# 用合理的代码替换以上“***”,删除每行前的“#”,即可运行
 ```
 
 ---
@@ -556,13 +549,13 @@ mysum2(5)
 ## 7.2.3 自定义函数
 ```{r mysum3}
 mysum3 <- function(x = 6,y = 7){
-  if(is.numeric(x) == T & is.numeric(y) == T){
+  if(is.numeric(x) & is.numeric(y)){
     result = 3*x+5*y
     return(result)}
   else{print("x and y must be number")}
 }
-#print：输出指定的内容
-#is.numeric:判断是否为数值型。是则返回T，否则返回F
+# print：输出指定的内容
+# is.numeric:判断是否为数值型。是则返回T，否则返回F
 # & : 表示“且”
 mysum3(5,6)
 mysum3('a','b')
@@ -633,13 +626,15 @@ convert_data_types = function(df) {
 # <h1 lang="en">7.2 函数</h1>
 <span style="font-size: 30px;">综合练习</span></center><br>
 
-&emsp;1 定义一个函数用于计算$d′$ 
-&emsp;2 计算不同Shape情况下(immoralself，moralself，immoralother，moralother)<br>基于信号检测论match与mismatch(match为信号，mismatch噪音)之间的d'<br>
+- 定义一个函数用于计算$d'$ 
+
+- 计算不同Shape情况下(immoralself，moralself，immoralother，moralother)<br> 基于信号检测论(match为信号，mismatch噪音)的$d'$
+<br>
 
 提示：<br> 
-- 1 $d′$ = ${Z_{击中率}−Z_{虚报率}}$ = $\frac{M_{SN}-M_N}{\sigma_N}$ <br><br>
-- 2 $击中率$ = $\frac{击中次数}{信号总次数}$ <br><br>
-- 3 $虚报率$ = $\frac{虚报次数}{噪音总次数}$ 
+- (1) $d′$ = ${Z_{击中率}−Z_{虚报率}}$ = $\frac{M_{SN}-M_N}{\sigma_N}$ <br><br>
+- (2) $击中率$ = $\frac{击中次数}{信号总次数}$ <br><br>
+- (3) $虚报率$ = $\frac{虚报次数}{噪音总次数}$ 
 <br>
 
 ---
@@ -656,13 +651,13 @@ dplyr::summarise(
 ```{r, 6.3_prec2, eval=FALSE}
         Dprime = qnorm(
         ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss), #击中率
+               hit / (hit + miss),        # 击中率
                1 - 1 / (2 * (hit + miss)) # 避免击中率为1时的极端情况
               )
         ) 
              - qnorm(
         ifelse(fa / (fa + cr) > 0,
-              fa / (fa + cr), #虚报率
+              fa / (fa + cr),     # 虚报率
               1 / (2 * (fa + cr)) # 避免虚报率为0时的极端情况
               )
                     )
@@ -677,12 +672,11 @@ Step1: 选择需要的变量 <br>
 <br>
 Step2: 基于Sub, Shape分组[extract,filter] <br>
 <br>
-Step3: 使用计算公式，计算d值 <br>
+Step3: 使用计算公式，计算d'值 <br>
 <br>
 Step4: 删除击中、虚报、误报、正确拒绝四个不需要的变量 <br>
 <br>
 Step5: 长转宽，得到每个Shape情况下的信号检测论d值[pivot_wide] <br>
-
 
 ---
 # <h1 lang="en">7.2 函数</h1>
