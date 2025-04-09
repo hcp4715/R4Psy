@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>chapter_7.knit</title>
+    <title>chapter_8.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.30/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
   </head>
@@ -27,12 +28,12 @@
 
 
 class: center, middle
-&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;**第八章**&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-04-19&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-04-09&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 
@@ -57,7 +58,7 @@ font-size: 60px;
 ---
 # Packages
 
-```r
+``` r
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
@@ -96,14 +97,14 @@ class: inverse center middle
 
 
 ---
-## 7.0.1  批量导入数据
+## 8.0.1  回顾: 批量导入数据
 
 
 
 .panelset[
-.panel[.panel-name[获取地址]
+.panel[.panel-name[获取路径]
 
-```r
+``` r
 # 所有数据路径
 *files &lt;- list.files(
   ## &lt;- &amp; =
@@ -117,7 +118,7 @@ class: inverse center middle
 .panel[.panel-name[数据类型转换]
 
 
-```r
+``` r
 convert_data_types &lt;- function(df) {
   df &lt;- df %&gt;% 
     dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
@@ -134,7 +135,7 @@ convert_data_types &lt;- function(df) {
 
 .panel[.panel-name[批量合并]
 
-```r
+``` r
 df3 &lt;- data.frame() 
 
 for (i in seq_along(files)) {
@@ -152,7 +153,7 @@ rm(df, files, i)
 .panel[.panel-name[保存数据]
 
 
-```r
+``` r
 ## NOT RUN
 ## 上节课介绍了write.csv,也可使用bruceR::export
 bruceR::export(
@@ -164,7 +165,7 @@ bruceR::export(
 
 .panel[.panel-name[修改列名-rename]
 
-```r
+``` r
 ## 修改第一列列名 Date 为小写 date
 df3 %&gt;% dplyr::rename(  ## new_name = old_name
   date = Date
@@ -177,7 +178,7 @@ df3 %&gt;% dplyr::rename(  ## new_name = old_name
 ## [13] "CorrResp" "Resp"     "ACC"      "RT"
 ```
 
-```r
+``` r
 ## 将全部列名都变成小写
 df3 %&gt;% dplyr::rename_with(
   ## 将字符向量全部变成小写； ~ 声明这是一个函数，.代表前面的数据(df3)传到.所在的位置
@@ -211,10 +212,10 @@ df3 %&gt;% dplyr::rename_with(
 
 
 ---
-## 7.0.2  代码书写规范
+## 8.0.2  代码书写规范
 
 
-```r
+``` r
 ## 看起来如何？
 iris %&gt;% group_by(Species) %&gt;% summarize_all(mean) %&gt;%
 ungroup %&gt;% gather(measure, value, -Species) %&gt;%
@@ -223,7 +224,7 @@ arrange(value)
 
 --
 
-```r
+``` r
 ### 是不是更整洁一些
 iris %&gt;%
   dplyr::group_by(Species) %&gt;%
@@ -243,21 +244,22 @@ iris %&gt;%
 
 
 ---
-## 7.0.2  代码书写规范
+## 8.0.2  代码书写规范
 
 
 
-```r
+``` r
 ## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
 ## 或者点击 Code --&gt; Reformat Code (快捷键冲突)
 ## 自动增加空格与缩进
 ## 选中下面代码看看效果，尽管效果有限
 ## 还是平时养成书写习惯更好
 
-files&lt;-list.files(
-here::here("data","match"), 
-pattern="data_exp7_rep_match_.*\\.out$", 
-full.names=TRUE)
+files &lt;- list.files(
+  here::here("data","match"),
+  pattern = "data_exp7_rep_match_.*\\.out$",
+  full.names = TRUE
+)
 ```
 
 
@@ -269,7 +271,7 @@ full.names=TRUE)
 
 
 ---
-## 7.0.3  数据清洗
+## 8.0.3  回顾: 数据清洗
 .pull-left[
 ### 列操作
 -   增加、修改、删除(mutate)
@@ -323,10 +325,22 @@ full.names=TRUE)
 
 
 ---
+## 8.0.4  大作业
+
+&lt;img src="picture/chp7/opportunity_rep.jpg" width="45%" style="display: block; margin: auto 0 auto auto;" /&gt;
+
+.footnote[
+-----
+参考链接：[文献列表及状态](https://osf.io/ck5eg); 
+
+email: instituteforreplication@gmail.com.
+]
+
+---
 class: center,middle
 
 
-&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;**第八章**&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
 
@@ -359,7 +373,7 @@ class: inverse,center,middle
 .panelset[
 .panel[.panel-name[view]
 
-```r
+``` r
 quartets::datasaurus_dozen %&gt;%  ## 包中的数据
   head(10)
 ```
@@ -382,7 +396,7 @@ quartets::datasaurus_dozen %&gt;%  ## 包中的数据
 
 .panel[.panel-name[`str()`]
 
-```r
+``` r
 quartets::datasaurus_dozen %&gt;%  ## 包中的数据
   str()
 ```
@@ -403,7 +417,7 @@ quartets::datasaurus_dozen %&gt;%  ## 包中的数据
 
 .panel[.panel-name[`summary()`]
 
-```r
+``` r
 summary(datasaurus_dozen)
 ```
 
@@ -449,24 +463,25 @@ class: middle,center
 
 ---
 layout: true
-# 7.1  探索性数据分析
+# 8.1  探索性数据分析
 
 ---
 
-.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
+.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念： 
+
 **探索性数据分析(Exploratory Data Analysis, EDA)**
 ]
 
-&gt; In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
+&gt; 在统计中，探索性数据分析(EDA)总结数据主要特征的数据分析取向, 通常是使用可视化的方法([Wikipedia](https://en.wikipedia.org/wiki/Exploratory_data_analysis)).  
 
 
-&lt;img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/Data_visualization_process_v1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
 ---
 
-.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
+.bigfont[探索性数据分析是为了更加了解数据，形成对数据基本的判断；但每一次探索背后仍然都有特定的问题。我们可以先从几个基础的简单问题开始:]
 
 .pull-left[
 .bigfont[
@@ -481,7 +496,7 @@ layout: true
 .pull-right[
 
 
-```r
+``` r
 # 读取数据
 pg_raw &lt;- bruceR::import(here::here(
   "data", "penguin","penguin_rawdata.csv"))
@@ -496,16 +511,16 @@ mt_raw &lt;- bruceR::import(here::here(
 .panelset[
 .panel[.panel-name[`head`]
 
-```r
+``` r
 DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
 ```
 
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-26dcb7370cc352016475" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-26dcb7370cc352016475">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10"],["Exp","Exp","Exp"],[7302,7302,7302],[22,22,22],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[1,2,3],["immoralSelf","moralOther","immoralOther"],["immoralOther","moralSelf","moralOther"],["mismatch","mismatch","mismatch"],["n","n","n"],["m","n","n"],[0,1,1],[0.7561,0.7043,0.9903000000000001]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-7f75a777283e43b69af4" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-7f75a777283e43b69af4">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10"],["Exp","Exp","Exp"],[7302,7302,7302],[22,22,22],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[1,2,3],["immoralSelf","moralOther","immoralOther"],["immoralOther","moralSelf","moralOther"],["mismatch","mismatch","mismatch"],["n","n","n"],["m","n","n"],[0,1,1],[0.7561,0.7043,0.9903]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Label","targets":11},{"name":"Match","targets":12},{"name":"CorrResp","targets":13},{"name":"Resp","targets":14},{"name":"ACC","targets":15},{"name":"RT","targets":16}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[`str`]
 
-```r
+``` r
 mt_raw %&gt;% 
   str() 
 ```
@@ -538,7 +553,7 @@ mt_raw %&gt;%
 .panelset[
 .panel[.panel-name[`summary`]
 
-```r
+``` r
 summary(mt_raw) %&gt;% 
   knitr::kable() # 注：kable函数只为了输出
 ```
@@ -557,7 +572,7 @@ summary(mt_raw) %&gt;%
 
 .panel[.panel-name[`skimr::skim()--1`]
 
-```r
+``` r
 skimr::skim(mt_raw) %&gt;% 
   capture.output() %&gt;% 
   .[1:12]
@@ -581,7 +596,7 @@ skimr::skim(mt_raw) %&gt;%
 .panel[.panel-name[`skimr::skim()--2`]
 
 
-```r
+``` r
 skimr::skim(mt_raw) %&gt;% 
   capture.output() %&gt;% 
   .[13:24]
@@ -605,7 +620,7 @@ skimr::skim(mt_raw) %&gt;%
 
 .panel[.panel-name[`skimr::skim()--3`]
 
-```r
+``` r
 skimr::skim(mt_raw) %&gt;% 
   capture.output() %&gt;% 
   .[25:41]
@@ -634,7 +649,7 @@ skimr::skim(mt_raw) %&gt;%
 .panel[.panel-name[`bruceR::Describe()`]
 
 
-```r
+``` r
 bruceR::Describe(mt_raw) %&gt;% 
   capture.output() %&gt;% 
   .[2:17] ## 可以使用 file参数输出 Word
@@ -674,22 +689,22 @@ class: inverse middle center
 ]
 
 ---
-# 7.2  数据可视化
-## 7.2.1 可视化的重要性
+# 8.2  数据可视化
+## 8.2.1 可视化的重要性
 
 .pull-left[
 .size5[
-Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
+任何的统计分析或计算描述性统计值之前，都应该对数据“本来的面貌”进行可视化:  
 
--   A quick and easy way to check our data make sense, and to identify any unusual trends.
+-   简单快速地了解数据质量，发现异常的模式。
 
--   A way to honestly present the features of our data to anyone who reads our research.
+-   诚实地向读者呈现数据的特征。
 ]
 ]
 
 --
 .pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-25-1.png" width="90%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-26-1.png" width="90%" /&gt;
 
 ]
 &lt;br&gt;
@@ -702,8 +717,8 @@ Before we do any statistical analyses or present any summary statistics, we shou
 
 
 ---
-# 7.2  数据可视化
-## 7.2.2 为何使用 ggplot2?
+# 8.2  数据可视化
+## 8.2.2 为何使用 ggplot2?
 &lt;br&gt;
 .size5[
 * 化繁为简：大量的默认值
@@ -722,13 +737,13 @@ Before we do any statistical analyses or present any summary statistics, we shou
 ]
 
 ---
-## 7.2.2 为何使用 ggplot?
+## 8.2.2 为何使用 ggplot?
 
 &lt;img src="picture/chp7/exmp2.png" width="63%" style="display: block; margin: auto;" /&gt;
 
 
 ---
-## 7.2.2 为何使用 ggplot?
+## 8.2.2 为何使用 ggplot?
 
 &lt;img src="picture/chp7/exmp1.png" width="63%" style="display: block; margin: auto;" /&gt;
 
@@ -741,7 +756,7 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 
 
 ---
-## 7.2.3 ggplot2 的逻辑
+## 8.2.3 ggplot2 的逻辑
 .left-column[
 .bigfont[
 -   数据映射
@@ -755,7 +770,7 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 
 
 ---
-## 7.2.3 ggplot2 的逻辑
+## 8.2.3 ggplot2 的逻辑
 
 .left-column[
 .bigfont[
@@ -766,12 +781,12 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 ]
 
 .right-column[
-&lt;img src="https://psyteachr.github.io/data-skills-v1/images/layers.png" width="70%" /&gt;
+&lt;img src="picture/chp7/layers.png" width="70%" /&gt;
 ]
 
 
 ---
-## 7.2.3 ggplot2 的逻辑
+## 8.2.3 ggplot2 的逻辑
 
 .left-column[
 .bigfont[
@@ -786,45 +801,46 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 .panelset[
 .panel[.panel-name[数据映射]
 
-```r
+``` r
 # 以penguin问卷中前后体温为例
 
-p1 &lt;- pg_raw %&gt;% 
-  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
-             y = Temperature_t2)) 
+p1 &lt;- pg_raw %&gt;%
+      ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
+                 y = Temperature_t2)) 
 p1 ## 坐标轴名称已对应，虽然图片为空
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-30-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-31-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[添加图层-散点]
 
-```r
+``` r
 p1 + geom_point()
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-31-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 .panel[.panel-name[添加图层-拟合曲线]
 
-```r
+``` r
 p1 + geom_point() + geom_smooth(method = 'lm')
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-33-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[改变映射]
 
-```r
+``` r
 pg_raw %&gt;% 
-  drop_na(Temperature_t1,Temperature_t2,sex) %&gt;% 
-  ggplot(aes(x = Temperature_t1, 
-             y = Temperature_t2,
-             color = factor(sex))) +
-  geom_point() + geom_smooth()  
+      drop_na(Temperature_t1,Temperature_t2,sex) %&gt;% 
+      ggplot(aes(x = Temperature_t1, 
+                 y = Temperature_t2,
+                 color = factor(sex))) +
+      geom_point() + 
+      geom_smooth()  
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-33-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-34-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -839,14 +855,14 @@ pg_raw %&gt;%
 -   除了 x 和 y，仍然有其他变量进行映射，如 color
 
 ---
-## 7.2.4 单个图片的组成
+## 8.2.4 单个图片的组成
 
 &lt;img src="picture/chp7/comps1.png" width="70%" style="display: block; margin: auto;" /&gt;
 
 
 
 ---
-## 7.2.4 单个图片的组成
+## 8.2.4 单个图片的组成
 
 &lt;img src="picture/chp7/comps2.png" width="75%" style="display: block; margin: auto;" /&gt;
 
@@ -854,7 +870,7 @@ pg_raw %&gt;%
 
 ---
 layout: true
-# 7.3 常用图形
+# 8.3 常用图形
 
 
 ---
@@ -867,17 +883,17 @@ layout: true
 
 .pull-left[
 
-```r
+``` r
 pic_his &lt;- mt_raw %&gt;% 
-  # 确定映射到x轴的变量
-  ggplot(aes(x = RT)) + 
-  geom_histogram(bins = 40) +
-  theme_classic()
+      # 确定映射到x轴的变量
+      ggplot(aes(x = RT)) + 
+      geom_histogram(bins = 40) +
+      theme_classic()
 ```
 ]
 
 .pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-37-1.png" width="100%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-38-1.png" width="100%" /&gt;
 ]
 
 
@@ -889,17 +905,18 @@ pic_his &lt;- mt_raw %&gt;%
 
 .pull-left[
 
-```r
-pic_dens &lt;- mt_raw %&gt;% ggplot()+
-  # 绘制密度曲线
-  geom_density(aes(x = RT)) +
-  theme_classic()
+``` r
+pic_dens &lt;- mt_raw %&gt;% 
+      ggplot() +
+      # 绘制密度曲线 
+      geom_density(aes(x = RT)) +
+      theme_classic()
 ```
 ]
 
 .pull-right[
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-40-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -907,18 +924,19 @@ pic_dens &lt;- mt_raw %&gt;% ggplot()+
 
 .pull-left[
 
-```r
+``` r
 ## 尝试将两个图层叠加在一起
-mt_raw %&gt;% ggplot(aes(x = RT))+
-  geom_histogram(bins = 40) + 
-  geom_density() +
-  theme_classic()
+mt_raw %&gt;% 
+      ggplot(aes(x = RT))+
+      geom_histogram(bins = 40) + 
+      geom_density() +
+      theme_classic()
 ```
 ]
 
 
 .pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-41-1.png" width="100%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-42-1.png" width="100%" /&gt;
 似乎密度曲线没有显示…
 原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
 如果仔细观察 x 坐标轴还是能看到细微差异的。
@@ -930,20 +948,20 @@ mt_raw %&gt;% ggplot(aes(x = RT))+
 ## 直方图 + 密度图
 .pull-left[
 
-```r
+``` r
 pic_mix &lt;- mt_raw %&gt;% 
-  ggplot(aes(x = RT,
-  ## 直方图的统计结果通过after_stat(density)传递给了密度图
-*       y = after_stat(density))) +
-  geom_histogram() +
-  geom_density() +
-  theme_classic()
-# 设定绘图风格
+      ggplot(aes(x = RT,
+                 ## 直方图的统计结果通过after_stat(density)传递给了密度图
+                 y = after_stat(density))) +  
+      geom_histogram() +
+      geom_density() +
+      # 设定绘图风格
+      theme_classic()
 ```
 ]
 
 .pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-43-1.png" width="100%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-44-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -954,19 +972,18 @@ pic_mix &lt;- mt_raw %&gt;%
 
 .pull-left[
 
-```r
-pic_box &lt;- mt_raw %&gt;% ggplot(aes(
-  x = Label,
-  y = RT)) +
-  geom_boxplot(staplewidth = 1) +
-  # 绘制箱线图并添加上下边缘线
-  theme_classic()
+``` r
+pic_box &lt;- mt_raw %&gt;% 
+      ggplot(aes(x = Label, y = RT)) +
+      geom_boxplot(staplewidth = 1) +
+      # 绘制箱线图并添加上下边缘线 
+      theme_classic()
 ```
 
 
 ]
 .pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-45-1.png" width="100%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-46-1.png" width="100%" /&gt;
 ]
 
 .footnote[
@@ -976,13 +993,13 @@ pic_box &lt;- mt_raw %&gt;% ggplot(aes(
 ]
 ---
 layout: true
-# 7.4 Explore data with DataExplorer
+# 8.4 Explore data with DataExplorer
 
 ---
 
 
 
-```r
+``` r
  DataExplorer::plot_str(mt_raw)
 ```
 
@@ -991,67 +1008,67 @@ layout: true
 ---
 
 
-```r
+``` r
 DataExplorer::plot_intro(mt_raw)
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-48-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-49-1.png" width="70%" /&gt;
 
 
 ---
 
 
-```r
+``` r
  DataExplorer::plot_missing(mt_raw)
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-49-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-50-1.png" width="70%" /&gt;
 
 ---
 
 
-```r
+``` r
  DataExplorer::plot_bar(mt_raw)
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-50-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-51-1.png" width="70%" /&gt;
 
 ---
 
 
-```r
+``` r
  DataExplorer::plot_bar(mt_raw, by="Match")
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-51-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-52-1.png" width="70%" /&gt;
 
 ---
 
 
-```r
+``` r
 DataExplorer::plot_histogram(mt_raw)
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-52-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-53-1.png" width="70%" /&gt;
 
 
 ---
 
 
-```r
+``` r
  DataExplorer::plot_qq(pg_raw[,2:10])
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-53-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-54-1.png" width="70%" /&gt;
 
 ---
 
 
-```r
+``` r
 DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-54-1.png" width="70%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-55-1.png" width="70%" /&gt;
 
 ---
 ## 使用ggpairs
@@ -1059,7 +1076,7 @@ DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
 .panelset[
 .panel[.panel-name[Code]
 
-```r
+``` r
 ## 以 penguin project 数据中 ALEX, stress和 ECR 为例
 pg_raw %&gt;% 
   mutate(
@@ -1083,7 +1100,7 @@ pg_raw %&gt;%
 
 .panel[.panel-name[Output]
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-55-1.png" width="100%" /&gt;
+&lt;img src="chapter_8_files/figure-html/unnamed-chunk-56-1.png" width="100%" /&gt;
 
 ]
 
@@ -1114,6 +1131,8 @@ layout: false
 -   [R Graphics Cookbook](https://r-graphics.org/)
 
 -   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
+
+-   [The Landscape of R Packages for Automated Exploratory Data Analysis](https://doi.org/10.32614/RJ-2019-033)
 ]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

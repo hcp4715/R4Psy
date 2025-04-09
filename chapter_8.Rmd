@@ -19,7 +19,7 @@ params:
 
 
 class: center, middle
-<span style="font-size: 50px;">**第七章**</span> <br>
+<span style="font-size: 50px;">**第八章**</span> <br>
 <span style="font-size: 50px;">__如何探索数据: __</span> <br>
 <span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
@@ -94,15 +94,15 @@ class: inverse center middle
 
 
 ---
-## 7.0.1  批量导入数据
+## 8.0.1  回顾: 批量导入数据
 ```{r xaringan-panelset, echo=FALSE}
 xaringanExtra::use_panelset()
 ```
 
 
 .panelset[
-.panel[.panel-name[获取地址]
-```{r }
+.panel[.panel-name[获取路径]
+```{r}
 # 所有数据路径
 files <- list.files(  #<<
   ## <- & =
@@ -194,7 +194,7 @@ df3 %>% dplyr::rename_with(
 
 
 ---
-## 7.0.2  代码书写规范
+## 8.0.2  代码书写规范
 
 ```{r eval=FALSE}
 ## 看起来如何？
@@ -224,7 +224,7 @@ iris %>%
 
 
 ---
-## 7.0.2  代码书写规范
+## 8.0.2  代码书写规范
 
 
 ```{r eval=FALSE}
@@ -250,7 +250,7 @@ files <- list.files(
 
 
 ---
-## 7.0.3  数据清洗
+## 8.0.3  回顾: 数据清洗
 .pull-left[
 ### 列操作
 -   增加、修改、删除(mutate)
@@ -304,10 +304,24 @@ files <- list.files(
 
 
 ---
+## 8.0.4  大作业
+
+```{r,echo=FALSE,out.width="45%",fig.align='right'}
+knitr::include_graphics("picture/chp7/opportunity_rep.jpg")
+```
+
+.footnote[
+-----
+参考链接：[文献列表及状态](https://osf.io/ck5eg); 
+
+email: instituteforreplication@gmail.com.
+]
+
+---
 class: center,middle
 
 
-<span style="font-size: 50px;">**第七章**</span> <br>
+<span style="font-size: 50px;">**第八章**</span> <br>
 <span style="font-size: 50px;">__如何探索数据: __</span> <br>
 <span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
 
@@ -378,7 +392,7 @@ class: middle,center
 ```{r echo=FALSE,eval=FALSE}
 ## NOT SHOW
 ## PLOT GIF
-pacman::p_load(camcorder,tidyverse,bruceR)
+pacman::p_load(camcorder, tidyverse, bruceR)
 data = quartets::datasaurus_dozen
 colors = c('#FF5733','#00CED1','#FFD700',
            '#8A2BE2','#32CD32','#4682B4',
@@ -443,26 +457,27 @@ quartets::datasaurus_dozen %>%
 
 ---
 layout: true
-# 7.1  探索性数据分析
+# 8.1  探索性数据分析
 
 ---
 
-.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
+.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念： 
+
 **探索性数据分析(Exploratory Data Analysis, EDA)**
 ]
 
-> In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
+> 在统计中，探索性数据分析(EDA)总结数据主要特征的数据分析取向, 通常是使用可视化的方法([Wikipedia](https://en.wikipedia.org/wiki/Exploratory_data_analysis)).  
 
 
 ```{r,echo=FALSE,out.width="50%",fig.align='center'}
-knitr::include_graphics("https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png")
+knitr::include_graphics("picture/chp7/Data_visualization_process_v1.png")
 ```
 
 
 
 ---
 
-.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
+.bigfont[探索性数据分析是为了更加了解数据，形成对数据基本的判断；但每一次探索背后仍然都有特定的问题。我们可以先从几个基础的简单问题开始:]
 
 .pull-left[
 .bigfont[
@@ -508,7 +523,6 @@ mt_raw %>%
 .panelset[
 .panel[.panel-name[`summary`]
 ```{r,out.width="10%"}
-
 summary(mt_raw) %>% 
   knitr::kable() # 注：kable函数只为了输出
 ```
@@ -560,22 +574,22 @@ class: inverse middle center
 ]
 
 ---
-# 7.2  数据可视化
-## 7.2.1 可视化的重要性
+# 8.2  数据可视化
+## 8.2.1 可视化的重要性
 
 .pull-left[
 .size5[
-Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
+任何的统计分析或计算描述性统计值之前，都应该对数据“本来的面貌”进行可视化:  
 
--   A quick and easy way to check our data make sense, and to identify any unusual trends.
+-   简单快速地了解数据质量，发现异常的模式。
 
--   A way to honestly present the features of our data to anyone who reads our research.
+-   诚实地向读者呈现数据的特征。
 ]
 ]
 
 --
 .pull-right[
-```{r echo=FALSE,fig.width=5,out.width='90%',fig.align='default'}
+```{r echo=FALSE, fig.width=5,out.width='90%',fig.align='default'}
 library(showtext)
 showtext::showtext_auto(enable = T)
 quartets::datasaurus_dozen %>% 
@@ -597,8 +611,8 @@ quartets::datasaurus_dozen %>%
 
 
 ---
-# 7.2  数据可视化
-## 7.2.2 为何使用 ggplot2?
+# 8.2  数据可视化
+## 8.2.2 为何使用 ggplot2?
 <br>
 .size5[
 * 化繁为简：大量的默认值
@@ -617,7 +631,7 @@ quartets::datasaurus_dozen %>%
 ]
 
 ---
-## 7.2.2 为何使用 ggplot?
+## 8.2.2 为何使用 ggplot?
 
 ```{r echo=FALSE,out.width='63%',fig.align='center'}
 knitr::include_graphics('picture/chp7/exmp2.png')
@@ -625,7 +639,7 @@ knitr::include_graphics('picture/chp7/exmp2.png')
 
 
 ---
-## 7.2.2 为何使用 ggplot?
+## 8.2.2 为何使用 ggplot?
 
 ```{r echo=FALSE,out.width='63%',fig.align='center'}
 knitr::include_graphics('picture/chp7/exmp1.png')
@@ -640,7 +654,7 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 
 
 ---
-## 7.2.3 ggplot2 的逻辑
+## 8.2.3 ggplot2 的逻辑
 .left-column[
 .bigfont[
 -   数据映射
@@ -656,7 +670,7 @@ knitr::include_graphics('picture/chp7/mapping.jpg')
 
 
 ---
-## 7.2.3 ggplot2 的逻辑
+## 8.2.3 ggplot2 的逻辑
 
 .left-column[
 .bigfont[
@@ -668,13 +682,14 @@ knitr::include_graphics('picture/chp7/mapping.jpg')
 
 .right-column[
 ```{r echo=FALSE,out.width='70%'}
-knitr::include_graphics('https://psyteachr.github.io/data-skills-v1/images/layers.png')
+# knitr::include_graphics('https://psyteachr.github.io/data-skills-v1/images/layers.png')
+knitr::include_graphics('picture/chp7/layers.png')
 ```
 ]
 
 
 ---
-## 7.2.3 ggplot2 的逻辑
+## 8.2.3 ggplot2 的逻辑
 
 .left-column[
 .bigfont[
@@ -691,11 +706,10 @@ knitr::include_graphics('https://psyteachr.github.io/data-skills-v1/images/layer
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
 # 以penguin问卷中前后体温为例
 
-p1 <- pg_raw %>% 
-  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
-             y = Temperature_t2)) 
+p1 <- pg_raw %>%
+      ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
+                 y = Temperature_t2)) 
 p1 ## 坐标轴名称已对应，虽然图片为空
-  
 ```
 
 
@@ -711,11 +725,12 @@ p1 + geom_point() + geom_smooth(method = 'lm')
 .panel[.panel-name[改变映射]
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
 pg_raw %>% 
-  drop_na(Temperature_t1,Temperature_t2,sex) %>% 
-  ggplot(aes(x = Temperature_t1, 
-             y = Temperature_t2,
-             color = factor(sex))) +
-  geom_point() + geom_smooth()  
+      drop_na(Temperature_t1,Temperature_t2,sex) %>% 
+      ggplot(aes(x = Temperature_t1, 
+                 y = Temperature_t2,
+                 color = factor(sex))) +
+      geom_point() + 
+      geom_smooth()  
 
 ```
 
@@ -732,7 +747,7 @@ pg_raw %>%
 -   除了 x 和 y，仍然有其他变量进行映射，如 color
 
 ---
-## 7.2.4 单个图片的组成
+## 8.2.4 单个图片的组成
 
 ```{r echo=FALSE,out.width='70%',fig.align='center'}
 knitr::include_graphics('picture/chp7/comps1.png')
@@ -742,7 +757,7 @@ knitr::include_graphics('picture/chp7/comps1.png')
 
 
 ---
-## 7.2.4 单个图片的组成
+## 8.2.4 单个图片的组成
 
 ```{r echo=FALSE,out.width='75%',fig.align='center'}
 knitr::include_graphics('picture/chp7/comps2.png')
@@ -753,7 +768,7 @@ knitr::include_graphics('picture/chp7/comps2.png')
 
 ---
 layout: true
-# 7.3 常用图形
+# 8.3 常用图形
 
 
 ---
@@ -767,10 +782,10 @@ layout: true
 .pull-left[
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
 pic_his <- mt_raw %>% 
-  # 确定映射到x轴的变量
-  ggplot(aes(x = RT)) + 
-  geom_histogram(bins = 40) +
-  theme_classic()
+      # 确定映射到x轴的变量
+      ggplot(aes(x = RT)) + 
+      geom_histogram(bins = 40) +
+      theme_classic()
 ```
 ]
 
@@ -789,10 +804,11 @@ pic_his
 
 .pull-left[
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
-pic_dens <- mt_raw %>% ggplot()+
-  # 绘制密度曲线
-  geom_density(aes(x = RT)) +
-  theme_classic()
+pic_dens <- mt_raw %>% 
+      ggplot() +
+      # 绘制密度曲线 
+      geom_density(aes(x = RT)) +
+      theme_classic()
 ```
 ]
 
@@ -809,10 +825,11 @@ pic_dens
 .pull-left[
 ```{r eval=FALSE}
 ## 尝试将两个图层叠加在一起
-mt_raw %>% ggplot(aes(x = RT))+
-  geom_histogram(bins = 40) + 
-  geom_density() +
-  theme_classic()
+mt_raw %>% 
+      ggplot(aes(x = RT))+
+      geom_histogram(bins = 40) + 
+      geom_density() +
+      theme_classic()
 ```
 ]
 
@@ -820,10 +837,10 @@ mt_raw %>% ggplot(aes(x = RT))+
 .pull-right[
 ```{r echo=FALSE,fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
 
-mt_raw %>% ggplot(aes(x = RT))+
-  geom_histogram(bins = 40) + 
-  geom_density() +
-  theme_classic()
+mt_raw %>% 
+      ggplot(aes(x = RT)) +
+      geom_histogram(bins = 40) + 
+      theme_classic()
 ```
 似乎密度曲线没有显示…
 原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
@@ -837,13 +854,13 @@ mt_raw %>% ggplot(aes(x = RT))+
 .pull-left[
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%'}
 pic_mix <- mt_raw %>% 
-  ggplot(aes(x = RT,
-  ## 直方图的统计结果通过after_stat(density)传递给了密度图
-        y = after_stat(density))) +  #<<
-  geom_histogram() +
-  geom_density() +
-  theme_classic()
-# 设定绘图风格
+      ggplot(aes(x = RT,
+                 ## 直方图的统计结果通过after_stat(density)传递给了密度图
+                 y = after_stat(density))) +  
+      geom_histogram() +
+      geom_density() +
+      # 设定绘图风格
+      theme_classic()
 ```
 ]
 
@@ -861,12 +878,11 @@ pic_mix
 
 .pull-left[
 ```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
-pic_box <- mt_raw %>% ggplot(aes(
-  x = Label,
-  y = RT)) +
-  geom_boxplot(staplewidth = 1) +
-  # 绘制箱线图并添加上下边缘线
-  theme_classic()
+pic_box <- mt_raw %>% 
+      ggplot(aes(x = Label, y = RT)) +
+      geom_boxplot(staplewidth = 1) +
+      # 绘制箱线图并添加上下边缘线 
+      theme_classic()
 ```
 
 
@@ -884,7 +900,7 @@ pic_box
 ]
 ---
 layout: true
-# 7.4 Explore data with DataExplorer
+# 8.4 Explore data with DataExplorer
 
 ---
 
@@ -990,4 +1006,6 @@ layout: false
 -   [R Graphics Cookbook](https://r-graphics.org/)
 
 -   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
+
+-   [The Landscape of R Packages for Automated Exploratory Data Analysis](https://doi.org/10.32614/RJ-2019-033)
 ]
