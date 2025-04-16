@@ -4,14 +4,11 @@
     <title>chapter_11.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-<<<<<<< HEAD
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
-=======
-    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
->>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <script src="libs/viz-1.8.2/viz.js"></script>
     <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
@@ -28,7 +25,7 @@ class: center, middle
 &lt;span style="font-size: 50px;"&gt;回归模型(四)：中介分析&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-05-15&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-04-16&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
@@ -54,7 +51,7 @@ font-size: 10px;
 
 ## 准备工作
 
-```r
+``` r
 # Packages
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
@@ -66,19 +63,6 @@ pacman::p_load(tidyverse,easystats,magrittr,
                quartets,
                # 绘图
                patchwork,DiagrammeR,magick)
-<<<<<<< HEAD
-```
-
-```
-## 程序包'magick'打开成功，MD5和检查也通过
-## 
-## 下载的二进制程序包在
-## 	C:\Users\dazai osamu\AppData\Local\Temp\RtmpoxA4eJ\downloaded_packages里
-```
-
-```r
-=======
->>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 options(scipen=99999,digits = 3)
 set.seed(1002)
 ```
@@ -109,7 +93,7 @@ class: inverse, middle ,center
 .panel[.panel-name[performance]
 
 
-```r
+``` r
 lm(y ~ x,data = anscombe_quartet %&gt;% 
      dplyr::filter(dataset == '(3) Outlier')) %&gt;% 
 * performance::check_model(check = c('linearity','outliers'))
@@ -182,16 +166,16 @@ class: inverse, middle ,center
 
 .pull-left[
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-eb68ae1ca613bc458c42" style="width:540px;height:100px;"></div>
-<script type="application/json" data-for="htmlwidget-eb68ae1ca613bc458c42">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X1 -> X3\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-a613bc458c42c74d20ac" style="width:540px;height:100px;"></div>
+<script type="application/json" data-for="htmlwidget-a613bc458c42c74d20ac">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X1 -> X3\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 ]
 
 
 .pull-right[
 
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-c74d20ac9049b4ab04e2" style="width:540px;height:100px;"></div>
-<script type="application/json" data-for="htmlwidget-c74d20ac9049b4ab04e2">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X3 -> X1\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-9049b4ab04e235b3c2d8" style="width:540px;height:100px;"></div>
+<script type="application/json" data-for="htmlwidget-9049b4ab04e235b3c2d8">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X3 -> X1\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 ]
 
 ---
@@ -204,8 +188,8 @@ class: inverse, middle ,center
 对于中介过程的量化包括路径分析和SEM（同时包含测量模型和结构模型），后面的介绍基于路径分析。
 
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-35b3c2d84228862c5168" style="width:540px;height:100px;"></div>
-<script type="application/json" data-for="htmlwidget-35b3c2d84228862c5168">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-4228862c516815729d10" style="width:540px;height:100px;"></div>
+<script type="application/json" data-for="htmlwidget-4228862c516815729d10">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 
 ---
@@ -223,8 +207,8 @@ class: inverse, middle ,center
 ]
 
 .pull-right[
-<div class="grViz html-widget html-fill-item" id="htmlwidget-15729d10e6c1d12556bb" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-15729d10e6c1d12556bb">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  \n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.4,weight = 0.3,fontsize = 10]\n  e1[style = NULL,fillcolor = NULL,penwidth = 0,height = 0.02,width = 0.02]\n  \n  # 定义边\n  edge [color = black, arrowhead = vee]\n  {rank = same; e1; Y}\n  X -> Y [label = \"c\"]\n  e1 -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-e6c1d12556bbfadd3469" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-e6c1d12556bbfadd3469">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  \n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.4,weight = 0.3,fontsize = 10]\n  e1[style = NULL,fillcolor = NULL,penwidth = 0,height = 0.02,width = 0.02]\n  \n  # 定义边\n  edge [color = black, arrowhead = vee]\n  {rank = same; e1; Y}\n  X -> Y [label = \"c\"]\n  e1 -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 ]
 
 
@@ -244,8 +228,8 @@ class: inverse, middle ,center
 
 .pull-right[
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-fadd34694e292ff98532" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-fadd34694e292ff98532">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-4e292ff98532998346cb" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-4e292ff98532998346cb">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 ]
 
@@ -279,8 +263,8 @@ $$ Y = i_3 + c'X + b(i_2 + aX + e_2) + e_3$$
 ]
 
 .pull-right[
-<div class="grViz html-widget html-fill-item" id="htmlwidget-998346cb44a12602da36" style="width:540px;height:432px;"></div>
-<script type="application/json" data-for="htmlwidget-998346cb44a12602da36">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-44a12602da368b5ea12c" style="width:540px;height:432px;"></div>
+<script type="application/json" data-for="htmlwidget-44a12602da368b5ea12c">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 ]
 
@@ -299,7 +283,7 @@ $$ Y = i_3 + c'X + b(i_2 + aX + e_2) + e_3$$
 
 
 
-```r
+``` r
 tot = lm(CBT ~ DEQ,data = pg_raw %&gt;% 
            dplyr::filter(romantic == 1))
 # 计算相关
@@ -360,22 +344,22 @@ data.frame('相关系数' =
 .panelset[
 .panel[.panel-name[假设]
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-8b5ea12c3ecaffd5a5a8" style="width:540px;height:300px;"></div>
-<script type="application/json" data-for="htmlwidget-8b5ea12c3ecaffd5a5a8">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  DEQ -> CSI[label = \"+\"]\n  DEQ -> CBT[label = \"-\"]\n  CSI -> CBT[label = \"+\"]\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-3ecaffd5a5a8e2617df3" style="width:540px;height:300px;"></div>
+<script type="application/json" data-for="htmlwidget-3ecaffd5a5a8e2617df3">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  DEQ -> CSI[label = \"+\"]\n  DEQ -> CBT[label = \"-\"]\n  CSI -> CBT[label = \"+\"]\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[数据导入]
 
 
 
 
-```r
+``` r
 # 数据导入
 pg_raw = bruceR::import(here::here('data','penguin','penguin_rawdata_full.csv'))
 ```
 
 .panel[.panel-name[计算CSI]
 
-```r
+``` r
 # 计算CSI
 ### get the column names:
 snDivNames  &lt;- c("SNI3", "SNI5", "SNI7", "SNI9", "SNI11", "SNI13",  "SNI15", "SNI17","SNI18","SNI19","SNI21")
@@ -414,7 +398,7 @@ pg_raw$socialdiversity &lt;- snDivData$SNdiversity
 .panel[.panel-name[计算CBT]
 
 
-```r
+``` r
 ## 更改列名
 pg_raw %&lt;&gt;% dplyr::rename(CSI = socialdiversity)
 ###  计算CBT（mean）
@@ -467,7 +451,7 @@ Ref: [https://lavaan.ugent.be/tutorial/syntax1.html](https://lavaan.ugent.be/tut
 .panel[.panel-name[lavaan语句]
 
 
-```r
+``` r
 med_model &lt;- "
   # 直接效应(Y = cX)
   CBT ~ c*DEQ   # 语法同回归，但需要声明回归系数
@@ -492,7 +476,7 @@ fit &lt;- lavaan::sem(med_model,
 .panel[.panel-name[lavaan-output]
 
 
-```r
+``` r
 fit %&gt;% summary() %&gt;% capture.output() %&gt;% .[21:38]
 ```
 
@@ -519,11 +503,7 @@ fit %&gt;% summary() %&gt;% capture.output() %&gt;% .[21:38]
 
 .panel[.panel-name[中介图-Paper]
 
-<<<<<<< HEAD
-&lt;img src="picture/chp11/lav.png" style="display: block; margin: auto;" /&gt;
-=======
 &lt;img src="picture/chp11/lav.png" width="1158" style="display: block; margin: auto;" /&gt;
->>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 
 
 .panel[.panel-name[中介图-tidySEM]
@@ -532,7 +512,7 @@ fit %&gt;% summary() %&gt;% capture.output() %&gt;% .[21:38]
 
 .pull-left[
 
-```r
+``` r
 ## 与DiagrammeR::get_edges相冲突
 detach("package:DiagrammeR", unload = TRUE)
 ## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
@@ -556,7 +536,7 @@ tidySEM::graph_sem(fit,digits = 3,
 .panelset[
 .panel[.panel-name[bruceR::PROCESS]
 
-```r
+``` r
 ## RUN IN CONSOLE !!!
 pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;% 
   bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
@@ -615,21 +595,18 @@ pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;%
 ## Sample Size : 792 (38 missing observations deleted)
 ## Random Seed : set.seed()
 ## Simulations : 100 (Bootstrap)
+```
+
+```
 ## 
 ## Running 100 simulations...
 ## Indirect Path: "DEQ" (X) ==&gt; "CSI" (M) ==&gt; "CBT" (Y)
 ## ───────────────────────────────────────────────────────────────
 ##                Effect    S.E.      z     p        [Boot 95% CI]
 ## ───────────────────────────────────────────────────────────────
-<<<<<<< HEAD
-## Indirect (ab)   0.002 (0.000)  5.233 &lt;.001 *** [ 0.001,  0.003]
-## Direct (c')    -0.004 (0.001) -3.718 &lt;.001 *** [-0.006, -0.002]
-## Total (c)      -0.002 (0.001) -2.074  .038 *   [-0.004, -0.000]
-=======
-## Indirect (ab)   0.002 (0.000)  5.055 &lt;.001 *** [ 0.001,  0.003]
-## Direct (c')    -0.004 (0.001) -3.555 &lt;.001 *** [-0.006, -0.002]
-## Total (c)      -0.002 (0.001) -2.035  .042 *   [-0.004, -0.000]
->>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
+## Indirect (ab)   0.002 (0.000)  5.457 &lt;.001 *** [ 0.001,  0.002]
+## Direct (c')    -0.004 (0.001) -3.283  .001 **  [-0.006, -0.002]
+## Total (c)      -0.002 (0.001) -1.770  .077 .   [-0.004, -0.000]
 ## ───────────────────────────────────────────────────────────────
 ## Percentile Bootstrap Confidence Interval
 ## (SE and CI are estimated based on 100 Bootstrap samples.)
@@ -679,15 +656,9 @@ pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;%
 ##  [9] "───────────────────────────────────────────────────────────────"
 ## [10] "               Effect    S.E.      z     p        [Boot 95% CI]"
 ## [11] "───────────────────────────────────────────────────────────────"
-<<<<<<< HEAD
-## [12] "Indirect (ab)   0.002 (0.000)  4.812 &lt;.001 *** [ 0.001,  0.003]"
-## [13] "Direct (c')    -0.004 (0.001) -3.355 &lt;.001 *** [-0.006, -0.002]"
-## [14] "Total (c)      -0.002 (0.001) -2.037  .042 *   [-0.004, -0.000]"
-=======
-## [12] "Indirect (ab)   0.002 (0.000)  5.804 &lt;.001 *** [ 0.001,  0.002]"
-## [13] "Direct (c')    -0.004 (0.001) -3.750 &lt;.001 *** [-0.006, -0.002]"
-## [14] "Total (c)      -0.002 (0.001) -2.135  .033 *   [-0.005, -0.001]"
->>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
+## [12] "Indirect (ab)   0.002 (0.000)  4.591 &lt;.001 *** [ 0.001,  0.003]"
+## [13] "Direct (c')    -0.004 (0.001) -3.442 &lt;.001 *** [-0.006, -0.002]"
+## [14] "Total (c)      -0.002 (0.001) -2.035  .042 *   [-0.004, -0.000]"
 ## [15] "───────────────────────────────────────────────────────────────"
 ```
 
@@ -784,8 +755,8 @@ Ref: 《The Book of Why: The New Science of Cause and Effect》
 ]]
 
 .pull-right[
-<div class="grViz html-widget html-fill-item" id="htmlwidget-e2617df3851641c94082" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-e2617df3851641c94082">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-851641c94082d175c2bf" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-851641c94082d175c2bf">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 ]
 
@@ -817,8 +788,8 @@ Ref: 《The Book of Why: The New Science of Cause and Effect》
 ]
 
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-d175c2bf8b0efa5b56e9" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-d175c2bf8b0efa5b56e9">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-8b0efa5b56e9aca18bd5" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-8b0efa5b56e9aca18bd5">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 
 
@@ -840,8 +811,8 @@ Ref: 《The Book of Why: The New Science of Cause and Effect》
 对X(如使用不同难度的教材)和A(控制组 vs 提供相关辅导以减轻焦虑)进行操纵，如果对A的操纵不能影响Y，则可以证明中介路径不合理
 ]
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-aca18bd523be5ef902ca" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-aca18bd523be5ef902ca">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n  X -> A\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-23be5ef902ca5828cb13" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-23be5ef902ca5828cb13">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n  X -> A\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 
 ---
@@ -850,12 +821,6 @@ Ref
 
 -   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
 
-<<<<<<< HEAD
--   调节验证中介：[https://doi.org/10.1016/j.jesp.2023.104507](https://doi.org/10.1016/j.jesp.2023.104507)
-
--   内隐中介分析：[https://journals.sagepub.com/doi/10.1177/25152459211047227](https://journals.sagepub.com/doi/10.1177/25152459211047227)
-
-=======
 -   通过实验来验证中介效应([葛枭语, 2023](https://doi.org/10.1016/j.jesp.2023.104507))
 
 -   内隐中介分析([Bullock et al , 2023, AMPPS](https://journals.sagepub.com/doi/10.1177/25152459211047227))
@@ -863,7 +828,6 @@ Ref
 -   相关不等于因果([Rohrer, 2018](https://doi.org/10.1177/2515245917745629))
 
 -   A lot of processes ([Rohrer, 2022](https://doi.org/10.1177/25152459221095827))
->>>>>>> cc43e2413a99a12b8a8a6d535263c085c1fec44f
 ]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
