@@ -17,7 +17,7 @@ params:
 ---
 
 class: center, middle
-<span style="font-size: 50px;">**第八章**</span> <br>
+<span style="font-size: 50px;">**第九章**</span> <br>
 <span style="font-size: 50px;">回归模型(一)</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
