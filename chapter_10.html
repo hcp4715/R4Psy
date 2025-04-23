@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>chapter_9.knit</title>
+    <title>chapter_10.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.27/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -25,11 +26,11 @@
 
 
 class: center, middle
-&lt;span style="font-size: 50px;"&gt;**第九章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;**第十章**&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 50px;"&gt;回归模型(二)：分层线性模型&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-04-29&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-04-23&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
@@ -52,7 +53,7 @@ font-size: 60px;
 
 ## 准备工作
 
-```r
+``` r
 # Packages
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
@@ -97,14 +98,14 @@ class: inverse, middle ,center
 
 
 ---
-# 0.2 虚拟编码
+# 0.2 虚拟编码(indicator coding)
 
 
 
 .panelset[
 .panel[.panel-name[预处理]
 
-```r
+``` r
 df.penguin &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %&gt;%
   dplyr::mutate(subjID = row_number()) %&gt;%
   dplyr::select(subjID,Temperature_t1, Temperature_t2, socialdiversity, 
@@ -127,7 +128,7 @@ df.penguin$climate &lt;- cut(df.penguin$DEQ,
 .panel[.panel-name[虚拟编码]
 
 
-```r
+``` r
 # 比较不同气候条件下个体的体温是否存在差异：
 ## 虚拟编码
 contrasts(df.penguin$climate) &lt;- stats::contr.treatment(unique(df.penguin$climate))
@@ -144,7 +145,7 @@ lm_temp &lt;- stats::lm(Temperature ~ climate,data = df.penguin)
 .pull-left[
 
 
-```r
+``` r
 ## 输出回归系数
 lm_temp %&gt;% 
   tidy() %&gt;% 
@@ -167,7 +168,7 @@ lm_temp %&gt;%
 .pull-right[
 
 
-```r
+``` r
 ## 可以看到回归的结果以热带为基准，系数则为均值之差
 df.penguin %&gt;% 
   group_by(climate) %&gt;% 
@@ -190,7 +191,7 @@ df.penguin %&gt;%
 .footnote[
 
 ----------
-虚拟编码方式很多，可参考[这里](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/#ORTHOGONAL)
+虚拟编码方式很多，可参考[这里](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/)
 ]
 
 
@@ -211,7 +212,7 @@ class: center, middle, inverse
 .panelset[
 .panel[.panel-name[预处理]
 
-```r
+``` r
 mt_raw &lt;- bruceR::import(here::here('data','match','match_raw.csv'))
 
 mt_raw &lt;- mt_raw %&gt;% 
@@ -222,8 +223,8 @@ mt_raw &lt;- mt_raw %&gt;%
 ```
 
 .panel[.panel-name[数据展示]
-<div id="htmlwidget-d783bfb79768b27a6bab" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d783bfb79768b27a6bab">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-1b38b40029b1687447ba" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-1b38b40029b1687447ba">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Valence","targets":9},{"name":"Identity","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 
@@ -250,20 +251,22 @@ mt_raw &lt;- mt_raw %&gt;%
 .panelset[
 .panel[.panel-name[ANOVA-bruceR]
 
-```r
+``` r
 mt_mean &lt;- mt_raw %&gt;%
-  dplyr::filter(!is.na(RT) &amp; Match == "match" &amp; ACC == 1) %&gt;%
-  dplyr::group_by(Sub,Identity,Valence) %&gt;%
-  dplyr::summarise(RT = mean(RT)) %&gt;%
-  dplyr::ungroup()
+      dplyr::filter(!is.na(RT) &amp; Match == "match" &amp; ACC == 1) %&gt;%
+      dplyr::group_by(Sub,Identity,Valence) %&gt;%
+      dplyr::summarise(RT = mean(RT)) %&gt;%
+      dplyr::ungroup()
 
 ##  本例为长数据
 ##  RUN IN CONSOLE!
 ##  球形检验输出：
 bruceR::MANOVA(data = mt_mean,
-       subID = 'Sub', # 被试编号
-       dv= 'RT', # dependent variable
-       within = c('Identity', 'Valence')) %&gt;% capture.output() %&gt;% .[c(33:37)]
+               subID = 'Sub', # 被试编号
+               dv= 'RT',      # dependent variable
+               within = c('Identity', 'Valence')) %&gt;%
+      capture.output() %&gt;% 
+      .[c(33:37)]
 ```
 
 ```
@@ -277,12 +280,12 @@ bruceR::MANOVA(data = mt_mean,
 
 .panel[.panel-name[ANOVA-bruceR(输出)]
 
-```r
+``` r
 bruceR::MANOVA(data = mt_mean,
                subID = 'Sub',
                dv = 'RT',
                within = c('Identity', 'Valence')) %&gt;%
-  capture.output() %&gt;% .[c(15:31)]
+      capture.output() %&gt;% .[c(15:31)]
 ```
 
 ```
@@ -308,13 +311,13 @@ bruceR::MANOVA(data = mt_mean,
 
 .panel[.panel-name[ANOVA-afex]
 
-```r
+``` r
 ## bruceR::MANOVA 是对afex的封装
 m_aov &lt;- afex::aov_ez(
-  data = mt_mean,
-  id = 'Sub',
-  dv = 'RT',
-  within = c('Identity', 'Valence'))
+      data = mt_mean,
+      id = 'Sub',
+      dv = 'RT',
+      within = c('Identity', 'Valence'))
 
 m_aov
 ```
@@ -420,8 +423,8 @@ layout: true
 
 
 
-<div id="htmlwidget-1ef060a1855194719671" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1ef060a1855194719671">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.271,87351.301,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-816a53ce901186f80b68" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-816a53ce901186f80b68">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.27099999999,87351.30100000001,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"ids","targets":1},{"name":"department","targets":2},{"name":"bases","targets":3},{"name":"experience","targets":4},{"name":"raises","targets":5},{"name":"salary","targets":6}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 
 
@@ -439,7 +442,7 @@ layout: true
 
 ---
 layout: true
-## 2.2 固定效应与随机效应
+## 2.2 固定效应(fixed effects)与随机效应(random effects)
 
 ---
 
@@ -452,7 +455,7 @@ layout: true
 
 .panel[.panel-name[OLS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-16-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-16-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ]]]
@@ -476,13 +479,13 @@ layout: true
 
 对应在图中，则会在截距与斜率之间出现差异：
 
-1.    不同学院的底薪相同，工资涨幅也相同；（固定截距，固定斜率）
+1.    不同学院的底薪相同，工资涨幅也相同；（截距不随分组变化，斜率不随分组变化）
 
-2.    不同学院间底薪不同，但工资涨幅相同；（随机截距，固定斜率）
+2.    不同学院间底薪不同，但工资涨幅相同；（截距根据分组变化，斜率不随分组变化）
 
-3.    不同学院间底薪相同，但工资涨幅不同；（固定截距，随机斜率）
+3.    不同学院间底薪相同，但工资涨幅不同；（截距不随分组变化，斜率根据分组变化）
 
-4.    不同学院间底薪和工资涨幅都不相同。（随机截距，随机斜率）
+4.    不同学院间底薪和工资涨幅都不相同。（截距、斜率均根据分组而变化）
 
 画图看看.
 ]
@@ -492,21 +495,21 @@ layout: true
 
 .panelset[
 .panel[.panel-name[fixI-fixS]
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-17-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-17-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[ranI-fixS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[fixI-ranS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-19-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-19-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[ranI-ranS]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ]]]]]
@@ -523,9 +526,11 @@ layout: false
 .panel[.panel-name[两种效应]
 
 .size5[
--   固定效应代表了实验中稳定的、总体水平上的效应，即它们在不同个体、群体或条件之间的影响是一致的，如match数据中Identity和Valence的效应
+-   固定效应代表了总体水平上的效应，即它们在不同分组（可能是个体、群体或条件）之间的影响是一致的，如match数据中Identity和Valence在所有被上总体的效应。
 
--   随机效应则表示了数据中的随机变异或个体间的差异的程度，以及这种变异程度如何随着特定分组因素的变化而变化。
+-   随机效应则表示了在不同分组中变化的效应/参数。
+
+- 这两个术语的使用非常混乱，需要看到模型本身的代码进行判断，不可盲目相关文字描述。
 ]
 
 
@@ -551,7 +556,7 @@ layout: false
 画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
 ]
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-23-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-23-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -567,19 +572,19 @@ layout: false
 
 &lt;br&gt;
 
-```r
+``` r
 fit &lt;- lme4::lmer(
-    data =   , 
-*   formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor))
+      data =   , 
+*     formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor))
 ```
 &lt;br&gt;
 --
 .size5[
 注：
 
--   **但在建立模型之前，需要考虑好在我们的数据中，随机效应和固定效应分别是什么**。一般都会添加随机截距，而随机斜率的加入应当考虑是否有充足理由；
+-   **但在建立模型之前，需要思考模型中的总体水平和随着分组变化的效应分别是什么**。一般推荐至少添加变化的截距，也有推荐一开始就让斜率随着分组变化；
 
--   另外，由于随机效应是从某些总体中抽样的离散单位，因而本质上是分类变量
+-   另外，由于分组变化的效应可以视为从某些总体中抽样的离散单位，因而是分类变量
 ]
 
 
@@ -589,39 +594,38 @@ fit &lt;- lme4::lmer(
 .panelset[
 .panel[.panel-name[ranI]
 
-```r
-## 随机截距 固定斜率
-model &lt;- lme4::lmer(data = mt_raw,
-                    RT ~ Identity * Valence + (1|Sub))
+``` r
+## 变化截距 固定斜率
+model &lt;- lme4::lmer(data = mt_raw, RT ~ Identity * Valence + (1 | Sub))
 ```
 
 
 .size5[
 -   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
--   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+-   (1|Sub): 1表示随机截距（0则表示截距不根据分组变化）； 管道(|)右侧Sub为分组变量
 ]
 
 
 .panel[.panel-name[ranI ranS]
 
 
-```r
+``` r
 ## 随机截距 随机斜率
-model_full &lt;- lme4::lmer(data = mt_raw,
-                         RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
+model_full &lt;- lme4::lmer(data = mt_raw, 
+                         RT ~ Identity * Valence + (1 + Identity * Valence |Sub)) 
 ```
 
 
 .size5[
 -   Identity \* Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
--   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+-   (1|Sub): 1表示随机截距（0则表示截距不根据分组变化）； 管道(|)右侧Sub为分组变量
 ]
 
 .panel[.panel-name[模型比较]
 
-```r
+``` r
 ## 模型比较
 stats::anova(model, model_full) %&gt;% capture.output()
 ```
@@ -643,7 +647,7 @@ stats::anova(model, model_full) %&gt;% capture.output()
 &lt;br&gt;
 
 ------
-注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://chinaxiv.org/abs/202308.00658)
+注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://journal.psych.ac.cn/xlkxjz/CN/10.3724/SP.J.1042.2024.01736)
 
 ]]]]
 
@@ -658,7 +662,7 @@ stats::anova(model, model_full) %&gt;% capture.output()
 
 .panel[.panel-name[anova]
 
-```r
+``` r
 # 建立没有固定效应的“空模型”
 model_null &lt;- lme4::lmer(data = mt_raw,
                    RT ~ (1 + Identity*Valence|Sub))
@@ -686,10 +690,10 @@ stats::anova(model_full, model_null)
 在模型非常复杂时（多层嵌套），如果仅仅只想对固定效应进行检验，可以使用afex::mixed()，设置method 参数为 LRT(Likelihood-ratio tests)
 
 
-```r
+``` r
 afex::mixed(data = mt_raw,
             RT ~ Identity * Valence + (1 + Identity*Valence|Sub),
-*           method = 'LRT')
+            method = 'LRT')
 ```
 
 ```
@@ -712,7 +716,7 @@ afex::mixed(data = mt_raw,
 lmerTest是一个与lme4包兼容的包，主要用于对混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
 
 
-```r
+``` r
 lmer_model &lt;- lmerTest::lmer(data = mt_raw,
                              RT ~ Identity * Valence + (1 + Identity * Valence|Sub))
 # summary(lmer_model)
@@ -731,7 +735,7 @@ lmer_model &lt;- lmerTest::lmer(data = mt_raw,
 ## 3.4 模型解读
 
 .panelset[
-.panel[.panel-name[随机效应]
+.panel[.panel-name[变化的效应]
 注意：
 -   相关矩阵会体现自变量效应在个体上的差异，尤其是第一列(截距与斜率的相关)，而具体的解释也应考虑对应固定效应系数本身的正负；  
 
@@ -756,7 +760,7 @@ lmer_model &lt;- lmerTest::lmer(data = mt_raw,
 ```
 ## [1] "Fixed effects:"                                       
 ## [2] "                          Estimate Std. Error t value"
-## [3] "(Intercept)                0.72328    0.00997   72.51"
+## [3] "(Intercept)                0.72328    0.00997   72.52"
 ## [4] "IdentitySelf               0.01329    0.00624    2.13"
 ## [5] "Valencemoral              -0.00913    0.00744   -1.23"
 ## [6] "IdentitySelf:Valencemoral -0.04150    0.01128   -3.68"
@@ -765,14 +769,14 @@ lmer_model &lt;- lmerTest::lmer(data = mt_raw,
 
 .panel[.panel-name[交互效应的可视化]
 
-```r
+``` r
 ## 一种快捷的方法
 interactions::cat_plot(model = model_full,
                        pred = Identity,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_9_files/figure-html/unnamed-chunk-33-1.png" width="432" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-33-1.png" width="432" style="display: block; margin: auto;" /&gt;
 
 
 ]]]]
@@ -796,7 +800,7 @@ interactions::cat_plot(model = model_full,
 
 
 
-```r
+``` r
 m_aov
 ```
 
@@ -814,7 +818,7 @@ m_aov
 
 .panel[.panel-name[lme4]
 
-```r
+``` r
 ## 使用lme4建立的模型
 model_full %&gt;% anova()
 ```
@@ -831,7 +835,7 @@ model_full %&gt;% anova()
 
 
 
-```r
+``` r
 ## 使用lmerTest建立的模型
 lmer_model %&gt;% anova()
 ```
@@ -839,8 +843,8 @@ lmer_model %&gt;% anova()
 ```
 ## Type III Analysis of Variance Table with Satterthwaite's method
 ##                  Sum Sq Mean Sq NumDF DenDF F value      Pr(&gt;F)    
-## Identity          0.031   0.031     1  43.0    1.73     0.19578    
-## Valence           0.765   0.765     1  43.3   42.47 0.000000063 ***
+## Identity          0.031   0.031     1  43.0    1.73     0.19574    
+## Valence           0.765   0.765     1  43.3   42.46 0.000000063 ***
 ## Identity:Valence  0.244   0.244     1  43.0   13.54     0.00065 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -853,11 +857,9 @@ lmer_model %&gt;% anova()
 ---
 
 
-```r
+``` r
 # http://www.dwoll.de/rexrepos/posts/anovaMixed.html#two-way-repeated-measures-anova-rbf-pq-design
-
 model_aov &lt;- mt_mean %&gt;%
-  # dplyr::filter(!is.na(RT) &amp; Match == "match" &amp; ACC == 1) %&gt;%
   lmerTest::lmer(
    data = .,
    RT ~ Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub)

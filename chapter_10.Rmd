@@ -17,7 +17,7 @@ params:
 ---
 
 class: center, middle
-<span style="font-size: 50px;">**第九章**</span> <br>
+<span style="font-size: 50px;">**第十章**</span> <br>
 <span style="font-size: 50px;">回归模型(二)：分层线性模型</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
@@ -96,7 +96,7 @@ class: inverse, middle ,center
 
 
 ---
-# 0.2 虚拟编码
+# 0.2 虚拟编码(indicator coding)
 
 ```{r xaringan-panelset, echo=FALSE}
 xaringanExtra::use_panelset()
@@ -172,7 +172,7 @@ df.penguin %>%
 .footnote[
 
 ----------
-虚拟编码方式很多，可参考[这里](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/#ORTHOGONAL)
+虚拟编码方式很多，可参考[这里](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/)
 ]
 
 
@@ -236,18 +236,20 @@ knitr::include_graphics('picture/chp9/data.png')
 ```{r warning=FALSE}
 
 mt_mean <- mt_raw %>%
-  dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
-  dplyr::group_by(Sub,Identity,Valence) %>%
-  dplyr::summarise(RT = mean(RT)) %>%
-  dplyr::ungroup()
+      dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
+      dplyr::group_by(Sub,Identity,Valence) %>%
+      dplyr::summarise(RT = mean(RT)) %>%
+      dplyr::ungroup()
 
 ##  本例为长数据
 ##  RUN IN CONSOLE!
 ##  球形检验输出：
 bruceR::MANOVA(data = mt_mean,
-       subID = 'Sub', # 被试编号
-       dv= 'RT', # dependent variable
-       within = c('Identity', 'Valence')) %>% capture.output() %>% .[c(33:37)]
+               subID = 'Sub', # 被试编号
+               dv= 'RT',      # dependent variable
+               within = c('Identity', 'Valence')) %>%
+      capture.output() %>% 
+      .[c(33:37)]
 
 
 ```
@@ -259,7 +261,7 @@ bruceR::MANOVA(data = mt_mean,
                subID = 'Sub',
                dv = 'RT',
                within = c('Identity', 'Valence')) %>%
-  capture.output() %>% .[c(15:31)]
+      capture.output() %>% .[c(15:31)]
 ```
 
 
@@ -267,10 +269,10 @@ bruceR::MANOVA(data = mt_mean,
 ```{r }
 ## bruceR::MANOVA 是对afex的封装
 m_aov <- afex::aov_ez(
-  data = mt_mean,
-  id = 'Sub',
-  dv = 'RT',
-  within = c('Identity', 'Valence'))
+      data = mt_mean,
+      id = 'Sub',
+      dv = 'RT',
+      within = c('Identity', 'Valence'))
 
 m_aov
 ```
@@ -379,6 +381,7 @@ experience <- floor(runif(total.faculty, 0, 10))
 bases <- rep(base.salaries, faculty.per.dept) * runif(total.faculty, .9, 1.1) # noise
 raises <- rep(annual.raises, faculty.per.dept) * runif(total.faculty, .9, 1.1) # noise
 df <- data.frame(ids, department, bases, experience, raises)
+
 # Generate salaries (base + experience * raise)
 df <- df %>% mutate(
     salary = bases + experience * raises
@@ -387,19 +390,23 @@ df <- df %>% mutate(
 
 
 ```{r echo=FALSE}
-df %>% mutate(across(where(is.numeric),~round(.,3))) %>% head(6) %>% DT::datatable()
+df %>% 
+      mutate(across(where(is.numeric),~round(.,3))) %>% 
+      head(6) %>% 
+      DT::datatable()
 ```
 
 
 
 ```{r echo=FALSE}
-
 # Model without respect to grouping
 m0 <- stats::lm(salary ~ experience, data=df)
+
 df$simple.model <- predict(m0)
 
 # Model with varying intercept
 m1 <- lme4::lmer(salary ~ experience + (1|department), data = df)
+
 df$random.intercpet.preds <- predict(m1)
 
 # 可能会碰到错误
@@ -409,10 +416,12 @@ df$random.intercpet.preds <- predict(m1)
 
 # Model with varying slope
 m2 <- lme4::lmer(salary ~ experience + (0 + experience|department), data=df)
+
 df$random.slope.preds <- predict(m2)
 
 # Model with varying slope and intercept
 m3 <- lme4::lmer(salary ~ experience + (1 + experience|department), data=df)
+
 df$random.slope.int.preds <- predict(m3)
 ```
 
@@ -428,7 +437,7 @@ df$random.slope.int.preds <- predict(m3)
 
 ---
 layout: true
-## 2.2 固定效应与随机效应
+## 2.2 固定效应(fixed effects)与随机效应(random effects)
 
 ---
 
@@ -478,13 +487,13 @@ df %>%
 
 对应在图中，则会在截距与斜率之间出现差异：
 
-1.    不同学院的底薪相同，工资涨幅也相同；（固定截距，固定斜率）
+1.    不同学院的底薪相同，工资涨幅也相同；（截距不随分组变化，斜率不随分组变化）
 
-2.    不同学院间底薪不同，但工资涨幅相同；（随机截距，固定斜率）
+2.    不同学院间底薪不同，但工资涨幅相同；（截距根据分组变化，斜率不随分组变化）
 
-3.    不同学院间底薪相同，但工资涨幅不同；（固定截距，随机斜率）
+3.    不同学院间底薪相同，但工资涨幅不同；（截距不随分组变化，斜率根据分组变化）
 
-4.    不同学院间底薪和工资涨幅都不相同。（随机截距，随机斜率）
+4.    不同学院间底薪和工资涨幅都不相同。（截距、斜率均根据分组而变化）
 
 画图看看.
 ]
@@ -497,15 +506,16 @@ df %>%
 ```{r echo=FALSE}
 ###  plot
 df %>% 
-  ggplot(aes(x = experience,y = salary)) + 
-  geom_point(aes(x = experience,
-                 y = salary,color = department),
-             size = 5,alpha = 0.5) + 
-  geom_smooth(method = 'lm',color = 'black',se=F)  + 
-  labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
-  scale_colour_discrete('Department') +
-  ggtitle("Fixed Slope and Intercept") +
-  bruceR::theme_bruce()
+      ggplot(aes(x = experience,y = salary)) + 
+      geom_point(aes(x = experience,
+                     y = salary,
+                     color = department),
+                 size = 5, alpha = 0.5) + 
+      geom_smooth(method = 'lm',color = 'black',se=F) + 
+      labs(x = 'Experience',y = 'Salary',legends = 'Department') + 
+      scale_colour_discrete('Department') +
+      ggtitle("Fixed Slope and Intercept") +
+      bruceR::theme_bruce()
 ```
 
 
@@ -513,45 +523,52 @@ df %>%
 
 ```{r echo=FALSE}
 df %>% 
-  ggplot() +
-  geom_point(data = df,aes(x = experience,y = salary,
-                           color = department),
-             size = 5,alpha = 0.4) + 
-  geom_line(aes(x=experience, y=random.intercpet.preds, 
-             group = department, colour = department)) + 
-  labs(x="Experience", y="Salary") +
-  ggtitle("Varying Intercept") + 
-  scale_colour_discrete('Department') +
-  bruceR::theme_bruce()
+      ggplot() +
+      geom_point(data = df,
+                 aes(x = experience,y = salary,
+                     color = department),
+                 size = 5,alpha = 0.4) + 
+      geom_line(aes(x=experience, y=random.intercpet.preds,
+                    group = department, 
+                    colour = department)) +
+      labs(x="Experience", y="Salary") +
+      ggtitle("Varying Intercept") + 
+      scale_colour_discrete('Department') +
+      bruceR::theme_bruce()
 ```
 
 
 .panel[.panel-name[fixI-ranS]
 
 ```{r echo=FALSE}
-df %>% 
-  ggplot() +
-    geom_point(data = df,aes(x = experience,y = salary,
-                             color = department),
-               size = 5,alpha = 0.4) + 
-    geom_line(aes(x=experience, y=random.slope.preds, 
-                  group = department, colour = department)) + 
-    labs(x="Experience", y="Salary") +
-    ggtitle("Varying Slope") + 
-    scale_colour_discrete('Department') + 
-  bruceR::theme_bruce()
+df %>%
+      ggplot() +
+      geom_point(
+            data = df,
+            aes(x = experience, y = salary, color = department),
+            size = 5,
+            alpha = 0.4) +
+      geom_line(aes(
+            x = experience,
+            y = random.slope.preds,
+            group = department,
+            colour = department)) +
+      labs(x = "Experience", y = "Salary") +
+      ggtitle("Varying Slope") +
+      scale_colour_discrete('Department') +
+      bruceR::theme_bruce()
 ```
 
 .panel[.panel-name[ranI-ranS]
 
 ```{r echo=FALSE}
-df %>% 
-    ggplot(aes(x = experience,y = salary,color = department)) + 
-    geom_point(size = 5,alpha = 0.4) + 
-    geom_smooth(method = 'lm',se = F,size = 0.5) +
-  labs(x="Experience", y="Salary") +
-    ggtitle("Varying Slope and Intercept") +
-    bruceR::theme_bruce() 
+df %>%
+      ggplot(aes(x = experience, y = salary, color = department)) +
+      geom_point(size = 5, alpha = 0.4) +
+      geom_smooth(method = 'lm', se = F, size = 0.5) +
+      labs(x = "Experience", y = "Salary") +
+      ggtitle("Varying Slope and Intercept") +
+      bruceR::theme_bruce() 
 ```
 
 
@@ -569,9 +586,11 @@ layout: false
 .panel[.panel-name[两种效应]
 
 .size5[
--   固定效应代表了实验中稳定的、总体水平上的效应，即它们在不同个体、群体或条件之间的影响是一致的，如match数据中Identity和Valence的效应
+-   固定效应代表了总体水平上的效应，即它们在不同分组（可能是个体、群体或条件）之间的影响是一致的，如match数据中Identity和Valence在所有被上总体的效应。
 
--   随机效应则表示了数据中的随机变异或个体间的差异的程度，以及这种变异程度如何随着特定分组因素的变化而变化。
+-   随机效应则表示了在不同分组中变化的效应/参数。
+
+- 这两个术语的使用非常混乱，需要看到模型本身的代码进行判断，不可盲目相关文字描述。
 ]
 
 
@@ -602,24 +621,35 @@ include_graphics('picture/chp9/nest.png')
 ]
 
 ```{r echo=FALSE,fig.height=5.8}
-mt_sample_df <- mt_raw %>% 
-  dplyr::filter(Match == 'match' & ACC == 1) %>% 
-  dplyr::filter(Sub %in% c(7311,7313, 7307, 7324)) %>%
-  dplyr::mutate(Sub = factor(Sub),
-                Identity = factor(Identity, levels = c("Self", "Other")),
-                Valence = factor(Valence, levels = c("moral", "immoral")))
+mt_sample_df <- mt_raw %>%
+      dplyr::filter(Match == 'match' & ACC == 1) %>%
+      dplyr::filter(Sub %in% c(7311, 7313, 7307, 7324)) %>%
+      dplyr::mutate(
+            Sub = factor(Sub),
+            Identity = factor(Identity, levels = c("Self", "Other")),
+            Valence = factor(Valence, levels = c("moral", "immoral"))
+      )
 
 mt_sample_df %>%
-    dplyr::filter(Identity == 'Self') %>%
-    ggplot(aes(x = Valence, color = Valence, y = RT))  + 
-    geom_point(position = position_jitter(0.2),alpha = 1) +
-    stat_summary(fun.y = "mean", geom = "point", 
-                 shape = 18, size = 4, color = "darkred") +
-    stat_summary(fun.y = "mean", geom = "line", 
-                 aes(group = 1), color = "darkred") +
-    facet_wrap(~Sub, nrow = 1) +
-    scale_color_brewer(palette = 'Accent')+
-    theme_bw(base_size = 13)
+      dplyr::filter(Identity == 'Self') %>%
+      ggplot(aes(x = Valence, color = Valence, y = RT))  +
+      geom_point(position = position_jitter(0.2), alpha = 1) +
+      stat_summary(
+            fun.y = "mean",
+            geom = "point",
+            shape = 18,
+            size = 4,
+            color = "darkred"
+      ) +
+      stat_summary(
+            fun.y = "mean",
+            geom = "line",
+            aes(group = 1),
+            color = "darkred"
+      ) +
+      facet_wrap( ~ Sub, nrow = 1) +
+      scale_color_brewer(palette = 'Accent') +
+      theme_bw(base_size = 13)
 ```
 
 
@@ -637,17 +667,17 @@ mt_sample_df %>%
 <br>
 ```{r eval=FALSE, highlight=TRUE}
 fit <- lme4::lmer(
-    data =   , 
-    formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor)) #<<
+      data =   , 
+      formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor)) #<<
 ```
 <br>
 --
 .size5[
 注：
 
--   **但在建立模型之前，需要考虑好在我们的数据中，随机效应和固定效应分别是什么**。一般都会添加随机截距，而随机斜率的加入应当考虑是否有充足理由；
+-   **但在建立模型之前，需要思考模型中的总体水平和随着分组变化的效应分别是什么**。一般推荐至少添加变化的截距，也有推荐一开始就让斜率随着分组变化；
 
--   另外，由于随机效应是从某些总体中抽样的离散单位，因而本质上是分类变量
+-   另外，由于分组变化的效应可以视为从某些总体中抽样的离散单位，因而是分类变量
 ]
 
 
@@ -657,9 +687,8 @@ fit <- lme4::lmer(
 .panelset[
 .panel[.panel-name[ranI]
 ```{r}
-## 随机截距 固定斜率
-model <- lme4::lmer(data = mt_raw,
-                    RT ~ Identity * Valence + (1|Sub))
+## 变化截距 固定斜率
+model <- lme4::lmer(data = mt_raw, RT ~ Identity * Valence + (1 | Sub))
 
 ```
 
@@ -667,7 +696,7 @@ model <- lme4::lmer(data = mt_raw,
 .size5[
 -   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
--   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+-   (1|Sub): 1表示随机截距（0则表示截距不根据分组变化）； 管道(|)右侧Sub为分组变量
 ]
 
 
@@ -675,15 +704,15 @@ model <- lme4::lmer(data = mt_raw,
 
 ```{r }
 ## 随机截距 随机斜率
-model_full <- lme4::lmer(data = mt_raw,
-                         RT ~ Identity * Valence + (1 + Identity * Valence|Sub)) 
+model_full <- lme4::lmer(data = mt_raw, 
+                         RT ~ Identity * Valence + (1 + Identity * Valence |Sub)) 
 ```
 
 
 .size5[
 -   Identity \* Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
 
--   (1|Sub): 1表示随机截距（0则表示固定截距）； 管道(|)右侧Sub为随机因子
+-   (1|Sub): 1表示随机截距（0则表示截距不根据分组变化）； 管道(|)右侧Sub为分组变量
 ]
 
 .panel[.panel-name[模型比较]
@@ -697,7 +726,7 @@ stats::anova(model, model_full) %>% capture.output()
 <br>
 
 ------
-注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://chinaxiv.org/abs/202308.00658)
+注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://journal.psych.ac.cn/xlkxjz/CN/10.3724/SP.J.1042.2024.01736)
 
 ]]]]
 
@@ -730,7 +759,7 @@ stats::anova(model_full, model_null)
 ```{r highlight=TRUE}
 afex::mixed(data = mt_raw,
             RT ~ Identity * Valence + (1 + Identity*Valence|Sub),
-            method = 'LRT') #<<
+            method = 'LRT')
 ```
 
 
@@ -757,7 +786,7 @@ lmer_model <- lmerTest::lmer(data = mt_raw,
 ## 3.4 模型解读
 
 .panelset[
-.panel[.panel-name[随机效应]
+.panel[.panel-name[变化的效应]
 注意：
 -   相关矩阵会体现自变量效应在个体上的差异，尤其是第一列(截距与斜率的相关)，而具体的解释也应考虑对应固定效应系数本身的正负；  
 
@@ -765,8 +794,6 @@ lmer_model <- lmerTest::lmer(data = mt_raw,
 
 ```{r echo=FALSE}
 summary(model_full) %>% capture.output() %>% .[c(11:18)]
-
-
 ```
 
 
@@ -776,7 +803,6 @@ summary(model_full) %>% capture.output() %>% .[c(11:18)]
 ## 使用lme4::lmer()并没有返回显著性
 ## 其中也报告了交互效应
 summary(model_full) %>% capture.output() %>% .[c(20:25)]
-
 ```
 
 
@@ -835,9 +861,7 @@ lmer_model %>% anova()
 
 ```{r }
 # http://www.dwoll.de/rexrepos/posts/anovaMixed.html#two-way-repeated-measures-anova-rbf-pq-design
-
 model_aov <- mt_mean %>%
-  # dplyr::filter(!is.na(RT) & Match == "match" & ACC == 1) %>%
   lmerTest::lmer(
    data = .,
    RT ~ Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub)
