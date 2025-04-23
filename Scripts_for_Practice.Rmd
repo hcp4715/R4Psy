@@ -1,0 +1,216 @@
+---
+title: "Example code for practices"
+author: "Zhou, Fangru; Hu Chuan-Peng"
+date: "2025-04-16"
+output:xaringan::moon_reader:
+    css: [default, css/Custumed_Style.css,css/zh-CN.css]
+    lib_dir: libs
+    nature:
+      highlightLines: true
+      highlightStyle: github
+      countIncrementalSlides: false
+      seal: true
+      ratio: 16:9
+params:
+  output_dir: "../output"
+  
+---
+# <h1 lang="en">练习1: 计算 d prime</h1>
+
+- 定义一个函数用于计算 $d'$ 
+- 计算不同Shape情况下(immoralself，moralself，immoralother，moralother)<br> 基于信号检测论(match为信号，mismatch噪音)的 $d'$ 值
+<br>
+
+## 导入所需要镜像和R包
+```{r 7.1 R package}
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+# install.pacakges("tidyverse")
+# install.packages("pacman")
+
+# 清空environment, 避免变量冲突或者错误
+rm(list = ls())
+
+# 导入所需R包
+pacman::p_load(tidyverse)
+pacman::p_load(here)
+```
+
+---
+
+## 2 读取数据并选择需要的变量
+```{r 7.2 load data}
+# 此前已经将合并后的实验数据存入"match_raw.csv"，此次可直接读取
+df7 <-  bruceR::import(here::here("data", "match","match_raw.csv")) %>%
+      # 选择我们需要的变量
+      dplyr::select(df7,
+                     Sub, Age, Sex, Hand, #人口统计学
+                     Block, Bin, Trial,   # 试次
+                     Shape, Label, Match, # 刺激
+                     Resp, ACC, RT)       # 反应结果
+# 也可以用原始方式导入
+# penguin_data <- read.csv('./data/match/match_raw.csv')  # 仅用基础包的做法
+```
+
+---
+
+## 3 分组并计算 $d'$ 值
+
+计算 $d'$ 值, 包括两个部分：hit对应的z值和fa对应的z值，每个部分使用ifelse对极端值进行处理,采用Stanislaw & Todorov (1999)中提到的第四种简易方法。
+
+- Stanislaw, H., & Todorov, N. (1999). Calculation of signal detection theory measures. https://doi.org/10.3758/BF03207704
+
+```{r 7.3 calculate Dprime}
+df_dprime <- df7 %>%
+      # 分组
+      dplyr::group_by(Sub, Shape) %>%
+      dplyr::summarise(
+            hit = length(ACC[Match == "match" & ACC == 1]), 
+            fa = length(ACC[Match == "mismatch" & ACC == 0]),
+            miss = length(ACC[Match == "match" & ACC == 0]),
+            cr = length(ACC[Match == "mismatch" & ACC == 1]),
+            # 计算 $d'$ 值, 
+            # 包括两个部分：hit对应的z值和fa对应的z值
+            # 每个部分使用ifelse对极端值进行处理,采用上述文献中的简易方法
+            Dprime = qnorm(
+                  ifelse(hit / (hit + miss) < 1,
+                         hit / (hit + miss),
+                         1 - 1 / (2 * (hit + miss))
+                         )
+                  ) 
+             - qnorm(
+                   ifelse(fa / (fa + cr) > 0,
+                          fa / (fa + cr),
+                          1 / (2 * (fa + cr))
+                          )
+                   )
+            )%>%
+      dplyr::ungroup()
+
+print(df_dprime) #可以逐步打印结果以便检查
+```
+
+---
+## 4 (optional) 删除额外变量
+
+```{r 7.5 delete variables}
+df_dprime %>%
+      dplyr::select(-c(hit:cr)) 
+```
+
+---
+- 6 长转宽，将形4个形状为列标题，以显示不同被试在不同形状条件下的$d'$ 值
+```{r 7.6}
+df_dprime_w <- df_dprime %>%
+      dplyr::select(-c(hit:cr)) %>%
+      tidyr::pivot_wider(names_from = "Shape", values_from = "Dprime")
+
+print(df_dprime_w)
+```
+
+---
+- 7 合并Tidyverse操作
+```{r example of total rawdata_matchtask, message=FALSE}
+# 用管道操作符合并以上代码
+df_dprime_w <- bruceR::import(here::here("data", "match","match_raw.csv")) %>%
+  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
+                Block, Bin, Trial,   # 试次
+                Shape, Label, Match, # 刺激
+                Resp, ACC, RT) %>%   # 反应结果
+  tidyr::drop_na() %>%               #删除缺失值
+  dplyr::group_by(Sub, Shape,) %>%
+  dplyr::summarise(
+      hit = length(ACC[Match == "match" & ACC == 1]), 
+      fa = length(ACC[Match == "mismatch" & ACC == 0]),
+      miss = length(ACC[Match == "match" & ACC == 0]),
+      cr = length(ACC[Match == "mismatch" & ACC == 1]),
+      Dprime = qnorm(
+        ifelse(hit / (hit + miss) < 1,
+               hit / (hit + miss),
+               1 - 1 / (2 * (hit + miss))
+              )
+        ) 
+             - qnorm(
+        ifelse(fa / (fa + cr) > 0,
+              fa / (fa + cr),
+              1 / (2 * (fa + cr))
+              )
+                    )
+      ) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(-c(hit:cr)) %>%
+  tidyr::pivot_wider(names_from = "Shape", values_from = "Dprime")
+```
+
+---
+
+#练习2: 选择数据并绘图
+
+## 1. 读取并选择数据
+
+- 按照7的过程，处理好数据，使shape为一列，hit为一列
+```{r 8.1}
+df8 <- bruceR::import(here::here("data", "match","match_raw.csv")) %>%
+  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
+                Block, Bin, Trial,   # 试次
+                Shape, Label, Match, # 刺激
+                Resp, ACC, RT) %>%  # 反应结果
+  tidyr::drop_na() %>%               #删除缺失值
+  dplyr::group_by(Sub, Shape,) %>%
+  dplyr::summarise(hit = mean(ACC[Match == "match"])) %>%
+  dplyr::ungroup()
+
+print(df8)
+```
+
+---
+
+- (2) 作为x和y绘制箱型图
+```{r 8.2 pic_box}
+pic_box_1 <- df8 %>% 
+      ggplot(aes(x = Shape, y = hit)) +
+      geom_boxplot(staplewidth = 1) +
+      # 绘制箱线图并添加上下边缘线 
+      theme_classic()
+
+pic_box_1
+```
+
+---
+## 设定x轴顺序
+
+```{r 8.2 pic_box}
+df8_new <- bruceR::import(here::here("data", "match", "match_raw.csv")) %>%
+  dplyr::select(Sub, Age, Sex, Hand,      
+                Block, Bin, Trial,        
+                Shape, Label, Match,    
+                Resp, ACC, RT) %>%      
+  tidyr::drop_na() %>%                  
+  dplyr::group_by(Sub, Shape) %>%
+  dplyr::summarise(hit = mean(ACC[Match == "match"])) %>%
+  dplyr::ungroup() %>%
+  #利用dplyr中的mutate函数，将Shape转化为因子，并利用levels来进行自定义排序
+  dplyr::mutate(Shape = factor(Shape, 
+                               levels = c("moralSelf", "immoralSelf", 
+                                          "moralOther", "immoralOther"),
+                               labels = c("Moral Self", "Immoral Self",
+                                          "Moral Other", "Immoral Other")))
+                
+
+pic_box_2 <- df8_new %>% 
+      ggplot(aes(x = Shape, y = hit)) +
+      geom_boxplot(staplewidth = 0.5,
+                   outlier.colour = "red") + 
+      theme_classic() + 
+      theme(# increase font size of x and y axis labels
+            axis.text.x = element_text(size = 16),
+            axis.text.y = element_text(size = 16),
+            # increase font size of x and y axis titles
+            axis.title.x = element_text(size = 24),
+            axis.title.y = element_text(size = 24)
+      )
+pic_box_2
+```
+
+
+
