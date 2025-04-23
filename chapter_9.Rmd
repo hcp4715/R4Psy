@@ -255,7 +255,8 @@ $$\epsilon_{n×1}=\begin{bmatrix}
 
 ```{r preprocessing for lm}
 df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%
-  dplyr::mutate(subjID = row_number()) %>%
+  #第一行是读取数据
+  dplyr::mutate(subjID = row_number()) %>%                         #生成一个被试编号
   dplyr::select(subjID,Temperature_t1, Temperature_t2) %>%         # 选择变量
   dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2)) 
 ```
@@ -283,7 +284,7 @@ m1 <- stats::lm(Temperature_t2 ~ Temperature_t1,  # 公式
           )
 
 # 使用 broom 包的 glance() 函数来提取模型摘要信息
-m1_summary <- broom::tidy(m1)
+m1_summary <- broom::tidy(m1)     #对m1模型的摘要信息进行提取，并且赋予新的名称m1_summary
 
 # 使用 knitr 包的 kable() 函数来创建一个格式化的表格
 knitr::kable(m1_summary, caption = "Model Summary")
@@ -292,7 +293,7 @@ knitr::kable(m1_summary, caption = "Model Summary")
 
 
 ```{r summary using bruceR}
-bruceR::model_summary(m1)
+bruceR::model_summary(m1)    #心理学学者开发的包，输出方式也比较好用
 ```
 ]
 ]
@@ -305,8 +306,9 @@ bruceR::model_summary(m1)
 ## 8.0.3 bruceR::regress
 
 ```{r lm in bruceR}
-m2 <- bruceR::regress(Temperature_t2 ~ Temperature_t1,  # 公式
+m2 <- bruceR::regress(Temperature_t2 ~ Temperature_t1,  # 公式 这个是bruceR的一个输出方式，叫做regress
           data = df.penguin, ) # 数据
+install.packages("MuMIn")
 ```
 ---
 class: left, middle
@@ -346,13 +348,15 @@ $$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}
 
 .panel[.panel-name[数据清理]
 
-```{r preprocessing}
+```{r preprocessing}   
+#单独跑这边的代码跑不出来因为52行的代码没有跑！！！！！
 df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%
   dplyr::mutate(subjID = row_number()) %>%
   dplyr::select(subjID,Temperature_t1, Temperature_t2, socialdiversity, 
                 Site, DEQ, romantic, ALEX1:ALEX16) %>%                                     # 选择变量
   dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2) & !is.na(DEQ)) %>%         # 处理缺失值
   dplyr::mutate(romantic = factor(romantic, levels = c(1,2), labels = c("恋爱", "单身")),  # 转化为因子
+#是之前没见过的代码
                 Temperature = rowMeans(select(., starts_with("Temperature"))),             # 计算两次核心温度的均值
                 ALEX4  = case_when(TRUE ~ 6 - ALEX4),
                 ALEX12 = case_when(TRUE ~ 6 - ALEX12),
@@ -574,7 +578,7 @@ summary(model.paired)
 ---
 # 8.1 *t*-test
 ## 8.1.5 bruceR::TTEST
-* 如果偏好按传统方式使用*t*检验，推荐`bruceR::TTEST`函数
+* 如果偏好按传统方式使用*t*检验，推荐`bruceR::TTEST`函数（因为他的输出符合心理学人的习惯）
 
 <p align="center">
   <img src="./picture/chp8/TTEST.png" width="70%">
@@ -589,7 +593,7 @@ summary(model.paired)
 .pull-left[
 
 ```{r,results='hide'}
-stats::t.test(
+stats::t.test( 
   data = df.penguin, 
   Temperature ~ romantic,
   var.equal = TRUE
@@ -606,7 +610,7 @@ stats::t.test(
 
 ```{r,results='hide'}
 bruceR::TTEST(
-  data = df.penguin, # 数据
+  data = df.penguin, # 数据 ###他还会输出效应量，比较厉害
   y = "Temperature", # 因变量
   x = "romantic"     # 自变量
 ) 
@@ -827,7 +831,7 @@ ggplot(df, aes(Temperature)) +
 ## 8.2.2 代码实操|双因素被试间方差分析
 .panelset[
 .panel[.panel-name[stats::aov()]
-
+##最常用的代码aov
 ```{r}
 aov1 <- stats::aov(Temperature ~ climate * romantic, data = df)
 summary(aov1)
@@ -1062,8 +1066,8 @@ sim_eff <- res1 %>%
 # DEQ对Temperature的影响
 res2 <- bruceR::MANOVA(
   data = df,
-  dv = "Temperature",
-  between = "climate") 
+  dv = "Temperature",  #只有一个因变量
+  between = "climate") #被试间变量
 ```
 
 
