@@ -20,6 +20,8 @@ pacman::p_load(
 options(scipen=99999,digits = 5)
 
 #--------- 0.2 虚拟编码(indicator coding)相关 ----------
+# 虚拟编码方式相关参考资料：https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
+
 df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%
   dplyr::mutate(subjID = row_number()) %>%
   dplyr::select(subjID,Temperature_t1, Temperature_t2, socialdiversity, 
@@ -60,9 +62,6 @@ df.penguin %>%
   summarise(mean = mean(Temperature)) %>% 
   as.data.frame() 
 
-
-# 虚拟编码方式相关参考资料：https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
-
 # ---------- 1.3 重复测量方差分析 ----------
 ## 载入数据 并进行变量预处理
 mt_raw <- bruceR::import(here::here('data','match','match_raw.csv')) %>% 
@@ -83,8 +82,6 @@ bruceR::MANOVA(data = mt_mean,
                subID = 'Sub', # 被试编号
                dv= 'RT',      # dependent variable
                within = c('Identity', 'Valence'))
-
-
 
 ## 使用afex进行重复测量方差分析，比较两者的区别，可以看到MANOVA是对afex的封装
 m_aov <- afex::aov_ez(
