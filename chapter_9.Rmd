@@ -17,7 +17,7 @@ params:
 ---
 
 class: center, middle
-<span style="font-size: 50px;">**第八章**</span> <br>
+<span style="font-size: 50px;">**第九章**</span> <br>
 <span style="font-size: 50px;">回归模型(一)</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
@@ -243,7 +243,7 @@ $$\epsilon_{n×1}=\begin{bmatrix}
 
 3.  残差方差齐性预设;
 
-4.  列差正态分布预设(残差项𝝐独立且同分布).<br>
+4.  残差正态分布预设(残差项𝝐独立且同分布).<br>
 <br>
 
 **假设**
@@ -306,7 +306,7 @@ bruceR::model_summary(m1)
 
 ```{r lm in bruceR}
 m2 <- bruceR::regress(Temperature_t2 ~ Temperature_t1,  # 公式
-          data = df.penguin, ) # 数据
+          data = df.penguin) # 数据
 ```
 ---
 class: left, middle
