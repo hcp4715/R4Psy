@@ -4,19 +4,20 @@
     <title>chapter_10.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.27/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -26,13 +27,14 @@
 
 class: center, middle
 &lt;span style="font-size: 50px;"&gt;**第十章**&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;回归模型(三)：广义线性模型&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;回归模型(二)：分层线性模型&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-05-08&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-04-23&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
+
 
 
 &lt;style type="text/css"&gt;
@@ -49,807 +51,877 @@ font-size: 60px;
 &lt;/style&gt;
 
 
+## 准备工作
+
+``` r
+# Packages
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here, tidyverse, 
+  # ANOVA &amp; HLM
+  bruceR, lmerTest, lme4, broom, afex, interactions,
+  # 生成课件
+  xaringan, xaringanthemer, xaringanExtra, knitr)
+
+options(scipen=99999,digits = 5)
+```
 
 
 
+---
+class: inverse, middle ,center
+
+
+#  一般线性模型回顾
 
 
 
+---
+# 0.1 线性模型与方差分析等价性
 
-# 补充内容: easystats系统包的简介
-&lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+
+|       | R自带函数 | 线性模型 | 解释 |
+|-------|-------|-------|-------|
+| 单样本*t* | t.test(y, mu = 0) | lm(y ~ 1)| 仅有截距的回归模型 |
+| 独立样本*t* | t.test( `\(y_1\)`, `\(y_2\)`) | lm(y ~ 1 + `\(G_2\)`)| 自变量为二分变量的回归模型 |
+| 配对样本*t* | t.test( `\(y_1\)`, `\(y_2\)`, paired=T)  | lm( `\(y_1\)` - `\(y_2\)` ~ 1)| 仅有截距的回归模型)|
+| 单因素ANOVA | aov(y ~ G) | lm(y ~ 1 + `\(G_1\)` + `\(G_2\)` + ...)| 一个离散自变量的回归模型 |
+| 多因素ANOVA | aov(y ~ G * S) | lm(y ~ `\(G_1\)` + `\(G_2\)` + ... + `\(S_1\)` + `\(S_2\)` + ...)| 多个离散自变量的回归模型 |
 
 &lt;br&gt;
 &lt;br&gt;
-&lt;center&gt;
-https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
-&lt;/center&gt;
+
+
 ---
-class: center, middle
-.tit_font[
-当因变量不服从正态分布(如正确率)时如何处理？
-]
----
+# 0.2 虚拟编码(indicator coding)
+
+
+
 .panelset[
-.panel[.panel-name[df.match]
+.panel[.panel-name[预处理]
 
-```r
-head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
+``` r
+df.penguin &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %&gt;%
+  dplyr::mutate(subjID = row_number()) %&gt;%
+  dplyr::select(subjID,Temperature_t1, Temperature_t2, socialdiversity, 
+                Site, DEQ, romantic, ALEX1:ALEX16) %&gt;%
+  dplyr::filter(!is.na(Temperature_t1) &amp; !is.na(Temperature_t2) &amp; !is.na(DEQ)) %&gt;%
+  dplyr::mutate(romantic = factor(romantic, levels = c(1,2), 
+                                  labels = c("恋爱", "单身")),  # 转化为因子
+                Temperature = rowMeans(select(., starts_with("Temperature"))))
+
+# 设定相应的标签
+breaks &lt;- c(0, 35, 50, 66.5)
+labels &lt;- c('热带', '温带', '寒温带')
+# 创建新的变量
+df.penguin$climate &lt;- cut(df.penguin$DEQ, 
+                          breaks = breaks, 
+                          labels = labels)
 ```
 
-<div id="htmlwidget-db93ea4216a2eb01ef04" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-db93ea4216a2eb01ef04">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
-.panel[.panel-name[df.match.aov]
+.panel[.panel-name[虚拟编码]
 
-```r
-df.match.aov %&gt;%
-  dplyr::select(1:4) %&gt;%
-  head(5) %&gt;% 
-  DT::datatable()
+
+``` r
+# 比较不同气候条件下个体的体温是否存在差异：
+## 虚拟编码
+contrasts(df.penguin$climate) &lt;- stats::contr.treatment(unique(df.penguin$climate))
+### contr.treatment本质上创建了一个矩阵
+### 由于3个分组，所以矩阵为2列
+
+
+## 建立回归模型
+lm_temp &lt;- stats::lm(Temperature ~ climate,data = df.penguin)
 ```
 
-<div id="htmlwidget-751dc3e27421b5184726" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-751dc3e27421b5184726">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.986666666666667,0.833333333333333,0.821917808219178,0.71830985915493,0.932432432432432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+.panel[.panel-name[结果]
+
+.pull-left[
+
+
+``` r
+## 输出回归系数
+lm_temp %&gt;% 
+  tidy() %&gt;% 
+  select(1:3) %&gt;% 
+  mutate(across(where(is.numeric),
+                ~round(., 3)))
+```
+
+```
+## # A tibble: 3 × 3
+##   term          estimate std.error
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)     36.6       0.022
+## 2 climate寒温带   -0.178     0.028
+## 3 climate温带     -0.299     0.03
+```
+
+]
+
+.pull-right[
+
+
+``` r
+## 可以看到回归的结果以热带为基准，系数则为均值之差
+df.penguin %&gt;% 
+  group_by(climate) %&gt;% 
+  summarise(mean = mean(Temperature)) %&gt;% 
+  as.data.frame() 
+```
+
+```
+##   climate   mean
+## 1    热带 36.555
+## 2    温带 36.377
+## 3  寒温带 36.255
+```
+]
+
+
+]]]]
+
+
+.footnote[
+
+----------
+虚拟编码方式很多，可参考[这里](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/)
+]
+
+
+---
+class: center, middle, inverse
+&lt;span style="font-size: 55px;"&gt;重复测量方差分析与回归模型 &lt;/span&gt; 
+
+
+
+
+---
+# 1 重复测量方差分析
+## 1.1 数据与问题介绍
+
+.size5[
+以match_raw.csv为例，一个2x2的被试内实验设计（Identity: Self vs. Other) x Valence: Moral vs. Immoral)），我们希望知道这两种条件之下被试的反应时是否存在显著差异]
+
+.panelset[
+.panel[.panel-name[预处理]
+
+``` r
+mt_raw &lt;- bruceR::import(here::here('data','match','match_raw.csv'))
+
+mt_raw &lt;- mt_raw %&gt;% 
+  tidyr::extract(Shape, 
+                 into = c("Valence", "Identity"),
+                 regex = "(moral|immoral)(Self|Other)",
+                 remove = FALSE)
+```
+
+.panel[.panel-name[数据展示]
+<div class="datatables html-widget html-fill-item" id="htmlwidget-1b38b40029b1687447ba" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-1b38b40029b1687447ba">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Valence","targets":9},{"name":"Identity","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
----
-.tit_font[  Contents&lt;/h1&gt;]
-&lt;br&gt;
-&lt;br&gt;
-.bigfont[
-    10.1 广义线性模型&lt;br&gt;
-&lt;br&gt;
-    10.2 二项分布&lt;br&gt;
-&lt;br&gt;
-    10.3 其他分布&lt;br&gt;
-&lt;br&gt;
-    10.4 代码实操&lt;br&gt;
-&lt;br&gt;
-    10.5 方法比较&lt;br&gt;
-]
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-##多元线性回归（Multiple Linear Regression）
-&lt;br&gt;
-.normal[
-`$$Y = b_0 + b_{1}X_{1} + b_{2}X_{2} +... + b_{p}X_{p} + \epsilon$$`
-- `\(Y\)` : 因变量，Dependent variable
-- `\(X_i\)` : 自变量，Independent (explanatory) variable
-- `\(b_0\)` : 截距，Intercept
-- `\(b_i\)` : 斜率，Slope
-- `\(\epsilon\)` : 残差，Residual (error)
-]
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-##线性模型的组成部分
-![](./picture/chp10/formula.png)
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-##线性模型的组成部分
-&lt;img src="./picture/chp10/plot.png" width="60%" style="display: block; margin: auto;" /&gt;
+
 
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-##回归方程的多种形式&lt;br&gt;
-.bigfont[
-- 简单线性回归：
-`$$Y = b_0+b_1 X_1+ b_2 X_2+…+b_p X_p + \epsilon$$` 
-- 线性代数表达：
-`$$y_i = b_0 + b_1 X_{i1} + b_2 X_{i2} + … + b_p X_{ip} + \epsilon$$` 
-- 矩阵表达：
-`$$Y= X\beta + \epsilon$$`
-- 代码表达(r)：
-`$$Y \sim X_1 + X_2 + ... + X_n$$`
+## 1.2 数据结构
+
+&lt;img src="picture/chp9/data.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+&lt;br&gt;
+.size5[
+-   将总变异分解为组间与组内
+
+-   组内变异是主要关注对象，组间变异则要被控制
 ]
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-##回归方程的多种表达形式&lt;br&gt;
-&lt;br&gt;
-.bigfont[
-- 回归模型形式：观测项 = 预测项 + 误差项 &lt;br&gt;
-- 假定观测项是正态分布，上述公式可以重新表达为： &lt;br&gt;
-`$$y \sim N(\mu, \epsilon)$$` 
-  - 其中，$\mu$为预测值，即
-  `$$μ = \beta_0 + \beta_1 x$$`
-- 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。&lt;br&gt;
-]
---
 
-.bigfont[
-如果因变量不服从正态分布，如何构建回归模型？
-]
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
 
-![](./picture/chp10/function1.png)
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-![](./picture/chp10/function.png)
+
+
 
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-![](./picture/chp10/function2.png)
-
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-##Generalized Linear Model, GLM
-###在简单线性回归中，预测项的连接函数等于它本身
-![](./picture/chp10/lm.png)
----
-#10.1 广义线性模型(Generalized Linear Model, GLM)
-.bigfont[
-- 简单线性模型可视为GLM的特殊形式，预测项的连接函数等于它本身，观测项为正态分布。
-- 在广义线性模型中：
-  - 观测项不一定是正态分布（残差不一定是正态分布）
-  - 连接函数不等于其自身
-
-- 广义线性模型，能够对非正态分布的因变量进行建模
-]
----
-#10.2 二项分布(Binomial Distribution)
-##伯努利试验
-&lt;br&gt;
-.bigfont[
-- 同样的条件下重复地、相互独立地进行的一种随机试验。
-&lt;br&gt;
-&lt;br&gt;
-- 该随机试验只有两种可能结果：发生或者不发生。
-&lt;br&gt;
-&lt;br&gt;
-- 假设该项试验独立重复地进行了n次，那么就称这一系列重复独立的随机试验为n重伯努利试验(n-fold bernoulli trials)。
-&lt;br&gt;
-&lt;br&gt;
-- n次独立重复的伯努利试验的概率分布服从二项分布
-]
----
-#10.2 二项分布(Binomial Distribution)
-.bigfont[
-- 每次试验中事件A发生的概率为p
-&lt;br&gt;&lt;br&gt;
-- X表示n重伯努利试验中事件A发生的次数，X的可能取值为0，1，…，n
-&lt;br&gt;&lt;br&gt;
-- 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
-&lt;br&gt;&lt;br&gt;
-- 随机变量X服从以n, p为参数的二项分布，写作 `\(X \sim B(n, p)\)` 
-&lt;br&gt;&lt;br&gt;
-- `\(p \in [0,1]\)`, `\(n \in N\)` 
-
-`$$P(X=k )=𝐶_𝑛^𝑘 𝑝^𝑘 𝑞^{𝑛−𝑘}= 𝐶_𝑛^𝑘 𝑝^𝑘 (1−𝑝)^{𝑛−𝑘}$$`
-$$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
-]
----
-#10.2 二项分布(Binomial Distribution)
-##抛硬币
-
+## 1.3 重复测量方差分析的实现
 
 .panelset[
-.panel[.panel-name[5人，每人10次]
+.panel[.panel-name[ANOVA-bruceR]
 
-```r
-simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
+``` r
+mt_mean &lt;- mt_raw %&gt;%
+      dplyr::filter(!is.na(RT) &amp; Match == "match" &amp; ACC == 1) %&gt;%
+      dplyr::group_by(Sub,Identity,Valence) %&gt;%
+      dplyr::summarise(RT = mean(RT)) %&gt;%
+      dplyr::ungroup()
+
+##  本例为长数据
+##  RUN IN CONSOLE!
+##  球形检验输出：
+bruceR::MANOVA(data = mt_mean,
+               subID = 'Sub', # 被试编号
+               dv= 'RT',      # dependent variable
+               within = c('Identity', 'Valence')) %&gt;%
+      capture.output() %&gt;% 
+      .[c(33:37)]
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
-
-.panel[.panel-name[10人，每人10次]
-
-
-```r
-simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
+```
+## [1] "Levene’s Test for Homogeneity of Variance:"                                             
+## [2] "No between-subjects factors. No need to do the Levene’s test."                          
+## [3] ""                                                                                       
+## [4] "Mauchly’s Test of Sphericity:"                                                          
+## [5] "The repeated measures have only two levels. The assumption of sphericity is always met."
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
-.panel[.panel-name[1000人，每人10次]
+.panel[.panel-name[ANOVA-bruceR(输出)]
 
-
-```r
-simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
+``` r
+bruceR::MANOVA(data = mt_mean,
+               subID = 'Sub',
+               dv = 'RT',
+               within = c('Identity', 'Valence')) %&gt;%
+      capture.output() %&gt;% .[c(15:31)]
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-11-1.png" width="540" style="display: block; margin: auto;" /&gt;
+```
+##  [1] "ANOVA Table:"                                                                     
+##  [2] "Dependent variable(s):      RT"                                                   
+##  [3] "Between-subjects factor(s): –"                                                    
+##  [4] "Within-subjects factor(s):  Identity, Valence"                                    
+##  [5] "Covariate(s):               –"                                                    
+##  [6] "─────────────────────────────────────────────────────────────────────────────────"
+##  [7] "                       MS   MSE df1 df2      F     p     η²p [90% CI of η²p]  η²G"
+##  [8] "─────────────────────────────────────────────────────────────────────────────────"
+##  [9] "Identity            0.008 0.003   1  43  2.554  .117       .056 [.000, .198] .009"
+## [10] "Valence             0.128 0.002   1  43 64.374 &lt;.001 ***   .600 [.440, .706] .131"
+## [11] "Identity * Valence  0.033 0.002   1  43 14.364 &lt;.001 ***   .250 [.085, .417] .037"
+## [12] "─────────────────────────────────────────────────────────────────────────────────"
+## [13] "MSE = mean square error (the residual variance of the linear model)"              
+## [14] "η²p = partial eta-squared = SS / (SS + SSE) = F * df1 / (F * df1 + df2)"          
+## [15] "ω²p = partial omega-squared = (F - 1) * df1 / (F * df1 + df2 + 1)"                
+## [16] "η²G = generalized eta-squared (see Olejnik &amp; Algina, 2003)"                       
+## [17] "Cohen’s f² = η²p / (1 - η²p)"
+```
+
+
+.panel[.panel-name[ANOVA-afex]
+
+``` r
+## bruceR::MANOVA 是对afex的封装
+m_aov &lt;- afex::aov_ez(
+      data = mt_mean,
+      id = 'Sub',
+      dv = 'RT',
+      within = c('Identity', 'Valence'))
+
+m_aov
+```
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##             Effect    df  MSE         F  ges p.value
+## 1         Identity 1, 43 0.00      2.55 .009    .117
+## 2          Valence 1, 43 0.00 64.37 *** .131   &lt;.001
+## 3 Identity:Valence 1, 43 0.00 14.36 *** .037   &lt;.001
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+]]]]
+
+
+
+---
+# 1.4 重复测量方差分析的不足
+
+.bigfont[
+重复测量方差分析有没有局限性？
+]
+
+--
+&lt;br&gt;
+.bigfont[
+-   个体间差异同样无法估计；
+]
+
+.bigfont[
+-   处理缺失值只能将整行观测删除，会导致标准误增加、功效降低；
+]
+
+.bigfont[
+-   对因变量(连续)和自变量(分类)的类型有要求；
+]
+
+
+.bigfont[
+-   对每一个试次中数据利用率低，造成试次的浪费
+]
+
+
+&lt;br&gt;
+
+---
+# 1.4 重复测量方差分析的不足
+
+.bigfont[
+重复测量方差分析有没有局限性？
+]
+
+&lt;img src="picture/chp9/Neuron_LMM.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+.bigfont[
+
+*因此，现在越来越多的期刊推荐使用多层线性回归(Hierarchical Linear Model) ，如[Neuron](https://www.sciencedirect.com/science/article/pii/S089662732100845X)。*
+]
+
+
+
+---
+# 2 多层线性模型(HLM)简介
+
+
+
+.size5[
+分层线性模型/多层线性模型(HLM): 用于处理"多层嵌套数据"，在一个以上层次上变化参数的线性模型。但多层线性模型的名字非常多，不同学科称呼不同，有许多“近义词”：]
+
+    -   层级/分层模型（Hierarchical Model，HM）  
+    
+    -   多水平模型（Multilevel Model，MLM）
+    
+    -   线性混合模型（Linear Mixed Model）
+    
+    -   混合效应模型（Mixed Effects Model）
+    
+    -   随机效应模型（Random Effects Model）
+    
+    -   随机系数模型（Random Coefficients Model）.....
+
+
+.size5[
+
+但在注意与多元回归(multiple regression)进行区分，即逐步引入自变量到回归模型中，以检验每个自变量对因变量的影响是否独立于其他自变量
+]
+
+---
+layout: true
+# 2.1 多层线性模型(HLM)的关键概念：固定效应与随机效应
+
+---
+.size5[
+在回归模型中一般会在截距和斜率上分别讨论**固定效应**和**随机效应**。
+
+例如，关于研究教师的工龄(Experience)与薪水(Salary)之间是否存在关系。在某校随机抽取了5个学院的教师信息，具体数据如下：]
+&lt;br&gt;
+
+
+
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-816a53ce901186f80b68" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-816a53ce901186f80b68">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.27099999999,87351.30100000001,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"ids","targets":1},{"name":"department","targets":2},{"name":"bases","targets":3},{"name":"experience","targets":4},{"name":"raises","targets":5},{"name":"salary","targets":6}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+
+
+
+
+
+
+.footnote[
+----------
+数据来源见[这里](https://github.com/mkfreeman/hierarchical-models/blob/master/generate-data.R)
+]
+
+
+
+
+---
+layout: true
+## 2.2 固定效应(fixed effects)与随机效应(random effects)
+
+---
+
+.size5[问题：是否可用工龄预测某个学校员工的工资？]
+
+.panelset[
+.panel[.panel-name[数据结构]
+&lt;img src="picture/chp9/nest.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[OLS]
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-16-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+
+]]]
+
+
+---
+
+.size[
+似乎可以。但有两个问题：
+
+-   不同学院的底薪有可能存在差异（存在/不存在）
+
+-   不同学院间间，工资与工龄的关系存在差异（存在/不存在）
+
+这意味有可能会出现四种情况
+]
+
+--
+&lt;br&gt;
+.size[
+
+对应在图中，则会在截距与斜率之间出现差异：
+
+1.    不同学院的底薪相同，工资涨幅也相同；（截距不随分组变化，斜率不随分组变化）
+
+2.    不同学院间底薪不同，但工资涨幅相同；（截距根据分组变化，斜率不随分组变化）
+
+3.    不同学院间底薪相同，但工资涨幅不同；（截距不随分组变化，斜率根据分组变化）
+
+4.    不同学院间底薪和工资涨幅都不相同。（截距、斜率均根据分组而变化）
+
+画图看看.
+]
+
+
+---
+
+.panelset[
+.panel[.panel-name[fixI-fixS]
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-17-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[ranI-fixS]
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[fixI-ranS]
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-19-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[ranI-ranS]
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+
+]]]]]
+
+
+---
+layout: false
+## 2.3 两种数据结构的比较
+.size5[
+无论在我们的数据中，还是刚才的数据中，其实都出现了层级或嵌套关系；只是对于match数据，每个变量都嵌套在一个被试中，而每个被试都可视为一条回归线。
+]
+
+.panelset[
+.panel[.panel-name[两种效应]
+
+.size5[
+-   固定效应代表了总体水平上的效应，即它们在不同分组（可能是个体、群体或条件）之间的影响是一致的，如match数据中Identity和Valence在所有被上总体的效应。
+
+-   随机效应则表示了在不同分组中变化的效应/参数。
+
+- 这两个术语的使用非常混乱，需要看到模型本身的代码进行判断，不可盲目相关文字描述。
+]
+
+
+
+.panel[.panel-name[match_data]
+&lt;img src="picture/chp9/data.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[shcool]
+&lt;img src="picture/chp9/nest.png" width="80%" style="display: block; margin: auto;" /&gt;
+]]]]
+
+
+
+---
+.size5[
+对于match数据，类比与学校员工薪水数据，我们也可以设想：
+
+-   不同被试总体上会不会存在反应时上的差异：有些个体普遍反应速度更快，而有些反应速度普遍更慢（随机截距）
+
+-   在自我条件下，两种Valence的差异是否完全相同？还是会有个体差异？（随机斜率）
+
+
+画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
+]
+
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-23-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+---
+# 3 多层线性模型的应用
+## 3.1 基本形式
+
+.size5[
+我们使用lme4包对多层线性模型建模，具体语句形式如下：
+]
+
+&lt;br&gt;
+
+``` r
+fit &lt;- lme4::lmer(
+      data =   , 
+*     formula = DV ~ Fixed_Factor + (Random_intercept + Random_Slope | Random_Factor))
+```
+&lt;br&gt;
+--
+.size5[
+注：
+
+-   **但在建立模型之前，需要思考模型中的总体水平和随着分组变化的效应分别是什么**。一般推荐至少添加变化的截距，也有推荐一开始就让斜率随着分组变化；
+
+-   另外，由于分组变化的效应可以视为从某些总体中抽样的离散单位，因而是分类变量
+]
+
+
+---
+## 3.2 建立模型
+
+.panelset[
+.panel[.panel-name[ranI]
+
+``` r
+## 变化截距 固定斜率
+model &lt;- lme4::lmer(data = mt_raw, RT ~ Identity * Valence + (1 | Sub))
+```
+
+
+.size5[
+-   Identity\*Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示截距不根据分组变化）； 管道(|)右侧Sub为分组变量
+]
+
+
+.panel[.panel-name[ranI ranS]
+
+
+``` r
+## 随机截距 随机斜率
+model_full &lt;- lme4::lmer(data = mt_raw, 
+                         RT ~ Identity * Valence + (1 + Identity * Valence |Sub)) 
+```
+
+
+.size5[
+-   Identity \* Valence:  \*表示两变量间所有可能的形式，等同与Identity + Valence + Identity:Valence
+
+-   (1|Sub): 1表示随机截距（0则表示截距不根据分组变化）； 管道(|)右侧Sub为分组变量
+]
+
+.panel[.panel-name[模型比较]
+
+``` r
+## 模型比较
+stats::anova(model, model_full) %&gt;% capture.output()
+```
+
+```
+## [1] "Data: mt_raw"                                                                  
+## [2] "Models:"                                                                       
+## [3] "model: RT ~ Identity * Valence + (1 | Sub)"                                    
+## [4] "model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)"          
+## [5] "           npar    AIC    BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    "
+## [6] "model         6 -29173 -29124  14592   -29185                                 "
+## [7] "model_full   15 -30024 -29902  15027   -30054   869  9 &lt;0.0000000000000002 ***"
+## [8] "---"                                                                           
+## [9] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+```
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+------
+注：模型比较的指标、计算方法及其优劣请参考[《认知建模中模型比较的方法》](https://journal.psych.ac.cn/xlkxjz/CN/10.3724/SP.J.1042.2024.01736)
 
 ]]]]
 
 ---
-#10.2 二项分布(Binomial Distribution)
-.bigfont[
-- 已知一次试验中的每次尝试中事件A发生的概率$p$，共进行$n$次独立重复的伯努利试验
-- 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
-`$$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$`
-- 当n → ∞，$p$ ≠ q，$np$ ≥ 5且$nq$ ≥ 5，事件A在$n$次试验中出现次数的平均数：
-`$$\mu = np$$`
-- 事件A出现次数所属分布的标准差：
-$$ \sigma = \sqrt{𝑛𝑝𝑞}$$
-]
----
-#10.2 二项分布(Binomial Distribution)
-## 如何将$z$与二分变量进行连接？
-### (1)将预测项映射到(0,1)之间，例如，使用
-`$$\frac{1}{1+exp(-z)}$$`
-### (2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
-.pull-left[
-![](./picture/chp10/func.png)
-]
-.pull-right[
-![](./picture/chp10/bernoulli.png)
-]
----
-#10.2 二项分布(Binomial Distribution)
-&lt;img src="./picture/chp10/func2.png" width="80%" style="display: block; margin: auto;" /&gt;
-
----
-#10.2 二项分布(Binomial Distribution)
-##参数求解
-.bigfont[
-- 对于logit回归，我们可以使用极大似然估计对其进行求解
-- 该求解过程比较复杂，一般由计算机自动完成
-]
-![](./picture/chp10/logit.png)
-
-
-
-
----
-#10.3 代码实操
-##首先分析一个被试的数据
-
-```r
-df.match.7304 &lt;- df.match %&gt;%
-  dplyr::filter(Sub == 7304) #选择被试7304
-mod_7304_full &lt;- stats::glm(data = df.match.7304, #数据
-                          formula = ACC ~ 1 + Identity * Valence, #模型
-                          family = binomial) #因变量为二项分布
-summary(mod_7304_full) %&gt;% #查看模型信息
-  capture.output() %&gt;% .[c(6:11,15:19)] #课堂展示重要结果
-```
-
-```
-##  [1] "Coefficients:"                                                        
-##  [2] "                             Estimate Std. Error z value Pr(&gt;|z|)    "
-##  [3] "(Intercept)                      4.30       1.01    4.28 0.000019 ***"
-##  [4] "IdentityOther                   -2.69       1.05   -2.56   0.0106 *  "
-##  [5] "Valenceimmoral                  -2.77       1.05   -2.64   0.0083 ** "
-##  [6] "IdentityOther:Valenceimmoral     2.10       1.13    1.86   0.0628 .  "
-##  [7] "(Dispersion parameter for binomial family taken to be 1)"             
-##  [8] ""                                                                     
-##  [9] "    Null deviance: 254.02  on 290  degrees of freedom"                
-## [10] "Residual deviance: 228.32  on 287  degrees of freedom"                
-## [11] "AIC: 236.3"
-```
-
----
-#10.3 代码实操
+## 3.3 似然比检验(Likelihood-ratio tests)
 
 .panelset[
-.panel[.panel-name[mod_null]
+.panel[.panel-name[问题]
+.size5[
+在建立模型后，我们希望知道固定效应大小是否显著，但由于多层线性模型中对于自由度的估计有多种方法，比较复杂，所以lme4::lmer()中没有提供显著性。
+]
 
-```r
-#无固定效应
-mod_null &lt;- lme4::glmer(data = df.match, #数据
-                   formula = ACC ~ (1 + Identity * Valence|Sub), #模型
-                   family = binomial) #因变量二项分布
-#performance::model_performance(mod_null)
-summary(mod_null) %&gt;%
-  capture.output()%&gt;% .[c(7:8,14:24)]
+.panel[.panel-name[anova]
+
+``` r
+# 建立没有固定效应的“空模型”
+model_null &lt;- lme4::lmer(data = mt_raw,
+                   RT ~ (1 + Identity*Valence|Sub))
+
+## 根据似然比进行模型比较
+stats::anova(model_full, model_null)
 ```
 
 ```
-##  [1] "     AIC      BIC   logLik deviance df.resid "                           
-##  [2] "  9378.8   9460.2  -4678.4   9356.8    11999 "                           
-##  [3] "Random effects:"                                                         
-##  [4] " Groups Name                         Variance Std.Dev. Corr             "
-##  [5] " Sub    (Intercept)                  1.53     1.24                      "
-##  [6] "        IdentityOther                2.52     1.59     -0.86            "
-##  [7] "        Valenceimmoral               2.40     1.55     -0.85  0.83      "
-##  [8] "        IdentityOther:Valenceimmoral 3.33     1.83      0.69 -0.87 -0.82"
-##  [9] "Number of obs: 12010, groups:  Sub, 41"                                  
-## [10] ""                                                                        
-## [11] "Fixed effects:"                                                          
-## [12] "            Estimate Std. Error z value            Pr(&gt;|z|)    "         
-## [13] "(Intercept)    2.014      0.114    17.7 &lt;0.0000000000000002 ***"
-```
-
-.panel[.panel-name[mod]
-
-```r
-#随机截距，固定斜率
-mod &lt;- lme4::glmer(data = df.match, #数据
-                     formula = ACC ~ 1 + Identity * Valence + (1|Sub), #模型
-                     family = binomial) #因变量二项分布
-#performance::model_performance(mod)
-summary(mod) %&gt;%
-  capture.output() %&gt;% .[c(7:8,14:24,28:32)]
-```
-
-```
-##  [1] "     AIC      BIC   logLik deviance df.resid "                                
-##  [2] "  9639.0   9675.9  -4814.5   9629.0    12005 "                                
-##  [3] "Random effects:"                                                              
-##  [4] " Groups Name        Variance Std.Dev."                                        
-##  [5] " Sub    (Intercept) 0.237    0.487   "                                        
-##  [6] "Number of obs: 12010, groups:  Sub, 41"                                       
-##  [7] ""                                                                             
-##  [8] "Fixed effects:"                                                               
-##  [9] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [10] "(Intercept)                    2.4964     0.1015   24.60 &lt; 0.0000000000000002"
-## [11] "IdentityOther                 -0.7161     0.0839   -8.53 &lt; 0.0000000000000002"
-## [12] "Valenceimmoral                -0.9474     0.0819  -11.57 &lt; 0.0000000000000002"
-## [13] "IdentityOther:Valenceimmoral   0.8230     0.1086    7.58    0.000000000000035"
-## [14] "Valenceimmoral               ***"                                             
-## [15] "IdentityOther:Valenceimmoral ***"                                             
-## [16] "---"                                                                          
-## [17] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"               
-## [18] ""
-```
-
-.panel[.panel-name[model_full]
-
-```r
-#随机截距，随机斜率
-mod_full &lt;- lme4::glmer(data = df.match, #数据
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), #模型
-                          family = binomial) #因变量二项分布
-##performance::model_performance(mod_full)
-summary(mod_full) %&gt;%
-  capture.output() %&gt;% .[c(6:8,13:18,21:26,30:34)]
-```
-
-```
-##  [1] ""                                                                             
-##  [2] "     AIC      BIC   logLik deviance df.resid "                                
-##  [3] "  9355.9   9459.4  -4664.0   9327.9    11996 "                                
-##  [4] ""                                                                             
-##  [5] "Random effects:"                                                              
-##  [6] " Groups Name                         Variance Std.Dev. Corr             "     
-##  [7] " Sub    (Intercept)                  0.971    0.986                     "     
-##  [8] "        IdentityOther                1.770    1.331    -0.79            "     
-##  [9] "        Valenceimmoral               1.028    1.014    -0.75  0.75      "     
-## [10] ""                                                                             
-## [11] "Fixed effects:"                                                               
-## [12] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [13] "(Intercept)                     2.772      0.178   15.53 &lt; 0.0000000000000002"
-## [14] "IdentityOther                  -0.870      0.234   -3.71              0.00021"
-## [15] "Valenceimmoral                 -1.150      0.190   -6.06         0.0000000013"
-## [16] "IdentityOther                ***"                                             
-## [17] "Valenceimmoral               ***"                                             
-## [18] "IdentityOther:Valenceimmoral ***"                                             
-## [19] "---"                                                                          
-## [20] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
-```
-
-.panel[.panel-name[模型比较anova]
-
-```r
-stats::anova(mod_null, mod, mod_full) #比较三个模型
-```
-
-```
-## Data: df.match
+## Data: mt_raw
 ## Models:
-## mod: ACC ~ 1 + Identity * Valence + (1 | Sub)
-## mod_null: ACC ~ (1 + Identity * Valence | Sub)
-## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
-##          npar  AIC  BIC logLik deviance Chisq Df           Pr(&gt;Chisq)    
-## mod         5 9639 9676  -4814     9629                                  
-## mod_null   11 9379 9460  -4678     9357 272.1  6 &lt; 0.0000000000000002 ***
-## mod_full   14 9356 9459  -4664     9328  28.9  3            0.0000023 ***
+## model_null: RT ~ (1 + Identity * Valence | Sub)
+## model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)
+##            npar    AIC    BIC logLik deviance Chisq Df  Pr(&gt;Chisq)    
+## model_null   12 -29992 -29894  15008   -30016                         
+## model_full   15 -30024 -29902  15027   -30054  38.1  3 0.000000026 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-.panel[.panel-name[模型比较compare_performance]
 
-```r
-performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose = FALSE)
+
+.panel[.panel-name[mixed]
+
+在模型非常复杂时（多层嵌套），如果仅仅只想对固定效应进行检验，可以使用afex::mixed()，设置method 参数为 LRT(Likelihood-ratio tests)
+
+
+``` r
+afex::mixed(data = mt_raw,
+            RT ~ Identity * Valence + (1 + Identity*Valence|Sub),
+            method = 'LRT')
 ```
 
-![](./picture/chp10/performance1.png)
-]]]]]]
+```
+## Mixed Model Anova Table (Type 3 tests, LRT-method)
+## 
+## Model: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)
+## Data: mt_raw
+## Df full model: 15
+##             Effect df     Chisq p.value
+## 1         Identity  1      1.73    .188
+## 2          Valence  1 30.27 ***   &lt;.001
+## 3 Identity:Valence  1 12.03 ***   &lt;.001
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+
+.panel[.panel-name[lmerTest]
+
+lmerTest是一个与lme4包兼容的包，主要用于对混合效应模型进行假设检验；其中也包含了lmerTest::lmer()函数，与lme4::lmer()不同的是，其结果报告了显著性（使用Satterthwaite分母自由）
+
+
+``` r
+lmer_model &lt;- lmerTest::lmer(data = mt_raw,
+                             RT ~ Identity * Valence + (1 + Identity * Valence|Sub))
+# summary(lmer_model)
+
+# 如果使用lmerTest包进行建模，可以使用bruceR::HLM_summary()进行输出
+##  RUN IN CONSOLE
+# HLM_summary(lmer_model)
+```
+
+]]]]]
+
+
+
 
 ---
-#10.3 代码实操
-##结果解读
+## 3.4 模型解读
 
-```r
-summary(mod_full) %&gt;% capture.output() %&gt;% .[c(21:27)]
+.panelset[
+.panel[.panel-name[变化的效应]
+注意：
+-   相关矩阵会体现自变量效应在个体上的差异，尤其是第一列(截距与斜率的相关)，而具体的解释也应考虑对应固定效应系数本身的正负；  
+
+-   有可能会提供天花板与地板效应的相关信息，如任务过于简单，数据变化较小，有可能出现截距与斜率为负相关。
+
+
+```
+## [1] "Random effects:"                                                        
+## [2] " Groups   Name                      Variance Std.Dev. Corr             "
+## [3] " Sub      (Intercept)               0.00425  0.0652                    "
+## [4] "          IdentitySelf              0.00147  0.0383   -0.24            "
+## [5] "          Valencemoral              0.00219  0.0468   -0.22  0.49      "
+## [6] "          IdentitySelf:Valencemoral 0.00510  0.0714   -0.02 -0.53 -0.80"
+## [7] " Residual                           0.01801  0.1342                    "
+## [8] "Number of obs: 25920, groups:  Sub, 44"
 ```
 
+
+.panel[.panel-name[固定效应]
+
+
 ```
-## [1] ""                                                                             
-## [2] "Fixed effects:"                                                               
-## [3] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [4] "(Intercept)                     2.772      0.178   15.53 &lt; 0.0000000000000002"
-## [5] "IdentityOther                  -0.870      0.234   -3.71              0.00021"
-## [6] "Valenceimmoral                 -1.150      0.190   -6.06         0.0000000013"
-## [7] "IdentityOther:Valenceimmoral    0.988      0.272    3.63              0.00028"
+## [1] "Fixed effects:"                                       
+## [2] "                          Estimate Std. Error t value"
+## [3] "(Intercept)                0.72328    0.00997   72.52"
+## [4] "IdentitySelf               0.01329    0.00624    2.13"
+## [5] "Valencemoral              -0.00913    0.00744   -1.23"
+## [6] "IdentitySelf:Valencemoral -0.04150    0.01128   -3.68"
 ```
 
-&lt;img src="./picture/chp10/logit2.png" width="60%" style="display: block; margin: auto;" /&gt;
-.pull-left[
-- MoralSelf:
-`\(P=\frac{e^{2.77}}{1+e^{2.77}} = 0.941\)`
-&lt;br&gt;
-- ImmoralSelf:
-`\(P=\frac{e^{2.77-1.15}}{1+e^{2.77-1.15}} = 0.835\)`
-]
-.pull-right[
-- MoralOther:
-`\(P=\frac{e^{2.77-0.87}}{1+e^{2.77-0.87}} = 0.870\)`
-&lt;br&gt;
-- ImmoralOther:
-`\(P=\frac{e^{2.77-0.87-1.15+0.99}}{1+e^{2.77-0.87-1.15+0.99}} = 0.851\)`
-]
----
-#10.3 代码实操
 
+.panel[.panel-name[交互效应的可视化]
 
-```r
-#交互作用
-interactions::cat_plot(model = mod_full,
+``` r
+## 一种快捷的方法
+interactions::cat_plot(model = model_full,
                        pred = Identity,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-21-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-33-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+
+]]]]
+
+
+
+
 
 
 ---
-#10.4 方法比较
+## 3.5 模型等价性
+
+.size5[
+如果我们观察一下使用lme4::lmer()的结果与重复测量结果，可以发现存在差异：
+]
+
+
 
 .panelset[
 .panel[.panel-name[anova]
 
-```r
-res &lt;- bruceR::MANOVA(data = df.match.aov, #数据
-       subID = 'Sub', # 被试编号
-       dv= 'mean_ACC', # 因变量
-       within = c('Identity', 'Valence')) #自变量（被试内）
-```
 
 
-```r
-capture.output(res) %&gt;% .[3:8]
+``` r
+m_aov
 ```
 
 ```
-## [1] "Response: mean_ACC"                                  
-## [2] "            Effect    df  MSE         F  ges p.value"
-## [3] "1         Identity 1, 40 0.01    3.08 + .017    .087"
-## [4] "2          Valence 1, 40 0.01 16.26 *** .068   &lt;.001"
-## [5] "3 Identity:Valence 1, 40 0.01   8.52 ** .038    .006"
-## [6] "---"
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##             Effect    df  MSE         F  ges p.value
+## 1         Identity 1, 43 0.00      2.55 .009    .117
+## 2          Valence 1, 43 0.00 64.37 *** .131   &lt;.001
+## 3 Identity:Valence 1, 43 0.00 14.36 *** .037   &lt;.001
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
 
+.panel[.panel-name[lme4]
 
-.panel[.panel-name[EMMAMNS]
-
-```r
-res %&gt;%
-  bruceR::EMMEANS(effect = 'Valence', by = 'Identity') %&gt;%
-  capture.output()
-```
-
-```
-##  [1] "------ EMMEANS (effect = \"Valence\") ------"                                              
-##  [2] ""                                                                                          
-##  [3] "Joint Tests of \"Valence\":"                                                               
-##  [4] "────────────────────────────────────────────────────────────────"                          
-##  [5] "  Effect \"Identity\" df1 df2      F     p     η²p [90% CI of η²p]"                        
-##  [6] "────────────────────────────────────────────────────────────────"                          
-##  [7] " Valence      Self    1  40 35.614 &lt;.001 ***   .471 [.282, .610]"                          
-##  [8] " Valence      Other   1  40  0.412  .525       .010 [.000, .114]"                          
-##  [9] "────────────────────────────────────────────────────────────────"                          
-## [10] "Note. Simple effects of repeated measures with 3 or more levels"                           
-## [11] "are different from the results obtained with SPSS MANOVA syntax."                          
-## [12] ""                                                                                          
-## [13] "Estimated Marginal Means of \"Valence\":"                                                  
-## [14] "───────────────────────────────────────────────────"                                       
-## [15] " \"Valence\" \"Identity\" Mean [95% CI of Mean]    S.E."                                   
-## [16] "───────────────────────────────────────────────────"                                       
-## [17] "   moral        Self   0.916 [0.885, 0.947] (0.015)"                                       
-## [18] "   immoral      Self   0.814 [0.776, 0.852] (0.019)"                                       
-## [19] "   moral        Other  0.844 [0.809, 0.879] (0.017)"                                       
-## [20] "   immoral      Other  0.829 [0.794, 0.864] (0.017)"                                       
-## [21] "───────────────────────────────────────────────────"                                       
-## [22] ""                                                                                          
-## [23] "Pairwise Comparisons of \"Valence\":"                                                      
-## [24] "────────────────────────────────────────────────────────────────────────────────────────"  
-## [25] "        Contrast \"Identity\" Estimate    S.E. df      t     p     Cohen’s d [95% CI of d]"
-## [26] "────────────────────────────────────────────────────────────────────────────────────────"  
-## [27] " immoral - moral      Self    -0.102 (0.017) 40 -5.968 &lt;.001 *** -0.736 [-0.985, -0.487]"  
-## [28] " immoral - moral      Other   -0.015 (0.024) 40 -0.642  .525     -0.111 [-0.459,  0.238]"  
-## [29] "────────────────────────────────────────────────────────────────────────────────────────"  
-## [30] "Pooled SD for computing Cohen’s d: 0.139"                                                  
-## [31] "No need to adjust p values."                                                               
-## [32] ""                                                                                          
-## [33] "Disclaimer:"                                                                               
-## [34] "By default, pooled SD is Root Mean Square Error (RMSE)."                                   
-## [35] "There is much disagreement on how to compute Cohen’s d."                                   
-## [36] "You are completely responsible for setting `sd.pooled`."                                   
-## [37] "You might also use `effectsize::t_to_d()` to compute d."                                   
-## [38] ""
-```
-
-.panel[.panel-name[GLM]
-
-```r
-stats::anova(mod_full)
+``` r
+## 使用lme4建立的模型
+model_full %&gt;% anova()
 ```
 
 ```
 ## Analysis of Variance Table
 ##                  npar Sum Sq Mean Sq F value
-## Identity            1    0.2     0.2     0.2
-## Valence             1   26.8    26.8    26.8
-## Identity:Valence    1   13.6    13.6    13.6
+## Identity            1  0.013   0.013    0.74
+## Valence             1  0.811   0.811   45.00
+## Identity:Valence    1  0.244   0.244   13.54
 ```
 
-.panel[.panel-name[HLM]
+.panel[.panel-name[lmerTest]
 
 
 
-```r
-mod_anova &lt;- lme4::lmer(data = df.match,
-                        formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
-stats::anova(mod_anova)
-```
-
-```
-## Analysis of Variance Table
-##                  npar Sum Sq Mean Sq F value
-## Identity            1   0.42    0.42    3.71
-## Valence             1   3.17    3.17   27.69
-## Identity:Valence    1   0.98    0.98    8.54
-```
-
-.panel[.panel-name[HLM_mean]
-
-```r
-mod_mean &lt;- lme4::lmer(data = df.match.aov,
-                          formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
-stats::anova(mod_mean)
+``` r
+## 使用lmerTest建立的模型
+lmer_model %&gt;% anova()
 ```
 
 ```
-## Analysis of Variance Table
-##                  npar Sum Sq Mean Sq F value
-## Identity            1 0.0272  0.0272    3.08
-## Valence             1 0.1410  0.1410   15.93
-## Identity:Valence    1 0.0769  0.0769    8.69
-```
-
-.panel[.panel-name[compare]
-
-```r
-performance::compare_performance(mod_full, mod_anova, rank = TRUE, verbose = FALSE)
-```
-
-![](./picture/chp10/performance2.png)
-
-
-```r
-stats::anova(mod_full, mod_anova)
-```
-
-```
-## Data: df.match
-## Models:
-## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
-## mod_anova: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
-##           npar  AIC  BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    
-## mod_full    14 9356 9459  -4664     9328                                 
-## mod_anova   15 8396 8507  -4183     8366   962  1 &lt;0.0000000000000002 ***
+## Type III Analysis of Variance Table with Satterthwaite's method
+##                  Sum Sq Mean Sq NumDF DenDF F value      Pr(&gt;F)    
+## Identity          0.031   0.031     1  43.0    1.73     0.19574    
+## Valence           0.765   0.765     1  43.3   42.46 0.000000063 ***
+## Identity:Valence  0.244   0.244     1  43.0   13.54     0.00065 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 
-]]]]]]]
-
----
-#10.4 方法比较
-## 留出法
-
-```r
-# 设置种子以确保结果的可重复性
-set.seed(456)
-
-# 随机选择70%的数据作为训练集，剩余的30%作为测试集
-train_index &lt;- caret::createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
-train_data &lt;- df.match[train_index, ]
-test_data &lt;- df.match[-train_index, ]
-
-# 根据训练集生成模型
-model_full &lt;- lme4::glmer(data = train_data,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
-                          family = binomial)
-model_anova &lt;- lme4::lmer(data = train_data,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
-
-# 使用模型进行预测
-pre_mod_full &lt;- stats::predict(model_full, newdata = test_data, type = 'response')
-pre_mod_anova &lt;- stats::predict(model_anova, newdata = test_data)
-```
+]]]]
 
 
 ---
-#10.4 方法比较
-## 留出法
-.pull-left[
 
-```r
-# 计算模型的性能指标
-performance_mod_full &lt;- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
-                R2 = cor(test_data$ACC, pre_mod_full)^2)
-# 打印性能指标
-print(performance_mod_full)
+
+``` r
+# http://www.dwoll.de/rexrepos/posts/anovaMixed.html#two-way-repeated-measures-anova-rbf-pq-design
+model_aov &lt;- mt_mean %&gt;%
+  lmerTest::lmer(
+   data = .,
+   RT ~ Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub)
+ )
+
+model_aov %&gt;% anova()
 ```
 
 ```
-##     RMSE       R2 
-## 0.342402 0.074985
-```
-]
-.pull-right[
-
-```r
-# 计算模型的性能指标
-performance_mod_anova &lt;- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
-                R2 = cor(test_data$ACC, pre_mod_anova)^2)
-
-# 打印性能指标
-print(performance_mod_anova)
+## Type III Analysis of Variance Table with Satterthwaite's method
+##                  Sum Sq Mean Sq NumDF DenDF F value         Pr(&gt;F)    
+## Identity         0.0055  0.0055     1    43    2.55        0.11735    
+## Valence          0.1282  0.1282     1    86   59.89 0.000000000018 ***
+## Identity:Valence 0.0329  0.0329     1    86   15.36        0.00018 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-```
-##     RMSE       R2 
-## 0.342263 0.075676
-```
 
+
+
+
+---
+#  4 HLM的应用
+
+
+.size5[
+HLM 非常复杂，本节课仅以重复测量为例，下面提供了一些其他的应用场景：
 ]
 
----
-#10.4 方法比较
-## 留出法
 
-```r
-# 将预测概率转换为分类结果
-predicted_classes &lt;- ifelse(pre_mod_full &gt; 0.5, 1, 0)
-# 计算混淆矩阵
-confusion_matrix &lt;- caret::confusionMatrix(as.factor(predicted_classes), as.factor(test_data$ACC))
-```
 
----
-#10.4 方法比较
-## 留出法
+.panelset[
+.panel[.panel-name[嵌套数据]
 
-```r
-# 打印混淆矩阵和性能指标
-print(confusion_matrix)
-```
+&lt;img src="picture/chp9/nestdesign.jpg" width="700" style="display: block; margin: auto;" /&gt;
+.panel[.panel-name[元分析1]
 
-```
-## Confusion Matrix and Statistics
-## 
-##           Reference
-## Prediction    0    1
-##          0   37   27
-##          1  499 3037
-##                                              
-##                Accuracy : 0.854              
-##                  95% CI : (0.842, 0.865)     
-##     No Information Rate : 0.851              
-##     P-Value [Acc &gt; NIR] : 0.33               
-##                                              
-##                   Kappa : 0.095              
-##                                              
-##  Mcnemar's Test P-Value : &lt;0.0000000000000002
-##                                              
-##             Sensitivity : 0.0690             
-##             Specificity : 0.9912             
-##          Pos Pred Value : 0.5781             
-##          Neg Pred Value : 0.8589             
-##              Prevalence : 0.1489             
-##          Detection Rate : 0.0103             
-##    Detection Prevalence : 0.0178             
-##       Balanced Accuracy : 0.5301             
-##                                              
-##        'Positive' Class : 0                  
-## 
-```
+通过综合一组研究来评估效应量的大小。由于不同研究的结果之间往往涉及到不同质的群体或不同的实验条件。
+
+&lt;img src="picture/chp9/meta1.jpg" width="85%" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[元分析2]
+&lt;img src="picture/chp9/meta2.jpg" width="60%" style="display: block; margin: auto;" /&gt;
+
+]]]]
+
+
 
 ---
-#10.4 方法比较
-## 留出法
-.pull-left[
+# 5 可能遇到的问题
 
-```r
-# 计算ROC曲线和AUC
-roc_result &lt;- pROC::roc(test_data$ACC, pre_mod_full)
-print(roc_result)
-```
+.size5[
+-   模型不收敛：[混合线性模型的实现](https://zhuanlan.zhihu.com/p/63092231)
 
-```
-## 
-## Call:
-## roc.default(response = test_data$ACC, predictor = pre_mod_full)
-## 
-## Data: pre_mod_full in 536 controls (test_data$ACC 0) &lt; 3064 cases (test_data$ACC 1).
-## Area under the curve: 0.699
-```
+-   自由度问题：[多层线性模型（HLM）及其自由度问题](https://zhuanlan.zhihu.com/p/50048784)  
+
+-   [统计学中的固定效应 vs. 随机效应](https://zhuanlan.zhihu.com/p/60528092)
+
+-   [「固定效应、主效应、简单效应」概念辨析](https://zhuanlan.zhihu.com/p/513227882)
 ]
-.pull-right[
 
-```r
-# 绘制ROC曲线
-plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
-abline(a = 0, b = 1, lty = 2) # 添加对角线
-```
-
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-35-1.png" width="540" style="display: block; margin: auto;" /&gt;
-
-]
----
-#10.4 方法比较
-## 重复测量分析的不足
-.bigfont[
-- 会产生难以解释的结果
-  - 假设在10个回答中，正确回答8次，错误回答2次
-  - 此时95%CI为[0.52,1.08] ( = 0.8 ± 0.275)
-- 方差不齐，不满足方差分析基本假设
-
-`$$\mu = np$$`
-`$$𝜎 = √(𝑛𝑝𝑞 )$$`
-`$$𝜎_p^2 = \frac{p(1-p)}{n}$$`
-]
-Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
-
-
----
-#10.5 其他分布
-##泊松分布(Poisson distribution)
-.bigfont[
-- 在固定时间间隔或空间区域内发生某种事件的次数的概率。
-- 适用于事件以恒定平均速率独立发生的情况
-- 例如电话呼叫、网站访问、机器故障等。
-`$$P(X = k) = \frac{e^{-\lambda} \lambda^k}{k!}$$`
-- λ:事件在给定时间或空间内的平均发生率（或平均数量）。
-- k:可能的事件发生次数，可以是0, 1, 2, …
-]
----
-#10.5 其他分布
-##泊松分布(Poisson distribution)
-
-
-```r
-set.seed(123) # 设置随机种子以获得可重复的结果
-random_samples &lt;- rpois(1000, lambda = 5)
-hist(random_samples,col = 'white', border = 'black',)
-```
-
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-36-1.png" width="540" style="display: block; margin: auto;" /&gt;
-
----
-#10.5 其他分布
-##泊松分布(Poisson distribution)
-![](./picture/chp10/poission.png)
----
-#10.5 其他分布
-##伽马分布(Gamma distribution)
-&lt;br&gt;
-.bigfont[
-- 伽马分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
-- “指数分布”和“卡方分布”都是伽马分布的特例。
-`$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$`
-- α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
-- β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
-]
----
-#10.5 其他分布
-##伽马分布(Gamma distribution)
-&lt;img src="./picture/chp10/gamma.webp" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: center, middle
@@ -857,7 +929,7 @@ class: center, middle
 思考
 ]
 &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;信号检测论是否可以用广义线性模型分析？&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;当因变量不服从正态分布(如ACC)时如何处理？&lt;/span&gt; &lt;br&gt;
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
