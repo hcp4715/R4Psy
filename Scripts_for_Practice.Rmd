@@ -43,11 +43,10 @@ pacman::p_load(here)
 # 此前已经将合并后的实验数据存入"match_raw.csv"，此次可直接读取
 df7 <-  bruceR::import(here::here("data", "match","match_raw.csv")) %>%
       # 选择我们需要的变量
-      dplyr::select(df7,
-                     Sub, Age, Sex, Hand, #人口统计学
-                     Block, Bin, Trial,   # 试次
-                     Shape, Label, Match, # 刺激
-                     Resp, ACC, RT)       # 反应结果
+      dplyr::select(Sub, Age, Sex, Hand, #人口统计学
+                    Block, Bin, Trial,   # 试次
+                    Shape, Label, Match, # 刺激
+                    Resp, ACC, RT)       # 反应结果
 # 也可以用原始方式导入
 # penguin_data <- read.csv('./data/match/match_raw.csv')  # 仅用基础包的做法
 ```
