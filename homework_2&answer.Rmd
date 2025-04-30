@@ -1,5 +1,5 @@
 title: "Test1"
-author: "Hetong Qi"
+author: "Fangru"
 date: "`r Sys.Date()`"
 output:
   html_document: default
@@ -21,6 +21,7 @@ Q1
 
 ---
 2.根据下列图片中自己所在的位置（所在行代表应选取的站点；所在列代表在固定站点后、应选取的特定的行；如Tsinghua (1,20)，即在选择“Tsinghua”这一站点后，再从该站点数据中选择前1-20行的数据），对Q1进行筛选（提示：在Tidyverse中可以调用slice函数来选定相应的列）
+![pic1](picture/homework/pic1.png)
 
 ```{r homework 2}
 # 同样存在多种方法
