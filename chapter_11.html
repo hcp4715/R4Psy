@@ -10,9 +10,14 @@
     <script src="libs/panelset-0.2.6/panelset.js"></script>
     <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
-    <script src="libs/viz-1.8.2/viz.js"></script>
-    <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
-    <script src="libs/grViz-binding-1.0.11/grViz.js"></script>
+    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
+    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -22,14 +27,13 @@
 
 class: center, middle
 &lt;span style="font-size: 50px;"&gt;**第十一章**&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;回归模型(四)：中介分析&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;回归模型(三)：广义线性模型&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2025-04-16&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-04-30&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
-
 
 
 &lt;style type="text/css"&gt;
@@ -39,796 +43,828 @@ class: center, middle
 .size5{
 font-size: 24px;
 }
-.titfont{
+.tit_font{
 font-size: 60px;
-}
-.foot{
-font-size: 10px;
 }
 
 &lt;/style&gt;
 
 
-## 准备工作
 
-``` r
-# Packages
-if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
-}
-pacman::p_load(tidyverse,easystats,magrittr,
-               # 中介分析
-               lavaan, bruceR,tidySEM,
-               # 数据集
-               quartets,
-               # 绘图
-               patchwork,DiagrammeR,magick)
-options(scipen=99999,digits = 3)
-set.seed(1002)
-```
 
 
 
----
-class: inverse, middle ,center
 
 
-.titfont[线性模型回顾]
 
-
-
----
-# 0.1 线性模型及模型检验
--   回归方程用于分析一个因变量与多个自变量之间的关系。在回归中，将一个或多个自变量视为整体，对因变量进行预测，通过OLS或ML进行拟合，解释不了的成分则被视为残差；而我们的目的在于，舍弃残差（随机部分），而获得可解释的成分。
-
-
-
-
-
-.panelset[
-.panel[.panel-name[anscombe_quartet]
-
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-2-1.png" width="540" style="display: block; margin: auto;" /&gt;
-
-.panel[.panel-name[performance]
-
-
-``` r
-lm(y ~ x,data = anscombe_quartet %&gt;% 
-     dplyr::filter(dataset == '(3) Outlier')) %&gt;% 
-* performance::check_model(check = c('linearity','outliers'))
-```
-
-&lt;img src="chapter_11_files/figure-html/Outlier-1.png" width="540" style="display: block; margin: auto;" /&gt;
-
-
-
-
-]]]
-
-
-
----
-# 0.2 多元线性模型的局限
-
-.size5[
-
--   模型可分为三类 `\(^*\)`：描述模型、推断模型、预测模型
-
-
--   回归兼具这三种功能：
-
-    -   使用LOESS(即geom_smooth()中method默认的参数)可以对数据进行描述；
-    
-    -   关注各个变量的(偏)回归系数的显著性可以进行统计推断(如果是离散变量的时候即等价与ANOVA)
-    
-    -   进行预测时，则不关注各个变量之间的复杂关系，因而将自变量当做整体，关注其是否能够预测因变量(拟合指标)
-    
-]
-
---
-
-### 局限
-.size5[
-如果所有自变量都相互独立，使用多元回归是合理的；
-
-但在现实中，变量之间存在相互作用更为普遍，而多元回归值仅关注到自变量对因变量的独立作用(偏回归系数)，很难描述变量间复杂的关系。变量越多，这个问题越明显。
-
-]
-
-.footnote[
------------
-.footfont[
-Ref: [https://www.tmwr.org/software-modeling](https://www.tmwr.org/software-modeling)
-]
-]
-
----
-class: inverse, middle ,center
-
-.titfont[中介分析]
-
-
----
-# 2.1 对于“机制”的表示——“图”
-
--   变量间关系中，我们期望验证因果关系。
-
--   对于因果关系，可以用“图”来表示：
-
-    -   图包括两部分：节点和边。节点表示具体变量，而箭头表示变量之间的关系；
-    
-    -   对节点来说，在SEM中，观测变量用椭圆表示，潜变量用椭圆表示。
-    
-    -   边表示变量间关系，**单箭头直线表示直接因果关系，从原因指向结果；双曲线箭头则表示相关
-
--   使用的图多为有向无环图(Directed Acyclic Graph, DAGs)，而图本身是对理论因果关系的表征
-
-.pull-left[
-
-<div class="grViz html-widget html-fill-item" id="htmlwidget-a613bc458c42c74d20ac" style="width:540px;height:100px;"></div>
-<script type="application/json" data-for="htmlwidget-a613bc458c42c74d20ac">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X1 -> X3\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-]
-
-
-.pull-right[
-
-
-<div class="grViz html-widget html-fill-item" id="htmlwidget-9049b4ab04e235b3c2d8" style="width:540px;height:100px;"></div>
-<script type="application/json" data-for="htmlwidget-9049b4ab04e235b3c2d8">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X3 -> X1\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-]
-
----
-# 2.2 中介分析
-
--   中介分析：
-
-关注变量间因果关系，自变量如何影响因变量（即机制），如X通过M作用于Y，M为中介变量。中介的存在意味着时间上发生的先后顺序： `\(X \rightarrow M \rightarrow Y\)` 。
-
-对于中介过程的量化包括路径分析和SEM（同时包含测量模型和结构模型），后面的介绍基于路径分析。
-
-
-<div class="grViz html-widget html-fill-item" id="htmlwidget-4228862c516815729d10" style="width:540px;height:100px;"></div>
-<script type="application/json" data-for="htmlwidget-4228862c516815729d10">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-
-
----
-# 2.2 中介分析
-
-
-.pull-left[
-
-.bigfont[
-总方程:  
-
-`$$Y = i_1 + cX + e_1$$`
-]
-
-]
-
-.pull-right[
-<div class="grViz html-widget html-fill-item" id="htmlwidget-e6c1d12556bbfadd3469" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-e6c1d12556bbfadd3469">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  \n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.4,weight = 0.3,fontsize = 10]\n  e1[style = NULL,fillcolor = NULL,penwidth = 0,height = 0.02,width = 0.02]\n  \n  # 定义边\n  edge [color = black, arrowhead = vee]\n  {rank = same; e1; Y}\n  X -> Y [label = \"c\"]\n  e1 -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-]
-
-
-------------------
+# 补充内容: easystats系统包的简介
+&lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 &lt;br&gt;
-.pull-left[
+&lt;br&gt;
+&lt;center&gt;
+https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
+&lt;/center&gt;
+---
+class: center, middle
+.tit_font[
+当因变量不服从正态分布(如正确率)时如何处理？
+]
+---
+.panelset[
+.panel[.panel-name[df.match]
+
+``` r
+head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-488292a7d2734b1202b6" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-488292a7d2734b1202b6">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"Label","targets":4},{"name":"Match","targets":5},{"name":"CorrResp","targets":6},{"name":"Resp","targets":7},{"name":"ACC","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+.panel[.panel-name[df.match.aov]
+
+``` r
+df.match.aov %&gt;%
+  dplyr::select(1:4) %&gt;%
+  head(5) %&gt;% 
+  DT::datatable()
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-26ec61e0b04e0b32233a" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-26ec61e0b04e0b32233a">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.9866666666666667,0.8333333333333334,0.821917808219178,0.7183098591549296,0.9324324324324325]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"mean_ACC","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+]]]
+---
+.tit_font[  Contents&lt;/h1&gt;]
+&lt;br&gt;
+&lt;br&gt;
+.bigfont[
+    10.1 广义线性模型&lt;br&gt;
+&lt;br&gt;
+    10.2 二项分布&lt;br&gt;
+&lt;br&gt;
+    10.3 其他分布&lt;br&gt;
+&lt;br&gt;
+    10.4 代码实操&lt;br&gt;
+&lt;br&gt;
+    10.5 方法比较&lt;br&gt;
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##多元线性回归（Multiple Linear Regression）
+&lt;br&gt;
+.normal[
+`$$Y = b_0 + b_{1}X_{1} + b_{2}X_{2} +... + b_{p}X_{p} + \epsilon$$`
+- `\(Y\)` : 因变量，Dependent variable
+- `\(X_i\)` : 自变量，Independent (explanatory) variable
+- `\(b_0\)` : 截距，Intercept
+- `\(b_i\)` : 斜率，Slope
+- `\(\epsilon\)` : 残差，Residual (error)
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##线性模型的组成部分
+![](./picture/chp10/formula.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##线性模型的组成部分
+&lt;img src="./picture/chp10/plot.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##回归方程的多种形式&lt;br&gt;
+.bigfont[
+- 简单线性回归：
+`$$Y = b_0+b_1 X_1+ b_2 X_2+…+b_p X_p + \epsilon$$` 
+- 线性代数表达：
+`$$y_i = b_0 + b_1 X_{i1} + b_2 X_{i2} + … + b_p X_{ip} + \epsilon$$` 
+- 矩阵表达：
+`$$Y= X\beta + \epsilon$$`
+- 代码表达(r)：
+`$$Y \sim X_1 + X_2 + ... + X_n$$`
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##回归方程的多种表达形式&lt;br&gt;
+&lt;br&gt;
+.bigfont[
+- 回归模型形式：观测项 = 预测项 + 误差项 &lt;br&gt;
+- 假定观测项是正态分布，上述公式可以重新表达为： &lt;br&gt;
+`$$y \sim N(\mu, \epsilon)$$` 
+  &lt;br&gt;
+  其中，$\mu$为预测值，即
+  &lt;br&gt;
+  `$$μ = \beta_0 + \beta_1 x$$`
+- 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。&lt;br&gt;
+]
+--
 
 .bigfont[
-分解:
-
-`$$M = i_2 + aX + e_2$$`
-
-`$$Y = i_3 + c'X + bM + e_3$$`
+如果因变量不服从正态分布，如何构建回归模型？
 ]
-]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
 
-.pull-right[
-
-<div class="grViz html-widget html-fill-item" id="htmlwidget-4e292ff98532998346cb" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-4e292ff98532998346cb">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-
-]
+![](./picture/chp10/function1.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+![](./picture/chp10/function.png)
 
 ---
-# 2.3 中介效应
-.pull-left[
-
-
-$$ Y = i_1 + cX + e_1$$  
-
-$$ M = i_2 + aX + e_2$$  
-
-`$$Y = i_3 + c'X + bM + e_3$$`  
-
-如果将第二个方程代入第三个方程：  
-
-$$ Y = i_3 + c'X + b(i_2 + aX + e_2) + e_3$$
-`$$= (b*i_2 + i_3) + c'X + abX + (b*e_2 + e_3)$$`
-`$$= i_4 + c'X + abX + e_5$$`
-
-可以发现，将X对Y的效应分解成了中介效应ab和直接效应c'
-
--   在中介模型路径图中， `\(X \rightarrow Y\)`路径上的回归系数 `\(c'\)`为直接效应
-
-
--   中介效应：ab，或 `\(c - c'\)`。在M和Y均为连续变量的时候，有： `\(ab = c - c'\)`
-
--   中介效应分为两类：完全中介（即c' = 0）和部分中介(c' ≠ 0)
-
--   但问题是，回归系数意味着变量间存在因果关系么？
-]
-
-.pull-right[
-<div class="grViz html-widget html-fill-item" id="htmlwidget-44a12602da368b5ea12c" style="width:540px;height:432px;"></div>
-<script type="application/json" data-for="htmlwidget-44a12602da368b5ea12c">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-
-]
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+![](./picture/chp10/function2.png)
 
 ---
-
-# 2.3 中介效应
-
-
-.size5[
--   回归系数本质上只是(偏)相关( `\(\beta = \frac{S_y}{S_x}·r\)`)，比如对于总效应c来说：]
-
-
-
-
-
-
-
-
-``` r
-tot = lm(CBT ~ DEQ,data = pg_raw %&gt;% 
-           dplyr::filter(romantic == 1))
-# 计算相关
-r = pg_raw %&gt;% 
-  dplyr::filter(romantic == 1) %&gt;%  
-  correlation::correlation(select = cc("DEQ,CBT")) %&gt;% 
-  .$r
-
-# 比较回归系数与相关
-data.frame('相关系数' = 
-             (sd(pg_raw$CBT,na.rm = T)/sd(pg_raw$DEQ,na.rm = T))*r,
-           '回归系数' = tot$coefficients[2]) %&gt;% print()
-```
-
-```
-##     相关系数 回归系数
-## DEQ -0.00214 -0.00222
-```
-
-
-
-.size5[
--   而中介效应ab也只是两个回归方程的回归系数的乘积，或者说是 `\(r_{XM}\)` 与 `\(r_{MY}\)`的乘积；而相关不等于因果，所以使用测量中介实际上是无法确认因果关系！
-
-]
-
-
-
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##Generalized Linear Model, GLM
+###在简单线性回归中，预测项的连接函数等于它本身
+![](./picture/chp10/lm.png)
 ---
-# 2.4 中介效应的检验
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+.bigfont[
+- 简单线性模型可视为GLM的特殊形式，预测项的连接函数等于它本身，观测项为正态分布。
+- 在广义线性模型中：
+  - 观测项不一定是正态分布（残差不一定是正态分布）
+  - 连接函数不等于其自身
 
-.size5[
-中介效应的检验方法很多，如四步法、Sobel检验等，但最常用的是通过Bootstrap 来计算中介效应的置信区间(且两个随机变量的乘积很多情境中并非服从正态分布)，如果其置信区间不包含0则认为该参数估计值显著：
-
-
--   Bootstrap对原始样本进行有放回的重复抽样（允许重复抽取相同数据），抽样次数通常等于数据本身大小N相同，假设重复抽取1000次；
-
--   然后对每次抽取的样本计算中介效应ab，就得到了1000个ab的值，据此估计中介效应ab的分布情况，进而取2.5%和97.5%个百分位点计算95%置信区间。
-
-
+- 广义线性模型，能够对非正态分布的因变量进行建模
 ]
-
 ---
-# 2.5 问题提出
+#10.2 二项分布(Binomial Distribution)
+##伯努利试验
+&lt;br&gt;
+.bigfont[
+- 同样的条件下重复地、相互独立地进行的一种随机试验。
+&lt;br&gt;
+&lt;br&gt;
+- 该随机试验只有两种可能结果：发生或者不发生。
+&lt;br&gt;
+&lt;br&gt;
+- 假设该项试验独立重复地进行了n次，那么就称这一系列重复独立的随机试验为n重伯努利试验(n-fold bernoulli trials)。
+&lt;br&gt;
+&lt;br&gt;
+- n次独立重复的伯努利试验的概率分布服从二项分布
+]
+---
+#10.2 二项分布(Binomial Distribution)
+.bigfont[
+- 每次试验中事件A发生的概率为p
+&lt;br&gt;&lt;br&gt;
+- X表示n重伯努利试验中事件A发生的次数，X的可能取值为0，1，…，n
+&lt;br&gt;&lt;br&gt;
+- 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
+&lt;br&gt;&lt;br&gt;
+- 随机变量X服从以n, p为参数的二项分布，写作 `\(X \sim B(n, p)\)` 
+&lt;br&gt;&lt;br&gt;
+- `\(p \in [0,1]\)`, `\(n \in N\)` 
 
-在第六章中，我们使用Penguins数据研究了社交复杂度(CSI)是否影响核心体温(CBT)，特别是在离赤道比较远的（低温）地区(DEQ)。
-
-
-这里，我们复现论文中第一个中介模型：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响。具体来说：
-
--   DEQ为自变量，CBT为因变量，CSI为中介变量。
-
--   赤道距离(DEQ)应当正向预测社会复杂度(CSI)，而社会复杂度应当正向预测体温(CBT)，但赤道距离(DEQ)应当负向预测体温(CBT)(即遮掩效应，如下图)
-
-
+`$$P(X=k )=𝐶_𝑛^𝑘 𝑝^𝑘 𝑞^{𝑛−𝑘}= 𝐶_𝑛^𝑘 𝑝^𝑘 (1−𝑝)^{𝑛−𝑘}$$`
+$$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
+]
+---
+#10.2 二项分布(Binomial Distribution)
+##抛硬币
 
 
 .panelset[
-.panel[.panel-name[假设]
+.panel[.panel-name[5人，每人10次]
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-3ecaffd5a5a8e2617df3" style="width:540px;height:300px;"></div>
-<script type="application/json" data-for="htmlwidget-3ecaffd5a5a8e2617df3">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  DEQ -> CSI[label = \"+\"]\n  DEQ -> CBT[label = \"-\"]\n  CSI -> CBT[label = \"+\"]\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+``` r
+simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
+```
 
-.panel[.panel-name[数据导入]
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
-
+.panel[.panel-name[10人，每人10次]
 
 
 ``` r
-# 数据导入
-pg_raw = bruceR::import(here::here('data','penguin','penguin_rawdata_full.csv'))
+simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 ```
 
-.panel[.panel-name[计算CSI]
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
-``` r
-# 计算CSI
-### get the column names:
-snDivNames  &lt;- c("SNI3", "SNI5", "SNI7", "SNI9", "SNI11", "SNI13",  "SNI15", "SNI17","SNI18","SNI19","SNI21")
-extrDivName &lt;- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
-
-### create a empty dataframe for social network diversity
-snDivData &lt;- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(pg_raw))), snDivNames)
-
-### recode Q10 (spouse): 1-&gt; 1; else -&gt;0
-snDivData$SNI1_r &lt;- car::recode(pg_raw$SNI1,"1= 1; else = 0")
-
-####re-code Q12 ~ Q30: NA -&gt; 0; 0 -&gt; 0; 1~10 -&gt; 1
-snDivData[,snDivNames] &lt;- apply(pg_raw[,snDivNames],2,function(x) {x &lt;- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
-
-### add suffix to the colnames
-colnames(snDivData[,snDivNames]) &lt;- paste(snDivNames,"div",  sep = "_")    
-
-### recode the social network at work by combining SNI17, SNI18
-snDivData$SNIwork   &lt;- snDivData$SNI17 + snDivData$SNI18
-snDivData$SNIwork_r &lt;- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
-
-### re-code extra groups, 0/NA --&gt; 0; more than 0 --&gt; 1
-extrDivData &lt;- pg_raw[,extrDivName]          # Get extra data
-extrDivData$sum &lt;- rowSums(extrDivData)    # sum the other groups
-snDivData$extrDiv_r &lt;- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")  # recode
-
-### Get the column names for social diversity 
-snDivNames_r &lt;- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
-                  "SNI19","SNI21","extrDiv_r")
-
-### Get the social diveristy score
-snDivData$SNdiversity &lt;- rowSums(snDivData[,snDivNames_r])
-pg_raw$socialdiversity &lt;- snDivData$SNdiversity
-```
-
-.panel[.panel-name[计算CBT]
+.panel[.panel-name[1000人，每人10次]
 
 
 ``` r
-## 更改列名
-pg_raw %&lt;&gt;% dplyr::rename(CSI = socialdiversity)
-###  计算CBT（mean）
-# 筛选大于34.99 的被试
-
-# pg_raw %&lt;&gt;%
-#   filter(Temperature_t1 &gt; 34.99 &amp;
-#            Temperature_t2 &gt; 34.99)
-
-# 前测后测求均值
-pg_raw %&lt;&gt;% 
-  dplyr::mutate(CBT = (Temperature_t1 + Temperature_t2)/2)
-```
-]]]]]
-
----
-layout: true
-# 2.6 代码实现
-
----
-## 2.6.1 lavaan 介绍
-
--   lavaan包专门用于结构方程模型（SEM）的估计，如CFA、EFA、Multiple groups、Growth curves等。
-
-
--   基本语法 `\(^*\)`：
-
-| formula type               | operator | mnemonic           |
-|----------------------------|----------|--------------------|
-| latent variable definition | `=~`     | is measured by     |
-| regression                 | `~`      | is regressed on    |
-| (residual) (co)variance    | `~~`     | is correlated with |
-| intercept                  | `~ 1`    | intercept          |
-| ‘defines’ new parameters   | `:= `    | defines            |
-
-.footnote[
-
------------
-.footfont[
-Ref: [https://lavaan.ugent.be/tutorial/syntax1.html](https://lavaan.ugent.be/tutorial/syntax1.html)
-]
-]
-
-
----
-## 2.6.2 lavaan语句
-
-
-.panelset[
-.panel[.panel-name[lavaan语句]
-
-
-``` r
-med_model &lt;- "
-  # 直接效应(Y = cX)
-  CBT ~ c*DEQ   # 语法同回归，但需要声明回归系数
-  
-  # 中介路径(M)
-  CSI ~ a*DEQ
-  CBT ~ b*CSI
-  
-  # 定义间接效应c'
-  #注： `:=`意思是根据已有的参数定义新的参数
-  ab := a*b
-
-  # 总效应
-  total := c + (a*b)"
-# 注：这里数据仅以处于浪漫关系中的个体为例
-fit &lt;- lavaan::sem(med_model,
-           data = pg_raw %&gt;% dplyr::filter(romantic == 1),
-           bootstrap = 100 # 建议1000
-           )
+simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ```
 
-.panel[.panel-name[lavaan-output]
-
-
-``` r
-fit %&gt;% summary() %&gt;% capture.output() %&gt;% .[21:38]
-```
-
-```
-##  [1] "Regressions:"                                          
-##  [2] "                   Estimate  Std.Err  z-value  P(&gt;|z|)"
-##  [3] "  CBT ~                                               "
-##  [4] "    DEQ        (c)   -0.004    0.001   -3.520    0.000"
-##  [5] "  CSI ~                                               "
-##  [6] "    DEQ        (a)    0.026    0.004    7.400    0.000"
-##  [7] "  CBT ~                                               "
-##  [8] "    CSI        (b)    0.071    0.011    6.316    0.000"
-##  [9] ""                                                      
-## [10] "Variances:"                                            
-## [11] "                   Estimate  Std.Err  z-value  P(&gt;|z|)"
-## [12] "   .CBT               0.197    0.010   19.900    0.000"
-## [13] "   .CSI               1.949    0.098   19.900    0.000"
-## [14] ""                                                      
-## [15] "Defined Parameters:"                                   
-## [16] "                   Estimate  Std.Err  z-value  P(&gt;|z|)"
-## [17] "    ab                0.002    0.000    4.804    0.000"
-## [18] "    total            -0.002    0.001   -1.930    0.054"
-```
-
-.panel[.panel-name[中介图-Paper]
-
-&lt;img src="picture/chp11/lav.png" width="1158" style="display: block; margin: auto;" /&gt;
-
-
-.panel[.panel-name[中介图-tidySEM]
-
-这里绘图使用的是tidySEM包，当然也有semPlot等包可以选择；tidySEM使用了tidyverse风格，并支持lavaan和Mplus等语法对SEM进行建模，可使用help(package = tidySEM)进行查看。
-
-.pull-left[
-
-``` r
-## 与DiagrammeR::get_edges相冲突
-detach("package:DiagrammeR", unload = TRUE)
-## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
-lay = get_layout("", "CSI", "",
-                 "DEQ", "", "CBT", 
-                 rows = 2)
-tidySEM::graph_sem(fit,digits = 3,
-                   layout = lay)
-```
-]
-
-.pull-right[
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
-]
-]]]]]
-
-
----
-## 2.6.3 PROCESS in bruceR()
-
-.panelset[
-.panel[.panel-name[bruceR::PROCESS]
-
-``` r
-## RUN IN CONSOLE !!!
-pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;% 
-  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
-  x = 'DEQ', y = 'CBT',meds = 'CSI',nsim = 100)
-```
-
-```
-## 
-## ****************** PART 1. Regression Model Summary ******************
-## 
-## PROCESS Model Code : 4 (Hayes, 2018; www.guilford.com/p/hayes3)
-## PROCESS Model Type : Simple Mediation
-## -    Outcome (Y) : CBT
-## -  Predictor (X) : DEQ
-## -  Mediators (M) : CSI
-## - Moderators (W) : -
-## - Covariates (C) : -
-## -   HLM Clusters : -
-## 
-## All numeric predictors have been grand-mean centered.
-## (For details, please see the help page of PROCESS.)
-## 
-## Formula of Mediator:
-## -    CSI ~ DEQ
-## Formula of Outcome:
-## -    CBT ~ DEQ + CSI
-## 
-## CAUTION:
-##   Fixed effect (coef.) of a predictor involved in an interaction
-##   denotes its "simple effect/slope" at the other predictor = 0.
-##   Only when all predictors in an interaction are mean-centered
-##   can the fixed effect denote the "main effect"!
-##   
-## Model Summary
-## 
-## ──────────────────────────────────────────────────
-##              (1) CBT      (2) CSI      (3) CBT    
-## ──────────────────────────────────────────────────
-## (Intercept)   36.386 ***    7.111 ***   36.386 ***
-##               (0.016)      (0.050)      (0.016)   
-## DEQ           -0.002        0.026 ***   -0.004 ***
-##               (0.001)      (0.004)      (0.001)   
-## CSI                                      0.071 ***
-##                                         (0.011)   
-## ──────────────────────────────────────────────────
-## R^2            0.005        0.065        0.052    
-## Adj. R^2       0.003        0.063        0.050    
-## Num. obs.    792          792          792        
-## ──────────────────────────────────────────────────
-## Note. * p &lt; .05, ** p &lt; .01, *** p &lt; .001.
-## 
-## ************ PART 2. Mediation/Moderation Effect Estimate ************
-## 
-## Package Use : ‘mediation’ (v4.5.0)
-## Effect Type : Simple Mediation (Model 4)
-## Sample Size : 792 (38 missing observations deleted)
-## Random Seed : set.seed()
-## Simulations : 100 (Bootstrap)
-```
-
-```
-## 
-## Running 100 simulations...
-## Indirect Path: "DEQ" (X) ==&gt; "CSI" (M) ==&gt; "CBT" (Y)
-## ───────────────────────────────────────────────────────────────
-##                Effect    S.E.      z     p        [Boot 95% CI]
-## ───────────────────────────────────────────────────────────────
-## Indirect (ab)   0.002 (0.000)  5.457 &lt;.001 *** [ 0.001,  0.002]
-## Direct (c')    -0.004 (0.001) -3.283  .001 **  [-0.006, -0.002]
-## Total (c)      -0.002 (0.001) -1.770  .077 .   [-0.004, -0.000]
-## ───────────────────────────────────────────────────────────────
-## Percentile Bootstrap Confidence Interval
-## (SE and CI are estimated based on 100 Bootstrap samples.)
-## 
-## Note. The results based on bootstrapping or other random processes
-## are unlikely identical to other statistical software (e.g., SPSS).
-## To make results reproducible, you need to set a seed (any number).
-## Please see the help page for details: help(PROCESS)
-## Ignore this note if you have already set a seed. :)
-```
-
-
-.panel[.panel-name[bruceR::PROCESS-Regression]
-
-```
-##  [1] "Model Summary"                                     
-##  [2] ""                                                  
-##  [3] "──────────────────────────────────────────────────"
-##  [4] "             (1) CBT      (2) CSI      (3) CBT    "
-##  [5] "──────────────────────────────────────────────────"
-##  [6] "(Intercept)   36.386 ***    7.111 ***   36.386 ***"
-##  [7] "              (0.016)      (0.050)      (0.016)   "
-##  [8] "DEQ           -0.002        0.026 ***   -0.004 ***"
-##  [9] "              (0.001)      (0.004)      (0.001)   "
-## [10] "CSI                                      0.071 ***"
-## [11] "                                        (0.011)   "
-## [12] "──────────────────────────────────────────────────"
-## [13] "R^2            0.005        0.065        0.052    "
-## [14] "Adj. R^2       0.003        0.063        0.050    "
-## [15] "Num. obs.    792          792          792        "
-## [16] "──────────────────────────────────────────────────"
-## [17] "Note. * p &lt; .05, ** p &lt; .01, *** p &lt; .001."
-```
-
-.panel[.panel-name[bruceR::PROCESS-Mediation]
-
-
-```
-##  [1] "Package Use : ‘mediation’ (v4.5.0)"                             
-##  [2] "Effect Type : Simple Mediation (Model 4)"                       
-##  [3] "Sample Size : 792 (38 missing observations deleted)"            
-##  [4] "Random Seed : set.seed()"                                       
-##  [5] "Simulations : 100 (Bootstrap)"                                  
-##  [6] ""                                                               
-##  [7] "Running 100 simulations..."                                     
-##  [8] "Indirect Path: \"DEQ\" (X) ==&gt; \"CSI\" (M) ==&gt; \"CBT\" (Y)"     
-##  [9] "───────────────────────────────────────────────────────────────"
-## [10] "               Effect    S.E.      z     p        [Boot 95% CI]"
-## [11] "───────────────────────────────────────────────────────────────"
-## [12] "Indirect (ab)   0.002 (0.000)  4.591 &lt;.001 *** [ 0.001,  0.003]"
-## [13] "Direct (c')    -0.004 (0.001) -3.442 &lt;.001 *** [-0.006, -0.002]"
-## [14] "Total (c)      -0.002 (0.001) -2.035  .042 *   [-0.004, -0.000]"
-## [15] "───────────────────────────────────────────────────────────────"
-```
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-11-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 ]]]]
 
 ---
-layout: false
-# 2.7 反思
-
-&lt;br&gt;
-
-.size5[
-在刚才的分析中，我们希望证明：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响，因而通过中介分析来验证假设，但实际上我们得到的只是变量间的相关，而不能得到期望的因果关系。
-
-
-那么我们应该如何去验证变量间的因果关系？
+#10.2 二项分布(Binomial Distribution)
+.bigfont[
+- 已知一次试验中的每次尝试中事件A发生的概率*p*，共进行*n*次独立重复的伯努利试验
+- 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
+`$$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$`
+- 当*n* → ∞，*p* ≠ *q*，*np* ≥ 5且*nq* ≥ 5，事件A在*n*次试验中出现次数的平均数：
+`$$\mu = np$$`
+- 事件A出现次数所属分布的标准差：
+$$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 ]
-
 ---
-
-
-# 3.1 因果推断(Casual Inference)
-.size5[
-确认变量间存在因果关系至少满足三个条件 `\(^*\)`：
-
-1.时间顺序：因在果之前发生；
-
-2.共变：因果之间存在相关，原因的变化伴随结果的变化；
-
-3.排除其他可能的解释
-
-
-]
-
-
---
-.size5[
-目前社科中常用的一个因果推断框架是反事实(conterfactual)推断，即观察到与事实情况相反的情况：
-
--   如，一个人得了感冒， 而服用感冒药以后症状得到了缓解，而对药效的归因则因为“如果当时不吃药，感冒就好不了”（即反事实）
-
--   但反事实理论框架要求需要针对特定的个体——相同个体，当时在感冒发生时不吃药，且最后“感冒好不了”
-
--   由于反事实的“不可观测性”，实际研究中使用随机对照的方式来解决（找到发生在相似个体身上的“反事实情况”）。
-]
-
-
-
-.footnote[
-.footsize[
-刘国芳,程亚华,辛自强.作为因果关系的中介效应及其检验[J].心理技术与应用,2018,6(11):665-676
-]
-]
-
----
-# 3.2 因果推断与概率
-
-
-假设100万儿童中已有99%接种了疫苗，1%没有接种。
--   接种疫苗：有1%的可能性出现不良反应，这种不良反应有1%的可能性导致儿童死亡，但不可能得天花。
--   未接种疫苗：有2%的概率得天花。最后，假设天花的致死率是20%。
-
-要不要接种？
---
-
--   99万接种：则有990000\*1% = 9900的人出现不良反应，9900\*1% = 99人因不良反应死亡
-
--   1万未接种：有10000\*2% = 200人得了天花，共200\*20% = 40人因天花死亡
-
-不接种疫苗更好？   
-
---
-
-
-如果基于一个反事实问题：疫苗接种率为0时会如何？
-
-共100万\*2% = 20000人得天花，20000\*20% = 4000人会因天花死亡。
-
-.size5[
-“‘因果关系不能被简化为概率’这个认识来之 不易……这个概念也存在于我们的直觉中，并且根深蒂固。例如，当我们说“鲁莽驾驶会导致交通事故”或“你会因为懒惰而挂科”时，我们很清楚地知道，前者只是增加了后者发生的可能性，而非必然会让后者发生。”]
-
-
-.footnote[
------------
-Ref: 《The Book of Why: The New Science of Cause and Effect》
-
-]
-
----
-# 3.3 基于实验的中介
+#10.2 二项分布(Binomial Distribution)
+## 如何将$z$与二分变量进行连接？
+### (1)将预测项映射到(0,1)之间，例如，使用
+`$$\frac{1}{1+exp(-z)}$$`
+### (2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
 .pull-left[
-.size5[
-如何验证中介中的因果？
-]]
-
+![](./picture/chp10/func.png)
+]
 .pull-right[
-<div class="grViz html-widget html-fill-item" id="htmlwidget-851641c94082d175c2bf" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-851641c94082d175c2bf">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-
+![](./picture/chp10/bernoulli.png)
 ]
-
---
-
-假设：教材难度(X)通过焦虑(M)来影响努力程度(Y)，可以穷举出在哪些情况下我们不能验证中介中的因果：
-
--   教材难度(X)不能影响焦虑(M)
-
--   焦虑(M)不能影响努力程度(Y)
-
--   教材难度(X)可以影响焦虑(M)，焦虑(M)也可以影响努力程度(Y)，由 X 的变化引起的 M 的变化并不会导致 Y 的变化（即 M 对 Y 的影响与 X 对 Y 的影响无关）。
 
 
 
 ---
+#10.2 二项分布(Binomial Distribution)
+&lt;img src="./picture/chp10/func2.png" width="80%" style="display: block; margin: auto;" /&gt;
 
-
-.size5[
-• 操纵X
-
-• 测量 M
-
-• 测量 Y
-
-
-对X进行操纵（如使用不同难度的教材），可以验证X对M的因果关系，但M与Y之间的因果关系并没有得到验证
-
+---
+#10.2 二项分布(Binomial Distribution)
+##参数求解
+.bigfont[
+- 对于logit回归，我们可以使用极大似然估计对其进行求解
+- 该求解过程比较复杂，一般由计算机自动完成
 ]
-
-
-<div class="grViz html-widget html-fill-item" id="htmlwidget-8b0efa5b56e9aca18bd5" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-8b0efa5b56e9aca18bd5">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-
+![](./picture/chp10/logit.png)
 
 
 
 
 ---
-.size5[
-但如果我们理论假设错误，测量的是焦虑（A），但实际上实验操纵引发的中介应为恐惧(M,即实际路径应为X - M - Y,而我们测量路径为X - A - Y)，那么刚才的实验设计可能无法证伪，因此需要对A进行操纵：
+#10.3 代码实操
+##首先分析一个被试的数据
 
+``` r
+df.match.7304 &lt;- df.match %&gt;%
+  dplyr::filter(Sub == 7304) #选择被试7304
+mod_7304_full &lt;- stats::glm(data = df.match.7304, #数据
+                          formula = ACC ~ 1 + Identity * Valence, #模型
+                          family = binomial) #因变量为二项分布
+summary(mod_7304_full) %&gt;% #查看模型信息
+  capture.output() %&gt;% .[c(6:11,15:19)] #课堂展示重要结果
+```
 
+```
+##  [1] "Coefficients:"                                                        
+##  [2] "                             Estimate Std. Error z value Pr(&gt;|z|)    "
+##  [3] "(Intercept)                      4.30       1.01    4.28 0.000019 ***"
+##  [4] "IdentityOther                   -2.69       1.05   -2.56   0.0106 *  "
+##  [5] "Valenceimmoral                  -2.77       1.05   -2.64   0.0083 ** "
+##  [6] "IdentityOther:Valenceimmoral     2.10       1.13    1.86   0.0628 .  "
+##  [7] "(Dispersion parameter for binomial family taken to be 1)"             
+##  [8] ""                                                                     
+##  [9] "    Null deviance: 254.02  on 290  degrees of freedom"                
+## [10] "Residual deviance: 228.32  on 287  degrees of freedom"                
+## [11] "AIC: 236.3"
+```
 
-• 操纵 X
+---
+#10.3 代码实操
 
-• 操纵 A
+.panelset[
+.panel[.panel-name[mod_null]
 
-• 测量 Y
+``` r
+#无固定效应
+mod_null &lt;- lme4::glmer(data = df.match, #数据
+                   formula = ACC ~ (1 + Identity * Valence|Sub), #模型
+                   family = binomial) #因变量二项分布
+#performance::model_performance(mod_null)
+summary(mod_null) %&gt;%
+  capture.output()%&gt;% .[c(7:8,14:24)]
+```
 
+```
+##  [1] "     AIC      BIC   logLik deviance df.resid "                           
+##  [2] "  9378.8   9460.2  -4678.4   9356.8    11999 "                           
+##  [3] "Random effects:"                                                         
+##  [4] " Groups Name                         Variance Std.Dev. Corr             "
+##  [5] " Sub    (Intercept)                  1.53     1.24                      "
+##  [6] "        IdentityOther                2.52     1.59     -0.86            "
+##  [7] "        Valenceimmoral               2.40     1.55     -0.85  0.83      "
+##  [8] "        IdentityOther:Valenceimmoral 3.34     1.83      0.69 -0.87 -0.82"
+##  [9] "Number of obs: 12010, groups:  Sub, 41"                                  
+## [10] ""                                                                        
+## [11] "Fixed effects:"                                                          
+## [12] "            Estimate Std. Error z value            Pr(&gt;|z|)    "         
+## [13] "(Intercept)    2.014      0.114    17.7 &lt;0.0000000000000002 ***"
+```
 
-对X(如使用不同难度的教材)和A(控制组 vs 提供相关辅导以减轻焦虑)进行操纵，如果对A的操纵不能影响Y，则可以证明中介路径不合理
+.panel[.panel-name[mod]
+
+``` r
+#随机截距，固定斜率
+mod &lt;- lme4::glmer(data = df.match, #数据
+                     formula = ACC ~ 1 + Identity * Valence + (1|Sub), #模型
+                     family = binomial) #因变量二项分布
+#performance::model_performance(mod)
+summary(mod) %&gt;%
+  capture.output() %&gt;% .[c(7:8,14:24,28:32)]
+```
+
+```
+##  [1] "     AIC      BIC   logLik deviance df.resid "                                
+##  [2] "  9639.0   9675.9  -4814.5   9629.0    12005 "                                
+##  [3] "Random effects:"                                                              
+##  [4] " Groups Name        Variance Std.Dev."                                        
+##  [5] " Sub    (Intercept) 0.237    0.487   "                                        
+##  [6] "Number of obs: 12010, groups:  Sub, 41"                                       
+##  [7] ""                                                                             
+##  [8] "Fixed effects:"                                                               
+##  [9] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [10] "(Intercept)                    2.4964     0.1015   24.60 &lt; 0.0000000000000002"
+## [11] "IdentityOther                 -0.7161     0.0839   -8.53 &lt; 0.0000000000000002"
+## [12] "Valenceimmoral                -0.9474     0.0818  -11.58 &lt; 0.0000000000000002"
+## [13] "IdentityOther:Valenceimmoral   0.8230     0.1085    7.58    0.000000000000034"
+## [14] "Valenceimmoral               ***"                                             
+## [15] "IdentityOther:Valenceimmoral ***"                                             
+## [16] "---"                                                                          
+## [17] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"               
+## [18] ""
+```
+
+.panel[.panel-name[model_full]
+
+``` r
+#随机截距，随机斜率
+mod_full &lt;- lme4::glmer(data = df.match, #数据
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), #模型
+                          family = binomial) #因变量二项分布
+##performance::model_performance(mod_full)
+summary(mod_full) %&gt;%
+  capture.output() %&gt;% .[c(6:8,13:18,21:26,30:34)]
+```
+
+```
+##  [1] ""                                                                             
+##  [2] "     AIC      BIC   logLik deviance df.resid "                                
+##  [3] "  9355.9   9459.4  -4664.0   9327.9    11996 "                                
+##  [4] ""                                                                             
+##  [5] "Random effects:"                                                              
+##  [6] " Groups Name                         Variance Std.Dev. Corr             "     
+##  [7] " Sub    (Intercept)                  0.972    0.986                     "     
+##  [8] "        IdentityOther                1.770    1.331    -0.79            "     
+##  [9] "        Valenceimmoral               1.028    1.014    -0.75  0.75      "     
+## [10] ""                                                                             
+## [11] "Fixed effects:"                                                               
+## [12] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [13] "(Intercept)                     2.772      0.178   15.55 &lt; 0.0000000000000002"
+## [14] "IdentityOther                  -0.870      0.234   -3.72              0.00020"
+## [15] "Valenceimmoral                 -1.150      0.189   -6.07         0.0000000013"
+## [16] "IdentityOther                ***"                                             
+## [17] "Valenceimmoral               ***"                                             
+## [18] "IdentityOther:Valenceimmoral ***"                                             
+## [19] "---"                                                                          
+## [20] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+```
+
+.panel[.panel-name[模型比较anova]
+
+``` r
+stats::anova(mod_null, mod, mod_full) #比较三个模型
+```
+
+```
+## Data: df.match
+## Models:
+## mod: ACC ~ 1 + Identity * Valence + (1 | Sub)
+## mod_null: ACC ~ (1 + Identity * Valence | Sub)
+## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+##          npar  AIC  BIC logLik deviance Chisq Df           Pr(&gt;Chisq)    
+## mod         5 9639 9676  -4814     9629                                  
+## mod_null   11 9379 9460  -4678     9357 272.1  6 &lt; 0.0000000000000002 ***
+## mod_full   14 9356 9459  -4664     9328  28.9  3            0.0000023 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+.panel[.panel-name[模型比较compare_performance]
+
+``` r
+performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance1.png)
+]]]]]]
+
+---
+#10.3 代码实操
+##结果解读
+
+``` r
+summary(mod_full) %&gt;% capture.output() %&gt;% .[c(21:27)]
+```
+
+```
+## [1] ""                                                                             
+## [2] "Fixed effects:"                                                               
+## [3] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
+## [4] "(Intercept)                     2.772      0.178   15.55 &lt; 0.0000000000000002"
+## [5] "IdentityOther                  -0.870      0.234   -3.72              0.00020"
+## [6] "Valenceimmoral                 -1.150      0.189   -6.07         0.0000000013"
+## [7] "IdentityOther:Valenceimmoral    0.988      0.272    3.64              0.00027"
+```
+
+&lt;img src="./picture/chp10/logit2.png" width="60%" style="display: block; margin: auto;" /&gt;
+.pull-left[
+- MoralSelf:
+`\(P=\frac{e^{2.77}}{1+e^{2.77}} = 0.941\)`
+&lt;br&gt;
+- ImmoralSelf:
+`\(P=\frac{e^{2.77-1.15}}{1+e^{2.77-1.15}} = 0.835\)`
 ]
+.pull-right[
+- MoralOther:
+`\(P=\frac{e^{2.77-0.87}}{1+e^{2.77-0.87}} = 0.870\)`
+&lt;br&gt;
+- ImmoralOther:
+`\(P=\frac{e^{2.77-0.87-1.15+0.99}}{1+e^{2.77-0.87-1.15+0.99}} = 0.851\)`
+]
+---
+#10.3 代码实操
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-23be5ef902ca5828cb13" style="width:540px;height:200px;"></div>
-<script type="application/json" data-for="htmlwidget-23be5ef902ca5828cb13">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n  X -> A\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+``` r
+#交互作用
+interactions::cat_plot(model = mod_full,
+                       pred = Identity,
+                       modx = Valence)
+```
+
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-21-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ---
-.size5[
-Ref
+#10.4 方法比较
 
--   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
+.panelset[
+.panel[.panel-name[anova]
 
--   通过实验来验证中介效应([葛枭语, 2023](https://doi.org/10.1016/j.jesp.2023.104507))
+``` r
+res &lt;- bruceR::MANOVA(data = df.match.aov, #数据
+       subID = 'Sub', # 被试编号
+       dv= 'mean_ACC', # 因变量
+       within = c('Identity', 'Valence')) #自变量（被试内）
+```
 
--   内隐中介分析([Bullock et al , 2023, AMPPS](https://journals.sagepub.com/doi/10.1177/25152459211047227))
 
--   相关不等于因果([Rohrer, 2018](https://doi.org/10.1177/2515245917745629))
+``` r
+capture.output(res) %&gt;% .[3:8]
+```
 
--   A lot of processes ([Rohrer, 2022](https://doi.org/10.1177/25152459221095827))
+```
+## [1] "Response: mean_ACC"                                  
+## [2] "            Effect    df  MSE         F  ges p.value"
+## [3] "1         Identity 1, 40 0.01    3.08 + .017    .087"
+## [4] "2          Valence 1, 40 0.01 16.26 *** .068   &lt;.001"
+## [5] "3 Identity:Valence 1, 40 0.01   8.52 ** .038    .006"
+## [6] "---"
+```
+
+
+.panel[.panel-name[EMMAMNS]
+
+``` r
+res %&gt;%
+  bruceR::EMMEANS(effect = 'Valence', by = 'Identity') %&gt;%
+  capture.output()
+```
+
+```
+##  [1] "------ EMMEANS (effect = \"Valence\") ------"                                              
+##  [2] ""                                                                                          
+##  [3] "Joint Tests of \"Valence\":"                                                               
+##  [4] "────────────────────────────────────────────────────────────────"                          
+##  [5] "  Effect \"Identity\" df1 df2      F     p     η²p [90% CI of η²p]"                        
+##  [6] "────────────────────────────────────────────────────────────────"                          
+##  [7] " Valence      Self    1  40 35.614 &lt;.001 ***   .471 [.282, .610]"                          
+##  [8] " Valence      Other   1  40  0.412  .525       .010 [.000, .114]"                          
+##  [9] "────────────────────────────────────────────────────────────────"                          
+## [10] "Note. Simple effects of repeated measures with 3 or more levels"                           
+## [11] "are different from the results obtained with SPSS MANOVA syntax."                          
+## [12] ""                                                                                          
+## [13] "Estimated Marginal Means of \"Valence\":"                                                  
+## [14] "───────────────────────────────────────────────────"                                       
+## [15] " \"Valence\" \"Identity\" Mean [95% CI of Mean]    S.E."                                   
+## [16] "───────────────────────────────────────────────────"                                       
+## [17] "   moral        Self   0.916 [0.885, 0.947] (0.015)"                                       
+## [18] "   immoral      Self   0.814 [0.776, 0.852] (0.019)"                                       
+## [19] "   moral        Other  0.844 [0.809, 0.879] (0.017)"                                       
+## [20] "   immoral      Other  0.829 [0.794, 0.864] (0.017)"                                       
+## [21] "───────────────────────────────────────────────────"                                       
+## [22] ""                                                                                          
+## [23] "Pairwise Comparisons of \"Valence\":"                                                      
+## [24] "────────────────────────────────────────────────────────────────────────────────────────"  
+## [25] "        Contrast \"Identity\" Estimate    S.E. df      t     p     Cohen’s d [95% CI of d]"
+## [26] "────────────────────────────────────────────────────────────────────────────────────────"  
+## [27] " immoral - moral      Self    -0.102 (0.017) 40 -5.968 &lt;.001 *** -0.736 [-0.985, -0.487]"  
+## [28] " immoral - moral      Other   -0.015 (0.024) 40 -0.642  .525     -0.111 [-0.459,  0.238]"  
+## [29] "────────────────────────────────────────────────────────────────────────────────────────"  
+## [30] "Pooled SD for computing Cohen’s d: 0.139"                                                  
+## [31] "No need to adjust p values."                                                               
+## [32] ""                                                                                          
+## [33] "Disclaimer:"                                                                               
+## [34] "By default, pooled SD is Root Mean Square Error (RMSE)."                                   
+## [35] "There is much disagreement on how to compute Cohen’s d."                                   
+## [36] "You are completely responsible for setting `sd.pooled`."                                   
+## [37] "You might also use `effectsize::t_to_d()` to compute d."                                   
+## [38] ""
+```
+
+.panel[.panel-name[GLM]
+
+``` r
+stats::anova(mod_full)
+```
+
+```
+## Analysis of Variance Table
+##                  npar Sum Sq Mean Sq F value
+## Identity            1    0.2     0.2     0.2
+## Valence             1   26.8    26.8    26.8
+## Identity:Valence    1   13.6    13.6    13.6
+```
+
+.panel[.panel-name[HLM]
+
+
+
+``` r
+mod_anova &lt;- lme4::lmer(data = df.match,
+                        formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+stats::anova(mod_anova)
+```
+
+```
+## Analysis of Variance Table
+##                  npar Sum Sq Mean Sq F value
+## Identity            1   0.42    0.42    3.70
+## Valence             1   3.17    3.17   27.70
+## Identity:Valence    1   0.98    0.98    8.54
+```
+
+.panel[.panel-name[HLM_mean]
+
+``` r
+mod_mean &lt;- lme4::lmer(data = df.match.aov,
+                          formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
+stats::anova(mod_mean)
+```
+
+```
+## Analysis of Variance Table
+##                  npar Sum Sq Mean Sq F value
+## Identity            1 0.0272  0.0272    3.08
+## Valence             1 0.1410  0.1410   15.93
+## Identity:Valence    1 0.0769  0.0769    8.69
+```
+
+.panel[.panel-name[compare]
+
+``` r
+performance::compare_performance(mod_full, mod_anova, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance2.png)
+
+
+``` r
+stats::anova(mod_full, mod_anova)
+```
+
+```
+## Data: df.match
+## Models:
+## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+## mod_anova: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
+##           npar  AIC  BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    
+## mod_full    14 9356 9459  -4664     9328                                 
+## mod_anova   15 8396 8507  -4183     8366   962  1 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
+]]]]]]]
+
+---
+#10.4 方法比较
+## 交叉验证法(Cross-Validation)
+
+``` r
+# 设置种子以确保结果的可重复性
+set.seed(456)
+
+# 随机选择70%的数据作为训练集，剩余的30%作为测试集
+train_index &lt;- caret::createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
+train_data &lt;- df.match[train_index, ]
+test_data &lt;- df.match[-train_index, ]
+
+# 根据训练集生成模型
+model_full &lt;- lme4::glmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
+                          family = binomial)
+model_anova &lt;- lme4::lmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+
+# 使用模型进行预测
+pre_mod_full &lt;- stats::predict(model_full, newdata = test_data, type = 'response')
+pre_mod_anova &lt;- stats::predict(model_anova, newdata = test_data)
+```
+
+
+---
+#10.4 方法比较
+## 留出法
+.pull-left[
+
+``` r
+# 计算模型的性能指标
+performance_mod_full &lt;- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
+                R2 = cor(test_data$ACC, pre_mod_full)^2)
+# 打印性能指标
+print(performance_mod_full)
+```
+
+```
+##     RMSE       R2 
+## 0.342402 0.074985
+```
 ]
+.pull-right[
+
+``` r
+# 计算模型的性能指标
+performance_mod_anova &lt;- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
+                R2 = cor(test_data$ACC, pre_mod_anova)^2)
+
+# 打印性能指标
+print(performance_mod_anova)
+```
+
+```
+##     RMSE       R2 
+## 0.342263 0.075676
+```
+
+]
+
+---
+#10.4 方法比较
+## 留出法
+
+``` r
+# 将预测概率转换为分类结果
+predicted_classes &lt;- ifelse(pre_mod_full &gt; 0.5, 1, 0)
+# 计算混淆矩阵
+confusion_matrix &lt;- caret::confusionMatrix(as.factor(predicted_classes), as.factor(test_data$ACC))
+```
+
+---
+#10.4 方法比较
+## 留出法
+
+``` r
+# 打印混淆矩阵和性能指标
+print(confusion_matrix)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0   37   27
+##          1  499 3037
+##                                              
+##                Accuracy : 0.854              
+##                  95% CI : (0.842, 0.865)     
+##     No Information Rate : 0.851              
+##     P-Value [Acc &gt; NIR] : 0.33               
+##                                              
+##                   Kappa : 0.095              
+##                                              
+##  Mcnemar's Test P-Value : &lt;0.0000000000000002
+##                                              
+##             Sensitivity : 0.0690             
+##             Specificity : 0.9912             
+##          Pos Pred Value : 0.5781             
+##          Neg Pred Value : 0.8589             
+##              Prevalence : 0.1489             
+##          Detection Rate : 0.0103             
+##    Detection Prevalence : 0.0178             
+##       Balanced Accuracy : 0.5301             
+##                                              
+##        'Positive' Class : 0                  
+## 
+```
+
+---
+#10.4 方法比较
+## 留出法
+.pull-left[
+
+``` r
+# 计算ROC曲线和AUC
+roc_result &lt;- pROC::roc(test_data$ACC, pre_mod_full)
+print(roc_result)
+```
+
+```
+## 
+## Call:
+## roc.default(response = test_data$ACC, predictor = pre_mod_full)
+## 
+## Data: pre_mod_full in 536 controls (test_data$ACC 0) &lt; 3064 cases (test_data$ACC 1).
+## Area under the curve: 0.699
+```
+]
+.pull-right[
+
+``` r
+# 绘制ROC曲线
+plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2) # 添加对角线
+```
+
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-35-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+]
+---
+#10.4 方法比较
+## 重复测量分析的不足
+.bigfont[
+- 会产生难以解释的结果
+  - 假设在10个回答中，正确回答8次，错误回答2次
+  - 此时95%CI为[0.52,1.08] ( = 0.8 ± 0.275)
+- 方差不齐，不满足方差分析基本假设
+
+`$$\mu = np$$`
+`$$𝜎 = √(𝑛𝑝𝑞 )$$`
+`$$𝜎_p^2 = \frac{p(1-p)}{n}$$`
+]
+Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
+
+
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+.bigfont[
+- 在固定时间间隔或空间区域内发生某种事件的次数的概率。
+- 适用于事件以恒定平均速率独立发生的情况
+- 例如电话呼叫、网站访问、机器故障等。
+`$$P(X = k) = \frac{e^{-\lambda} \lambda^k}{k!}$$`
+- λ:事件在给定时间或空间内的平均发生率（或平均数量）。
+- k:可能的事件发生次数，可以是0, 1, 2, …
+]
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+
+
+``` r
+set.seed(123) # 设置随机种子以获得可重复的结果
+random_samples &lt;- rpois(1000, lambda = 5)
+hist(random_samples,col = 'white', border = 'black',)
+```
+
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-36-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+![](./picture/chp10/poission.png)
+---
+#10.5 其他分布
+##伽马分布(Gamma distribution)
+&lt;br&gt;
+.bigfont[
+- 伽马分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
+- “指数分布”和“卡方分布”都是伽马分布的特例。
+`$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$`
+- α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
+- β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
+]
+---
+#10.5 其他分布
+##伽马分布(Gamma distribution)
+&lt;img src="./picture/chp10/gamma.webp" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+class: center, middle
+.tit_font[
+思考
+]
+&lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;信号检测论是否可以用广义线性模型分析？&lt;/span&gt; &lt;br&gt;
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
