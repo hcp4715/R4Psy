@@ -1,0 +1,164 @@
+---
+title: "Test1"
+author: "Hetong Qi"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+1.创建字符型向量fruits，包含 “apple”, “banana”, “cherry” 三个元素，并输出为Q1。
+```{r}
+fruits <- c("apple", "banana", "cherry")
+Q1 <- fruits
+Q1
+```
+2.用索引的方式，将fruits中的第二个元素改为 “blueberry”，并输出为Q2。
+```{r}
+fruits[2] <- "blueberry"
+Q2 <- fruits
+Q2
+```
+3.使用sort()函数，将向量fruits中的元素按照"apple" "cherry" "blueberry" 排序，然后输出“apple"的数据类型为Q3。(tips:通过转化成因子型，可以按照特定方式排序）
+```{r}
+fruits <- factor(fruits, levels = c("apple", "cherry", "blueberry"))
+fruits <- sort(fruits)
+Q3 <- class(fruits[1])
+Q3
+```
+4.判断'watermelon'是否存在于fruits中，输出逻辑值为Q4。
+```{r}
+Q4 <- c("watermelon" %in% fruits)
+Q4
+```
+5.用paste()函数将fruits中的元素连接成一个字符串，中间用英文逗号隔开，并输出为Q5。(tips:可以使用"?"查看函数功能)
+```{r}
+Q5 <- paste(fruits, collapse = ",")
+Q5
+```
+6.使用str_length()函数计算fruits中每个元素的长度，并输出为Q6。(tips:可以使用"?"查看函数功能)
+```{r}
+library(stringr)
+Q6 <- str_length(fruits)
+Q6
+```
+7.使用str_sub()函数，提取fruits中每个元素的前两个字母，并输出为Q7。(tips:可以使用"?"查看函数功能)
+```{r}
+Q7 <- str_sub(fruits, 1, 2)
+Q7
+```
+8.把以下表格中的内容创建为数据框(df)。其中Name列、Class列和Email列数据为字符型，Age列和ID列为数值型，并用"is"函数查看Class列数据是否为字符型。输出逻辑值为Q8。
+<img src="./pictures/1.png" width="80%" style="display: block; margin-left: auto; margin-right: auto;">
+```{r}
+df <- data.frame(
+  Name = c("Alice", "Emma", "David"),
+  Age = c(22, 24, 23),
+  Class = c("B", "A", "B"),
+  ID = c(2, 3, 4),
+  Email = c("happy@123.com", "good@123.org", "yes@123.com")
+)
+Q8 <- is.character(df$Class)
+Q8
+```
+9.将数据框中的Alice改为Bob，年龄改为25岁，并输出新数据框为Q9。
+```{r}
+df$Name[df$Name == "Alice"] <- "Bob"
+df$Age[df$Name == "Bob"] <- 25
+Q9 <- df
+Q9
+```
+10.在数据框中新增一列，列名为Score，其值为80,90,85，并输出新数据框为Q10。
+```{r}
+df$Score <- c(80, 90, 85)
+Q10 <- df
+Q10
+```
+11.找出数据框中大于等于24岁的学生的姓名，输出为Q11。
+```{r}
+Q11 <- df$Name[df$Age >= 24]
+Q11
+```
+12.计算数据框中B班学生的平均成绩，输出为Q12。
+```{r}
+Q12 <- mean(df$Score[df$Class == "B"])
+Q12
+```
+13.在数据框中查找：B班，且年龄小于 24 岁的所有学生信息，并输出为数据框 Q13。
+```{r}
+Q13 <- df[df$Class == "B" & df$Age < 24, ]
+Q13
+```
+14.提取数据框中前2行、前3列数据的信息，输出为 Q14。
+```{r}
+Q14 <- df[1:2, 1:3]
+Q14
+```
+15.使用通配符，查找数据框中邮箱以“.com”结尾的学生的成绩，并输出为 Q15。(tips:可以使用grep()函数进行模式匹配，在“.”前需要加上转义字符“\\”，通配符$表示结尾)
+```{r}
+Q15 <- df$Score[grep("\\.com$", df$Email)]
+Q15
+```
+
+16.创建一个名为func的函数，输入两个参数 a 和 b (默认值：a=1,b=1)，返回它们的和的平方((a + b)^2)。并使用func函数，计算 a=3 和 b=4 时的值，输出为Q16。
+```{r}
+func <- function(a = 1, b = 1) {
+  return((a + b) ^ 2)
+}
+Q16 <- func(3, 4)
+Q16
+```
+17.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q17。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
+```{r}
+func2 <- function(x) {
+  mean_val <- mean(x)
+  sd_val <- sd(x)
+  result_df <- data.frame(mean = mean_val, sd = sd_val)
+  return(result_df)
+}
+Q17 <- func2(c(1, 2, 3, 4, 5))
+Q17
+```
+18.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q18。(tips:函数%%用于计算两个数相除的余数)
+```{r}
+func3 <- function(x = 10) {
+  return(x %% 2 == 0)
+}
+Q18 <- func3(22)
+Q18
+```
+19.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q19。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
+```{r}
+func4 <- function(x) {
+  if (x > 0) {
+    return("Positive")
+  } else if (x < 0) {
+    return("Negative")
+  } else {
+    return("Zero")
+  }
+}
+Q19 <- func4(-3)
+Q19
+```
+20.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q20。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
+```{r}
+func5 <- function(x) {
+  if (x >= 90) {
+    return("A")
+  } else if (x >= 80) {
+    return("B")
+  } else if (x >= 70) {
+    return("C")
+  } else if (x >= 60) {
+    return("D")
+  } else {
+    return("E")
+  }
+}
+Q20 <- func5(95)
+Q20
+```
+
+
+
+
+
