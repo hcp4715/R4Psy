@@ -4,13 +4,14 @@
     <title>chapter_12.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
-    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.3.0/panelset.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.32/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
@@ -25,11 +26,11 @@
 
 class: center, middle
 &lt;span style="font-size: 60px;"&gt;**第十二章**&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;如何得到可发表的图像&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;数据可视化进阶&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;数据可视化进阶与papaja&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-05-22&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-05-07&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 
@@ -88,15 +89,14 @@ font-size: 60px;
 .panelset[
 .panel[.panel-name[Packages]
 
-```r
+``` r
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
 
-
 pacman::p_load(
   # 本节课需要用到的 packages
-  here, tidyverse, reshape, bruceR, ggplot2, patchwork, magick,
+  here, tidyverse, reshape, bruceR, ggplot2, patchwork, magick, tesseract,
   # 生成课件
   xaringan, xaringanthemer, xaringanExtra, knitr)
 
@@ -105,12 +105,12 @@ options(scipen=99999,digits = 5)
 
 .panel[.panel-name[trial data]
 
-```r
+``` r
 df.match.trial &lt;- bruceR::import(here::here('data','match','match_raw.csv')) %&gt;% 
   tidyr::extract(Shape, 
                  into = c('Valence', 'Identity'),
                  regex = '(moral|immoral)(Self|Other)',
-                 remove = FALSE) %&gt;% #将Shape列分为两列
+                 remove = FALSE) %&gt;% # 将Shape列分为两列
   dplyr::mutate(Valence = factor(Valence, levels = c('moral','immoral'), labels = c('moral','immoral')),
                 Identity = factor(Identity, levels = c('Self','Other'), labels = c('Self','Other'))) %&gt;%
   dplyr::filter(ACC == 0 | ACC == 1, 
@@ -119,12 +119,12 @@ df.match.trial &lt;- bruceR::import(here::here('data','match','match_raw.csv')) 
                 (!Sub %in% c(7302,7303,7338))) 
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-a51952170b90a44611db" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a51952170b90a44611db">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["06-May-2018_14:45:42","06-May-2018_14:45:44","06-May-2018_14:45:50","06-May-2018_14:45:53"],["Exp","Exp","Exp","Exp"],[7304,7304,7304,7304],[25,25,25,25],["female","female","female","female"],["R","R","R","R"],[1,1,1,1],[1,1,1,1],[3,4,7,8],["moralOther","immoralOther","moralSelf","immoralOther"],["moral","immoral","moral","immoral"],["Other","Other","Self","Other"],["moralOther","immoralOther","moralSelf","immoralOther"],["match","match","match","match"],["n","n","n","n"],["n","m","n","m"],[1,0,1,0],[0.8167,0.8728,0.4951,0.8713]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,17,18]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Valence","targets":11},{"name":"Identity","targets":12},{"name":"Label","targets":13},{"name":"Match","targets":14},{"name":"CorrResp","targets":15},{"name":"Resp","targets":16},{"name":"ACC","targets":17},{"name":"RT","targets":18}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-5ca994ee4e57e758743b" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-5ca994ee4e57e758743b">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["06-May-2018_14:45:42","06-May-2018_14:45:44","06-May-2018_14:45:50","06-May-2018_14:45:53"],["Exp","Exp","Exp","Exp"],[7304,7304,7304,7304],[25,25,25,25],["female","female","female","female"],["R","R","R","R"],[1,1,1,1],[1,1,1,1],[3,4,7,8],["moralOther","immoralOther","moralSelf","immoralOther"],["moral","immoral","moral","immoral"],["Other","Other","Self","Other"],["moralOther","immoralOther","moralSelf","immoralOther"],["match","match","match","match"],["n","n","n","n"],["n","m","n","m"],[1,0,1,0],[0.8167,0.8728,0.4951,0.8713]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,17,18]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Valence","targets":11},{"name":"Identity","targets":12},{"name":"Label","targets":13},{"name":"Match","targets":14},{"name":"CorrResp","targets":15},{"name":"Resp","targets":16},{"name":"ACC","targets":17},{"name":"RT","targets":18}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[subj data]
 
-```r
+``` r
 df.match.subj &lt;- df.match.trial %&gt;%
   dplyr::group_by(Sub, Identity, Valence) %&gt;%
   dplyr::summarise(RT_mean = mean(RT), 
@@ -132,12 +132,12 @@ df.match.subj &lt;- df.match.trial %&gt;%
   dplyr::ungroup()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-d3983644fdf2df6ccfe9" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-d3983644fdf2df6ccfe9">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],[7304,7304,7304,7304],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.552276,0.706672602739726,0.7493875,0.7581492957746478],[0.9866666666666667,0.821917808219178,0.8333333333333334,0.7183098591549296]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>RT_mean<\/th>\n      <th>ACC_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Identity","targets":2},{"name":"Valence","targets":3},{"name":"RT_mean","targets":4},{"name":"ACC_mean","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-a28021a5f72ba13804f9" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a28021a5f72ba13804f9">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],[7304,7304,7304,7304],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.552276,0.706672602739726,0.7493875,0.7581492957746478],[0.9866666666666667,0.821917808219178,0.8333333333333334,0.7183098591549296]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>RT_mean<\/th>\n      <th>ACC_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Identity","targets":2},{"name":"Valence","targets":3},{"name":"RT_mean","targets":4},{"name":"ACC_mean","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[sum data]
 
-```r
+``` r
 df.match.sum &lt;- df.match.subj %&gt;% 
   dplyr::group_by(Identity, Valence) %&gt;%
   dplyr::summarise(grand_mean_RT = mean(RT_mean),
@@ -150,8 +150,8 @@ df.match.sum &lt;- df.match.subj %&gt;%
   dplyr::ungroup()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-be879c504cf1844fed20" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-be879c504cf1844fed20">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973,0.6996564845828235],[0.06334254097700114,0.06957103122069196,0.07816459938618592,0.0695041721958588],[0.01001533511349354,0.01100014589120355,0.01235890832274734,0.01098957455117302],[0.9161836748531289,0.8142527831854576,0.8440248488102073,0.828686850170307],[0.0980144792704873,0.1197130892135965,0.1095526473381531,0.1107136186340657],[0.01549744990850493,0.01892830138249502,0.01732179446448731,0.01750536014414538],[41,41,41,41]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean_RT<\/th>\n      <th>SD_RT<\/th>\n      <th>SE_RT<\/th>\n      <th>grand_mean_ACC<\/th>\n      <th>SD_ACC<\/th>\n      <th>SE_ACC<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean_RT","targets":3},{"name":"SD_RT","targets":4},{"name":"SE_RT","targets":5},{"name":"grand_mean_ACC","targets":6},{"name":"SD_ACC","targets":7},{"name":"SE_ACC","targets":8},{"name":"n","targets":9}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-4ade3083c27be456cca0" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-4ade3083c27be456cca0">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973,0.6996564845828235],[0.06334254097700114,0.06957103122069196,0.07816459938618592,0.06950417219585882],[0.01001533511349354,0.01100014589120355,0.01235890832274734,0.01098957455117303],[0.9161836748531289,0.8142527831854576,0.8440248488102073,0.828686850170307],[0.09801447927048731,0.1197130892135965,0.1095526473381531,0.1107136186340657],[0.01549744990850494,0.01892830138249502,0.01732179446448731,0.01750536014414538],[41,41,41,41]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean_RT<\/th>\n      <th>SD_RT<\/th>\n      <th>SE_RT<\/th>\n      <th>grand_mean_ACC<\/th>\n      <th>SD_ACC<\/th>\n      <th>SE_ACC<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean_RT","targets":3},{"name":"SD_RT","targets":4},{"name":"SE_RT","targets":5},{"name":"grand_mean_ACC","targets":6},{"name":"SD_ACC","targets":7},{"name":"SE_ACC","targets":8},{"name":"n","targets":9}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]]]
 
@@ -195,7 +195,7 @@ class: center, middle
 ![](./picture/chp12/required.png)
 
 
-```r
+``` r
 # 以柱状图为例
 p1 &lt;- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_RT, fill = Valence)) +
   ggplot2::geom_bar(stat = "Identity",
@@ -210,7 +210,7 @@ p1 &lt;- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_R
 # 12.1 ggplot2基础
 ## 必须图层
 
-```r
+``` r
 p1
 ```
 
@@ -222,7 +222,7 @@ p1
 &lt;img src="./picture/chp12/adjust.png" width="70%" style="display: block; margin: auto;" /&gt;
 
 
-```r
+``` r
 # 以柱状图为例
 p2 &lt;- p1 +
   ggplot2::scale_y_continuous(expand=c(0, 0), 
@@ -236,7 +236,7 @@ p2 &lt;- p1 +
 # 12.1 ggplot2基础
 ## 可选图层
 
-```r
+``` r
 p2
 ```
 
@@ -259,7 +259,7 @@ p2
 
 .panel[.panel-name[Data preprocessing]
 
-```r
+``` r
 df1 &lt;- df.match.sum[,-c(6, 7, 8)]%&gt;%
   dplyr::rename(grand_mean = grand_mean_RT,
                 SD = SD_RT,
@@ -276,12 +276,12 @@ df.match.sum.long &lt;- df.match.sum[,-c(3, 4, 5)] %&gt;%
 rm(df1)
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-cda03d1e36524a69ce81" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-cda03d1e36524a69ce81">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[41,41,41],["RT","RT","RT"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean<\/th>\n      <th>SD<\/th>\n      <th>SE<\/th>\n      <th>n<\/th>\n      <th>DV<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean","targets":3},{"name":"SD","targets":4},{"name":"SE","targets":5},{"name":"n","targets":6},{"name":"DV","targets":7}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-91f6d0aa8a11c82e88a0" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-91f6d0aa8a11c82e88a0">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[41,41,41],["RT","RT","RT"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean<\/th>\n      <th>SD<\/th>\n      <th>SE<\/th>\n      <th>n<\/th>\n      <th>DV<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean","targets":3},{"name":"SD","targets":4},{"name":"SE","targets":5},{"name":"n","targets":6},{"name":"DV","targets":7}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[figure code]
 
-```r
+``` r
 p4 &lt;- df.match.sum.long %&gt;%
   ggplot2::ggplot(., 
                   aes(x = Identity,
@@ -312,7 +312,7 @@ p4 &lt;- df.match.sum.long %&gt;%
 ## 可选图层
 ## 同时呈现两张图——方法二：patchwork
 
-```r
+``` r
 p2 + p3 + plot_layout(guides = "collect")
 ```
 
@@ -353,7 +353,7 @@ class: center, middle
 .panelset[
 .panel[.panel-name[code]
 
-```r
+``` r
 s1 &lt;- df.match.sum %&gt;%
   ggplot2::ggplot(., 
                   aes(x = Identity,
@@ -382,7 +382,7 @@ s1 &lt;- df.match.sum %&gt;%
 .panelset[
 .panel[.panel-name[直接加入——拥挤]
 
-```r
+``` r
 s2 &lt;- s1 +
   ggplot2::geom_point(data = df.match.subj,
                       aes(x = Identity,
@@ -394,7 +394,7 @@ s2 &lt;- s1 +
 
 .panel[.panel-name[加入抖动——混乱]
 
-```r
+``` r
 s3 &lt;- s1 +
   ggplot2::geom_point(data = df.match.subj,
                       aes(x = Identity, y = RT_mean, group = Valence),
@@ -412,7 +412,7 @@ s3 &lt;- s1 +
 .panelset[
 .panel[.panel-name[将不同条件点的位置作为新变量]
 
-```r
+``` r
 df.match.plot &lt;- df.match.subj %&gt;%
   dplyr::mutate(conds = case_when(Identity == "Self" &amp; Valence == "moral" ~ "0.88",
                                   Identity == "Self" &amp; Valence == "immoral" ~ "1.12",
@@ -423,7 +423,7 @@ df.match.plot &lt;- df.match.subj %&gt;%
 
 .panel[.panel-name[以conds为基础抖动]
 
-```r
+``` r
 s4 &lt;- s1 +
     ggplot2::geom_point(data = df.match.plot,
                        aes(x = conds, y = RT_mean, group = Valence),
@@ -439,7 +439,7 @@ s4 &lt;- s1 +
 # 12.2 进阶——细节调整(目标图片1)
 ## 显示个体趋势
 
-```r
+``` r
 s5 &lt;- s4 +
   ggplot2::geom_line(data = df.match.plot,
                      aes(x = conds, y = RT_mean, group = Sub),
@@ -457,7 +457,7 @@ s5 &lt;- s4 +
 .panelset[
 .panel[.panel-name[code]
 
-```r
+``` r
 s6 &lt;- s1 +
   ggplot2::geom_point(data = df.match.plot,
                        aes(x = conds,
@@ -495,7 +495,7 @@ s6 &lt;- s1 +
 # 12.2 进阶——细节调整(目标图片1)
 ## 合并图片
 
-```r
+``` r
 s9 &lt;- s6 + s8 + plot_layout(guides = "collect")
 s9
 ```
@@ -506,11 +506,11 @@ s9
 # 12.2 进阶——细节调整(目标图片1)
 ## 保存图片
 
-```r
+``` r
 # 保存为pdf更加清晰
 ggplot2::ggsave(filename = "./picture/chp12/p1.pdf", 
                 plot = s9, 
-                width = 5, 
+                width = 8, 
                 height = 4)
 ```
 
@@ -527,7 +527,7 @@ ggplot2::ggsave(filename = "./picture/chp12/p1.pdf",
 .panelset[
 .panel[.panel-name[使用一个简单的模型]
 
-```r
+``` r
 #此处选择12个被试是为了在展示的时候更清晰
 sublist &lt;- unique(df.match.trial$Sub)
 target2 &lt;- df.match.trial %&gt;% 
@@ -549,7 +549,7 @@ model &lt;- lme4::lmer(data = target2,
 .panel[.panel-name[data preprocessing]
 
 
-```r
+``` r
 # 提取随机效应
 ranef_df &lt;- as.data.frame(ranef(model)$Sub) %&gt;%
   dplyr::mutate(Sub = row.names(.)) %&gt;%
@@ -563,7 +563,7 @@ ranef_df &lt;- as.data.frame(ranef(model)$Sub) %&gt;%
 
 .panel[.panel-name[forest]
 
-```r
+``` r
 # 绘制森林图
 ranef_df %&gt;% 
   ggplot2::ggplot(., aes(x=Intercept, y=Sub)) +
@@ -699,9 +699,9 @@ magick包可以应用于所有常见图片操作(甚至包括PDF)，具体功能
 
 .panel[.panel-name[读取图片]
 
-```r
+``` r
 ## 读取图片；图片可以是本地，也可以是图片的网址链接
-img = magick::image_read('picture/chp6/pr1.png')
+img &lt;- magick::image_read('picture/chp6/pr1.png')
 
 ## 查看图片相关信息
 img %&gt;% magick::image_info()
@@ -737,7 +737,7 @@ img %&gt;% magick::image_info()
 .panel[.panel-name[图片剪裁--结果]
 
 
-```r
+``` r
 img %&gt;% magick::image_crop('850x480+10+10')
 ```
 
@@ -746,11 +746,11 @@ img %&gt;% magick::image_crop('850x480+10+10')
 .panel[.panel-name[图片剪裁与合并]
 
 
-```r
-img1 = img %&gt;% magick::image_crop('870x488')
-img2 = img %&gt;% magick::image_crop('870x488+0+485')
+``` r
+img1 &lt;- img %&gt;% magick::image_crop('870x488')
+img2 &lt;- img %&gt;% magick::image_crop('870x488+0+485')
 ## 使用image_append进行拼接，令stack = F进行横向拼接（T为竖向）
-*img3 = image_append(c(img1,img2),stack = F)
+*img3 &lt;- image_append(c(img1,img2),stack = F)
 img3 %&gt;% print()
 ```
 
@@ -766,7 +766,7 @@ img3 %&gt;% print()
 .panel[.panel-name[其他]
 
 
-```r
+``` r
 #### NOT RUN ####
 # 保存图片到本地
 image_write(image = img3,path = 'your path')
@@ -794,11 +794,11 @@ image_read("http://jeroen.github.io/images/testocr.png") %&gt;%
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightLines": true,
-"highlightStyle": "github",
-"countIncrementalSlides": false,
-"seal": true,
-"ratio": "16:9"
+  "highlightLines": true,
+  "highlightStyle": "github",
+  "countIncrementalSlides": false,
+  "seal": true,
+  "ratio": "16:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
