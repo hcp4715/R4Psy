@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>chapter_11.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+    <script src="libs/viz-1.8.2/viz.js"></script>
+    <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="libs/grViz-binding-1.0.11/grViz.js"></script>
+    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;**第十一章**&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;回归模型(四)：中介分析&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025-04-16&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
+
+---
+
+
+
+&lt;style type="text/css"&gt;
+.bigfont {
+  font-size: 30px;
+}
+.size5{
+font-size: 24px;
+}
+.titfont{
+font-size: 60px;
+}
+.foot{
+font-size: 10px;
+}
+
+&lt;/style&gt;
+
+
+## 准备工作
+
+``` r
+# Packages
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+pacman::p_load(tidyverse,easystats,magrittr,
+               # 中介分析
+               lavaan, bruceR,tidySEM,
+               # 数据集
+               quartets,
+               # 绘图
+               patchwork,DiagrammeR,magick)
+options(scipen=99999,digits = 3)
+set.seed(1002)
+```
+
+
+
+---
+class: inverse, middle ,center
+
+
+.titfont[线性模型回顾]
+
+
+
+---
+# 0.1 线性模型及模型检验
+-   回归方程用于分析一个因变量与多个自变量之间的关系。在回归中，将一个或多个自变量视为整体，对因变量进行预测，通过OLS或ML进行拟合，解释不了的成分则被视为残差；而我们的目的在于，舍弃残差（随机部分），而获得可解释的成分。
+
+
+
+
+
+.panelset[
+.panel[.panel-name[anscombe_quartet]
+
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-2-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+.panel[.panel-name[performance]
+
+
+``` r
+lm(y ~ x,data = anscombe_quartet %&gt;% 
+     dplyr::filter(dataset == '(3) Outlier')) %&gt;% 
+* performance::check_model(check = c('linearity','outliers'))
+```
+
+&lt;img src="chapter_11_files/figure-html/Outlier-1.png" width="540" style="display: block; margin: auto;" /&gt;
+
+
+
+
+]]]
+
+
+
+---
+# 0.2 多元线性模型的局限
+
+.size5[
+
+-   模型可分为三类 `\(^*\)`：描述模型、推断模型、预测模型
+
+
+-   回归兼具这三种功能：
+
+    -   使用LOESS(即geom_smooth()中method默认的参数)可以对数据进行描述；
+    
+    -   关注各个变量的(偏)回归系数的显著性可以进行统计推断(如果是离散变量的时候即等价与ANOVA)
+    
+    -   进行预测时，则不关注各个变量之间的复杂关系，因而将自变量当做整体，关注其是否能够预测因变量(拟合指标)
+    
+]
+
+--
+
+### 局限
+.size5[
+如果所有自变量都相互独立，使用多元回归是合理的；
+
+但在现实中，变量之间存在相互作用更为普遍，而多元回归值仅关注到自变量对因变量的独立作用(偏回归系数)，很难描述变量间复杂的关系。变量越多，这个问题越明显。
+
+]
+
+.footnote[
+-----------
+.footfont[
+Ref: [https://www.tmwr.org/software-modeling](https://www.tmwr.org/software-modeling)
+]
+]
+
+---
+class: inverse, middle ,center
+
+.titfont[中介分析]
+
+
+---
+# 2.1 对于“机制”的表示——“图”
+
+-   变量间关系中，我们期望验证因果关系。
+
+-   对于因果关系，可以用“图”来表示：
+
+    -   图包括两部分：节点和边。节点表示具体变量，而箭头表示变量之间的关系；
+    
+    -   对节点来说，在SEM中，观测变量用椭圆表示，潜变量用椭圆表示。
+    
+    -   边表示变量间关系，**单箭头直线表示直接因果关系，从原因指向结果；双曲线箭头则表示相关
+
+-   使用的图多为有向无环图(Directed Acyclic Graph, DAGs)，而图本身是对理论因果关系的表征
+
+.pull-left[
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-a613bc458c42c74d20ac" style="width:540px;height:100px;"></div>
+<script type="application/json" data-for="htmlwidget-a613bc458c42c74d20ac">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X1 -> X3\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+]
+
+
+.pull-right[
+
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-9049b4ab04e235b3c2d8" style="width:540px;height:100px;"></div>
+<script type="application/json" data-for="htmlwidget-9049b4ab04e235b3c2d8">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X1 ->X2\n  X2 -> X3\n  X3 -> X1\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+]
+
+---
+# 2.2 中介分析
+
+-   中介分析：
+
+关注变量间因果关系，自变量如何影响因变量（即机制），如X通过M作用于Y，M为中介变量。中介的存在意味着时间上发生的先后顺序： `\(X \rightarrow M \rightarrow Y\)` 。
+
+对于中介过程的量化包括路径分析和SEM（同时包含测量模型和结构模型），后面的介绍基于路径分析。
+
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-4228862c516815729d10" style="width:540px;height:100px;"></div>
+<script type="application/json" data-for="htmlwidget-4228862c516815729d10">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+
+---
+# 2.2 中介分析
+
+
+.pull-left[
+
+.bigfont[
+总方程:  
+
+`$$Y = i_1 + cX + e_1$$`
+]
+
+]
+
+.pull-right[
+<div class="grViz html-widget html-fill-item" id="htmlwidget-e6c1d12556bbfadd3469" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-e6c1d12556bbfadd3469">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  \n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.4,weight = 0.3,fontsize = 10]\n  e1[style = NULL,fillcolor = NULL,penwidth = 0,height = 0.02,width = 0.02]\n  \n  # 定义边\n  edge [color = black, arrowhead = vee]\n  {rank = same; e1; Y}\n  X -> Y [label = \"c\"]\n  e1 -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+]
+
+
+------------------
+
+&lt;br&gt;
+.pull-left[
+
+.bigfont[
+分解:
+
+`$$M = i_2 + aX + e_2$$`
+
+`$$Y = i_3 + c'X + bM + e_3$$`
+]
+]
+
+.pull-right[
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-4e292ff98532998346cb" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-4e292ff98532998346cb">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+]
+
+---
+# 2.3 中介效应
+.pull-left[
+
+
+$$ Y = i_1 + cX + e_1$$  
+
+$$ M = i_2 + aX + e_2$$  
+
+`$$Y = i_3 + c'X + bM + e_3$$`  
+
+如果将第二个方程代入第三个方程：  
+
+$$ Y = i_3 + c'X + b(i_2 + aX + e_2) + e_3$$
+`$$= (b*i_2 + i_3) + c'X + abX + (b*e_2 + e_3)$$`
+`$$= i_4 + c'X + abX + e_5$$`
+
+可以发现，将X对Y的效应分解成了中介效应ab和直接效应c'
+
+-   在中介模型路径图中， `\(X \rightarrow Y\)`路径上的回归系数 `\(c'\)`为直接效应
+
+
+-   中介效应：ab，或 `\(c - c'\)`。在M和Y均为连续变量的时候，有： `\(ab = c - c'\)`
+
+-   中介效应分为两类：完全中介（即c' = 0）和部分中介(c' ≠ 0)
+
+-   但问题是，回归系数意味着变量间存在因果关系么？
+]
+
+.pull-right[
+<div class="grViz html-widget html-fill-item" id="htmlwidget-44a12602da368b5ea12c" style="width:540px;height:432px;"></div>
+<script type="application/json" data-for="htmlwidget-44a12602da368b5ea12c">{"x":{"diagram":"digraph {\n  graph [layout = dot]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n  e2[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n  e3[style = NULL,fillcolor = NULL,penwidth = 0,\n    height = 0.02,width = 0.02]\n    \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n  # {rank = min; X; Med}\n  {rank = same; e2 Med}\n  {rank = same; X Y}\n\n  X -> Med [label = \"a\", len = 1]  \n  Med -> Y [label = \"b\", len = 1]  \n  X -> Y [label = \"c′\", len = 15]  \n  e3 -> Y [len = 1]  \n  e2 -> Med [len = 1] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+]
+
+---
+
+# 2.3 中介效应
+
+
+.size5[
+-   回归系数本质上只是(偏)相关( `\(\beta = \frac{S_y}{S_x}·r\)`)，比如对于总效应c来说：]
+
+
+
+
+
+
+
+
+``` r
+tot = lm(CBT ~ DEQ,data = pg_raw %&gt;% 
+           dplyr::filter(romantic == 1))
+# 计算相关
+r = pg_raw %&gt;% 
+  dplyr::filter(romantic == 1) %&gt;%  
+  correlation::correlation(select = cc("DEQ,CBT")) %&gt;% 
+  .$r
+
+# 比较回归系数与相关
+data.frame('相关系数' = 
+             (sd(pg_raw$CBT,na.rm = T)/sd(pg_raw$DEQ,na.rm = T))*r,
+           '回归系数' = tot$coefficients[2]) %&gt;% print()
+```
+
+```
+##     相关系数 回归系数
+## DEQ -0.00214 -0.00222
+```
+
+
+
+.size5[
+-   而中介效应ab也只是两个回归方程的回归系数的乘积，或者说是 `\(r_{XM}\)` 与 `\(r_{MY}\)`的乘积；而相关不等于因果，所以使用测量中介实际上是无法确认因果关系！
+
+]
+
+
+
+---
+# 2.4 中介效应的检验
+
+.size5[
+中介效应的检验方法很多，如四步法、Sobel检验等，但最常用的是通过Bootstrap 来计算中介效应的置信区间(且两个随机变量的乘积很多情境中并非服从正态分布)，如果其置信区间不包含0则认为该参数估计值显著：
+
+
+-   Bootstrap对原始样本进行有放回的重复抽样（允许重复抽取相同数据），抽样次数通常等于数据本身大小N相同，假设重复抽取1000次；
+
+-   然后对每次抽取的样本计算中介效应ab，就得到了1000个ab的值，据此估计中介效应ab的分布情况，进而取2.5%和97.5%个百分位点计算95%置信区间。
+
+
+]
+
+---
+# 2.5 问题提出
+
+在第六章中，我们使用Penguins数据研究了社交复杂度(CSI)是否影响核心体温(CBT)，特别是在离赤道比较远的（低温）地区(DEQ)。
+
+
+这里，我们复现论文中第一个中介模型：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响。具体来说：
+
+-   DEQ为自变量，CBT为因变量，CSI为中介变量。
+
+-   赤道距离(DEQ)应当正向预测社会复杂度(CSI)，而社会复杂度应当正向预测体温(CBT)，但赤道距离(DEQ)应当负向预测体温(CBT)(即遮掩效应，如下图)
+
+
+
+
+.panelset[
+.panel[.panel-name[假设]
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-3ecaffd5a5a8e2617df3" style="width:540px;height:300px;"></div>
+<script type="application/json" data-for="htmlwidget-3ecaffd5a5a8e2617df3">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  DEQ -> CSI[label = \"+\"]\n  DEQ -> CBT[label = \"-\"]\n  CSI -> CBT[label = \"+\"]\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+.panel[.panel-name[数据导入]
+
+
+
+
+``` r
+# 数据导入
+pg_raw = bruceR::import(here::here('data','penguin','penguin_rawdata_full.csv'))
+```
+
+.panel[.panel-name[计算CSI]
+
+``` r
+# 计算CSI
+### get the column names:
+snDivNames  &lt;- c("SNI3", "SNI5", "SNI7", "SNI9", "SNI11", "SNI13",  "SNI15", "SNI17","SNI18","SNI19","SNI21")
+extrDivName &lt;- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
+
+### create a empty dataframe for social network diversity
+snDivData &lt;- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(pg_raw))), snDivNames)
+
+### recode Q10 (spouse): 1-&gt; 1; else -&gt;0
+snDivData$SNI1_r &lt;- car::recode(pg_raw$SNI1,"1= 1; else = 0")
+
+####re-code Q12 ~ Q30: NA -&gt; 0; 0 -&gt; 0; 1~10 -&gt; 1
+snDivData[,snDivNames] &lt;- apply(pg_raw[,snDivNames],2,function(x) {x &lt;- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
+
+### add suffix to the colnames
+colnames(snDivData[,snDivNames]) &lt;- paste(snDivNames,"div",  sep = "_")    
+
+### recode the social network at work by combining SNI17, SNI18
+snDivData$SNIwork   &lt;- snDivData$SNI17 + snDivData$SNI18
+snDivData$SNIwork_r &lt;- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
+
+### re-code extra groups, 0/NA --&gt; 0; more than 0 --&gt; 1
+extrDivData &lt;- pg_raw[,extrDivName]          # Get extra data
+extrDivData$sum &lt;- rowSums(extrDivData)    # sum the other groups
+snDivData$extrDiv_r &lt;- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")  # recode
+
+### Get the column names for social diversity 
+snDivNames_r &lt;- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
+                  "SNI19","SNI21","extrDiv_r")
+
+### Get the social diveristy score
+snDivData$SNdiversity &lt;- rowSums(snDivData[,snDivNames_r])
+pg_raw$socialdiversity &lt;- snDivData$SNdiversity
+```
+
+.panel[.panel-name[计算CBT]
+
+
+``` r
+## 更改列名
+pg_raw %&lt;&gt;% dplyr::rename(CSI = socialdiversity)
+###  计算CBT（mean）
+# 筛选大于34.99 的被试
+
+# pg_raw %&lt;&gt;%
+#   filter(Temperature_t1 &gt; 34.99 &amp;
+#            Temperature_t2 &gt; 34.99)
+
+# 前测后测求均值
+pg_raw %&lt;&gt;% 
+  dplyr::mutate(CBT = (Temperature_t1 + Temperature_t2)/2)
+```
+]]]]]
+
+---
+layout: true
+# 2.6 代码实现
+
+---
+## 2.6.1 lavaan 介绍
+
+-   lavaan包专门用于结构方程模型（SEM）的估计，如CFA、EFA、Multiple groups、Growth curves等。
+
+
+-   基本语法 `\(^*\)`：
+
+| formula type               | operator | mnemonic           |
+|----------------------------|----------|--------------------|
+| latent variable definition | `=~`     | is measured by     |
+| regression                 | `~`      | is regressed on    |
+| (residual) (co)variance    | `~~`     | is correlated with |
+| intercept                  | `~ 1`    | intercept          |
+| ‘defines’ new parameters   | `:= `    | defines            |
+
+.footnote[
+
+-----------
+.footfont[
+Ref: [https://lavaan.ugent.be/tutorial/syntax1.html](https://lavaan.ugent.be/tutorial/syntax1.html)
+]
+]
+
+
+---
+## 2.6.2 lavaan语句
+
+
+.panelset[
+.panel[.panel-name[lavaan语句]
+
+
+``` r
+med_model &lt;- "
+  # 直接效应(Y = cX)
+  CBT ~ c*DEQ   # 语法同回归，但需要声明回归系数
+  
+  # 中介路径(M)
+  CSI ~ a*DEQ
+  CBT ~ b*CSI
+  
+  # 定义间接效应c'
+  #注： `:=`意思是根据已有的参数定义新的参数
+  ab := a*b
+
+  # 总效应
+  total := c + (a*b)"
+# 注：这里数据仅以处于浪漫关系中的个体为例
+fit &lt;- lavaan::sem(med_model,
+           data = pg_raw %&gt;% dplyr::filter(romantic == 1),
+           bootstrap = 100 # 建议1000
+           )
+```
+
+.panel[.panel-name[lavaan-output]
+
+
+``` r
+fit %&gt;% summary() %&gt;% capture.output() %&gt;% .[21:38]
+```
+
+```
+##  [1] "Regressions:"                                          
+##  [2] "                   Estimate  Std.Err  z-value  P(&gt;|z|)"
+##  [3] "  CBT ~                                               "
+##  [4] "    DEQ        (c)   -0.004    0.001   -3.520    0.000"
+##  [5] "  CSI ~                                               "
+##  [6] "    DEQ        (a)    0.026    0.004    7.400    0.000"
+##  [7] "  CBT ~                                               "
+##  [8] "    CSI        (b)    0.071    0.011    6.316    0.000"
+##  [9] ""                                                      
+## [10] "Variances:"                                            
+## [11] "                   Estimate  Std.Err  z-value  P(&gt;|z|)"
+## [12] "   .CBT               0.197    0.010   19.900    0.000"
+## [13] "   .CSI               1.949    0.098   19.900    0.000"
+## [14] ""                                                      
+## [15] "Defined Parameters:"                                   
+## [16] "                   Estimate  Std.Err  z-value  P(&gt;|z|)"
+## [17] "    ab                0.002    0.000    4.804    0.000"
+## [18] "    total            -0.002    0.001   -1.930    0.054"
+```
+
+.panel[.panel-name[中介图-Paper]
+
+&lt;img src="picture/chp11/lav.png" width="1158" style="display: block; margin: auto;" /&gt;
+
+
+.panel[.panel-name[中介图-tidySEM]
+
+这里绘图使用的是tidySEM包，当然也有semPlot等包可以选择；tidySEM使用了tidyverse风格，并支持lavaan和Mplus等语法对SEM进行建模，可使用help(package = tidySEM)进行查看。
+
+.pull-left[
+
+``` r
+## 与DiagrammeR::get_edges相冲突
+detach("package:DiagrammeR", unload = TRUE)
+## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
+lay = get_layout("", "CSI", "",
+                 "DEQ", "", "CBT", 
+                 rows = 2)
+tidySEM::graph_sem(fit,digits = 3,
+                   layout = lay)
+```
+]
+
+.pull-right[
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
+]
+]]]]]
+
+
+---
+## 2.6.3 PROCESS in bruceR()
+
+.panelset[
+.panel[.panel-name[bruceR::PROCESS]
+
+``` r
+## RUN IN CONSOLE !!!
+pg_raw %&gt;% dplyr::filter(romantic == 1) %&gt;% 
+  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
+  x = 'DEQ', y = 'CBT',meds = 'CSI',nsim = 100)
+```
+
+```
+## 
+## ****************** PART 1. Regression Model Summary ******************
+## 
+## PROCESS Model Code : 4 (Hayes, 2018; www.guilford.com/p/hayes3)
+## PROCESS Model Type : Simple Mediation
+## -    Outcome (Y) : CBT
+## -  Predictor (X) : DEQ
+## -  Mediators (M) : CSI
+## - Moderators (W) : -
+## - Covariates (C) : -
+## -   HLM Clusters : -
+## 
+## All numeric predictors have been grand-mean centered.
+## (For details, please see the help page of PROCESS.)
+## 
+## Formula of Mediator:
+## -    CSI ~ DEQ
+## Formula of Outcome:
+## -    CBT ~ DEQ + CSI
+## 
+## CAUTION:
+##   Fixed effect (coef.) of a predictor involved in an interaction
+##   denotes its "simple effect/slope" at the other predictor = 0.
+##   Only when all predictors in an interaction are mean-centered
+##   can the fixed effect denote the "main effect"!
+##   
+## Model Summary
+## 
+## ──────────────────────────────────────────────────
+##              (1) CBT      (2) CSI      (3) CBT    
+## ──────────────────────────────────────────────────
+## (Intercept)   36.386 ***    7.111 ***   36.386 ***
+##               (0.016)      (0.050)      (0.016)   
+## DEQ           -0.002        0.026 ***   -0.004 ***
+##               (0.001)      (0.004)      (0.001)   
+## CSI                                      0.071 ***
+##                                         (0.011)   
+## ──────────────────────────────────────────────────
+## R^2            0.005        0.065        0.052    
+## Adj. R^2       0.003        0.063        0.050    
+## Num. obs.    792          792          792        
+## ──────────────────────────────────────────────────
+## Note. * p &lt; .05, ** p &lt; .01, *** p &lt; .001.
+## 
+## ************ PART 2. Mediation/Moderation Effect Estimate ************
+## 
+## Package Use : ‘mediation’ (v4.5.0)
+## Effect Type : Simple Mediation (Model 4)
+## Sample Size : 792 (38 missing observations deleted)
+## Random Seed : set.seed()
+## Simulations : 100 (Bootstrap)
+```
+
+```
+## 
+## Running 100 simulations...
+## Indirect Path: "DEQ" (X) ==&gt; "CSI" (M) ==&gt; "CBT" (Y)
+## ───────────────────────────────────────────────────────────────
+##                Effect    S.E.      z     p        [Boot 95% CI]
+## ───────────────────────────────────────────────────────────────
+## Indirect (ab)   0.002 (0.000)  5.457 &lt;.001 *** [ 0.001,  0.002]
+## Direct (c')    -0.004 (0.001) -3.283  .001 **  [-0.006, -0.002]
+## Total (c)      -0.002 (0.001) -1.770  .077 .   [-0.004, -0.000]
+## ───────────────────────────────────────────────────────────────
+## Percentile Bootstrap Confidence Interval
+## (SE and CI are estimated based on 100 Bootstrap samples.)
+## 
+## Note. The results based on bootstrapping or other random processes
+## are unlikely identical to other statistical software (e.g., SPSS).
+## To make results reproducible, you need to set a seed (any number).
+## Please see the help page for details: help(PROCESS)
+## Ignore this note if you have already set a seed. :)
+```
+
+
+.panel[.panel-name[bruceR::PROCESS-Regression]
+
+```
+##  [1] "Model Summary"                                     
+##  [2] ""                                                  
+##  [3] "──────────────────────────────────────────────────"
+##  [4] "             (1) CBT      (2) CSI      (3) CBT    "
+##  [5] "──────────────────────────────────────────────────"
+##  [6] "(Intercept)   36.386 ***    7.111 ***   36.386 ***"
+##  [7] "              (0.016)      (0.050)      (0.016)   "
+##  [8] "DEQ           -0.002        0.026 ***   -0.004 ***"
+##  [9] "              (0.001)      (0.004)      (0.001)   "
+## [10] "CSI                                      0.071 ***"
+## [11] "                                        (0.011)   "
+## [12] "──────────────────────────────────────────────────"
+## [13] "R^2            0.005        0.065        0.052    "
+## [14] "Adj. R^2       0.003        0.063        0.050    "
+## [15] "Num. obs.    792          792          792        "
+## [16] "──────────────────────────────────────────────────"
+## [17] "Note. * p &lt; .05, ** p &lt; .01, *** p &lt; .001."
+```
+
+.panel[.panel-name[bruceR::PROCESS-Mediation]
+
+
+```
+##  [1] "Package Use : ‘mediation’ (v4.5.0)"                             
+##  [2] "Effect Type : Simple Mediation (Model 4)"                       
+##  [3] "Sample Size : 792 (38 missing observations deleted)"            
+##  [4] "Random Seed : set.seed()"                                       
+##  [5] "Simulations : 100 (Bootstrap)"                                  
+##  [6] ""                                                               
+##  [7] "Running 100 simulations..."                                     
+##  [8] "Indirect Path: \"DEQ\" (X) ==&gt; \"CSI\" (M) ==&gt; \"CBT\" (Y)"     
+##  [9] "───────────────────────────────────────────────────────────────"
+## [10] "               Effect    S.E.      z     p        [Boot 95% CI]"
+## [11] "───────────────────────────────────────────────────────────────"
+## [12] "Indirect (ab)   0.002 (0.000)  4.591 &lt;.001 *** [ 0.001,  0.003]"
+## [13] "Direct (c')    -0.004 (0.001) -3.442 &lt;.001 *** [-0.006, -0.002]"
+## [14] "Total (c)      -0.002 (0.001) -2.035  .042 *   [-0.004, -0.000]"
+## [15] "───────────────────────────────────────────────────────────────"
+```
+
+]]]]
+
+---
+layout: false
+# 2.7 反思
+
+&lt;br&gt;
+
+.size5[
+在刚才的分析中，我们希望证明：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响，因而通过中介分析来验证假设，但实际上我们得到的只是变量间的相关，而不能得到期望的因果关系。
+
+
+那么我们应该如何去验证变量间的因果关系？
+]
+
+---
+
+
+# 3.1 因果推断(Casual Inference)
+.size5[
+确认变量间存在因果关系至少满足三个条件 `\(^*\)`：
+
+1.时间顺序：因在果之前发生；
+
+2.共变：因果之间存在相关，原因的变化伴随结果的变化；
+
+3.排除其他可能的解释
+
+
+]
+
+
+--
+.size5[
+目前社科中常用的一个因果推断框架是反事实(conterfactual)推断，即观察到与事实情况相反的情况：
+
+-   如，一个人得了感冒， 而服用感冒药以后症状得到了缓解，而对药效的归因则因为“如果当时不吃药，感冒就好不了”（即反事实）
+
+-   但反事实理论框架要求需要针对特定的个体——相同个体，当时在感冒发生时不吃药，且最后“感冒好不了”
+
+-   由于反事实的“不可观测性”，实际研究中使用随机对照的方式来解决（找到发生在相似个体身上的“反事实情况”）。
+]
+
+
+
+.footnote[
+.footsize[
+刘国芳,程亚华,辛自强.作为因果关系的中介效应及其检验[J].心理技术与应用,2018,6(11):665-676
+]
+]
+
+---
+# 3.2 因果推断与概率
+
+
+假设100万儿童中已有99%接种了疫苗，1%没有接种。
+-   接种疫苗：有1%的可能性出现不良反应，这种不良反应有1%的可能性导致儿童死亡，但不可能得天花。
+-   未接种疫苗：有2%的概率得天花。最后，假设天花的致死率是20%。
+
+要不要接种？
+--
+
+-   99万接种：则有990000\*1% = 9900的人出现不良反应，9900\*1% = 99人因不良反应死亡
+
+-   1万未接种：有10000\*2% = 200人得了天花，共200\*20% = 40人因天花死亡
+
+不接种疫苗更好？   
+
+--
+
+
+如果基于一个反事实问题：疫苗接种率为0时会如何？
+
+共100万\*2% = 20000人得天花，20000\*20% = 4000人会因天花死亡。
+
+.size5[
+“‘因果关系不能被简化为概率’这个认识来之 不易……这个概念也存在于我们的直觉中，并且根深蒂固。例如，当我们说“鲁莽驾驶会导致交通事故”或“你会因为懒惰而挂科”时，我们很清楚地知道，前者只是增加了后者发生的可能性，而非必然会让后者发生。”]
+
+
+.footnote[
+-----------
+Ref: 《The Book of Why: The New Science of Cause and Effect》
+
+]
+
+---
+# 3.3 基于实验的中介
+.pull-left[
+.size5[
+如何验证中介中的因果？
+]]
+
+.pull-right[
+<div class="grViz html-widget html-fill-item" id="htmlwidget-851641c94082d175c2bf" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-851641c94082d175c2bf">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+]
+
+--
+
+假设：教材难度(X)通过焦虑(M)来影响努力程度(Y)，可以穷举出在哪些情况下我们不能验证中介中的因果：
+
+-   教材难度(X)不能影响焦虑(M)
+
+-   焦虑(M)不能影响努力程度(Y)
+
+-   教材难度(X)可以影响焦虑(M)，焦虑(M)也可以影响努力程度(Y)，由 X 的变化引起的 M 的变化并不会导致 Y 的变化（即 M 对 Y 的影响与 X 对 Y 的影响无关）。
+
+
+
+---
+
+
+.size5[
+• 操纵X
+
+• 测量 M
+
+• 测量 Y
+
+
+对X进行操纵（如使用不同难度的教材），可以验证X对M的因果关系，但M与Y之间的因果关系并没有得到验证
+
+]
+
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-8b0efa5b56e9aca18bd5" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-8b0efa5b56e9aca18bd5">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+
+
+
+
+---
+.size5[
+但如果我们理论假设错误，测量的是焦虑（A），但实际上实验操纵引发的中介应为恐惧(M,即实际路径应为X - M - Y,而我们测量路径为X - A - Y)，那么刚才的实验设计可能无法证伪，因此需要对A进行操纵：
+
+
+
+• 操纵 X
+
+• 操纵 A
+
+• 测量 Y
+
+
+对X(如使用不同难度的教材)和A(控制组 vs 提供相关辅导以减轻焦虑)进行操纵，如果对A的操纵不能影响Y，则可以证明中介路径不合理
+]
+
+<div class="grViz html-widget html-fill-item" id="htmlwidget-23be5ef902ca5828cb13" style="width:540px;height:200px;"></div>
+<script type="application/json" data-for="htmlwidget-23be5ef902ca5828cb13">{"x":{"diagram":"digraph {\n  graph [layout = dot,rankdir = LR]\n  # 定义节点\n  node [shape = box, style = filled, fillcolor = \"lightblue\",height = 0.3,weight = 0.3,fontsize = 10]\n \n  # 定义边\n  edge [color = black, arrowhead = vee,fontsize = 10]\n\n  X -> M\n  X -> Y\n  M -> Y\n  X -> A\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+
+
+---
+.size5[
+Ref
+
+-   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
+
+-   通过实验来验证中介效应([葛枭语, 2023](https://doi.org/10.1016/j.jesp.2023.104507))
+
+-   内隐中介分析([Bullock et al , 2023, AMPPS](https://journals.sagepub.com/doi/10.1177/25152459211047227))
+
+-   相关不等于因果([Rohrer, 2018](https://doi.org/10.1177/2515245917745629))
+
+-   A lot of processes ([Rohrer, 2022](https://doi.org/10.1177/25152459221095827))
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "github",
+"countIncrementalSlides": false,
+"seal": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
