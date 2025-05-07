@@ -17,7 +17,7 @@ params:
 ---
 
 class: center, middle
-<span style="font-size: 50px;">**第十章**</span> <br>
+<span style="font-size: 50px;">**第十一章**</span> <br>
 <span style="font-size: 50px;">回归模型(三)：广义线性模型</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
@@ -183,7 +183,9 @@ $$Y \sim X_1 + X_2 + ... + X_n$$
 - 回归模型形式：观测项 = 预测项 + 误差项 <br>
 - 假定观测项是正态分布，上述公式可以重新表达为： <br>
 $$y \sim N(\mu, \epsilon)$$ 
-  - 其中，$\mu$为预测值，即
+  <br>
+  其中，$\mu$为预测值，即
+  <br>
   $$μ = \beta_0 + \beta_1 x$$
 - 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。<br>
 ]
@@ -294,10 +296,10 @@ simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ---
 #10.2 二项分布(Binomial Distribution)
 .bigfont[
-- 已知一次试验中的每次尝试中事件A发生的概率$p$，共进行$n$次独立重复的伯努利试验
+- 已知一次试验中的每次尝试中事件A发生的概率*p*，共进行*n*次独立重复的伯努利试验
 - 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
 $$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$
-- 当n → ∞，$p$ ≠ q，$np$ ≥ 5且$nq$ ≥ 5，事件A在$n$次试验中出现次数的平均数：
+- 当*n* → ∞，*p* ≠ *q*，*np* ≥ 5且*nq* ≥ 5，事件A在*n*次试验中出现次数的平均数：
 $$\mu = np$$
 - 事件A出现次数所属分布的标准差：
 $$ \sigma = \sqrt{𝑛𝑝𝑞}$$
@@ -314,6 +316,9 @@ $$\frac{1}{1+exp(-z)}$$
 .pull-right[
 ![](./picture/chp10/bernoulli.png)
 ]
+
+
+
 ---
 #10.2 二项分布(Binomial Distribution)
 ```{r echo=FALSE, out.width='80%'}
@@ -492,7 +497,7 @@ stats::anova(mod_full, mod_anova)
 
 ---
 #10.4 方法比较
-## 留出法
+## 交叉验证法(Cross-Validation)
 ```{r model prediction}
 # 设置种子以确保结果的可重复性
 set.seed(456)
@@ -590,7 +595,7 @@ $$\mu = np$$
 $$𝜎 = √(𝑛𝑝𝑞 )$$
 $$𝜎_p^2 = \frac{p(1-p)}{n}$$
 ]
-Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
+Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
 
 
 ---
