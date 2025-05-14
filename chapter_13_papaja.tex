@@ -234,9 +234,9 @@ Correspondence concerning this article should be addressed to Hu Chuan-Peng, \#1
 \abstract{%
 Psychological science has encountered a serious replication crisis.
 
-To make self-correction of the field, researchers actively reform the current practices and increase the opennes, transparency, and reproducibility of studies in the field. Using R language for data analyses is recommended by many. With increasingly emphases on computational reproduciblity, \emph{papaja} was developed to combine data analysis and manuscript preparation.
+To improve the credibility of the field, researchers actively reform the current practices and increase the opennes, transparency, and reproducibility of published. Using R language for data analyses is highly recommended. To increase computational reproduciblity of results, Aust \& Barth developed \emph{papaja}, which combines data analyses and manuscript preparation into a single RMD file.
 
-The current chapter aims to demonstrate how to use \emph{papaja}.
+This chapter aims to demonstrate how to use \emph{papaja}.
 
 We will introduce the package and key elements of the it.
 
@@ -244,7 +244,7 @@ After the lecture, we expected students able to create an example APA manuscript
 
 This demo and practice will further enhance the student's experience in computational reproducibility.
 
-By spreading the ideas of reproducbility and teaching papaja, this class will increase the computational reprodcubility.
+By spreading the ideas of reproducbility and teaching papaja, we aimed to improve the credibility of Psychological Science as a whole.
 }
 
 
@@ -260,7 +260,64 @@ To fully integrate R in the life-cycle of psychological research, using R for pr
 
 Fortunately, we now have \emph{papaja} (Aust \& Barth, 2024), which enable us to prepare journal article that formatted as required by APA.
 
-Below we will demonstrate how to use \emph{papaja} to generate an APA formatted PDF. Note that we will use the data from perceptual matching task, which was from (Hu, Lan, Macrae, \& Sui, 2020). The data analysis for this dataset has been showed in previous classes.
+Below we will demonstrate how to use \emph{papaja} to generate an APA formatted PDF. Note that we will use the data from perceptual matching task, which was from (Hu, Lan, Macrae, \& Sui, 2020). The data analysis for this dataset has been showed in previous lectures.
+
+The prerequisite knowledge of using \emph{papaja} include: (1) R language; (2) R Markdown, which share grammar with Latex for formulas, see \href{https://bookdown.org/yihui/rmarkdown-cookbook/}{R Markdonw Cookbook}; (3) APA style.
+
+Here are some examples of common R Markdown syntax:
+
+\begin{itemize}
+\item
+\begin{verbatim}
+`#`: header
+\end{verbatim}
+\item
+\begin{verbatim}
+`##`: sub-header
+\end{verbatim}
+\item
+\begin{verbatim}
+`###`: sub-sub-header
+\end{verbatim}
+\item
+\begin{verbatim}
+`*text*`: italic text
+\end{verbatim}
+\item
+\begin{verbatim}
+`**text**`: bold text
+\end{verbatim}
+\item
+\begin{verbatim}
+`~~text~~`: strikethrough text
+\end{verbatim}
+\item
+\begin{verbatim}
+`[link](https://example.com)`: hyperlink
+\end{verbatim}
+\item
+\begin{verbatim}
+`![caption](image.png)`: image with caption
+\end{verbatim}
+\item
+\begin{verbatim}
+`$math$`: inline math (e.g., $y_i = \alpha + \beta X_i$ )
+\end{verbatim}
+\item
+\begin{verbatim}
+`$$math$$`: block math
+\end{verbatim}
+\item
+\begin{verbatim}
+font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+\end{verbatim}
+\end{itemize}
+
+One key advantage of using \emph{papaja} is that you can use variable names instead of a specific values in the text. Which means you do not need to update the text when your input (and thus the value) updated.
+
+Now, let do this using a simple example.
+
+We sampled 150 number from a normal distribution, and we found that mean of the these data are: M = -0.06, SD = 2.01.
 
 Here we will try to reproduce what has been reported in Hu et al. (2020). Thus, we adopted the code from: \url{https://github.com/hcp4715/moralSelf_ddm}.
 
