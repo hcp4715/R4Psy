@@ -1,5 +1,5 @@
 ---
-title             : "Lecture 12: Preparing journal artical with *papaja*"
+title             : "Lecture 13: Preparing journal artical with *papaja*"
 shorttitle        : "papaja"
 
 author: 
@@ -50,8 +50,8 @@ keywords          : "Reproducibility, R, Teaching, Demonstration"
 wordcount         : "X"
 
 bibliography      : 
-  - "chapter_12-r-references.bib"
-  - "chapter_12-citation.bib"
+  - "chapter_13-r-references.bib"
+  - "chapter_13-citation.bib"
 
 floatsintext      : no
 linenumbers       : yes
@@ -74,7 +74,7 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
 # 使用p_load来载入需要的包
 pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans")
 
-r_refs("chapter_12-r-references.bib")
+r_refs("chapter_13-r-references.bib")
 ```
 
 ```{r analysis-preferences}
@@ -193,7 +193,7 @@ The data was collected using the same settings as described in the pilot study, 
   * The questionnaires were different from the pilot study.
 
 ## Data analysis
-We used `r cite_r("chapter_12-r-references.bib", pkgs = c("afex", "emmeans", "ggplot2", "dplyr", "tidyr", "patchwork", "r-base"), withhold=FALSE)` for all our analyses. The results from Frequentist hypothesis testing (i.e., ANOVA and *t*-tests) will be reported below.
+We used `r cite_r("chapter_13-r-references.bib", pkgs = c("afex", "emmeans", "ggplot2", "dplyr", "tidyr", "patchwork", "r-base"), withhold=FALSE)` for all our analyses. The results from Frequentist hypothesis testing (i.e., ANOVA and *t*-tests) will be reported below.
 
 # Results
 
