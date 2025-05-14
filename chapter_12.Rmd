@@ -17,7 +17,7 @@ params:
 ---
 class: center, middle
 <span style="font-size: 60px;">**第十二章**</span> <br>
-<span style="font-size: 50px;">数据可视化进阶与papaja</span> <br>
+<span style="font-size: 50px;">数据可视化进阶</span> <br>
 <span style="font-size: 50px;"></span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
