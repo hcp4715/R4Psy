@@ -211,3 +211,4 @@ abline(a = 0, b = 1, lty = 2) # 添加对角线
 set.seed(123) # 设置随机种子以获得可重复的结果
 random_samples <- rpois(1000, lambda = 5)
 hist(random_samples,col = 'white', border = 'black',)
+
