@@ -17,7 +17,7 @@ params:
 ---
 class: center, middle
 <span style="font-size: 60px;">**第十二章**</span> <br>
-<span style="font-size: 50px;">数据可视化进阶与papaja</span> <br>
+<span style="font-size: 50px;">数据可视化进阶</span> <br>
 <span style="font-size: 50px;"></span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
@@ -311,6 +311,7 @@ p4 <- df.match.sum.long %>%
                              ymax = grand_mean+1.96*SE),
                          width = .1,
                          position = position_dodge(.9)) +
+      ggplot2::scale_y_continuous(expand=c(0, 0)) +
   papaja::theme_apa() +
   ggplot2::facet_wrap(~DV, scales = "free_y") +
   ggplot2::labs(title = "Summary data for matching trials",
@@ -451,7 +452,7 @@ s4 <- s1 +
     ggplot2::geom_point(data = df.match.plot,
                        aes(x = conds, y = RT_mean, group = Valence),
                        position = position_jitter(width = 0.08),
-                       alpha = 0.5)
+                       alpha = 0.2)
 ```
 
 ```{r echo=FALSE, out.width='70%', fig.align='center'}
@@ -1031,7 +1032,7 @@ img %>% magick::image_crop('850x480+10+10')
 img1 <- img %>% magick::image_crop('870x488')
 img2 <- img %>% magick::image_crop('870x488+0+485')
 ## 使用image_append进行拼接，令stack = F进行横向拼接（T为竖向）
-img3 <- image_append(c(img1,img2),stack = F) #<<
+img3 <- magick::image_append(c(img1,img2),stack = F) #<<
 img3 %>% print()
 ```
 
@@ -1046,8 +1047,8 @@ image_scale(img1,'40%')
 # 旋转
 image_rotate(img1,90)
 # OCR(这里以英文为例，中文的识别率经测验确实不太行😢)
-image_read("http://jeroen.github.io/images/testocr.png") %>% 
-  image_ocr() %>% 
+magick::image_read("http://jeroen.github.io/images/testocr.png") %>% 
+  magick::image_ocr() %>% 
   cat()
 ```
 
