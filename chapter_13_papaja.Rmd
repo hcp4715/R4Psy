@@ -417,11 +417,19 @@ ANOVA_rt <- afex::aov_ez(data = df.mt.rt.subj,
                          dv = "RT_mean",
                          within = c("Identity", "Valence")
                            )
+print(ANOVA_rt)
+## simple main effect analysis:
+simple_effect_rt <- emmeans::emmeans(ANOVA_rt, "Valence", by = "Identity")
+print(simple_effect_rt)
+simple_effect_rt_test <- pairs(simple_effect_rt)  
+print(simple_effect_rt_test)
 ```
 
 ## Reaction times
 
-[Please finish this part]
+A two-way repeated-measures ANOVA revealed a significant interaction between Identity and Valence, F(1, 41) = 13.97, p < .001. We conducted follow-up simple main effect analyses.
+
+When the shapes were self-referential, response time (RT) was significantly shorter in the good condition (685 ms ± 8.92) than in the bad condition (733 ms ± 10.20), t(41) = -7.04, p < .001. However, when the shapes were other-referential, there was no significant difference in RT between the good (710 ms ± 10.70) and bad (719 ms ± 9.53) conditions, t(41) = -1.34, p = .187 (see Figure @ref(fig:plot1)).
 
 
 # Discussion
