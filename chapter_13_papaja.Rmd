@@ -73,7 +73,12 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
   install.packages("pacman") }   # 如果未安装，则安装包
 
 # 使用p_load来载入需要的包
-pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans")
+pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans", "tinytex")
+
+## 安装tinytex，否则无法完成PDF生成(注意: 安装tinytex需要科学上网)
+if (!tinytex::is_tinytex()) {
+  tinytex::install_tinytex() # 安装TinyTeX
+}
 
 # create a bib file for reference
 r_refs("chapter_13-r-references.bib")
@@ -107,9 +112,12 @@ Here are some examples of common R Markdown syntax:
 -     `~~text~~`: strikethrough text
 -     `[link](https://example.com)`: hyperlink
 -     `![caption](image.png)`: image with caption
--     `$math$`: inline math (e.g., $y_i = \alpha + \beta X_i$ )
+
+`$math$`: inline math (e.g., $y_{i,j} = \alpha + \beta X_i$ )
+
 -     `$$math$$`: block math
--     font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+
+font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
 
 One key advantage of using *papaja* is that you can use variable names instead of a specific values in the text. Which means you do not need to update the text when your input (and thus the value) updated. 
 
@@ -117,7 +125,7 @@ Now, let do this using a simple example.
 
 ```{r example for variable}
 # sample data from a normal distribution
-a <- rnorm(n = 150, mean = 0, sd = 2)
+a <- rnorm(n = 200, mean = 0, sd = 2)
 
 a_N <- length(a)
 a_mean <- mean(a)
