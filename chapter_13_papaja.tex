@@ -299,25 +299,24 @@ Here are some examples of common R Markdown syntax:
 \begin{verbatim}
 `![caption](image.png)`: image with caption
 \end{verbatim}
-\item
-\begin{verbatim}
-`$math$`: inline math (e.g., $y_i = \alpha + \beta X_i$ )
-\end{verbatim}
+\end{itemize}
+
+\texttt{\$math\$}: inline math (e.g., \(y_{i,j} = \alpha + \beta X_i\) )
+
+\begin{itemize}
 \item
 \begin{verbatim}
 `$$math$$`: block math
 \end{verbatim}
-\item
-\begin{verbatim}
-font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
-\end{verbatim}
 \end{itemize}
+
+font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
 
 One key advantage of using \emph{papaja} is that you can use variable names instead of a specific values in the text. Which means you do not need to update the text when your input (and thus the value) updated.
 
 Now, let do this using a simple example.
 
-We sampled 150 number from a normal distribution, and we found that mean of the these data are: M = -0.06, SD = 2.01.
+We sampled 200 number from a normal distribution, and we found that mean of the these data are: M = -0.05, SD = 1.95.
 
 Here we will try to reproduce what has been reported in Hu et al. (2020). Thus, we adopted the code from: \url{https://github.com/hcp4715/moralSelf_ddm}.
 
