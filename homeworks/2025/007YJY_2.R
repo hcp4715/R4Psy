@@ -1,11 +1,10 @@
-title: "Test1"
+title: "Test2"
 author: "Fangru"
 date: "`r Sys.Date()`"
 output:
   html_document: default
 pdf_document: default
 ---
-
 #1.读取 penguin_rawdata.csv(data/penguin/ penguin_rawdata.csv),并赋值给Q1
 Q1 <- read.csv("F:/4Rclass_yjy/P4Psy/data/penguin/penguin_rawdata.csv")
 
