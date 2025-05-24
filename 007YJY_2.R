@@ -7,9 +7,10 @@ pdf_document: default
 ---
 
 #1.读取 penguin_rawdata.csv(data/penguin/ penguin_rawdata.csv),并赋值给Q1
-Q1 <- read.csv('./data/penguin/penguin_rawdata.csv')
+Q1 <- read.csv("F:/4Rclass_yjy/P4Psy/data/penguin/penguin_rawdata.csv")
 
-#2.根据下列图片中自己所在的位置选择“Tsinghua”这一站点后，再从该站点数据中选择前13-32行的数据，对Q1进行筛选
+
+#2.根据下列图片中自己所在的位置选择“XX”这一站点后，再从该站点数据中选择前XX行的数据，对Q1进行筛选
 #阎佳怡的横坐标是（13,32），纵坐标为Tsinghua
 #提示：在Tidyverse中可以调用slice函数来选定相应的列
 library(dplyr)
@@ -125,31 +126,34 @@ Q18
 func4 <- function(x) {
   if (x > 0) {
     return("Positive")
-    } else if (x < 0) {
+    } 
+  else if (x < 0) {
     return("Negative")
-      } else {
-                                                return("Zero")
-                                              }
-                                            }
-                                            Q19 <- func4(-3)
-                                            Q19
-                                            ```
-                                            
-                                            ---
-                                              18.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q20。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
-                                            ```{r}
-                                            func5 <- function(x) {
-                                              if (x >= 90) {
-                                                return("A")
-                                              } else if (x >= 80) {
-                                                return("B")
-                                              } else if (x >= 70) {
-                                                return("C")
-                                              } else if (x >= 60) {
-                                                return("D")
-                                              } else {
-                                                return("E")
-                                              }
-                                            }
-                                            Q20 <- func5(95)
-                                            Q20
+    } 
+  else {
+    return("Zero")
+    }
+  }
+Q19 <- func4(-3)
+Q19
+
+#18.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q20。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
+func5 <- function(x) {
+  if (x >= 90) {
+    return("A")
+    }
+  else if (x >= 80) {
+    return("B")
+    } 
+  else if (x >= 70) {
+    return("C")
+    } 
+  else if (x >= 60) {
+    return("D")
+    } 
+  else {        
+    return("E")
+    }
+  }
+Q20 <- func5(95)
+Q20
