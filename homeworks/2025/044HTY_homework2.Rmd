@@ -159,7 +159,7 @@ Q10 <- Q10 %>%
   dplyr::mutate(phone_total = 
                   rowSums(select(Q10,
                                   starts_with('phone'))))
-# Base R
+#  Base R
 #Q10$phone_total <- rowSums(
 #   Q10[,grepl('^phone',names(Q10))],
 #   na.rm = TRUE
