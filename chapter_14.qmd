@@ -192,7 +192,10 @@ permutation_test <- function(data, n = 1000) {
       for (i in 1:n) {
             permuted_data <- data %>%
                   dplyr::mutate(RT = sample(RT)) # permutate RT
+<<<<<<< HEAD
+=======
             
+>>>>>>> 145346fdb82d24a54c27ecc1a4ee094148a32a27
             permuted_diff <- permuted_data %>%
                   dplyr::group_by(Valence) %>%
                   dplyr::summarise(
@@ -242,8 +245,11 @@ ggplot(data.frame(perRes$permuted_diffs), aes(x = perRes.permuted_diffs)) +
 # 计算p值
 p_value <- mean(abs(perRes$permuted_diffs) >= abs(perRes$original_diff))
 p_value
+<<<<<<< HEAD
+=======
 
 p_value <- mean(perRes$permuted_diffs <= perRes$original_diff)
+>>>>>>> 145346fdb82d24a54c27ecc1a4ee094148a32a27
 ```
 
 # Bootstrap
