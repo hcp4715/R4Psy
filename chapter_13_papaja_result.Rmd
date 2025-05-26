@@ -73,12 +73,7 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
   install.packages("pacman") }   # 如果未安装，则安装包
 
 # 使用p_load来载入需要的包
-pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans", "tinytex")
-
-## 安装tinytex，否则无法完成PDF生成(注意: 安装tinytex需要科学上网)
-if (!tinytex::is_tinytex()) {
-  tinytex::install_tinytex() # 安装TinyTeX
-}
+pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans")
 
 # create a bib file for reference
 r_refs("chapter_13-r-references.bib")
@@ -112,12 +107,9 @@ Here are some examples of common R Markdown syntax:
 -     `~~text~~`: strikethrough text
 -     `[link](https://example.com)`: hyperlink
 -     `![caption](image.png)`: image with caption
-
-`$math$`: inline math (e.g., $y_{i,j} = \alpha + \beta X_i$ )
-
+-     `$math$`: inline math (e.g., $y_i = \alpha + \beta X_i$ )
 -     `$$math$$`: block math
-
-font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+-     font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
 
 One key advantage of using *papaja* is that you can use variable names instead of a specific values in the text. Which means you do not need to update the text when your input (and thus the value) updated. 
 
@@ -125,7 +117,7 @@ Now, let do this using a simple example.
 
 ```{r example for variable}
 # sample data from a normal distribution
-a <- rnorm(n = 200, mean = 0, sd = 2)
+a <- rnorm(n = 150, mean = 0, sd = 2)
 
 a_N <- length(a)
 a_mean <- mean(a)
@@ -418,7 +410,7 @@ simple_effect_dp_test <- pairs(simple_effect_dp)
 
 A two-way repeated-measure ANOVA revealed a significant interaction between Identity and Valence. *F*(`r ANOVA_dp$anova_table$"num Df"[3]`, `r ANOVA_dp$anova_table$"den Df"[3]`) = `r ANOVA_dp$anova_table$F[3]`, *p* = 0.0012. We conducted follow-up simple main effect analyses. When the shapes were self-referential, *d'* was significantly larger for moral condition (2.5 $\pm$ 0.11) than for immoral condition (1.99 $\pm$ 0.1), *t*(41) = 4.29, *p* < 0.001. However, this was no clear evidence that moral condition (2.11 $\pm$ 0.116) and immoral condition (2.27 $\pm$ 0.107) were not significantly different when the shapes are other-referential (see figure \@ref(fig:plot1)). 
 
-```{r results of RT, eval=FALSE}
+```{r results of RT, echo=FALSE}
 # analyses of RT
 ANOVA_rt <- afex::aov_ez(data = df.mt.rt.subj, 
                          id = "Sub", 
@@ -435,10 +427,7 @@ print(simple_effect_rt_test)
 
 ## Reaction times
 
-A two-way repeated-measures ANOVA revealed a significant interaction between Identity and Valence, F(1, 41) = 13.97, p < .001. We conducted follow-up simple main effect analyses.
-
-When the shapes were self-referential, response time (RT) was significantly shorter in the good condition (685 ms ± 8.92) than in the bad condition (733 ms ± 10.20), t(41) = -7.04, p < .001. However, when the shapes were other-referential, there was no significant difference in RT between the good (710 ms ± 10.70) and bad (719 ms ± 9.53) conditions, t(41) = -1.34, p = .187 (see Figure @ref(fig:plot1)).
-
+A two-way repeated-measure ANOVA revealed a significant interaction between Identity and Valence. *F*(`r ANOVA_rt$anova_table$"num Df"[3]`, `r ANOVA_rt$anova_table$"den Df"[3]`) = `r ANOVA_rt$anova_table$F[3]`, *p* < 0.001.We conducted follow-up simple main effect analyses. When the shapes were self-referential, *d'* was significantly larger for moral condition (685 $\pm$ 8.92) than for immoral condition (733 $\pm$ 10.20), *t*(41) = -7.04, *p* < 0.001. However, this was no clear evidence that moral condition (710 $\pm$ 10.70) and immoral condition (719 $\pm$ 9.53) were not significantly different when the shapes are other-referential. 
 
 # Discussion
 
