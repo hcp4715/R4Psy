@@ -1,3 +1,4 @@
+options(repos = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/")
 
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
