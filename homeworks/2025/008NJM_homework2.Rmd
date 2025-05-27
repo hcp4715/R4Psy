@@ -10,7 +10,7 @@ output:
 
 ```{r homework 1}
 # 有多种写法
-# 用 here::here 函数进行查找
+# 用here::here函数进行查找
 options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 if (!requireNamespace("here", quietly = TRUE)) {
   install.packages("here")
