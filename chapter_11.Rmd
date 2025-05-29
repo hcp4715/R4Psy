@@ -18,7 +18,7 @@ params:
 
 class: center, middle
 <span style="font-size: 50px;">**第十一章**</span> <br>
-<span style="font-size: 50px;">回归模型(四)：中介分析</span> <br>
+<span style="font-size: 50px;">回归模型(三)：广义线性模型</span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
 <span style="font-size: 30px;">`r Sys.Date()`</span> <br>
@@ -35,7 +35,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ```{css extra.css, echo=FALSE}
 .bigfont {
   font-size: 30px;
@@ -43,914 +42,610 @@ knitr::opts_chunk$set(
 .size5{
 font-size: 24px;
 }
-.titfont{
+.tit_font{
 font-size: 60px;
-}
-.foot{
-font-size: 10px;
 }
 
 ```
 
-
+```{r, echo = FALSE}
 ## 准备工作
-```{r }
 # Packages
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
-pacman::p_load(tidyverse,easystats,magrittr,
-               # 中介分析
-               lavaan, bruceR,tidySEM,
-               # 数据集
-               quartets,
-               # 绘图
-               patchwork,DiagrammeR,magick)
-options(scipen=99999,digits = 3)
-set.seed(1002)
 
+pacman::p_load(
+  # 本节课需要用到的 packages
+  here, tidyverse, ggplot2,
+  # ANOVA & HLM
+  bruceR, lmerTest, lme4, broom, afex, interactions, easystats, caret, pROC,
+  # 生成课件
+  xaringan, xaringanthemer, xaringanExtra, knitr)
+
+options(scipen=99999,digits = 5)
 ```
 
+```{r, echo = FALSE}
+#读取数据
+df.match <- bruceR::import(here::here('data','match','match_raw.csv')) %>% 
+  tidyr::extract(Shape, 
+                 into = c('Valence', 'Identity'),
+                 regex = '(moral|immoral)(Self|Other)',
+                 remove = FALSE) %>% #将Shape列分为两列
+  dplyr::mutate(Valence = factor(Valence, levels = c('moral','immoral'), labels = c('moral','immoral')),
+                Identity = factor(Identity, levels = c('Self','Other'), labels = c('Self','Other'))) %>%
+  dplyr::filter(ACC == 0 | ACC == 1, 
+                RT >= 0.2 & RT <= 1.5,
+                Match == 'match',
+                (!Sub %in% c(7302,7303,7338))
+                )#筛选
+```
 
-
----
-class: inverse, middle ,center
-
-
-.titfont[线性模型回顾]
-
-
-
----
-# 0.1 线性模型及模型检验
--   回归方程用于分析一个因变量与多个自变量之间的关系。在回归中，将一个或多个自变量视为整体，对因变量进行预测，通过OLS或ML进行拟合，解释不了的成分则被视为残差；而我们的目的在于，舍弃残差（随机部分），而获得可解释的成分。
-
-
+```{r, echo = FALSE}
+df.match.aov <- df.match %>%
+  dplyr::group_by(Sub, Valence, Identity) %>%
+  dplyr::summarise(mean_ACC = mean(ACC)) %>%
+  dplyr::ungroup()
+```
 
 ```{r xaringan-panelset, echo=FALSE}
 xaringanExtra::use_panelset()
 ```
 
-.panelset[
-.panel[.panel-name[anscombe_quartet]
-
-```{r echo=FALSE}
-p1 = list()
-group = unique(quartets::anscombe_quartet$dataset)
-
-for(i in 1:4){
-  p1[[i]] = quartets::anscombe_quartet %>% 
-    dplyr::filter(dataset == group[i]) %>% 
-    ggplot(aes(x = x,y = y)) + 
-    geom_point(size = 2.5,color = 'darkblue',alpha = 0.5) + 
-    geom_smooth(method = 'lm',se = F,
-                fullrange = T,size = 0.7,
-                color = 'darkgreen',alpha = 0.5) + 
-    scale_x_continuous(limits = c(4,19)) + 
-    scale_y_continuous(limits = c(3,13)) + 
-    labs(title = group[i]) + 
-    theme_bruce()
-}
-
-(p1[[1]] + p1[[2]])/(p1[[3]] + p1[[4]])
-
-
+# 补充内容: easystats系统包的简介
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./picture/chp10/bilibili.png')
 ```
-
-.panel[.panel-name[performance]
-
-```{r Outlier, highlight=TRUE}
-lm(y ~ x,data = anscombe_quartet %>% 
-     dplyr::filter(dataset == '(3) Outlier')) %>% 
-  performance::check_model(check = c('linearity','outliers')) #<<
-
-```
-
-
-
-
-]]]
-
-
-
----
-# 0.2 多元线性模型的局限
-
-.size5[
-
--   模型可分为三类 $^*$：描述模型、推断模型、预测模型
-
-
--   回归兼具这三种功能：
-
-    -   使用LOESS(即geom_smooth()中method默认的参数)可以对数据进行描述；
-    
-    -   关注各个变量的(偏)回归系数的显著性可以进行统计推断(如果是离散变量的时候即等价与ANOVA)
-    
-    -   进行预测时，则不关注各个变量之间的复杂关系，因而将自变量当做整体，关注其是否能够预测因变量(拟合指标)
-    
-]
-
---
-
-### 局限
-.size5[
-如果所有自变量都相互独立，使用多元回归是合理的；
-
-但在现实中，变量之间存在相互作用更为普遍，而多元回归值仅关注到自变量对因变量的独立作用(偏回归系数)，很难描述变量间复杂的关系。变量越多，这个问题越明显。
-
-]
-
-.footnote[
------------
-.footfont[
-Ref: [https://www.tmwr.org/software-modeling](https://www.tmwr.org/software-modeling)
-]
-]
-
----
-class: inverse, middle ,center
-
-.titfont[中介分析]
-
-
----
-# 2.1 对于“机制”的表示——“图”
-
--   变量间关系中，我们期望验证因果关系。
-
--   对于因果关系，可以用“图”来表示：
-
-    -   图包括两部分：节点和边。节点表示具体变量，而箭头表示变量之间的关系；
-    
-    -   对节点来说，在SEM中，观测变量用椭圆表示，潜变量用椭圆表示。
-    
-    -   边表示变量间关系，**单箭头直线表示直接因果关系，从原因指向结果；双曲线箭头则表示相关
-
--   使用的图多为有向无环图(Directed Acyclic Graph, DAGs)，而图本身是对理论因果关系的表征
-
-.pull-left[
-
-```{r echo = FALSE,out.height=100}
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  X1 ->X2
-  X2 -> X3
-  X1 -> X3
-}'
-)
-```
-]
-
-
-.pull-right[
-
-
-```{r echo = FALSE,out.height=100}
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  X1 ->X2
-  X2 -> X3
-  X3 -> X1
-}'
-)
-```
-]
-
----
-# 2.2 中介分析
-
--   中介分析：
-
-关注变量间因果关系，自变量如何影响因变量（即机制），如X通过M作用于Y，M为中介变量。中介的存在意味着时间上发生的先后顺序： $X \rightarrow M \rightarrow Y$ 。
-
-对于中介过程的量化包括路径分析和SEM（同时包含测量模型和结构模型），后面的介绍基于路径分析。
-
-
-```{r echo = FALSE,out.height=100}
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  X -> M
-  X -> Y
-  M -> Y
-}'
-)
-```
-
-
----
-# 2.2 中介分析
-
-
-.pull-left[
-
-.bigfont[
-总方程:  
-
-$$Y = i_1 + cX + e_1$$
-]
-
-]
-
-.pull-right[
-```{r echo = F,out.height=200}
-DiagrammeR::grViz(
-  'digraph {
-  graph [layout = dot,rankdir = LR]
-  
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.4,weight = 0.3,fontsize = 10]
-  e1[style = NULL,fillcolor = NULL,penwidth = 0,height = 0.02,width = 0.02]
-  
-  # 定义边
-  edge [color = black, arrowhead = vee]
-  {rank = same; e1; Y}
-  X -> Y [label = "c"]
-  e1 -> Y
-}'
-
-)
-```
-]
-
-
-------------------
 
 <br>
-.pull-left[
+<br>
+<center>
+https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
+</center>
+---
+class: center, middle
+.tit_font[
+当因变量不服从正态分布(如正确率)时如何处理？
+]
+---
+.panelset[
+.panel[.panel-name[df.match]
+```{r}
+head(df.match[c(3,11:17)],5) %>% DT::datatable()
+```
+
+.panel[.panel-name[df.match.aov]
+```{r}
+df.match.aov %>%
+  dplyr::select(1:4) %>%
+  head(5) %>% 
+  DT::datatable()
+```
+
+]]]
+---
+.tit_font[  Contents</h1>]
+<br>
+<br>
+.bigfont[
+    10.1 广义线性模型<br>
+<br>
+    10.2 二项分布<br>
+<br>
+    10.3 其他分布<br>
+<br>
+    10.4 代码实操<br>
+<br>
+    10.5 方法比较<br>
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##多元线性回归（Multiple Linear Regression）
+<br>
+.normal[
+$$Y = b_0 + b_{1}X_{1} + b_{2}X_{2} +... + b_{p}X_{p} + \epsilon$$
+- $Y$ : 因变量，Dependent variable
+- $X_i$ : 自变量，Independent (explanatory) variable
+- $b_0$ : 截距，Intercept
+- $b_i$ : 斜率，Slope
+- $\epsilon$ : 残差，Residual (error)
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##线性模型的组成部分
+![](./picture/chp10/formula.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##线性模型的组成部分
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./picture/chp10/plot.png')
+```
+
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##回归方程的多种形式<br>
+.bigfont[
+- 简单线性回归：
+$$Y = b_0+b_1 X_1+ b_2 X_2+…+b_p X_p + \epsilon$$ 
+- 线性代数表达：
+$$y_i = b_0 + b_1 X_{i1} + b_2 X_{i2} + … + b_p X_{ip} + \epsilon$$ 
+- 矩阵表达：
+$$Y= X\beta + \epsilon$$
+- 代码表达(r)：
+$$Y \sim X_1 + X_2 + ... + X_n$$
+]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##回归方程的多种表达形式<br>
+<br>
+.bigfont[
+- 回归模型形式：观测项 = 预测项 + 误差项 <br>
+- 假定观测项是正态分布，上述公式可以重新表达为： <br>
+$$y \sim N(\mu, \epsilon)$$ 
+  <br>
+  其中，$\mu$为预测值，即
+  <br>
+  $$μ = \beta_0 + \beta_1 x$$
+- 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。<br>
+]
+--
 
 .bigfont[
-分解:
-
-$$M = i_2 + aX + e_2$$
-
-$$Y = i_3 + c'X + bM + e_3$$
+如果因变量不服从正态分布，如何构建回归模型？
 ]
-]
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
 
-.pull-right[
-
-```{r echo=FALSE,out.height=200}
-grViz(
-    'digraph {
-  graph [layout = dot]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
-  e2[style = NULL,fillcolor = NULL,penwidth = 0,
-    height = 0.02,width = 0.02]
-  e3[style = NULL,fillcolor = NULL,penwidth = 0,
-    height = 0.02,width = 0.02]
-    
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-  # {rank = min; X; Med}
-  {rank = same; e2 Med}
-  {rank = same; X Y}
-
-  X -> Med [label = "a", len = 1]  
-  Med -> Y [label = "b", len = 1]  
-  X -> Y [label = "c′", len = 15]  
-  e3 -> Y [len = 1]  
-  e2 -> Med [len = 1] 
-}'
-)
-```
-
-]
+![](./picture/chp10/function1.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+![](./picture/chp10/function.png)
 
 ---
-# 2.3 中介效应
-.pull-left[
-
-
-$$ Y = i_1 + cX + e_1$$  
-
-$$ M = i_2 + aX + e_2$$  
-
-$$Y = i_3 + c'X + bM + e_3$$  
-
-如果将第二个方程代入第三个方程：  
-
-$$ Y = i_3 + c'X + b(i_2 + aX + e_2) + e_3$$
-$$= (b*i_2 + i_3) + c'X + abX + (b*e_2 + e_3)$$
-$$= i_4 + c'X + abX + e_5$$
-
-可以发现，将X对Y的效应分解成了中介效应ab和直接效应c'
-
--   在中介模型路径图中， $X \rightarrow Y$路径上的回归系数 $c'$为直接效应
-
-
--   中介效应：ab，或 $c - c'$。在M和Y均为连续变量的时候，有： $ab = c - c'$
-
--   中介效应分为两类：完全中介（即c' = 0）和部分中介(c' ≠ 0)
-
--   但问题是，回归系数意味着变量间存在因果关系么？
-]
-
-.pull-right[
-```{r echo=FALSE}
-grViz(
-    'digraph {
-  graph [layout = dot]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
-  e2[style = NULL,fillcolor = NULL,penwidth = 0,
-    height = 0.02,width = 0.02]
-  e3[style = NULL,fillcolor = NULL,penwidth = 0,
-    height = 0.02,width = 0.02]
-    
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-  # {rank = min; X; Med}
-  {rank = same; e2 Med}
-  {rank = same; X Y}
-
-  X -> Med [label = "a", len = 1]  
-  Med -> Y [label = "b", len = 1]  
-  X -> Y [label = "c′", len = 15]  
-  e3 -> Y [len = 1]  
-  e2 -> Med [len = 1] 
-}'
-)
-```
-
-]
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+![](./picture/chp10/function2.png)
 
 ---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+##Generalized Linear Model, GLM
+###在简单线性回归中，预测项的连接函数等于它本身
+![](./picture/chp10/lm.png)
+---
+#10.1 广义线性模型(Generalized Linear Model, GLM)
+.bigfont[
+- 简单线性模型可视为GLM的特殊形式，预测项的连接函数等于它本身，观测项为正态分布。
+- 在广义线性模型中：
+  - 观测项不一定是正态分布（残差不一定是正态分布）
+  - 连接函数不等于其自身
 
-# 2.3 中介效应
-
-
-.size5[
--   回归系数本质上只是(偏)相关( $\beta = \frac{S_y}{S_x}·r$)，比如对于总效应c来说：]
-
-
-
-```{r  echo = F}
-# 数据导入
-pg_raw = bruceR::import(here::here('data','penguin','penguin_rawdata_full.csv'))
-
-# 计算CSI
-### get the column names:
-snDivNames  <- c("SNI3", "SNI5", "SNI7", "SNI9", "SNI11", "SNI13",  "SNI15", "SNI17","SNI18","SNI19","SNI21")
-extrDivName <- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
-
-### create a empty dataframe for social network diversity
-snDivData <- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(pg_raw))), snDivNames)
-
-### recode Q10 (spouse): 1-> 1; else ->0
-snDivData$SNI1_r <- car::recode(pg_raw$SNI1,"1= 1; else = 0")
-
-####re-code Q12 ~ Q30: NA -> 0; 0 -> 0; 1~10 -> 1
-snDivData[,snDivNames] <- apply(pg_raw[,snDivNames],2,function(x) {x <- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
-
-### add suffix to the colnames
-colnames(snDivData[,snDivNames]) <- paste(snDivNames,"div",  sep = "_")    
-
-### recode the social network at work by combining SNI17, SNI18
-snDivData$SNIwork   <- snDivData$SNI17 + snDivData$SNI18
-snDivData$SNIwork_r <- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
-
-### re-code extra groups, 0/NA --> 0; more than 0 --> 1
-extrDivData <- pg_raw[,extrDivName]          # Get extra data
-extrDivData$sum <- rowSums(extrDivData)    # sum the other groups
-snDivData$extrDiv_r <- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")  # recode
-
-### Get the column names for social diversity 
-snDivNames_r <- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
-                  "SNI19","SNI21","extrDiv_r")
-
-### Get the social diveristy score
-snDivData$SNdiversity <- rowSums(snDivData[,snDivNames_r])
-pg_raw$socialdiversity <- snDivData$SNdiversity
-
-## 更改列名
-pg_raw %<>% dplyr::rename(CSI = socialdiversity)
-###  计算CBT（mean）
-# 筛选大于34.99 的被试
-
-# pg_raw %<>%
-#   filter(Temperature_t1 > 34.99 &
-#            Temperature_t2 > 34.99)
-
-# 前测后测求均值
-pg_raw %<>% 
-  dplyr::mutate(CBT = (Temperature_t1 + Temperature_t2)/2)
-```
-
-
-
-```{r}
-tot = lm(CBT ~ DEQ,data = pg_raw %>% 
-           dplyr::filter(romantic == 1))
-# 计算相关
-r = pg_raw %>% 
-  dplyr::filter(romantic == 1) %>%  
-  correlation::correlation(select = cc("DEQ,CBT")) %>% 
-  .$r
-
-# 比较回归系数与相关
-data.frame('相关系数' = 
-             (sd(pg_raw$CBT,na.rm = T)/sd(pg_raw$DEQ,na.rm = T))*r,
-           '回归系数' = tot$coefficients[2]) %>% print()
-
-```
-
-
-
-.size5[
--   而中介效应ab也只是两个回归方程的回归系数的乘积，或者说是 $r_{XM}$ 与 $r_{MY}$的乘积；而相关不等于因果，所以使用测量中介实际上是无法确认因果关系！
-
+- 广义线性模型，能够对非正态分布的因变量进行建模
 ]
-
-
-
 ---
-# 2.4 中介效应的检验
-
-.size5[
-中介效应的检验方法很多，如四步法、Sobel检验等，但最常用的是通过Bootstrap 来计算中介效应的置信区间(且两个随机变量的乘积很多情境中并非服从正态分布)，如果其置信区间不包含0则认为该参数估计值显著：
-
-
--   Bootstrap对原始样本进行有放回的重复抽样（允许重复抽取相同数据），抽样次数通常等于数据本身大小N相同，假设重复抽取1000次；
-
--   然后对每次抽取的样本计算中介效应ab，就得到了1000个ab的值，据此估计中介效应ab的分布情况，进而取2.5%和97.5%个百分位点计算95%置信区间。
-
-
+#10.2 二项分布(Binomial Distribution)
+##伯努利试验
+<br>
+.bigfont[
+- 同样的条件下重复地、相互独立地进行的一种随机试验。
+<br>
+<br>
+- 该随机试验只有两种可能结果：发生或者不发生。
+<br>
+<br>
+- 假设该项试验独立重复地进行了n次，那么就称这一系列重复独立的随机试验为n重伯努利试验(n-fold bernoulli trials)。
+<br>
+<br>
+- n次独立重复的伯努利试验的概率分布服从二项分布
 ]
-
 ---
-# 2.5 问题提出
+#10.2 二项分布(Binomial Distribution)
+.bigfont[
+- 每次试验中事件A发生的概率为p
+<br><br>
+- X表示n重伯努利试验中事件A发生的次数，X的可能取值为0，1，…，n
+<br><br>
+- 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
+<br><br>
+- 随机变量X服从以n, p为参数的二项分布，写作 $X \sim B(n, p)$ 
+<br><br>
+- $p \in [0,1]$, $n \in N$ 
 
-在第六章中，我们使用Penguins数据研究了社交复杂度(CSI)是否影响核心体温(CBT)，特别是在离赤道比较远的（低温）地区(DEQ)。
-
-
-这里，我们复现论文中第一个中介模型：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响。具体来说：
-
--   DEQ为自变量，CBT为因变量，CSI为中介变量。
-
--   赤道距离(DEQ)应当正向预测社会复杂度(CSI)，而社会复杂度应当正向预测体温(CBT)，但赤道距离(DEQ)应当负向预测体温(CBT)(即遮掩效应，如下图)
-
-
-
-
-.panelset[
-.panel[.panel-name[假设]
-
-```{r echo = FALSE,out.height=300}
-
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  DEQ -> CSI[label = "+"]
-  DEQ -> CBT[label = "-"]
-  CSI -> CBT[label = "+"]
-}'
-)
-```
-
-.panel[.panel-name[数据导入]
-
-
-
-```{r}
-# 数据导入
-pg_raw = bruceR::import(here::here('data','penguin','penguin_rawdata_full.csv'))
-```
-
-.panel[.panel-name[计算CSI]
-```{r}
-# 计算CSI
-### get the column names:
-snDivNames  <- c("SNI3", "SNI5", "SNI7", "SNI9", "SNI11", "SNI13",  "SNI15", "SNI17","SNI18","SNI19","SNI21")
-extrDivName <- c("SNI28","SNI29","SNI30","SNI31","SNI32")    # colnames of the extra groups
-
-### create a empty dataframe for social network diversity
-snDivData <- setNames(data.frame(matrix(ncol = length(snDivNames), nrow = nrow(pg_raw))), snDivNames)
-
-### recode Q10 (spouse): 1-> 1; else ->0
-snDivData$SNI1_r <- car::recode(pg_raw$SNI1,"1= 1; else = 0")
-
-####re-code Q12 ~ Q30: NA -> 0; 0 -> 0; 1~10 -> 1
-snDivData[,snDivNames] <- apply(pg_raw[,snDivNames],2,function(x) {x <- car::recode(x,"0 = 0; NA = 0; 1:10 = 1;"); x}) 
-
-### add suffix to the colnames
-colnames(snDivData[,snDivNames]) <- paste(snDivNames,"div",  sep = "_")    
-
-### recode the social network at work by combining SNI17, SNI18
-snDivData$SNIwork   <- snDivData$SNI17 + snDivData$SNI18
-snDivData$SNIwork_r <- car::recode(snDivData$SNIwork,"0 = 0;1:10 = 1")
-
-### re-code extra groups, 0/NA --> 0; more than 0 --> 1
-extrDivData <- pg_raw[,extrDivName]          # Get extra data
-extrDivData$sum <- rowSums(extrDivData)    # sum the other groups
-snDivData$extrDiv_r <- car::recode(extrDivData$sum,"0 = 0; NA = 0; else = 1")  # recode
-
-### Get the column names for social diversity 
-snDivNames_r <- c("SNI1_r","SNI3","SNI5","SNI7","SNI9","SNI11","SNI13","SNI15","SNIwork_r",
-                  "SNI19","SNI21","extrDiv_r")
-
-### Get the social diveristy score
-snDivData$SNdiversity <- rowSums(snDivData[,snDivNames_r])
-pg_raw$socialdiversity <- snDivData$SNdiversity
-```
-
-.panel[.panel-name[计算CBT]
-
-```{r}
-## 更改列名
-pg_raw %<>% dplyr::rename(CSI = socialdiversity)
-###  计算CBT（mean）
-# 筛选大于34.99 的被试
-
-# pg_raw %<>%
-#   filter(Temperature_t1 > 34.99 &
-#            Temperature_t2 > 34.99)
-
-# 前测后测求均值
-pg_raw %<>% 
-  dplyr::mutate(CBT = (Temperature_t1 + Temperature_t2)/2)
-```
-]]]]]
-
----
-layout: true
-# 2.6 代码实现
-
----
-## 2.6.1 lavaan 介绍
-
--   lavaan包专门用于结构方程模型（SEM）的估计，如CFA、EFA、Multiple groups、Growth curves等。
-
-
--   基本语法 $^*$：
-
-| formula type               | operator | mnemonic           |
-|----------------------------|----------|--------------------|
-| latent variable definition | `=~`     | is measured by     |
-| regression                 | `~`      | is regressed on    |
-| (residual) (co)variance    | `~~`     | is correlated with |
-| intercept                  | `~ 1`    | intercept          |
-| ‘defines’ new parameters   | `:= `    | defines            |
-
-.footnote[
-
------------
-.footfont[
-Ref: [https://lavaan.ugent.be/tutorial/syntax1.html](https://lavaan.ugent.be/tutorial/syntax1.html)
+$$P(X=k )=𝐶_𝑛^𝑘 𝑝^𝑘 𝑞^{𝑛−𝑘}= 𝐶_𝑛^𝑘 𝑝^𝑘 (1−𝑝)^{𝑛−𝑘}$$
+$$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
 ]
-]
-
-
 ---
-## 2.6.2 lavaan语句
-
-
-.panelset[
-.panel[.panel-name[lavaan语句]
-
-```{r lavaan}
-
-med_model <- "
-  # 直接效应(Y = cX)
-  CBT ~ c*DEQ   # 语法同回归，但需要声明回归系数
+#10.2 二项分布(Binomial Distribution)
+##抛硬币
+```{r, echo=FALSE}
+simulate_coin_toss <- function(prob_head, num_people, num_tosses) {
+  # 初始化一个向量来存储每个人正面朝上的总次数
+  total_heads <- rep(0, num_people)
+  # 模拟每个人抛硬币的次数，并计算正面朝上的总次数
+  for (i in 1:num_people) {
+    tosses <- rbinom(num_tosses, size = 1, prob = prob_head)
+    total_heads[i] <- sum(tosses)
+  }
   
-  # 中介路径(M)
-  CSI ~ a*DEQ
-  CBT ~ b*CSI
+  # 绘制直方图
+  hist(total_heads, main = "Coin Toss Results for All People", xlab = "硬币正面朝上的次数", ylab = "人数", col = 'white', border = 'black', breaks = seq(min(total_heads), max(total_heads) + 1, by = 1), xlim = c(0,max(total_heads) + 1))
   
-  # 定义间接效应c'
-  #注： `:=`意思是根据已有的参数定义新的参数
-  ab := a*b
-
-  # 总效应
-  total := c + (a*b)"
-# 注：这里数据仅以处于浪漫关系中的个体为例
-fit <- lavaan::sem(med_model,
-           data = pg_raw %>% dplyr::filter(romantic == 1),
-           bootstrap = 100 # 建议1000
-           )
-
+  # 返回每个人正面朝上的总次数
+}
 ```
-
-.panel[.panel-name[lavaan-output]
-
-```{r}
-fit %>% summary() %>% capture.output() %>% .[21:38]
-```
-
-.panel[.panel-name[中介图-Paper]
-
-```{r echo =F}
-# library(magick)
-# img = image_read('picture/chp6/pr1.png')
-# img %>% image_crop('870x500')
-knitr::include_graphics('picture/chp11/lav.png')
-```
-
-
-.panel[.panel-name[中介图-tidySEM]
-
-这里绘图使用的是tidySEM包，当然也有semPlot等包可以选择；tidySEM使用了tidyverse风格，并支持lavaan和Mplus等语法对SEM进行建模，可使用help(package = tidySEM)进行查看。
-
-.pull-left[
-```{r eval = F}
-## 与DiagrammeR::get_edges相冲突
-detach("package:DiagrammeR", unload = TRUE)
-## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
-lay = get_layout("", "CSI", "",
-                 "DEQ", "", "CBT", 
-                 rows = 2)
-tidySEM::graph_sem(fit,digits = 3,
-                   layout = lay)
-```
-]
-
-.pull-right[
-```{r echo = F}
-## 与DiagrammeR::get_edges相冲突
-detach("package:DiagrammeR", unload = TRUE)
-## 细节修改可在Vignettes中查看tidySEM::Plotting_graphs
-lay = get_layout("", "CSI", "",
-                 "DEQ", "", "CBT", 
-                 rows = 2)
-tidySEM::graph_sem(fit,digits = 3,
-                   layout = lay)
-```
-]
-]]]]]
-
-
----
-## 2.6.3 PROCESS in bruceR()
 
 .panelset[
-.panel[.panel-name[bruceR::PROCESS]
+.panel[.panel-name[5人，每人10次]
 ```{r}
-## RUN IN CONSOLE !!!
-pg_raw %>% dplyr::filter(romantic == 1) %>% 
-  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
-  x = 'DEQ', y = 'CBT',meds = 'CSI',nsim = 100)
-
+simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 ```
 
+.panel[.panel-name[10人，每人10次]
 
-.panel[.panel-name[bruceR::PROCESS-Regression]
-```{r echo = F}
-## RUN IN CONSOLE !!!
-pg_raw %>% dplyr::filter(romantic == 1) %>% 
-  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
-  x = 'DEQ', y = 'CBT',meds = 'CSI',nsim = 100) %>%
-  capture.output() %>% .[27:43]
-
+```{r}
+simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 ```
 
-.panel[.panel-name[bruceR::PROCESS-Mediation]
+.panel[.panel-name[1000人，每人10次]
 
-```{r echo = F}
-pg_raw %>% dplyr::filter(romantic == 1) %>% 
-  bruceR::PROCESS( ## 注意这里默认nsim = 100，建议1000
-  y = 'CBT', x = 'DEQ',meds = 'CSI') %>% 
-  capture.output() %>% .[47:61]
+```{r}
+simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ```
 
 ]]]]
 
 ---
-layout: false
-# 2.7 反思
-
-<br>
-
-.size5[
-在刚才的分析中，我们希望证明：社会复杂度(CSI)可以保护处于恋爱中的个体的体温(CBT)免受寒冷气候(DEQ)的影响，因而通过中介分析来验证假设，但实际上我们得到的只是变量间的相关，而不能得到期望的因果关系。
-
-
-那么我们应该如何去验证变量间的因果关系？
+#10.2 二项分布(Binomial Distribution)
+.bigfont[
+- 已知一次试验中的每次尝试中事件A发生的概率*p*，共进行*n*次独立重复的伯努利试验
+- 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
+$$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$
+- 当*n* → ∞，*p* ≠ *q*，*np* ≥ 5且*nq* ≥ 5，事件A在*n*次试验中出现次数的平均数：
+$$\mu = np$$
+- 事件A出现次数所属分布的标准差：
+$$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 ]
-
 ---
-
-
-# 3.1 因果推断(Casual Inference)
-.size5[
-确认变量间存在因果关系至少满足三个条件 $^*$：
-
-1.时间顺序：因在果之前发生；
-
-2.共变：因果之间存在相关，原因的变化伴随结果的变化；
-
-3.排除其他可能的解释
-
-
-]
-
-
---
-.size5[
-目前社科中常用的一个因果推断框架是反事实(conterfactual)推断，即观察到与事实情况相反的情况：
-
--   如，一个人得了感冒， 而服用感冒药以后症状得到了缓解，而对药效的归因则因为“如果当时不吃药，感冒就好不了”（即反事实）
-
--   但反事实理论框架要求需要针对特定的个体——相同个体，当时在感冒发生时不吃药，且最后“感冒好不了”
-
--   由于反事实的“不可观测性”，实际研究中使用随机对照的方式来解决（找到发生在相似个体身上的“反事实情况”）。
-]
-
-
-
-.footnote[
-.footsize[
-刘国芳,程亚华,辛自强.作为因果关系的中介效应及其检验[J].心理技术与应用,2018,6(11):665-676
-]
-]
-
----
-# 3.2 因果推断与概率
-
-
-假设100万儿童中已有99%接种了疫苗，1%没有接种。
--   接种疫苗：有1%的可能性出现不良反应，这种不良反应有1%的可能性导致儿童死亡，但不可能得天花。
--   未接种疫苗：有2%的概率得天花。最后，假设天花的致死率是20%。
-
-要不要接种？
---
-
--   99万接种：则有990000\*1% = 9900的人出现不良反应，9900\*1% = 99人因不良反应死亡
-
--   1万未接种：有10000\*2% = 200人得了天花，共200\*20% = 40人因天花死亡
-
-不接种疫苗更好？   
-
---
-
-
-如果基于一个反事实问题：疫苗接种率为0时会如何？
-
-共100万\*2% = 20000人得天花，20000\*20% = 4000人会因天花死亡。
-
-.size5[
-“‘因果关系不能被简化为概率’这个认识来之 不易……这个概念也存在于我们的直觉中，并且根深蒂固。例如，当我们说“鲁莽驾驶会导致交通事故”或“你会因为懒惰而挂科”时，我们很清楚地知道，前者只是增加了后者发生的可能性，而非必然会让后者发生。”]
-
-
-.footnote[
------------
-Ref: 《The Book of Why: The New Science of Cause and Effect》
-
-]
-
----
-# 3.3 基于实验的中介
+#10.2 二项分布(Binomial Distribution)
+## 如何将$z$与二分变量进行连接？
+### (1)将预测项映射到(0,1)之间，例如，使用
+$$\frac{1}{1+exp(-z)}$$
+### (2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
 .pull-left[
-.size5[
-如何验证中介中的因果？
-]]
-
+![](./picture/chp10/func.png)
+]
 .pull-right[
-```{r echo = F ,out.height=200}
-library(DiagrammeR)
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  X -> M
-  X -> Y
-  M -> Y
-}'
-)
-```
-
+![](./picture/chp10/bernoulli.png)
 ]
-
---
-
-假设：教材难度(X)通过焦虑(M)来影响努力程度(Y)，可以穷举出在哪些情况下我们不能验证中介中的因果：
-
--   教材难度(X)不能影响焦虑(M)
-
--   焦虑(M)不能影响努力程度(Y)
-
--   教材难度(X)可以影响焦虑(M)，焦虑(M)也可以影响努力程度(Y)，由 X 的变化引起的 M 的变化并不会导致 Y 的变化（即 M 对 Y 的影响与 X 对 Y 的影响无关）。
 
 
 
 ---
-
-
-.size5[
-• 操纵X
-
-• 测量 M
-
-• 测量 Y
-
-
-对X进行操纵（如使用不同难度的教材），可以验证X对M的因果关系，但M与Y之间的因果关系并没有得到验证
-
-]
-
-
-```{r echo = F ,out.height=200}
-library(DiagrammeR)
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  X -> M
-  X -> Y
-  M -> Y
-}'
-)
+#10.2 二项分布(Binomial Distribution)
+```{r echo=FALSE, out.width='80%'}
+knitr::include_graphics('./picture/chp10/func2.png')
 ```
 
+---
+#10.2 二项分布(Binomial Distribution)
+##参数求解
+.bigfont[
+- 对于logit回归，我们可以使用极大似然估计对其进行求解
+- 该求解过程比较复杂，一般由计算机自动完成
+]
+![](./picture/chp10/logit.png)
 
 
 
 
 ---
-.size5[
-但如果我们理论假设错误，测量的是焦虑（A），但实际上实验操纵引发的中介应为恐惧(M,即实际路径应为X - M - Y,而我们测量路径为X - A - Y)，那么刚才的实验设计可能无法证伪，因此需要对A进行操纵：
+#10.3 代码实操
+##首先分析一个被试的数据
+```{r}
+df.match.7304 <- df.match %>%
+  dplyr::filter(Sub == 7304) #选择被试7304
+mod_7304_full <- stats::glm(data = df.match.7304, #数据
+                          formula = ACC ~ 1 + Identity * Valence, #模型
+                          family = binomial) #因变量为二项分布
+summary(mod_7304_full) %>% #查看模型信息
+  capture.output() %>% .[c(6:11,15:19)] #课堂展示重要结果
+```
 
+---
+#10.3 代码实操
 
+.panelset[
+.panel[.panel-name[mod_null]
+```{r}
+#无固定效应
+mod_null <- lme4::glmer(data = df.match, #数据
+                   formula = ACC ~ (1 + Identity * Valence|Sub), #模型
+                   family = binomial) #因变量二项分布
+#performance::model_performance(mod_null)
+summary(mod_null) %>%
+  capture.output()%>% .[c(7:8,14:24)]
+```
 
-• 操纵 X
+.panel[.panel-name[mod]
+```{r}
+#随机截距，固定斜率
+mod <- lme4::glmer(data = df.match, #数据
+                     formula = ACC ~ 1 + Identity * Valence + (1|Sub), #模型
+                     family = binomial) #因变量二项分布
+#performance::model_performance(mod)
+summary(mod) %>%
+  capture.output() %>% .[c(7:8,14:24,28:32)]
+```
 
-• 操纵 A
+.panel[.panel-name[model_full]
+```{r}
+#随机截距，随机斜率
+mod_full <- lme4::glmer(data = df.match, #数据
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), #模型
+                          family = binomial) #因变量二项分布
+##performance::model_performance(mod_full)
+summary(mod_full) %>%
+  capture.output() %>% .[c(6:8,13:18,21:26,30:34)]
+```
 
-• 测量 Y
+.panel[.panel-name[模型比较anova]
+```{r}
+stats::anova(mod_null, mod, mod_full) #比较三个模型
+```
 
+.panel[.panel-name[模型比较compare_performance]
+```{r,results='hide'}
+performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose = FALSE)
+```
 
-对X(如使用不同难度的教材)和A(控制组 vs 提供相关辅导以减轻焦虑)进行操纵，如果对A的操纵不能影响Y，则可以证明中介路径不合理
+![](./picture/chp10/performance1.png)
+]]]]]]
+
+---
+#10.3 代码实操
+##结果解读
+```{r}
+summary(mod_full) %>% capture.output() %>% .[c(21:27)]
+```
+
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./picture/chp10/logit2.png')
+```
+.pull-left[
+- MoralSelf:
+$P=\frac{e^{2.77}}{1+e^{2.77}} = 0.941$
+<br>
+- ImmoralSelf:
+$P=\frac{e^{2.77-1.15}}{1+e^{2.77-1.15}} = 0.835$
 ]
+.pull-right[
+- MoralOther:
+$P=\frac{e^{2.77-0.87}}{1+e^{2.77-0.87}} = 0.870$
+<br>
+- ImmoralOther:
+$P=\frac{e^{2.77-0.87-1.15+0.99}}{1+e^{2.77-0.87-1.15+0.99}} = 0.851$
+]
+---
+#10.3 代码实操
 
-```{r echo = F ,out.height=200}
-library(DiagrammeR)
-grViz(
-    'digraph {
-  graph [layout = dot,rankdir = LR]
-  # 定义节点
-  node [shape = box, style = filled, fillcolor = "lightblue",height = 0.3,weight = 0.3,fontsize = 10]
- 
-  # 定义边
-  edge [color = black, arrowhead = vee,fontsize = 10]
-
-  X -> M
-  X -> Y
-  M -> Y
-  X -> A
-}'
-)
+```{r}
+#交互作用
+interactions::cat_plot(model = mod_full,
+                       pred = Identity,
+                       modx = Valence)
 ```
 
 
 ---
-.size5[
-Ref
+#10.4 方法比较
 
--   lavaan(提供了完整的SEM代码教程): [https://lavaan.ugent.be/tutorial/](https://lavaan.ugent.be/tutorial/)
+.panelset[
+.panel[.panel-name[anova]
+```{r, results = 'hide'}
+res <- bruceR::MANOVA(data = df.match.aov, #数据
+       subID = 'Sub', # 被试编号
+       dv= 'mean_ACC', # 因变量
+       within = c('Identity', 'Valence')) #自变量（被试内）
+```
 
--   通过实验来验证中介效应([葛枭语, 2023](https://doi.org/10.1016/j.jesp.2023.104507))
+```{r}
+capture.output(res) %>% .[3:8]
+```
 
--   内隐中介分析([Bullock et al , 2023, AMPPS](https://journals.sagepub.com/doi/10.1177/25152459211047227))
 
--   相关不等于因果([Rohrer, 2018](https://doi.org/10.1177/2515245917745629))
+.panel[.panel-name[EMMAMNS]
+```{r}
+res %>%
+  bruceR::EMMEANS(effect = 'Valence', by = 'Identity') %>%
+  capture.output()
+```
 
--   A lot of processes ([Rohrer, 2022](https://doi.org/10.1177/25152459221095827))
+.panel[.panel-name[GLM]
+```{r}
+stats::anova(mod_full)
+```
+
+.panel[.panel-name[HLM]
+
+
+```{r}
+mod_anova <- lme4::lmer(data = df.match,
+                        formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+stats::anova(mod_anova)
+```
+
+.panel[.panel-name[HLM_mean]
+```{r}
+mod_mean <- lme4::lmer(data = df.match.aov,
+                          formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
+stats::anova(mod_mean)
+
+```
+
+.panel[.panel-name[compare]
+```{r, results='hide'}
+performance::compare_performance(mod_full, mod_anova, rank = TRUE, verbose = FALSE)
+```
+
+![](./picture/chp10/performance2.png)
+
+```{r}
+stats::anova(mod_full, mod_anova)
+```
+
+
+]]]]]]]
+
+---
+#10.4 方法比较
+## 交叉验证法(Cross-Validation)
+```{r model prediction}
+# 设置种子以确保结果的可重复性
+set.seed(456)
+
+# 随机选择70%的数据作为训练集，剩余的30%作为测试集
+train_index <- caret::createDataPartition(df.match$Sub, p = 0.7, list = FALSE)
+train_data <- df.match[train_index, ]
+test_data <- df.match[-train_index, ]
+
+# 根据训练集生成模型
+model_full <- lme4::glmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
+                          family = binomial)
+model_anova <- lme4::lmer(data = train_data,
+                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+
+# 使用模型进行预测
+pre_mod_full <- stats::predict(model_full, newdata = test_data, type = 'response')
+pre_mod_anova <- stats::predict(model_anova, newdata = test_data)
+
+```
+
+
+---
+#10.4 方法比较
+## 留出法
+.pull-left[
+```{r}
+# 计算模型的性能指标
+performance_mod_full <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_full)^2)),
+                R2 = cor(test_data$ACC, pre_mod_full)^2)
+# 打印性能指标
+print(performance_mod_full)
+```
 ]
+.pull-right[
+```{r}
+# 计算模型的性能指标
+performance_mod_anova <- c(RMSE = sqrt(mean((test_data$ACC - pre_mod_anova)^2)),
+                R2 = cor(test_data$ACC, pre_mod_anova)^2)
+
+# 打印性能指标
+print(performance_mod_anova)
+```
+
+]
+
+---
+#10.4 方法比较
+## 留出法
+```{r}
+# 将预测概率转换为分类结果
+predicted_classes <- ifelse(pre_mod_full > 0.5, 1, 0)
+# 计算混淆矩阵
+confusion_matrix <- caret::confusionMatrix(as.factor(predicted_classes), as.factor(test_data$ACC))
+
+```
+
+---
+#10.4 方法比较
+## 留出法
+```{r}
+# 打印混淆矩阵和性能指标
+print(confusion_matrix)
+```
+
+---
+#10.4 方法比较
+## 留出法
+.pull-left[
+```{r}
+# 计算ROC曲线和AUC
+roc_result <- pROC::roc(test_data$ACC, pre_mod_full)
+print(roc_result)
+```
+]
+.pull-right[
+```{r}
+# 绘制ROC曲线
+plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2) # 添加对角线
+```
+
+]
+---
+#10.4 方法比较
+## 重复测量分析的不足
+.bigfont[
+- 会产生难以解释的结果
+  - 假设在10个回答中，正确回答8次，错误回答2次
+  - 此时95%CI为[0.52,1.08] ( = 0.8 ± 0.275)
+- 方差不齐，不满足方差分析基本假设
+
+$$\mu = np$$
+$$𝜎 = √(𝑛𝑝𝑞 )$$
+$$𝜎_p^2 = \frac{p(1-p)}{n}$$
+]
+Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformation or not) and towards logit mixed models. *Journal of Memory and Language, 59*(4), 434-446. doi:http://dx.doi.org/10.1016/j.jml.2007.11.007
+
+
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+.bigfont[
+- 在固定时间间隔或空间区域内发生某种事件的次数的概率。
+- 适用于事件以恒定平均速率独立发生的情况
+- 例如电话呼叫、网站访问、机器故障等。
+$$P(X = k) = \frac{e^{-\lambda} \lambda^k}{k!}$$
+- λ:事件在给定时间或空间内的平均发生率（或平均数量）。
+- k:可能的事件发生次数，可以是0, 1, 2, …
+]
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+
+```{r}
+set.seed(123) # 设置随机种子以获得可重复的结果
+random_samples <- rpois(1000, lambda = 5)
+hist(random_samples,col = 'white', border = 'black',)
+```
+
+---
+#10.5 其他分布
+##泊松分布(Poisson distribution)
+![](./picture/chp10/poission.png)
+---
+#10.5 其他分布
+##伽马分布(Gamma distribution)
+<br>
+.bigfont[
+- 伽马分布（Gamma Distribution）是统计学的一种连续概率函数，是概率统计中一种非常重要的分布。
+- “指数分布”和“卡方分布”都是伽马分布的特例。
+$$f(x | \alpha, \beta) = \frac{\beta^\alpha x^{\alpha-1} e^{-\beta x}}{\Gamma(\alpha)}$$
+- α:形状参数（shape parameter），决定了分布的曲线形态，尤其是峰值的位置和曲线的尖峭程度。
+- β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
+]
+---
+#10.5 其他分布
+##伽马分布(Gamma distribution)
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./picture/chp10/gamma.webp')
+```
+
+---
+class: center, middle
+.tit_font[
+思考
+]
+<br>
+<span style="font-size: 50px;">信号检测论是否可以用广义线性模型分析？</span> <br>
+
