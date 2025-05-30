@@ -1,5 +1,0 @@
----
-title: "056ZXY_hw2"
-output: html_document
----
-
