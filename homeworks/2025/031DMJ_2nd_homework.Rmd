@@ -1,5 +1,6 @@
 title: "Test1"
 author: "Fangru"
+author: "DMJ"
 date: "`r Sys.Date()`"
 output:
   html_document: default
