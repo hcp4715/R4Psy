@@ -17,8 +17,8 @@ params:
 ---
 class: center, middle
 <span style="font-size: 60px;">**第十二章**</span> <br>
-<span style="font-size: 50px;">如何得到可发表的图像</span> <br>
 <span style="font-size: 50px;">数据可视化进阶</span> <br>
+<span style="font-size: 50px;"></span> <br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
 <span style="font-size: 30px;">`r Sys.Date()`</span> <br>
@@ -93,10 +93,9 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
 
-
 pacman::p_load(
   # 本节课需要用到的 packages
-  here, tidyverse, reshape, bruceR, ggplot2, patchwork, magick,
+  here, tidyverse, reshape, bruceR, ggplot2, patchwork, magick, tesseract,
   # 生成课件
   xaringan, xaringanthemer, xaringanExtra, knitr)
 
@@ -109,7 +108,7 @@ df.match.trial <- bruceR::import(here::here('data','match','match_raw.csv')) %>%
   tidyr::extract(Shape, 
                  into = c('Valence', 'Identity'),
                  regex = '(moral|immoral)(Self|Other)',
-                 remove = FALSE) %>% #将Shape列分为两列
+                 remove = FALSE) %>% # 将Shape列分为两列
   dplyr::mutate(Valence = factor(Valence, levels = c('moral','immoral'), labels = c('moral','immoral')),
                 Identity = factor(Identity, levels = c('Self','Other'), labels = c('Self','Other'))) %>%
   dplyr::filter(ACC == 0 | ACC == 1, 
@@ -312,6 +311,7 @@ p4 <- df.match.sum.long %>%
                              ymax = grand_mean+1.96*SE),
                          width = .1,
                          position = position_dodge(.9)) +
+      ggplot2::scale_y_continuous(expand=c(0, 0)) +
   papaja::theme_apa() +
   ggplot2::facet_wrap(~DV, scales = "free_y") +
   ggplot2::labs(title = "Summary data for matching trials",
@@ -452,7 +452,7 @@ s4 <- s1 +
     ggplot2::geom_point(data = df.match.plot,
                        aes(x = conds, y = RT_mean, group = Valence),
                        position = position_jitter(width = 0.08),
-                       alpha = 0.5)
+                       alpha = 0.2)
 ```
 
 ```{r echo=FALSE, out.width='70%', fig.align='center'}
@@ -991,7 +991,7 @@ knitr::include_graphics('picture/chp6/pr1.png')
 .panel[.panel-name[读取图片]
 ```{r}
 ## 读取图片；图片可以是本地，也可以是图片的网址链接
-img = magick::image_read('picture/chp6/pr1.png')
+img <- magick::image_read('picture/chp6/pr1.png')
 
 ## 查看图片相关信息
 img %>% magick::image_info()
@@ -1029,10 +1029,10 @@ img %>% magick::image_crop('850x480+10+10')
 .panel[.panel-name[图片剪裁与合并]
 
 ```{r highlight=TRUE, out.width="80%"}
-img1 = img %>% magick::image_crop('870x488')
-img2 = img %>% magick::image_crop('870x488+0+485')
+img1 <- img %>% magick::image_crop('870x488')
+img2 <- img %>% magick::image_crop('870x488+0+485')
 ## 使用image_append进行拼接，令stack = F进行横向拼接（T为竖向）
-img3 = image_append(c(img1,img2),stack = F) #<<
+img3 <- magick::image_append(c(img1,img2),stack = F) #<<
 img3 %>% print()
 ```
 
@@ -1047,8 +1047,8 @@ image_scale(img1,'40%')
 # 旋转
 image_rotate(img1,90)
 # OCR(这里以英文为例，中文的识别率经测验确实不太行😢)
-image_read("http://jeroen.github.io/images/testocr.png") %>% 
-  image_ocr() %>% 
+magick::image_read("http://jeroen.github.io/images/testocr.png") %>% 
+  magick::image_ocr() %>% 
   cat()
 ```
 

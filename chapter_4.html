@@ -4,8 +4,8 @@
     <title>Lecture 4</title>
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
-    <meta name="date" content="2024-03-20" />
-    <script src="libs/header-attrs-2.20/header-attrs.js"></script>
+    <meta name="date" content="2025-03-12" />
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -27,7 +27,7 @@ class: center, middle, inverse, title-slide
 ### Nanjing Normal University
 ]
 .date[
-### 2024-03-20
+### 2025-03-12
 ]
 
 ---
@@ -43,11 +43,23 @@ class: center, middle
 &lt;span style="font-size: 20px;"&gt; Created with Rmarkdown &lt;/span&gt; &lt;br&gt;
 
 ---
-# Tips
-## 将`Rstudio`中报错语言变为英文
-- &lt;font size = 5.5&gt;打开Rstudio后，输入如下命令，可以让当前的session报错为英文。
+# Tip #1 
 
-```r
+## 如何使用最新的课件？
+
+首先，在github上，对forked的课件进行同步更新
+![sync_fork](picture/chp4/sync_fork.jpg)
+然后，让本地的文件夹（及隐藏的git仓库）与github上的仓库进行同步
+```
+git pull
+```
+---
+# Tip #2
+## 将`Rstudio`中报错语言变为英文
+- &lt;font size = 5.5&gt; 打开Rstudio后，输入如下命令，可以让当前的session报错为英文。
+
+
+``` r
 # set local encoding to English
 if (.Platform$OS.type == 'windows') {
   Sys.setlocale(category = 'LC_ALL','English_United States.1250')
@@ -60,7 +72,7 @@ Sys.setenv(LANG = "en")
 
 ## loading packages
 
-```r
+``` r
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
@@ -187,14 +199,15 @@ layout: false
 
 &lt;br&gt;&lt;br&gt;
 
--   **对于 .rmd文件和.Rproj 文件来说，会默认将该文件所在的文件夹当做工作目录**，比如当前 rmd文件默认目录为：  
+-   **对于`.rmd`文件和`.Rproj`文件来说，会默认将该文件所在的文件夹当做工作目录**，比如当前 rmd文件默认目录为：  
 
-```r
+
+``` r
 getwd()
 ```
 
 ```
-## [1] "D:/Study/NNU/YAN2/2/R4Psy1"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
 ```
 
 
@@ -235,7 +248,7 @@ getwd()
 需要注意在R中输入地址与Windows中地址栏的区别
 &lt;/font&gt;
 
-```r
+``` r
 ######  Run in WinOS !!! #####
 # r语言中的地址
 first_path &lt;- getwd()
@@ -245,13 +258,13 @@ cat(first_path,"\n")
 normalized_path &lt;- normalizePath(first_path, winslash = "\\")
 cat(normalized_path)
 ```
-&lt;font size=5.5&gt;**因此注意不要直接复制Windows地址栏中的地址**
+&lt;font size=5.5&gt; **因此注意不要直接复制Windows地址栏中的地址**
 
 &lt;br&gt;
 &lt;font size = 5.5&gt; 避免不同操纵系统中分割符切换的问题：`here()` &lt;/font&gt;
 
 
-```r
+``` r
 pacman::p_load(here)
 
 # here::here()
@@ -269,11 +282,12 @@ here::here("data","penguin","penguin_rawdata.csv")
 -   &lt;font size=5.5&gt;手动档&lt;/font&gt;
 
   使用 `setwd`输入具体路径，例如：
+  
 
-```r
-# setwd('D:/R4Psy/data/penguin/')
+``` r
+setwd('D:/R4Psy/data/penguin/')
 # or 
-# setwd('D:\\R4Psy\\data\\penguin')
+setwd('D:\\R4Psy\\data\\penguin')
 ```
 
 --
@@ -281,7 +295,8 @@ here::here("data","penguin","penguin_rawdata.csv")
 -   &lt;font size=5.5&gt;半自动档&lt;/font&gt;
 &lt;br&gt;&lt;br&gt;
 
-```r
+
+``` r
 # 两个函数等价，ask = T设置弹出交互式窗口选择文件夹
 bruceR::set.wd(ask = T)
 bruceR::set_wd(ask = T)
@@ -309,7 +324,7 @@ bruceR::set_wd(ask = T)
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
 - &lt;font size=6&gt;通过相对路径读取数据，便于分享你的工作
   &lt;/font&gt;
-  &lt;font size=4.5&gt;(*主要写起来省事儿*)&lt;/font&gt;&lt;br&gt;
+  &lt;font size=5&gt;(*写起来也更省事*)&lt;/font&gt;&lt;br&gt;
 
 
 ---
@@ -317,32 +332,15 @@ bruceR::set_wd(ask = T)
 ## 4.2 读取数据——手动档
 
 
-```r
+``` r
 # 读取数据,命名为penguin_data
-penguin_data = import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
-# 查看头(head) 5 行，有头就有尾(tail)
-# head(penguin_data,n = 3)
-# tail(penguin_data,n = 3)
-ncol(penguin_data)
-```
-
-```
-## [1] 232
-```
-
-```r
-nrow(penguin_data)
-```
-
-```
-## [1] 1517
+penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
 ```
 --
 
 -   &lt;font size=5&gt;由于已经加载bruceR，`bruceR::import()`可以简写为 `import()`，但不推荐；
 
 -   &lt;font size=5&gt;心理学中常用数据基本都可以使用该函数导入(使用`?bruceR::import()`查看支持导入哪些类型)。
-
 
 -   &lt;font size=5&gt;读取之后数据变量可以从Environment窗口中找到，变量名为penguin_data，点击会弹出窗口显示数据（也可在console中输入 `View(penguin_data)`查看）
 
@@ -359,9 +357,98 @@ nrow(penguin_data)
 ## 4.2 读取数据——自动挡
 &lt;br&gt;
 ![imp1](picture/chp4/imp2.png)
+---
+
+### 拆解第一个代码块
+
+``` r
+penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
+```
+
+`penguin_data`: 导入后的数据叫什么，可以理解为一个容器，里面装着数据；
+
+`&lt;-`：赋值符号，将右边的数据赋值给左边的变量；
+
+`bruceR::import()`: 导入数据的函数，可以理解我们让R语言这个工具做的事情；
+
+大家可以尝试不加`penguin_data &lt;-`，改变`penguin_data`的名字，或者改变`import()`里的文件路径，看看会发生什么。
 
 ---
-## 4.3 数据类型
+#### 赋值与变量
+
+在R中，使用赋值操作符`&lt;-`或 `=` 给对象赋值。&lt;br&gt;
+
+比如：
+
+``` r
+object &lt;- 10
+object
+```
+
+```
+## [1] 10
+```
+给对象“object”赋值为10。&lt;br&gt;
+赋值后可以对“object”进行操作，比如：&lt;br&gt;
+
+
+``` r
+object + 2
+```
+
+```
+## [1] 12
+```
+
+但注意此时的“object”本身并未发生改变。
+
+
+``` r
+object
+```
+
+```
+## [1] 10
+```
+---
+#### 赋值与变量
+![error1](picture/chp5/error1.png)
+&lt;font size=5&gt; 为什么会报错？&lt;br&gt;
+&lt;br&gt;
+--
+&lt;font size=5&gt; R中变量名是区分大小写的&lt;br&gt;
+--
+&lt;br&gt;
+![error2](picture/chp5/error2.png)
+&lt;br&gt;
+&lt;br&gt;
+&lt;font size=5&gt;  变量名可以由字母、数字、_和.组成。并且变量名的第一个字符不能为数字或者特殊符号，比如 +, -, *, /, ^, !, @, &amp;。&lt;/font&gt; &lt;br&gt;  
+&lt;br&gt;
+---
+#### 赋值与变量
+&lt;font size="5"&gt;
+&lt;br&gt;
+&lt;br&gt;
+tips：&lt;br&gt;
+&lt;br&gt;
+&amp;emsp;&amp;emsp;变量名可以使用中文，但不推荐，可能出现这样的乱码：&lt;br&gt;
+&amp;emsp;&amp;emsp;鍙︿竴涓▼搴忔鍦ㄤ娇鐢ㄦ鏂囦欢锛岃繘绋嬫棤娉曡闂��。&lt;br&gt;
+&lt;br&gt;
+&amp;emsp;&amp;emsp;命名对象最好有不错的可读性，比如“age”就要比“x”更易读。
+&lt;/font&gt;
+
+---
+## 4.3 了解数据
+
+- &lt;font size=5.5&gt; 想要做什么？
+
+- &lt;font size=5.5&gt; 数据里有什么？
+
+- &lt;font size=5.5&gt; 能做什么达到目标?
+
+
+**思维的变化: 我们要了解数据一些“看不见”的属性。**
+
 &lt;br&gt;&lt;br&gt;
 使用自动档读取penguin_rawdata.csv数据时，可以发现列名底下带有斜体字：
 
@@ -371,13 +458,144 @@ nrow(penguin_data)
 
 ---
 
+## 4.3 了解数据
+
+- &lt;font size=5.5&gt; 想要做什么？
+
+  - &lt;font size=5&gt; 基本信息 (被试人数、性别、年龄、国家分布 ...)
+  
+  - &lt;font size=5&gt; 数据预处理 (排除某些被试，反向记分 ...)
+
+  - &lt;font size=5&gt; 问卷得分相关分析(求和、相关分析、因子分析、信度分析...)
+
+
+**能好怎: 能用吗？好用吗？怎么用？**
+
+---
+
+## 4.3 了解数据
+
+- &lt;font size=5.5&gt; 数据里有什么？
+
+`str`: 查看R对象的结构
+
+
+``` r
+str(penguin_data)
+```
+
+```
+## 'data.frame':	1517 obs. of  232 variables:
+##  $ Site           : chr  "Tsinghua" "Oxford" "Oxford" "Oxford" ...
+##  $ age            : int  1922 1940 1945 1948 1948 1951 1952 1952 1952 1953 ...
+##  $ sex            : int  2 1 1 2 2 1 1 2 2 2 ...
+##  $ monogamous     : int  6 7 6 7 6 7 4 6 7 7 ...
+##  $ romantic       : int  2 1 1 1 1 1 1 2 2 2 ...
+##  $ health         : int  3 4 3 2 4 4 3 2 3 5 ...
+##  $ exercise       : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ eatdrink       : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ gluctot        : num  0 0 0 3 0 0 1 0.2 0 0 ...
+##  $ artgluctot     : num  0 0 8 0 0 0 3 0 0 0 ...
+##  $ smoke          : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ cigs           : num  0 NA NA NA 1 NA NA NA NA NA ...
+##  $ avgtemp        : num  36.8 35.4 35.1 36 36.1 ...
+##  $ Temperature_t1 : num  36.8 34.2 35 36.1 35.7 ...
+##  $ Temperature_t2 : num  36.7 36.6 35.2 35.8 36.4 ...
+##  $ DEQ            : num  26.9 51.8 51.8 51.8 42.1 ...
+##  $ AvgHumidity    : int  64 74 89 88 79 59 74 74 71 76 ...
+##  $ mintemp        : num  12 2.78 -1.67 -2.22 1 ...
+##  $ language       : int  7 5 5 5 2 1 5 5 5 4 ...
+##  $ langfamily     : int  3 1 1 1 1 1 1 1 1 1 ...
+##  $ SNI1           : int  2 3 1 1 5 1 5 4 4 4 ...
+##  $ SNI2           : int  1 8 6 3 4 3 2 3 2 2 ...
+##  $ SNI3           : int  0 4 4 3 4 3 2 3 2 2 ...
+##  $ SNI4           : int  1 1 2 1 1 1 1 2 1 2 ...
+##  $ SNI5           : int  1 NA 2 NA 1 NA NA 2 NA 2 ...
+##  $ SNI6           : int  5 2 1 1 1 1 1 1 1 5 ...
+##  $ SNI7           : int  0 2 NA NA NA NA NA NA NA NA ...
+##  $ SNI8           : int  6 1 1 4 6 7 1 2 1 3 ...
+##  $ SNI9           : int  2 NA NA 3 4 2 NA 2 NA 1 ...
+##  $ SNI10          : int  7 8 3 1 7 7 3 5 7 2 ...
+##  $ SNI11          : int  3 5 2 1 5 2 1 3 3 2 ...
+##  $ SNI12          : int  1 2 1 2 1 2 1 1 1 1 ...
+##  $ SNI13          : int  1 1 NA 8 NA 1 NA NA NA NA ...
+##  $ SNI14          : int  2 1 1 1 1 1 1 1 2 1 ...
+##  $ SNI15          : int  5 NA NA NA NA NA NA NA 4 NA ...
+##  $ SNI16          : int  3 2 1 1 1 1 1 1 2 2 ...
+##  $ SNI17          : int  1 1 NA NA NA NA NA NA 1 1 ...
+##  $ SNI18          : int  2 8 NA NA NA NA NA NA 7 1 ...
+##  $ SNI19          : int  3 1 4 3 4 2 2 3 4 1 ...
+##  $ SNI20          : int  2 1 1 2 1 2 1 1 1 2 ...
+##  $ SNI21          : int  1 NA NA 8 NA 8 NA NA NA 1 ...
+##  $ SNI22          : int  1 2 1 1 1 2 2 2 1 1 ...
+##  $ SNI23          : chr  "ʮ      վ" "Pensioners" NA NA ...
+##  $ SNI24          : chr  NA "Men/women with foreign spouses not in UK" NA NA ...
+##  $ SNI25          : chr  NA NA NA NA ...
+##  $ SNI26          : chr  NA NA NA NA ...
+##  $ SNI27          : chr  NA NA NA NA ...
+##  $ SNI28          : int  3 25 NA NA NA 7 12 10 NA NA ...
+##  $ SNI29          : int  NA 30 NA NA NA 2 5 10 NA NA ...
+##  $ SNI30          : int  NA NA NA NA NA NA 6 NA NA NA ...
+##  $ SNI31          : int  NA NA NA NA NA NA 1 NA NA NA ...
+##  $ SNI32          : int  NA NA NA NA NA NA 4 NA NA NA ...
+##  $ scontrol1      : int  3 3 4 3 2 4 2 2 4 3 ...
+##  $ scontrol2      : int  4 5 3 2 2 4 2 2 4 3 ...
+##  $ scontrol3      : num  4 2 4 4 3 3 4 2 4 3 ...
+##  $ scontrol4      : num  4 3 2 4 4 2 1 4 2 2 ...
+##  $ scontrol5      : num  4 2 2 2 4 2 2 2 3 3 ...
+##  $ scontrol6      : num  4 2 2 3 4 2 2 2 4 2 ...
+##  $ scontrol7      : num  2 5 3 4 3 2 2 3 2 5 ...
+##  $ scontrol8      : num  2 3 2 2 1 4 2 2 4 1 ...
+##  $ scontrol9      : num  4 4 3 2 5 3 3 3 4 4 ...
+##  $ scontrol10     : int  4 5 5 4 4 4 4 4 2 4 ...
+##  $ scontrol11     : int  4 5 3 4 4 4 4 3 5 2 ...
+##  $ scontrol12     : int  4 3 3 4 4 5 2 2 3 3 ...
+##  $ scontrol13     : int  4 4 4 2 4 2 3 2 4 4 ...
+##  $ stress1        : int  2 1 3 2 2 2 3 2 5 2 ...
+##  $ stress2        : int  4 1 3 2 2 3 4 3 3 3 ...
+##  $ stress3        : int  5 1 3 3 2 3 3 3 4 3 ...
+##  $ stress4        : int  3 1 2 2 3 3 3 2 3 1 ...
+##  $ stress5        : int  3 1 2 2 2 1 4 3 3 1 ...
+##  $ stress6        : int  1 1 2 1 1 2 3 3 3 1 ...
+##  $ stress7        : int  4 1 2 3 2 2 3 3 3 1 ...
+##  $ stress8        : int  2 1 2 2 2 3 3 3 5 2 ...
+##  $ stress9        : int  2 1 1 2 2 3 3 2 3 1 ...
+##  $ stress10       : int  3 1 2 2 3 2 3 3 3 2 ...
+##  $ stress11       : int  1 1 3 3 3 3 3 3 4 3 ...
+##  $ stress12       : int  5 5 3 3 3 2 2 4 5 3 ...
+##  $ stress13       : int  2 2 1 3 2 1 2 2 2 2 ...
+##  $ stress14       : int  1 1 2 3 2 2 2 3 5 1 ...
+##  $ phone1         : int  2 1 2 1 2 2 3 3 1 2 ...
+##  $ phone2         : int  3 1 2 3 2 4 4 3 1 2 ...
+##  $ phone3         : int  2 1 2 2 2 3 1 3 1 1 ...
+##  $ phone4         : int  3 1 1 4 2 4 4 3 1 1 ...
+##  $ phone5         : int  3 1 2 1 2 2 2 3 1 4 ...
+##  $ phone6         : int  2 1 1 2 1 1 2 3 1 2 ...
+##  $ phone7         : int  4 1 2 2 2 2 2 3 1 2 ...
+##  $ phone8         : int  4 1 2 4 4 3 3 3 1 3 ...
+##  $ phone9         : chr  "4" "1" "2" "4" ...
+##  $ onlineid1      : int  4 3 1 4 3 1 4 3 1 4 ...
+##  $ onlineid2      : int  4 1 2 1 3 2 4 3 1 4 ...
+##  $ onlineid3      : int  2 1 1 1 3 1 4 3 1 4 ...
+##  $ onlineid4      : int  4 1 1 2 3 1 3 3 1 4 ...
+##  $ onlineid5      : int  2 1 1 1 3 1 4 3 1 4 ...
+##  $ onlineid6      : int  2 1 1 1 1 1 2 3 1 1 ...
+##  $ onlineid7      : int  2 1 1 1 3 1 2 3 1 1 ...
+##  $ onlineid8      : int  2 1 2 1 3 1 2 3 1 1 ...
+##  $ onlineid9      : int  5 1 2 1 3 1 4 3 2 2 ...
+##  $ onlineid10     : int  1 1 1 1 1 1 2 3 1 1 ...
+##  $ onlineide11    : int  2 1 1 1 1 1 3 3 1 4 ...
+##   [list output truncated]
+```
+
+---
+
 ## 4.3 数据类型(in Excel)
 
 
 &lt;div class="center"&gt;
     &lt;img src="picture/chp4/datatype.png" alt="emj1" style="zoom:45%;"/&gt;
 &lt;/div&gt;
-
 
 
 ---
@@ -395,7 +613,7 @@ nrow(penguin_data)
 
     包含小数(double)和整数型(int)
 
--   字符串(character):   
+-   字符串(character/string):   
   
     文字数据，在字符串的开头或结尾一定要有单引号或双引号；
 
@@ -403,17 +621,13 @@ nrow(penguin_data)
 
     比较大小或是否相等--TRUE(1)和FALSE(0)
 
--   因子(factor):
-
-    对顺序数据的编码(数字/字符串)
-
-
 ---
 ## 4.3 数据类型
 &lt;br&gt;
 使用`class()`函数可以查看数据类型：
 
-```r
+
+``` r
 # getwd 返回当前工作目录，返回的数据类型是？
 class(getwd())
 ```
@@ -422,7 +636,7 @@ class(getwd())
 ## [1] "character"
 ```
 
-```r
+``` r
 # 字符串的数字与数值型的数字；
 # 注意区别== 与 =
 class('1' == 1)
@@ -432,7 +646,7 @@ class('1' == 1)
 ## [1] "logical"
 ```
 
-```r
+``` r
 # 导入数据的类型
 class(penguin_data)
 ```
@@ -442,7 +656,62 @@ class(penguin_data)
 ```
 
 
+---
+## 4.3 数据类型对应的“操纵”
 
+![table](picture/chp5/table.png)
+&lt;br&gt;
+&lt;br&gt;
+&lt;font size = 5&gt;
+数学运算 &lt;br&gt;
+&amp;emsp;+ - * / ^(加、减、乘、除、求幂)等 &lt;br&gt;
+&lt;br&gt;
+比较运算 &lt;br&gt;
+&amp;emsp;&gt;、&lt;、&gt;=、&lt;=、==、!= &lt;br&gt;
+&amp;emsp;identical(x,y) —— 判断两个对象是否严格相等 &lt;br&gt;
+&lt;br&gt;
+---
+## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
+
+
+``` r
+3.14 + 2
+```
+
+```
+## [1] 5.14
+```
+
+数值型可以进行数学运算
+--
+
+
+``` r
+TRUE * 3
+```
+
+```
+## [1] 3
+```
+
+``` r
+F ^ 2
+```
+
+```
+## [1] 0
+```
+
+逻辑型可以进行数学运算
+
+--
+
+
+``` r
+"a" + 1
+```
+
+字符不能进行数学运算
 ---
 
 ## 4.4 数据结构
@@ -451,22 +720,22 @@ class(penguin_data)
 &lt;br&gt;
 
 
--   Vector(向量)  
+-   Vector (向量)  
 
--   Matrix(矩阵)  
+-   Matrix (矩阵)  
 
--   Array(数组)  
+-   Array (数组)  
 
--   Data frame(数据框)  
+-   Data frame (数据框)  
 
--   List(列表)  
+-   List (列表)  
 
 
 ---
 
 ## 4.4 数据结构
 &lt;br&gt;
-&lt;font size=6&gt;不同类型的数据进行组合，形成了不同的数据结构
+&lt;font size=6&gt;不同类型的数据进行组合，形成了更复杂结构的数据
 &lt;br&gt;
 
 .pull-left[
@@ -487,14 +756,158 @@ class(penguin_data)
 &lt;p align="right"&gt;&lt;font size=2&gt;from http://venus.ifca.unican.es/Rintro/dataStruct.html&lt;/font&gt;&lt;/p&gt;
 
 ---
+## 4.4 数据结构
+
+### 向量
+
+``` r
+#创建向量
+v1 &lt;- c(1,2,3,4,5)  # 数值型向量
+v1
+```
+
+```
+## [1] 1 2 3 4 5
+```
+
+``` r
+v2 &lt;- c('apple','pear','banana','strawberry','lemon') # 字符型向量
+v2
+```
+
+```
+## [1] "apple"      "pear"       "banana"     "strawberry" "lemon"
+```
+
+``` r
+v3 &lt;- c(T,F,F,T,T) # 逻辑型向量
+v3
+```
+
+```
+## [1]  TRUE FALSE FALSE  TRUE  TRUE
+```
+
+``` r
+v4 &lt;- c(1:3) # 数值型向量
+v4
+```
+
+```
+## [1] 1 2 3
+```
+
+
+最常见的函数 `c()`，将多个元素组合成向量。
+
+---
+## 4.4 数据结构
+
+### 矩阵与数组
+
+``` r
+#创建矩阵
+m1 &lt;- matrix(c(1:9), nrow=3)
+m1
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    4    7
+## [2,]    2    5    8
+## [3,]    3    6    9
+```
+
+``` r
+#创建三维数组
+a1 &lt;- array(1:24, dim=c(3,4,2))
+a1
+```
+
+```
+## , , 1
+## 
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    4    7   10
+## [2,]    2    5    8   11
+## [3,]    3    6    9   12
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3] [,4]
+## [1,]   13   16   19   22
+## [2,]   14   17   20   23
+## [3,]   15   18   21   24
+```
+---
+## 4.4 数据结构
+
+### data frame
+
+
+``` r
+#创建数据框(每个成分都是一个向量)
+d1 &lt;- data.frame(v1,v2,v3)
+d1
+```
+
+```
+##   v1         v2    v3
+## 1  1      apple  TRUE
+## 2  2       pear FALSE
+## 3  3     banana FALSE
+## 4  4 strawberry  TRUE
+## 5  5      lemon  TRUE
+```
+
+``` r
+# d2 &lt;- data.frame(v1,v2,v3,v4)
+```
+&lt;font size = 5&gt; 
+数据框每一列的元素数目要相同 &lt;br&gt;
+
+---
+## 4.4 数据结构
+
+### data frame
+&lt;/br&gt;
+## 创建空的dataframe，但有列名。
+
+
+``` r
+df &lt;- data.frame(matrix(ncol = 3, nrow = 0))
+x &lt;- c("name", "age", "gender")
+colnames(df) &lt;- x
+```
+
+---
 ## 4.5.1 数据索引(中括号)
 &lt;font size=5&gt;中括号索引(data[row,col])  
 
 -   数字索引&lt;/font&gt;  
 
-```r
-# 选取前 2 行以及前 3 列数据
-penguin_data[1:2,1:3]
+
+``` r
+v1[2]
+```
+
+```
+## [1] 2
+```
+
+``` r
+v2[3]
+```
+
+```
+## [1] "banana"
+```
+
+
+
+``` r
+# 根据行与列的编号
+penguin_data[1:2, 1:3]
 ```
 
 ```
@@ -503,9 +916,9 @@ penguin_data[1:2,1:3]
 ## 2   Oxford 1940   1
 ```
 
-```r
+``` r
 # 也可以使用减号
-penguin_data[1:2,-c(4:ncol(penguin_data))]
+penguin_data[1:2, -c(4:ncol(penguin_data))]
 ```
 
 ```
@@ -520,9 +933,9 @@ penguin_data[1:2,-c(4:ncol(penguin_data))]
 
 -   名称索引&lt;/font&gt;  
 
-```r
+``` r
 # 同样选取前 2 行以及前 4 列数据
-penguin_data[1:2,c('age','ALEX1','ALEX2')]
+penguin_data[1:2, c('age','ALEX1','ALEX2')]
 ```
 
 ```
@@ -530,9 +943,10 @@ penguin_data[1:2,c('age','ALEX1','ALEX2')]
 ## 1 1922     2     2
 ## 2 1940     1     1
 ```
+
 TIP：输入字符串每次都要打很多引号会非常麻烦，因此可以使用bruceR::cc()，只需在首尾写冒号：
 
-```r
+``` r
 c('age','ALEX1','ALEX2') == cc('age,ALEX1,ALEX2')
 ```
 
@@ -545,7 +959,7 @@ c('age','ALEX1','ALEX2') == cc('age,ALEX1,ALEX2')
 &lt;font size=5&gt;美元符索引data$colname&lt;/font&gt;
 
 
-```r
+``` r
 ## 根据列名进行索引
 head(penguin_data$age)
 ```
@@ -554,7 +968,7 @@ head(penguin_data$age)
 ## [1] 1922 1940 1945 1948 1948 1951
 ```
 
-```r
+``` r
 ## 如果数据类型的格式是 ***data.frame***
 ## 则使用$提取和中括号提取是等价的
 
@@ -565,7 +979,7 @@ class(penguin_data$age)
 ## [1] "integer"
 ```
 
-```r
+``` r
 class(penguin_data[,1])
 ```
 
@@ -573,18 +987,32 @@ class(penguin_data[,1])
 ## [1] "character"
 ```
 
-```r
+``` r
 ## 但另外一种数据框的格式tibble中
 ## 会出现差异，当然这是下节课的内容了
 ```
-
-
 
 ---
 ## 4.5.3 数据索引(逻辑值)  
 &lt;font size=5&gt; 使用逻辑值进行索引，用于根据条件对数据进行筛选：&lt;/font&gt;
 
-```r
+
+``` r
+v5 &lt;- v1 &gt;=4
+
+v1[v5]
+```
+
+```
+## [1] 4 5
+```
+
+``` r
+# v1[v1&gt;=4]
+```
+
+
+``` r
 ## 输出逻辑值
 head(penguin_data$age &gt;1980)
 ```
@@ -593,7 +1021,7 @@ head(penguin_data$age &gt;1980)
 ## [1] FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
-```r
+``` r
 ## 筛选出生年份大于 1980 且(&amp;)小于 1990 的数据
 agedata = penguin_data[
   penguin_data$age &gt;1980 &amp; 
@@ -605,7 +1033,7 @@ unique(agedata$age)
 ##  [1] 1981 1982 1983 1984 1985 1986 1987 1988 1989   NA
 ```
 
-```r
+``` r
 ## 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于)
 ```
 
@@ -653,10 +1081,9 @@ class: center, middle
 
 -   &lt;font size=5.5&gt;报告（PPT或者HTML在课堂上展示）  &lt;/font&gt;&lt;br&gt;
 
-&lt;font size=5.5&gt;4、选题范围，以下期刊上发表有公开数据的论文：&lt;/font&gt;  
+&lt;font size=5.5&gt;4、参考手册&lt;/font&gt;  
 
--   &lt;font size=5.5&gt;Nature Human Behaviour; Nature communications; elife; Psychological Science, Cognition, JEG:General; Collabra: Psychology; Communications Psychology&lt;/font&gt;&lt;br&gt;&lt;br&gt;
-
+-   &lt;font size=5.5&gt;“心理学院R编程语言课程可重复检验指南(2025版).docx”&lt;/font&gt;  &lt;br&gt;
 
 ---
 
@@ -727,12 +1154,9 @@ class: center, middle
 
 
 ---
-# 4.7  Trifles
+# 4.7  变量名与规范
 
 ## 4.7.1  变量命名
-
-
-
 
 -   大小写敏感  
 
@@ -744,7 +1168,7 @@ class: center, middle
 
 -   如果一定要使用非法的变量名的话：将变量名使用\`illegal_varname\`括起来：  
 
-```r
+``` r
 # 比如变量名以数字开头且包含空格：
 `1 首先` = 1
 print(`1 首先`)
@@ -754,7 +1178,7 @@ print(`1 首先`)
 ## [1] 1
 ```
 
-```r
+``` r
 # 从环境中删除该变量
 rm(`1 首先`)
 ```
@@ -766,7 +1190,7 @@ rm(`1 首先`)
 
 -   NA：代表缺失值，任何数值与 NA 进行计算都会得到 NA，因此在计算或绘图中，需要移除缺失值或对其进行填补
 
-```r
+``` r
 unique(penguin_data$ALEX1)
 ```
 
@@ -774,7 +1198,7 @@ unique(penguin_data$ALEX1)
 ## [1]  2  1  3  4  5  7 NA
 ```
 
-```r
+``` r
 #直接计算会得到 NA
 mean(penguin_data$ALEX1)
 ```
@@ -783,7 +1207,7 @@ mean(penguin_data$ALEX1)
 ## [1] NA
 ```
 
-```r
+``` r
 # 因此计算时需要移除 NA(remove)
 mean(penguin_data$ALEX1,na.rm = T)
 ```
@@ -799,7 +1223,7 @@ mean(penguin_data$ALEX1,na.rm = T)
 
 R 语言中有一类函数以 `as.`开头，如 as.numeric()、as.data.frame()，会对数据类型进行转换，比如：
 
-```r
+``` r
 x = TRUE
 x = as.numeric(x)
 class(x)
@@ -809,7 +1233,7 @@ class(x)
 ## [1] "numeric"
 ```
 
-```r
+``` r
 x = as.character(x)
 class(x)
 ```
@@ -820,7 +1244,7 @@ class(x)
 
 类似，也存在一类函数以`is.`开头，判断对象是否属于某一类型，返回逻辑值：
 
-```r
+``` r
 is.character(x)
 ```
 
@@ -834,7 +1258,7 @@ is.character(x)
 
 - `getwd()`—返回当前工作目录。
 - `setwd()`—设置当前工作目录。
-- `list.files()`或`dir()`—查看目录中内容。 
+- `list.files()`或`dir()`—查看目录中内容。
 
     `list.files(pattern=’.*[.]r$’)`可以列出所有以“.r”结尾的文件。
 - `file.path()`—把目录和文件名组合得到文件路径。
@@ -863,30 +1287,30 @@ R 语言中，对象就是存储数据的容器，而变量名相当于容器的
 但 R 语言中所使用的复制为浅拷贝(shallow copy)：当对 y 进行更改的时候并不会影响原本 x 的值（在 R 3.1.0之前为deep copies），而 y 这个标签也被“贴在”了新的内存地址上（copy-on-modify）。  
 
 
-```r
+``` r
 x = 1;y = x
 address(x)
 ```
 
 ```
-## [1] "0000026e56600198"
+## [1] "0x14d831680"
 ```
 
-```r
+``` r
 address(y)
 ```
 
 ```
-## [1] "0000026e56600198"
+## [1] "0x14d831680"
 ```
 
-```r
+``` r
 y = 2
 address(y)
 ```
 
 ```
-## [1] "0000026e56614020"
+## [1] "0x14d84be78"
 ```
 
 

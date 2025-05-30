@@ -1,0 +1,1009 @@
+---
+format: 
+  revealjs:
+    slide-number: true
+    logo: picture/NNU-Logo.png
+    scrollable: true 
+    theme: theme.scss
+editor: source
+fontsize: 24pt
+editor_options: 
+  chunk_output_type: inline
+---
+
+</br>
+
+<h1 style="text-align: center">
+
+Chapter 14
+
+置换检验、自助抽样与模拟
+
+
+</h1>
+
+<h2 style="text-align: center">
+
+Permutation Test, Bootstrap & Simulation
+
+</h2>
+
+</br>
+
+<h3 style="text-align: center">
+
+Hu Chuan-Peng
+
+</h3>
+
+<h3 style="text-align: center">
+
+`r Sys.Date()`
+
+</h3>
+
+</br></br>
+
+# 本次课内容
+
+-   **Permutation Test**
+
+-   **Bootstrap**
+
+-   **Simulation**
+
+
+# 置换检验(Permutation Test)
+
+-   Permutation Test: 通过对当前进行随机化来检验观测的效应是否由随机性导致，是一种非参数检验方法。
+
+
+## 置换检验的一般步骤
+
+-   采用不放回的方式随机抽取样本，打乱数据原有的结构；
+
+-   计算打乱后数据的统计量；
+
+-   重复上述过程n次，形成**零假设分布**；
+
+-   根据原数据统计量在零假设分布中的位置判断显著性。
+
+```{r setup, echo = FALSE}
+## 准备工作
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+pacman::p_load(here, tidyverse, ggplot2, papaja, bruceR)
+
+options(scipen=99999,digits = 5)
+```
+      
+```{r}
+#读取数据
+df7305 <- bruceR::import(here::here('data','match','match_raw.csv')) %>% 
+      tidyr::extract(Shape, 
+                     into = c('Valence', 'Identity'),
+                     regex = '(moral|immoral)(Self|Other)',
+                     remove = FALSE) %>% #将Shape列分为两列
+      dplyr::mutate(Valence = factor(Valence, levels = c('moral','immoral'), labels = c('moral','immoral')),
+                    Identity = factor(Identity, levels = c('Self','Other'), labels = c('Self','Other'))) %>%
+      dplyr::filter(Sub == 7305) %>%
+      dplyr::filter(ACC == 0 | ACC == 1, 
+                RT >= 0.2 & RT <= 1.5,
+                Match == 'match')
+```
+
+```{r}
+# 计算每个条件下的均值、标准差和样本量
+df7305_sum <- df7305 %>%
+      dplyr::group_by(Valence, Identity) %>%
+      dplyr::summarise(
+            Mean = mean(RT),
+            SD = sd(RT),
+            N = n()) %>%
+      dplyr::ungroup()
+
+```
+
+```{r}
+# 画出moral-self与immoral-self条件下RT的分布：
+df7305 %>%
+      dplyr::filter(Identity == 'Self') %>%
+      ggplot(aes(x = RT, fill = Valence)) +
+      geom_histogram(aes(y = after_stat(density)), 
+                     binwidth = 0.05, 
+                     # position = 'Valence', 
+                     alpha = 0.5) +
+      geom_density(aes(y = after_stat(density), colour = Valence),
+                   size = 1,
+                   alpha = 0.2) +
+      # add means as two vertical lines:
+      geom_vline(data = df7305_sum %>% dplyr::filter(Identity == 'Self'),
+                 aes(xintercept = Mean, color = Valence),
+                 linetype = 'dashed', size = 1) +
+      ggplot2::scale_y_continuous(expand=c(0, 0)) +
+      labs(title = 'RT Distribution of Moral vs Immoral Self',
+           x = 'RT (s)', y = 'Density') +
+      papaja::theme_apa()
+```
+
+## 如何检查这两个条件下的RT是否有显著差异呢？
+
+配对样本*t*检验?
+
+```{r 1st permutation test}
+# permutate for one time
+
+df7305_permute <- df7305 %>%
+      dplyr::filter(Identity == 'Self') %>%
+      dplyr::mutate(RT = sample(RT)) # %>% # permutate RT
+
+df7305_permute_sum <- df7305_permute %>%
+      dplyr::group_by(Valence) %>%
+      dplyr::summarise(
+            Mean = mean(RT),
+            SD = sd(RT),
+            N = n()) %>%
+      dplyr::ungroup()
+
+df7305_permute %>%
+      ggplot(aes(x = RT, fill = Valence)) +
+      geom_histogram(aes(y = after_stat(density)), 
+                     binwidth = 0.05, 
+                     # position = 'Valence', 
+                     alpha = 0.5) +
+      geom_density(aes(y = after_stat(density), colour = Valence),
+                   size = 1,
+                   alpha = 0.2) +
+      # add means as two vertical lines:
+      geom_vline(data = df7305_permute_sum,
+                 aes(xintercept = Mean, color = Valence),
+                 linetype = 'dashed', size = 1) +
+      ggplot2::scale_y_continuous(expand=c(0, 0)) +
+      labs(title = 'RT Distribution of Moral vs Immoral Self',
+           x = 'RT (s)', y = 'Density') +
+      papaja::theme_apa()
+```
+
+```{r what does sample do}
+tmp <- seq(1,20)
+
+sample(tmp)
+```
+
+```{r write a func for permutation test}
+permutation_test <- function(data, n = 1000) {
+      # 计算原始均值差
+      original_diff <- data %>%
+            dplyr::group_by(Valence) %>%
+            dplyr::summarise(
+                  Mean = mean(RT),
+                  SD = sd(RT),
+                  N = n()) %>%
+            dplyr::ungroup() %>%
+            dplyr::summarise(diff = Mean[1] - Mean[2]) %>%
+            dplyr::pull(diff)
+      
+      # 初始化一个向量来存储每次置换的均值差
+      permuted_diffs <- numeric(n)
+      
+      # 进行n次置换
+      for (i in 1:n) {
+            permuted_data <- data %>%
+                  dplyr::mutate(RT = sample(RT)) # permutate RT
+            
+            permuted_diff <- permuted_data %>%
+                  dplyr::group_by(Valence) %>%
+                  dplyr::summarise(
+                        Mean = mean(RT),
+                        SD = sd(RT),
+                        N = n()) %>%
+                  dplyr::ungroup() %>%
+                  dplyr::summarise(diff = Mean[1] - Mean[2]) %>%
+                  dplyr::pull(diff)
+            
+            # 存储每次置换的均值差
+            permuted_diffs[i] <- permuted_diff
+      }
+      
+      # 返回原始均值差和置换后的均值差
+      return(list(original_diff = original_diff, permuted_diffs = permuted_diffs))
+}
+
+data <- df7305 %>% 
+      dplyr::filter(Identity == "Self") %>%
+      dplyr::mutate(RT = RT * 1000)
+      
+perRes <- permutation_test(data = data, n = 5000)
+
+# 画出置换后的均值差的分布
+
+ggplot(data.frame(perRes$permuted_diffs), aes(x = perRes.permuted_diffs)) +
+      geom_histogram(aes(y = after_stat(density)), 
+                     binwidth = 10, 
+                     # position = 'Valence', 
+                     alpha = 0.5) +
+      geom_density(aes(y = after_stat(density)),
+                   size = 1,
+                   alpha = 0.2) +
+      # add means as two vertical lines:
+      geom_vline(aes(xintercept = perRes$original_diff),
+                 linetype = 'dashed', size = 1) +
+      ggplot2::scale_y_continuous(expand=c(0, 0)) +
+      labs(title = 'RT Distribution of Moral vs Immoral Self',
+           x = 'RT (s)', y = 'Density') +
+      papaja::theme_apa()
+
+
+```
+
+```{r pvalue from permutation}
+# 计算p值
+p_value <- mean(abs(perRes$permuted_diffs) >= abs(perRes$original_diff))
+p_value
+
+p_value <- mean(perRes$permuted_diffs <= perRes$original_diff)
+```
+
+# Bootstrap
+
+## Bootstrap
+
+-   Bootstrap(自抽法、自举法)是非参数统计中一种参数估计的方法。</br>
+
+-   无需假设一个特定的理论分布，通过对当前数据集进行**有放回的重抽样**以创建多个模拟数据集，生成一系列待检验统计量的经验分布，可以计算标准误差、构建置信区间。
+
+## Bootstrap
+
+::: {style="text-align:center"}
+https://hranalyticslive.netlify.app/9-confidence-intervals.html
+:::
+
+## Bootstrap
+
+![](picture/chp14/14_3.jpg){fig-align="center"}
+
+::: {style="text-align:center"}
+https://arifromadhan19.medium.com/resampling-methods-a-simple-introduction-to-the-bootstrap-method-3a36d076852f
+:::
+
+## General flow of Bootstrap
+
+-   采取有放回抽样从原始样本抽取一定数量的子样本
+
+-   根据子样本计算统计量
+
+-   重复前面两步k次，得到k个统计量的估计值
+
+-   根据k个估计值获得统计量分布，计算置信区间
+
+## Bootstrap: Estimating correlation
+
+-   某研究者想探究焦虑与考试成绩之间的相关关系，在考试之前对103名同学进行了焦虑程度的测量。
+
+
+```{r}
+# 设置随机数种子以确保结果的可复现性
+set.seed(123)
+
+# 生成Exam得分
+exam_scores <- round(runif(103, min = 0, max = 100), 0)
+
+# 拟合Anxiety和Exam的负相关回归线
+regression_formula <- function(x) {
+  -0.2 * x + 80 + rnorm(length(x), mean = 0, sd = 10)
+}
+
+# 生成Anxiety得分
+anxiety_scores <- round(regression_formula(exam_scores),0)
+
+# 生成男女性别数据
+gender <- sample(c("Male", "Female"), 103, replace = TRUE)
+
+# 将Anxiety得分转化为high和low
+anxiety_1 <- ifelse(anxiety_scores >= 75,  "high", "low")
+
+# 创建数据框
+data <- data.frame(Exam = exam_scores, Anxiety = anxiety_scores, Gender = gender, Anxiety_1 = anxiety_1)
+
+# 打印数据框的前几行
+head(data)
+```
+
+## Bootstrap: Estimating correlation
+
+```{r}
+model <- lm(data$Anxiety ~ data$Exam)
+beta <- coef(model)[2]
+R2 <- summary(model)$r.squared
+
+plot <- ggplot(data, aes(x = Exam, y = Anxiety)) +
+  geom_point() +  # 散点图
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +  # 最佳拟合直线
+  annotate("text", x = Inf, y = Inf, label = paste("β =", round(beta, 3), "\nR^2 =", round(R2, 3)),
+             hjust = 1, vjust = 1, size = 4, color = "black") +
+  theme_apa()
+plot
+```
+
+## Bootstrap: Estimating correlation
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+# Bootstrap抽样函数,抽取50个子样本
+bootstrap_sample <- function(data, size=50) {
+  n <- nrow(data)
+  indices <- sample(1:n, replace = TRUE, size = size)
+  bootstrap_sample <- data[indices, ]
+  return(bootstrap_sample)
+}
+
+# 重复抽样3次
+k <- 3
+
+# 存储统计量和回归模型
+statistics_beta <- numeric(k)
+statistics_R2 <- numeric(k)
+models <- list()
+
+# 进行bootstrap抽样、计算统计量、绘制散点图和拟合直线
+for (i in 1:k) {
+  #抽样
+  bootstrap_sample_data <- bootstrap_sample(data,size=50)
+  
+  # 计算统计量 beta 和 R^2
+  x <- bootstrap_sample_data$Exam
+  y <- bootstrap_sample_data$Anxiety
+  model <- lm(y ~ x)
+  beta <- coef(model)[2]
+  R2 <- summary(model)$r.squared
+  
+  # 存储统计量和回归模型
+  statistics_beta[i] <- beta
+  statistics_R2[i] <- R2
+  models[[i]] <- model
+  
+  # 绘制散点图和拟合直线
+  p <- ggplot(bootstrap_sample_data, aes(x = Exam, y = Anxiety)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "solid", size = 2) +
+    labs(title = paste("Bootstrap Sample", i), x = "Exam", y = "Anxiety") +
+    annotate("text", x = Inf, y = Inf, label = paste("β =", round(beta, 3), "\nR^2 =", round(R2, 3)),
+             hjust = 1, vjust = 1, size = 4, color = "black") +
+    papaja::theme_apa()  # 
+  
+  print(p)
+}
+
+
+```
+
+## 估计焦虑与考试成绩的相关系数
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+library(boot)
+
+# 定义相关系数的统计量函数
+statistic <- function(data, indices) {
+  sampled_data <- data[indices, ]
+  model <- lm(sampled_data$Anxiety ~ sampled_data$Exam)
+  beta <- coef(model)[2]
+  return(beta)
+}
+
+# 进行1500次bootstrap抽样与计算统计量
+bootstrap_results <- boot(data = data, statistic = statistic, R = 2000)
+
+# 绘制beta的直方图
+hist(bootstrap_results$t, main = "Bootstrap Distribution of Beta",
+     xlab = "Beta Coefficient", ylab = "Density", col = "grey", freq = FALSE, breaks = 80)
+mean_beta <- mean(bootstrap_results$t)
+abline(v = mean_beta, col = "green", lty = 2)
+
+# 绘制beta的qq图
+qqnorm(bootstrap_results$t, main = "Normal Probability Plot for Beta",
+       xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+qqline(bootstrap_results$t, col = "grey")
+
+#计算95%CI
+boot_ci <- boot.ci(bootstrap_results, type = "bca")
+boot_ci
+```
+
+## 估计焦虑与考试成绩的决定系数。
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+library(boot)
+
+# 定义决定系数的统计量函数
+statistic <- function(data, indices) {
+  sampled_data <- data[indices, ]
+  model <- lm(sampled_data$Anxiety ~ sampled_data$Exam)
+  R2 <- summary(model)$r.squared
+  return(R2)
+}
+
+# 进行1500次bootstrap抽样与计算统计量
+bootstrap_results <- boot(data = data, statistic = statistic, R = 1200)
+
+
+# 绘制beta的直方图
+hist(bootstrap_results$t, main = "Bootstrap Distribution of R^2",
+     xlab = "R^2", ylab = "Density", col = "grey", freq = FALSE, breaks = 80)
+mean_R2 <- mean(bootstrap_results$t)
+abline(v = mean_R2, col = "green", lty = 2)
+
+# 绘制beta的QQ图
+qqnorm(bootstrap_results$t, main = "Normal Probability Plot for Beta",
+       xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+qqline(bootstrap_results$t, col = "grey")
+
+#计算95%CI
+boot_ci <- boot.ci(bootstrap_results, type = "bca")
+boot_ci
+
+```
+
+## Bootstrap: Estimating standardized diff
+
+-   某研究者想探究焦虑对考试成绩的影响大小。
+
+-   现有高焦虑与低焦虑两组被试，共103名被试
+
+```{r}
+head(data)
+```
+
+## Bootstrap: Estimating standardized diff
+
+-   $Cohen'd = \frac{M_A - M_B}{s}$
+
+-   $s = \sqrt{(SS_A + SS_B)/(n_A + n_B - 2)}$
+
+## 
+
+```{r}
+# 加载ggplot2包
+library(ggplot2)
+
+# 创建直方图和概率密度曲线
+ggplot(data, aes(x = Exam, color = Anxiety_1)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 10, alpha = 0.7, position = "identity") +
+  geom_density(size = 1) +
+  facet_wrap(~Anxiety_1, scales = "free_y") +  # 分别绘制两组
+  labs(title = "Distribution of Exam Scores",
+       x = "Exam Scores", y = "Density") +
+  theme_apa() +
+  scale_color_manual(values = c("low" = "blue", "high" = "red"))
+
+```
+
+```{r}
+
+## 计算Cohen’s d 
+group_A <- subset(data, Anxiety_1 == "high")$Exam
+group_B <- subset(data, Anxiety_1 == "low")$Exam
+
+# 计算均值
+mean_A <- mean(group_A)
+mean_B <- mean(group_B)
+
+# 计算SS_A和SS_B
+SS_A <- sum((group_A - mean_A)^2)
+SS_B <- sum((group_B - mean_B)^2)
+
+# 计算样本量
+n_A <- length(group_A)
+n_B <- length(group_B)
+
+# 计算 Cohen’s d
+cohen.d <- (mean_A - mean_B) / sqrt((SS_A+ SS_B) / (n_A + n_B - 2))
+print(paste("Cohen′d = ", cohen.d))
+
+```
+
+## 估计焦虑对考试成绩影响的效应大小
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+# 定义Cohen's d的统计量函数
+bootstrap_cohens_d <- function(data, indices) {
+  sampled_data <- data[indices, ]
+  
+  group_A <- subset(sampled_data, Anxiety_1 == "high")$Exam
+  group_B <- subset(sampled_data, Anxiety_1 == "low")$Exam
+  
+  mean_A <- mean(group_A)
+  mean_B <- mean(group_B)
+  
+  SS_A <- sum((group_A - mean_A)^2)
+  SS_B <- sum((group_B - mean_B)^2)
+  
+  n_A <- length(group_A)
+  n_B <- length(group_B)
+  
+  cohen.d <- (mean_A - mean_B) / sqrt((SS_A + SS_B) / (n_A + n_B - 2))
+  return(cohen.d)
+}
+
+# 进行1500次Bootstrap
+bootstrap_results <- boot(data = data, statistic = bootstrap_cohens_d, R = 1500)
+
+# 绘制Cohen's d的直方图
+hist(bootstrap_results$t, main = "Bootstrap Distribution of Cohen's d",
+     xlab = "Cohen's d", ylab = "Density", ", col = 'grey", freq = FALSE, breaks = 100)
+mean_d <- mean(bootstrap_results$t)
+abline(v = mean_d, col = 'green', lty = 2)
+
+# 绘制Cohen's d的QQ图
+qqnorm(bootstrap_results$t, main = "Normal Probability Plot for Cohen's d",
+       xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+qqline(bootstrap_results$t, col = "grey")
+
+#计算95%CI
+boot_ci <- boot.ci(bootstrap_results, type = "bca")
+boot_ci
+```
+
+## Bootstrap优点
+
+-   简单性，可以为分布的复杂估计量（如百分位数、比例、比值比和相关系数）导出标准误差和置信区间的估计值。
+
+-   可以应用于复杂的采样设计（例如，对于划分为s个层的人口，每个层有n个观测值，自举法可以应用于每个层）。
+
+-   控制和检查结果稳定性的适当方法。
+
+-   与使用样本方差和正态性假设获得的标准区间相比，bootstrap是渐近更准确的。 避免了重复实验以获得其他组的成本。
+
+## Bootstrap局限
+
+-   不适用于数据量太小，无法代表感兴趣的总体的数据
+
+-   不适用于数据存在许多异常值的情况
+
+-   不能提供一般的有限样本保证，结果可能取决于样本的代表性
+
+-   使用过程要确保样本内数据的独立性或足够大的样本量
+
+## Bootstrap vs Permutation
+
+-   Permutation对数据样本采用不放回抽样，常用于假设检验 (效应是否由随机因素导致)。
+
+-   Bootstrap对数据样本采取有放回抽样，利用非参方法进行区间估计，关注效应量的稳健的估计。
+
+# Simulation
+
+## 
+
+-   例子：想要探究某种干预方法能不能有效的调节考试焦虑
+
+-   我们设计了一个干预实验设计，通过随机干预/控制组实验来检验该方法。
+
+-   我们想在搜集实验数据前先完成数据分析的过程，并了解需要多少样本量比较合理。该如何做呢？
+
+## 
+
+-   将实验处理记为A，干预组为A1，控制组为A2。
+
+-   根据经验，使用特定量表测量焦虑时，总分是连续数据，均值约为70，标准差约为10。
+
+-   我们能否生成一批假数据，来帮助完成数据分析，并估计合理的样本量？
+
+## 生成模型
+
+-   生成模型：以特定模式生成新数据的模型。
+
+-   生成"假"数据，帮助我们更好地理解实验设计。
+
+-   R可用来来生成简单的假数据
+
+## 
+
+![](picture/chp14/14_4.jpg)
+
+## 在R中生成服从正态分布的假数据
+
+```{r echo=TRUE}
+
+set.seed(123)
+
+norm_data <- rnorm(100, mean = 5, sd = 2)
+df <- data.frame(Values = norm_data)
+norm_data
+
+```
+
+## 描述假数据
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+bruceR::Describe(norm_data)
+
+ggplot(df, aes(x = Values)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "grey", color = "black") +
+  labs(title = "Histogram of Normal Column",
+       x = "Normal Values",
+       y = "Rel.Freq(Normal in bin)")+
+  theme_apa()
+
+```
+
+## 计算似然
+```{r echo=TRUE}
+# 定义似然函数
+likelihood <- function(params) {
+  mu <- params[1]  # 均值参数
+  sigma <- params[2]  # 标准差参数
+  
+  # 计算观测数据的似然值
+  log_likelihood <- sum(dnorm(norm_data, mean = mu, sd = sigma, log = TRUE))
+  
+  return(-log_likelihood)  # 最大化似然函数等效于最小化相反数
+}
+
+# 使用最大似然法进行参数估计
+initial_params <- c(mean(norm_data), sd(norm_data))  # 初始参数值
+estimated_params <- optim(initial_params, likelihood)$par
+
+# 输出估计的参数值
+estimated_mean <- estimated_params[1]
+estimated_sd <- estimated_params[2]
+
+print(paste("估计的均值:", estimated_mean))
+print(paste("估计的标准差:", estimated_sd))
+```
+##
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+# 直方图
+hist(norm_data, probability = TRUE, main = "Histogram and PDF Comparison",
+     xlab = "Values", ylab = "Density", col = "lightblue", border = "black")
+# 理论概率密度函数曲线
+curve(dnorm(x, mean = 5, sd = 2),
+      col = "red", lwd = 2, add = TRUE, yaxt = "n")
+legend("topright", legend = c("Histogram", "theoretical pdf"), fill = c("lightblue", "red"))
+
+# QQ图
+qqnorm(norm_data, main = "QQ Plot")
+qqline(norm_data, col = "grey")
+
+# Kolmogorov-Smirnov检验
+ks_result <- ks.test(norm_data, "pnorm",mean = 5, sd = 2) # 检查数据是否服从mean=5，sd=2的正态分布
+ks_result
+
+```
+
+
+
+## 在R中生成服从二项分布的假数据
+
+```{r echo=TRUE}
+
+set.seed(123)
+
+# 成功概率p = 0.5，试验总次数为10
+binomial_data <- rbinom(100, 10, 0.5)
+df <- data.frame(Values = binomial_data)
+binomial_data
+
+```
+
+## 描述假数据
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+bruceR::Describe(binomial_data)
+
+ggplot(df, aes(x = Values)) +
+  geom_histogram(aes(y = ..density..), bins = 10, fill = "grey", color = "black") +
+  labs(title = "Histogram of Binomial Column",
+       x = "Binomial Values",
+       y = "Rel.Freq(Binomial in bin)")+
+  theme_apa()
+```
+
+## 查看数据拟合程度
+```{r echo=TRUE}
+
+
+# 定义似然函数
+likelihood <- function(params) {
+  p <- params[1]  # 成功概率参数
+  
+  # 计算观测数据的似然值
+  log_likelihood <- sum(dbinom(binomial_data, size = 10, prob = p, log = TRUE))
+  
+  return(-log_likelihood)  # 最大化似然函数等效于最小化相反数
+}
+
+# 使用最大似然法进行参数估计
+initial_params <- c(0.5)  # 初始参数值
+estimated_params <- optim(initial_params, likelihood)$par
+
+# 输出估计的参数值
+estimated_p <- estimated_params[1]
+
+print(paste("估计的成功概率:", estimated_p))
+```
+
+##
+
+```{r echo=TRUE}
+#| code-fold: true    #指示折叠或展开代码
+#| code-summary: "expand for full code"    #代码块说明文字
+#| fig-align: "center"      #设置图形居中显示
+
+# 计算理论的二项分布pdf
+x <- seq(0, 10, by = 1)
+theory_pdf <- dbinom(x, size = 10, prob = 0.5)
+
+# 绘制直方图
+hist(binomial_data, breaks = seq(-0.5, 10.5, by = 1), col = "lightblue", main = "Comparison of Empirical and Theoretical Binomial Distribution", xlab = "Number of Successes")
+
+# 添加理论PDF曲线
+lines(x, theory_pdf * length(binomial_data), type = "h", col = "red", lwd = 2)
+
+# QQ图
+qqnorm(binomial_data, main = "QQ Plot")
+qqline(binomial_data, col = "grey")
+
+# chisq.test
+observed_table <- binomial_data
+expected <-rep(length(binomial_data) / 2, 100)/sum(rep(length(binomial_data) / 2, 100)) # 期望频数，二项分布的期望为
+chisq_result <- chisq.test(observed_table, p = expected, correct = FALSE)
+chisq_result
+
+```
+
+## 
+
+-   将实验处理记为A，干预组为A1，控制组为A2。
+
+-   根据经验，使用特定量表测量焦虑时，总分是连续数据，均值约为70，标准差约为10。
+
+-   问题：我们能否生成一批假数据，来帮助完成数据分析，并估计合理的样本量？
+
+-   回答：可假定控制组的正态分布的均值为70，标准差为10；干预组的正态分布的均值为75，标准差为10。借此生成模拟数据。
+
+## 参数恢复
+
+-   参数恢复：模型从数据中"恢复"参数真实值的过程。
+
+-   参数恢复的好坏，可帮助我们判断某个模型的可靠性和有效性。如果一个模型具有良好的参数恢复，这意味着它能够准确地估计数据的参数，因此可以放心地使用它来做出预测或从数据中得出结论。
+
+## 
+
+![](picture/chp14/14_5.jpg)
+
+## 
+
+-   设置模型的参数值，利用生成模型模拟样本量为n的假数据，重复这个过程若干次
+
+-   对生成的假数据进行参数估计，求出参数的置信区间
+
+-   将假数据的参数的置信区间与模型的参数值进行比较，查看共有多少次假数据的参数的置信区间包含模型参数值。
+
+## 
+
+-   将实验处理记为A，干预组为A1，控制组为A2。
+
+-   为进行模拟，假定控制组的正态分布的均值为70，标准差为10；干预组的正态分布的均值为75，标准差为10。
+
+-   即，Cohen's d = 0.5
+
+-   然后通过参数恢复来理解我们的实验设计。
+
+## 
+
+![](picture/chp14/14_6.jpg)
+
+
+## 
+
+![](picture/chp14/14_8.jpg)
+
+## 
+
+我们可以看到随着样本量的变化，在效应量(Cohen's d)为0.5和显著性水平为0.05的情况下，随着各组样本量不断增大，统计检验力不断增大。
+
+要达到80%的统计检验力，我们需要各组人数均为65人左右，即需要搜集130名被试。
+
+![](picture/chp14/14_9.jpg)
+
+```{r live coding power analysis}
+
+# write a function to simulate power analysis
+# m1 = 70, m2 = 75, sd1 = sd2 = 10, n is free paramenter, n_sim is the number of repeats
+power_sim <- function(m1=70, m2=75, sd1=10, sd2=10, n=30, n_sim=1000) {
+  p_values <- numeric(n_sim)
+  
+  # Perform n_sim simulations
+  for (i in 1:n_sim) {
+    # Generate data
+    group1 <- rnorm(n, mean = m1, sd = sd1)
+    group2 <- rnorm(n, mean = m2, sd = sd2)
+    
+    # Perform t-test
+    t_test_result <- t.test(group1, group2)
+    p_values[i] <- t_test_result$p.value
+  }
+  
+  # Calculate power
+  power <- mean(p_values < 0.05)
+  return(power)
+}
+
+```
+
+```{r plot power}
+# write a func to vary n and plot power changes:
+power_plot <- function(m1=70, m2=75, sd1=10, sd2=10, n_sim=1000) {
+  n_values <- seq(10, 100, by = 5)
+  power_values <- sapply(n_values, function(n) power_sim(m1, m2, sd1, sd2, n, n_sim))
+  return(data.frame(n = n_values, power = power_values))
+}
+
+power_data <- power_plot(m1=70, m2=75, sd1=10, sd2=10, n_sim=1000)
+
+# Plot the power curve
+power_data %>%
+  ggplot(aes(x = n, y = power)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(size = 2) +
+  # add a horizontal line at y=0.8
+  geom_hline(yintercept = 0.8, linetype = "dashed", color = "red") +
+  # add a vertical line closes to y=0.8
+  geom_vline(xintercept = power_data$n[which.min(abs(power_data$power - 0.8))], 
+             linetype = "dashed", color = "blue") +
+  labs(title = "Power Analysis",
+       x = "Sample Size (n)",
+       y = "Power") +
+  theme_apa()
+```
+
+## 
+
+在NHST的框架下，在样本量为30的情况下，p值的分布情况
+
+![](picture/chp14/14_10.jpg)
+
+## 
+
+在NHST的框架下，在样本量为65的情况下，p值的分布情况
+
+![](picture/chp14/14_11.jpg)
+
+## 
+
+在NHST的框架下，在样本量为100的情况下，p值的分布情况
+
+![](picture/chp14/14_12.jpg)
+
+## 
+
+-   通过模拟数据，我们获得如下信息
+    -   可以进行独立样本t检验；
+    -   样本量是我们统计模型的一部分，具有关键作用；
+    -   样本量：
+        -   各组30人时，统计检验力\< 0.5;
+        -   各组65人左右时，统计检验力约80%
+
+## 模型恢复(Model recovery)
+
+-   上述参数恢复中，我们以t-test这个线性模型为前提进行了一系列模拟，但这个模型是否足够好？
+
+-   真实数据是如何产生，本身是我们未知，所以通常我们希望使用多个模型来分析数据。
+
+-   在使用这些模型拟合真实数据时，需要比较不同模型之间是否有区分度和有效。
+
+## 
+
+![](picture/chp14/14_13.jpg)
+
+## 
+
+-   首先，选择可能的模型
+
+-   用这些模型分别生成各自的假数据
+
+-   分别用所有模型对所有假数据进行拟合
+
+-   对每批数据的多个模型进行模型比较，得到胜出的模型
+
+-   重复上述过程n次，得到每个生成模型中最佳拟合模型的比例
+
+## 
+
+-   以两个有区分度的模型为例。
+
+-   二项分布的广义线性模型
+
+-   正态分布的线性模型
+
+## 
+
+-   生成模型：二项分布的GLM
+
+![](picture/chp14/14_14.jpg)
+
+## 
+
+![](picture/chp14/14_15.jpg)
+
+## 
+
+-   拟合模型
+
+![](picture/chp14/14_16.jpg)
+
+## 
+
+-   生成模型2：正态分布的LM
+
+    -   线性模拟数据进行标准化，再按照正负转化为二分变量
+
+![](picture/chp14/14_17.jpg)
+
+## 
+
+```{r}
+
+data <- rnorm(100, mean=0, sd=1)
+data <- data.frame(data)
+
+# 创建直方图和密度曲线图
+ggplot(data, aes(x = data)) +
+  geom_histogram(aes(y=..density..), bins=10, fill="lightblue", color="black", alpha=0.7) +
+  geom_density(color="red") +
+  ggtitle("Normal Distribution Plot") +
+  xlab("Values") +
+  ylab("Density")+
+  theme_apa()
+
+```
+
+## 
+
+-   拟合模型
+
+![](picture/chp14/14_19.jpg)
+
+## 
+
+![](picture/chp14/14_20.jpg)
+
+## 总结
+-   Permutation test
+
+-   Bootstrap
+
+-   Simulation
+
+    -   参数恢复
+
+    -   模型恢复
