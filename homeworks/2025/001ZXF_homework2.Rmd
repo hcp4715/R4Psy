@@ -49,15 +49,13 @@ Q2
 
 #转化，完成后可重新查看数据类型检查
 
-Q3 <- Q2 %>%
-  select(health, starts_with("phone"))
+Q3 <- Q2 %>% select(health, matches("phone[1-9]"))
 
 str(Q3)
 
-Q3 <- Q3 %>%
-  mutate(across(everything(), as.numeric))
+Q3 <- Q3 %>% mutate(across(where(is.character), as.numeric)) 
 
-str(Q3)
+
 ```
 
 ---
@@ -82,7 +80,9 @@ Q4 <- Q3 %>%
 
 Q5 <- factor(Q4$health, 
              levels = c("Poor", "Fair", "Good", "Very Good", "Excelent"),
-             ordered = TRUE)
+             ordered = TRUE) %>%
+  sort()
+
 Q5
 ```
 ---
