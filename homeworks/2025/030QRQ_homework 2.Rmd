@@ -56,11 +56,19 @@ Q3 <- Q2 %>%
 
 # Base R
 
+# Method 1:
 phone_cols <- paste0("phone",1:9) 
 #paste主要用于多个元素连接成一个元素,paste0可以消除空格(phone1),paste有空格(phone 1)
 cols <- c(phone_cols, "health")
 Q3 <- Q2[ , cols]  
 # print(names(Q2))可以通过查看Q2中所有列名来对比cols中的列名
+
+# Method 2:
+selected_cols <- c('health', colnames(Q2)[startsWith(colnames(Q2),'phone')])
+# startsWith(x,prefix)判断x中的条目是否以prefix开头
+# endsWith(x,suffix)判断x中的条目是否以suffix结尾
+Q3 <- Q2[ , selected_cols]
+  
 
 # 查看数据类型
 
@@ -164,7 +172,10 @@ Q10 <- Q4 %>%
 
 # Base R
 
+# Method 1: 
 Q4$Num <- c(1:nrow(Q4))
+# Method 2: 
+Q4$Num <- seq_len(nrow(Q4))
 Q10 <- Q4
 
 Q10
@@ -222,7 +233,7 @@ Q13
 ```{r}
 
 func <- function(a = 1, b = 2){
-  print((a + b)^2)
+  return((a + b)^2)
 }
 
 Q14 <- func(3,4)
@@ -236,7 +247,7 @@ Q14 <- func(3,4)
 func2 <- function(x){
   mean <- mean(x)
   sd <- sd(x)
-  print(data.frame(mean, sd))
+ return(data.frame(mean, sd))
 }
 
 Q15 <- func2(c(1,2,3,4,5))
@@ -248,7 +259,7 @@ Q15 <- func2(c(1,2,3,4,5))
 ```{r}
 
 func3 <- function(x=10){
-  print(x %% 2 == 0)
+  return(x %% 2 == 0)
 }
 
 Q16 <- func3(22)
@@ -261,11 +272,11 @@ Q16 <- func3(22)
 
 func4 <- function(x){
   if (x > 0)
-  print("Positive")
+  return("Positive")
   else if (x < 0)
-  print("Negative")
-  else
-  print("Zero")
+  return("Negative")
+  else if ( x == 0)
+  return("Zero")
 }
 
 Q17 <- func4(-3)
@@ -278,15 +289,15 @@ Q17 <- func4(-3)
 
 func5 <- function(x){
   if (x >= 90)
-    print("A")
+    return("A")
   else if (x >= 80)
-    print("B")
+    return("B")
   else if (x >= 70)
-    print("C")
+    return("C")
   else if (x >= 60)
-    print("D")
+    return("D")
   else
-    print("E")
+    return("E")
 }
 
 Q18 <- func5(95)
@@ -301,7 +312,7 @@ func6 <- function(n){
   result <- 1
   for (i in 1:n) # R里面的 for循环是(i in 序列)
     result <- result * i
-  print(result)
+  return(result)
 }
 
 Q19 <- func6(5)
