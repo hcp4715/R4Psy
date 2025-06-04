@@ -14,7 +14,8 @@ output:
 Q1 <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
 
 # 也可以用基础包，输入路径读取
-Q1 <- read.csv("D:/R/R4Psy/data/penguin/penguin_rawdata.csv")
+library(here)
+Q1 <- read.csv(here("data", "penguin", "penguin_rawdata.csv"))
 
 Q1
 ```
@@ -155,13 +156,7 @@ Q10 <- Q10 %>%
   )
 
 # Base R
-phone_cols <- grepl("^phone", names(Q10))  # 正则匹配列名
-Q10$phone_total <- rowSums(Q10[, phone_cols, drop = FALSE], na.rm = TRUE)
-
-# Q10$phone_total <- rowSums(
-  # Q10[,grepl('^phone',names(Q10))],
-  # na.rm = TRUE
-#)
+Q10$phone_total <- rowSums(Q10[,grepl('^phone',names(Q10)),drop = FALSE], na.rm = TRUE)
 sum(is.na(Q10$phone_total)) 
 
 Q10
@@ -216,15 +211,21 @@ Q16
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func4 <- function(x) {
+  if (!is.numeric(x)) {
+    return("Invalid input")
+  }
+  
   if (x > 0) {
     return("Positive")
   } else if (x < 0) {
     return("Negative")
-  } else {
+  } else if (x == 0) {
     return("Zero")
   }
 }
+
 Q17 <- func4(-3)
+
 Q17
 ```
 
