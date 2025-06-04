@@ -27,10 +27,7 @@ Q1 <- read.csv("data/penguin/penguin_rawdata.csv")
 # 同样存在多种方法
 # dplyr
 library(dplyr)
-Q2 <- Q1 %>% 
-  filter(站点 == "Isinghua") %>% 
-  slice(1:20)
-head(Q2)
+Q2 <- Q1[Q1$站点 == "Isinghua", ][1:20, ]
 # Base R
 isinghua_data <- Q1[Q1$站点 == "Isinghua", ]
 Q2 <- isinghua_data[1:20, ]
@@ -55,9 +52,10 @@ Q3$health <- as.numeric(Q3$health)
 Q3$`phonel-9` <- as.numeric(Q3$`phonel-9`)
 str(Q3)
 # 查看数据类型
-
+str(Q3)
 #转化，完成后可重新查看数据类型检查
-
+Q3 <- Q3 %>%
+  mutate(across(where(is.character) | where(is.factor), as.numeric))
 ```
 
 ---
@@ -121,19 +119,21 @@ Q9
 # 同样存在多种方法
 # dplyr
 library(dplyr)
-q10 <- Q4 %>%
+Q10 <- Q4 %>%
   mutate(Num = row_number())
 # Base R
-q10 <- Q4
-q10$Num <- 1:nrow(Q4) 
-Q10
+Q10 <- Q4
+Q10$Num <- 1:nrow(Q10)  # 生成从 1 到行数的序列
+#查看结果
+head(Q10)
 ```
 
 ---
 11.找出数据框Q10中健康在'Good'及以上的被试的编号，输出为Q11。
 ```{r homework 11}
-good_or_above <- Q10$health %in% c("Good", "Very Good", "Excellent")
-Q11 <- Q10$Num[good_or_above]
+Q11 <- Q10 %>%
+  filter(health %in% c("Good", "Very Good", "Excellent")) %>%
+  pull(Num)
 Q11
 ```
 
@@ -178,14 +178,17 @@ Q14
 ---
 15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
 ```{r}
+# 创建函数 func2
 func2 <- function(x) {
-  data.frame(
-    mean = mean(x),  
-    sd = sd(x)       
-  )
+  result <- data.frame(mean = mean(x), sd = sd(x))
+  return(result)
 }
+
+
+# 使用函数计算指定向量的均值和标准差
 Q15 <- func2(c(1, 2, 3, 4, 5))
 Q15
+
 ```
 
 ---
@@ -201,6 +204,7 @@ Q16
 ---
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
+# 定义函数 func4
 func4 <- function(x) {
   if (x > 0) {
     return("Positive")
@@ -210,8 +214,10 @@ func4 <- function(x) {
     return("Zero")
   }
 }
+
+# 测试输入 -3 并保存为 Q17
 Q17 <- func4(-3)
-Q17
+Q17 #"Negative"
 ```
 
 ---
