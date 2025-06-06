@@ -83,6 +83,7 @@ Q4
 5.将 health 赋值给Q5，并按从“Poor”到“Excelent”进行排序(tips:通过转化成因子型，可以按照特定方式排序）
 ```{r homework 5}
 Q5 <- factor(Q4$health,levels = c('Poor','Fair','Good','Very Good','Excellent'), ordered = TRUE)
+sort(Q5) # 排序
 
 Q5
 ```
@@ -131,8 +132,11 @@ Q10 <- Q4 %>%
   mutate(Num = row_number())
 
 # Base R
-Q10 <- Q4
+Q10 <- Q4     #第一种
 Q10$Num <- 1:nrow(Q4)
+
+Q4$Num <- seq_len(nrow(Q4))   #第二种
+Q10 <- Q4
 
 Q10
 ```
@@ -189,9 +193,10 @@ Q14
 15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
 ```{r}
 func2 <- function(x){
-  data.frame(
+  return(data.frame(
     mean = mean(x),
-    sd = sd(x))}
+    sd = sd(x)
+    ))}
 Q15 <- func2(x = c(1, 2, 3, 4, 5))
 
 Q15
@@ -217,13 +222,16 @@ Q16
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func4 <- function(x){
-  if((x > 0)){
+  if (!is.numeric(x) || x != as.integer(x)) {
+    return("Input must be an integer")} #确保输入是整数
+  else if (x > 0){
     return('Positive')}
-  else if((x < 0)){
+  else if (x < 0){
     return('Negative')}
-  else{return('Zero')}
+  else if(x == 0){
+    return('Zero')}
   }
-
+  
 Q17 <- func4(-3)
 
 Q17
@@ -233,7 +241,9 @@ Q17
 18.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q18。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func5 <- function(x){
-  if((x >= 90)){
+  if (!is.numeric(x)) {
+    return("Input must be a number")}
+  else if((x >= 90)){
     return('A')}
   else if((x >= 80)){
     return('B')}
@@ -241,7 +251,8 @@ func5 <- function(x){
     return('C')}
   else if((x >= 60)){
     return('D')}
-  else{return('E')}
+  else if((x < 60)){
+    return('E')}
   }
 
 Q18 <- func5(95)
