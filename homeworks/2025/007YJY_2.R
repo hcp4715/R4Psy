@@ -24,8 +24,7 @@ Q3 <- Q2 %>% select(health, starts_with("phone"))
 selected_cols <- c('health', colnames(Q2)[startsWith(colnames(Q2),'phone')])
 Q3 <- Q2[ , selected_cols]
 str(Q3)
-for(i in 1:10)
-Q3[i] <- as.numeric(unlist(Q3[i]))
+Q3[i] <- as.numeric(Q3[i]) ### 已改for循环以及unlist ###
 str(Q3)
 
 #4.将“health”中的数值改为文字（5= Excelent; 4 = Very Good; 3 = Good; 2 = Fair; 1 = Poor）
@@ -129,10 +128,10 @@ func4 <- function(x) {
   else if (x < 0) {
     return("Negative")
     } 
-  else {
+  else if (x = 0) {
     return("Zero")
     }
-  }
+  }          ###修复了可能出现文字的错误###
 Q19 <- func4(-3)
 Q19
 
