@@ -399,12 +399,34 @@ p1_dp + p1_rt + plot_annotation(tag_levels = 'A')  + plot_layout(nrow = 1, byrow
 
 #  ggsave('part1_plot_posterior.png', p, width = 15, height = 7.5)
 ```
+
+```{r results of dprime, echo=FALSE}
+# ANOVA for dprime
+ANOVA_dp <- afex::aov_ez(df.mt.dp.subj, id = "Sub", 
+                           dv = "Dprime",
+                           within = c("Identity", "Valence")
+                           )
+# simple main effect analysis:
+simple_effect_dp <- emmeans::emmeans(ANOVA_dp, "Valence", by = "Identity")
+simple_effect_dp_test <- pairs(simple_effect_dp)  
+```
+
 ## Sensitivity (*d'*)
+
 A two-way repeated-measure ANOVA revealed a significant interaction between Identity and Valence. *F*(`r ANOVA_dp$anova_table$"num Df"[3]`, `r ANOVA_dp$anova_table$"den Df"[3]`) = `r ANOVA_dp$anova_table$F[3]`, *p* = 0.0012. We conducted follow-up simple main effect analyses. When the shapes were self-referential, *d'* was significantly larger for moral condition (2.5 $\pm$ 0.11) than for immoral condition (1.99 $\pm$ 0.1), *t*(41) = 4.29, *p* < 0.001. However, this was no clear evidence that moral condition (2.11 $\pm$ 0.116) and immoral condition (2.27 $\pm$ 0.107) were not significantly different when the shapes are other-referential (see figure \@ref(fig:plot1)). 
 
+```{r results of RT, eval=FALSE}
+# analyses of RT
+ANOVA_rt <- afex::aov_ez(data = df.mt.rt.subj, 
+                         id = "Sub", 
+                         dv = "RT_mean",
+                         within = c("Identity", "Valence")
+                           )
+```
 
 ## Reaction times
-A two-way repeated-measure ANOVA revealed a significant interaction between Identity and Valence. *F*(`r ANOVA_rt$anova_table$"num Df"[3]`, `r ANOVA_rt$anova_table$"den Df"[3]`) = `r ANOVA_rt$anova_table$F[3]`, *p* = 0.0005. We conducted follow-up simple main effect analyses. When the shapes were self-referential, *d'* was significantly larger for moral condition (637.47 $\pm$ 63.57) than for immoral condition (720.40 $\pm$ 70.04), *t*(41) = 4.29, *p* < 0.001. However, this was no clear evidence that moral condition (2.11 $\pm$ 0.116) and immoral condition (2.27 $\pm$ 0.107) were not significantly different when the shapes are other-referential (see figure \@ref(fig:plot1)).
+
+[Please finish this part]
 
 # Discussion
 
