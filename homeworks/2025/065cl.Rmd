@@ -16,8 +16,7 @@ Q1 <- read.csv(here::here("data","penguin","penguin_rawdata.csv"))
 # 也可以用基础包，输入路径读取
 #工作目录已包含，使用相对路径
 Q1 <- read.csv("data/penguin/penguin_rawdata.csv")
-#未包含，使用绝对路径
-Q1 <- read.csv("D:/practice/RStudio/R4Psy/data/penguin/penguin_rawdata.csv")
+
 ```
 
 ---
@@ -40,7 +39,7 @@ Q2 <- Q1[Q1$Site == "Kassel", ][13:20, ]
 3. 在Q2中，进一步选择保留“health”和“phone1-9”等变量，赋值给Q3；查看这几个变量的数据类型，用注释进行记录;如果有数据类型为文字，需要转化为数字
 ```{r homework 3}
 # 选择变量,同样，这里同样存在多种方法
-# dplyr
+# 第一种dplyr
 Q3 <- Q2 %>%
    select(health, matches("phone[1-9]")) 
 # 选择 "health" 和 "phone1-phone9" 列
@@ -50,7 +49,7 @@ class("health")
 #转化，完成后可重新查看数据类型检查
 Q3 <- Q3 %>%
   mutate(across(starts_with("phone"), as.numeric))
-# Base R
+# 第二种Base R的方法
 phone_vars <- paste0("phone", 1:9)
 Q3 <- Q2[, c("health", phone_vars)]
 # 查看数据类型
@@ -224,7 +223,7 @@ func4 <- function(x) {
     return("Positive")
   } else if (x < 0) {
     return("Negative")
-  } else {
+  } else if (x = 0) {
     return("Zero")
   }
 }
@@ -246,7 +245,7 @@ func5 <- function(x) {
     return("C")
   } else if (x >= 60 && x < 70) {
     return("D")
-  } else {
+  } else if (x < 60) {
     return("E")
   }
 }
