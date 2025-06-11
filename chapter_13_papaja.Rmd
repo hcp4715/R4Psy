@@ -401,16 +401,13 @@ p1_dp + p1_rt + plot_annotation(tag_levels = 'A')  + plot_layout(nrow = 1, byrow
 ```
 
 ```{r results of dprime, echo=FALSE}
-
 # ANOVA for dprime
 ANOVA_dp <- afex::aov_ez(df.mt.dp.subj, id = "Sub", 
                            dv = "Dprime",
                            within = c("Identity", "Valence")
                            )
-
 # simple main effect analysis:
 simple_effect_dp <- emmeans::emmeans(ANOVA_dp, "Valence", by = "Identity")
-
 simple_effect_dp_test <- pairs(simple_effect_dp)  
 ```
 
@@ -430,7 +427,6 @@ ANOVA_rt <- afex::aov_ez(data = df.mt.rt.subj,
 ## Reaction times
 
 [Please finish this part]
-
 
 # Discussion
 
