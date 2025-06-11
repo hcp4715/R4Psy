@@ -54,6 +54,15 @@ print(Q2)
 # Q2提取后仅有"health"列，phone开头的列不包含在5-24列中，因此选择保留的SNI1-4
 Q3 <- Q2 %>%
   select(health, starts_with("SNI"))
+Q3 <- Q3 %>%
+  mutate(
+    health = as.numeric(health),
+    SNI1 = as.factor(SNI1),
+    SNI2 = as.factor(SNI2),
+    SNI3 = as.factor(SNI3),
+    SNI4 = as.factor(SNI4)
+    # 添加更多变量转换
+  )
 # 查看Q3中各变量的数据类型
 str(Q3)
 # health: num
