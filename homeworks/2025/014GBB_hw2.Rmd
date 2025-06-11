@@ -15,7 +15,7 @@ output:
 # 也可以用基础包，输入路径读取
 
 getwd()
-file_path <- "D:/A学习/R4Psyfork/data/penguin/penguin_rawdata.csv"
+file_path <- "./data/penguin/penguin_rawdata.csv"
 
 # 读取 CSV 文件并赋值给 Q1
 Q1 <- read.csv(file_path)
@@ -189,40 +189,75 @@ Q14
 ---
 15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
 ```{r}
-func2 <- function(x) { data.frame(mean = mean(x), sd = sd(x)) }
-Q15 <- func2(c(1,2,3,4,5)) 
+func2 <- function(x) {
+  result <- data.frame(mean = mean(x), sd = sd(x))
+  return(result)
+}
+
+# 检验函数
+Q15 <- func2(c(1, 2, 3, 4, 5))
 Q15
+
 ```
 
 ---
 16.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q16。(tips:函数%%用于计算两个数相除的余数)
 ```{r}
-fun3 <- function(x = 10) { x %% 2 == 0 }
+fun3 <- function(x = 10) {
+  return(x %% 2 == 0)
+}
+
+# 检验函数对输入 22 的返回值
 Q16 <- fun3(22)
 Q16
+
 ```
 
 ---
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func4 <- function(x) {
-  if (x > 0) "Positive" else if (x < 0) "Negative" else "Zero"
+  # 检查是否为整数
+  if (is.numeric(x) && x == as.integer(x)) {
+    if (x == 0) {
+      return("Zero")
+    }
+    if (x > 0) {
+      return("Positive")
+    }
+    if (x < 0) {
+      return("Negative")
+    }
+  }
 }
+
+# 检验输入 -3 的结果
 Q17 <- func4(-3)
 Q17
+
 ```
 
 ---
 18.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q18。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func5 <- function(x) {
-  if (x >= 90) "A" else
-  if (x >= 80) "B" else
-  if (x >= 70) "C" else
-  if (x >= 60) "D" else "E"
+  if (x >= 90) {
+    return("A")
+  } else if (x >= 80) {
+    return("B")
+  } else if (x >= 70) {
+    return("C")
+  } else if (x >= 60) {
+    return("D")
+  } else {
+    return("E")
+  }
 }
+
+# 使用函数将 95 转换为等级
 Q18 <- func5(95)
 Q18
+
 ```
 ---
 
