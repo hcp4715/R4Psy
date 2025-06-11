@@ -5,8 +5,8 @@ output:
   html_document: default
 pdf_document: default
 ---
-#1.读取 penguin_rawdata.csv(data/penguin/ penguin_rawdata.csv),并赋值给Q1
-Q1 <- read.csv("F:/4Rclass_yjy/P4Psy/data/penguin/penguin_rawdata.csv")
+  #1.读取 penguin_rawdata.csv(data/penguin/ penguin_rawdata.csv),并赋值给Q1
+  Q1 <- read.csv("F:/4Rclass_yjy/P4Psy/data/penguin/penguin_rawdata.csv")
 
 
 #2.根据下列图片中自己所在的位置选择“XX”这一站点后，再从该站点数据中选择前XX行的数据，对Q1进行筛选
@@ -14,8 +14,8 @@ Q1 <- read.csv("F:/4Rclass_yjy/P4Psy/data/penguin/penguin_rawdata.csv")
 #提示：在Tidyverse中可以调用slice函数来选定相应的列
 library(dplyr)
 Q2 <- Q1 %>% 
-filter(Site == "Tsinghua") %>%
-slice(13:32)
+  filter(Site == "Tsinghua") %>%
+  slice(13:32)
 
 #3.在Q2中，进一步选择保留“health”和“phone1-9”等变量，赋值给Q3
 #查看这几个变量的数据类型，用注释进行记录#
@@ -44,7 +44,7 @@ Q4 <- Q3 %>%
 Q5 <- factor(Q4$health, 
              levels = c('Poor','Fair','Good','Very Good','Excelent'),
              ordered = TRUE
-             )
+)
 Q5 <- sort(Q5)
 print(Q5)
 #6.判断'Poor'和'Fair'是否存在于Q5中，输出逻辑值为Q6_1和Q6_2
@@ -79,8 +79,8 @@ Q11
 #12.在数据框Q10中新增一列"phone_total"，计算被试的phone总分
 #(tips:一个一个录入的效率较低，可参考chapter6提供的简便方法)
 Q10 <- Q10 %>% 
-mutate(
-  phone_total = rowSums(select(., starts_with("phone")))
+  mutate(
+    phone_total = rowSums(select(., starts_with("phone")))
   )
 
 #13.在数据框中查找：健康在'Good'及以上，
@@ -93,7 +93,7 @@ Q13
 #14.创建一个名为func的函数，输入两个参数 a 和 b (默认值：a=1,b=1)，返回它们的和的平方((a + b)^2)。并使用func函数，计算 a=3 和 b=4 时的值，输出为Q16。
 func <- function(a = 1, b = 1) {
   return((a + b) ^ 2)
-  }
+}
 Q16 <- func(3, 4)
 Q16
 
@@ -104,7 +104,7 @@ func2 <- function(x) {
   sd_val <- sd(x)
   result_df <- data.frame(mean = mean_val, sd = sd_val)
   return(result_df)
-  }
+}
 Q17 <- func2(c(1, 2, 3, 4, 5))
 Q17
 
@@ -113,7 +113,7 @@ Q17
 #并检验该函数对输入 22 的返回值，输出为Q18。(tips:函数%%用于计算两个数相除的余数)
 func3 <- function(x = 10) {
   return(x %% 2 == 0)
-  }
+}
 Q18 <- func3(22)
 Q18
 
@@ -124,14 +124,14 @@ Q18
 func4 <- function(x) {
   if (x > 0) {
     return("Positive")
-    } 
+  } 
   else if (x < 0) {
     return("Negative")
-    } 
+  } 
   else if (x = 0) {
     return("Zero")
-    }
-  }          ###修复了可能出现文字的错误###
+  }
+}          ###修复了可能出现文字的错误###
 Q19 <- func4(-3)
 Q19
 
@@ -139,19 +139,19 @@ Q19
 func5 <- function(x) {
   if (x >= 90) {
     return("A")
-    }
+  }
   else if (x >= 80) {
     return("B")
-    } 
+  } 
   else if (x >= 70) {
     return("C")
-    } 
+  } 
   else if (x >= 60) {
     return("D")
-    } 
+  } 
   else {        
     return("E")
-    }
   }
+}
 Q20 <- func5(95)
 Q20

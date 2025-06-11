@@ -69,7 +69,8 @@ Q4 <- Q3 %>%
 
 Q5 <- factor(Q4$health, 
              levels = c("Poor", "Fair", "Good", "Very Good", "Excelent"),
-             ordered = TRUE)
+             ordered = TRUE) %>%
+  sort()
 ```
 ---
 6.判断'Poor'和'Fair'是否存在于Q5中，输出逻辑值为Q6_1和Q6_2
@@ -154,16 +155,30 @@ Q14 <- func(3, 4)
 15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
 ```{r}
 
-func2 <- function(x) data.frame(mean = mean(x), sd = sd(x))
-Q15 <- func2(c(1, 2, 3, 4, 5))  # mean=3, sd=1.581
+func2 <- function(x) {
+  mean_value <- mean(x)
+  sd_value <- sd(x)
+  result_df <- data.frame(mean = mean_value, sd = sd_value)
+  return(result_df)
+}
+
+Q15 <- func2(c(1, 2, 3, 4, 5))
 ```
 
 ---
 16.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q16。(tips:函数%%用于计算两个数相除的余数)
 ```{r}
 
-fun3 <- function(x = 10) x %% 2 == 0
-Q16 <- fun3(22)  
+fun3 <- function(x = 10) {
+  if (x %% 2 == 0) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
+
+
+Q16 <- fun3(22) 
 ```
 
 ---
@@ -171,10 +186,16 @@ Q16 <- fun3(22)
 ```{r}
 
 func4 <- function(x) {
-  if (x > 0) "Positive"
-  else if (x < 0) "Negative"
-  else "Zero"
+  if (x > 0) {
+    return("Positive")
+  } else if (x < 0) {
+    return("Negative")
+  } else {
+    return("Zero")
+  }
 }
+
+
 Q17 <- func4(-3)
 ```
 
@@ -183,15 +204,21 @@ Q17 <- func4(-3)
 ```{r}
 
 func5 <- function(x) {
-  case_when(
-    x >= 90 ~ "A",
-    x >= 80 ~ "B",
-    x >= 70 ~ "C",
-    x >= 60 ~ "D",
-    TRUE ~ "E"
-  )
+  if (x >= 90) {
+    return("A")
+  } else if (x >= 80 && x <= 89) {
+    return("B")
+  } else if (x >= 70 && x <= 79) {
+    return("C")
+  } else if (x >= 60 && x <= 69) {
+    return("D")
+  } else {
+    return("E")
+  }
 }
-Q18 <- func5(95) 
+
+
+Q18 <- func5(95)
 ```
 ---
 
@@ -200,10 +227,15 @@ Q18 <- func5(95)
 
 func6 <- function(n) {
   result <- 1
-  for (i in 1:n) result <- result * i
+  for (i in 1:n) {
+    result <- result * i
+  }
   return(result)
 }
+
+
 Q19 <- func6(5)
+Q19
 ```
 ---
 
