@@ -56,15 +56,29 @@ Q4 <- Q3 %>%
     health == 3 ~ "Good",
     health == 2 ~ "Fair",
     health == 1 ~ "Poor"
+    TRUE ~ as.character(health)  # 处理其他数值（如
   ))
+head(Q4)
 ```
 
 ---
 5.将 health 赋值给Q5，并按从“Poor”到“Excelent”进行排序(tips:通过转化成因子型，可以按照特定方式排序）
 ```{r homework 5}
 
-Q5 <- factor(Q4$health, 
-             levels = c("Poor", "Fair", "Good", "Very Good", "Excellent"),ordered = TRUE)
+# 转换为有序因子，排序后保存为单列数据框
+Q5 <- Q4 %>%
+  select(health) %>%  
+view(Q5)
+  
+Q5 <- Q5 %>% mutate(health = factor(
+    health,
+    levels = c("Poor", "Fair", "Good", "Very Good", "Excelent"),
+    ordered = TRUE
+  )) %>%
+  arrange(health)  # 按因子顺序排序
+
+# 输出结果
+print(Q5)
 ```
 
 ---
@@ -153,7 +167,14 @@ Q14
 15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
 ```{r}
 
-func2 <- function(x) { data.frame(mean = mean(x), sd = sd(x)) }
+func2 <- function(x) { 
+  if (!is.numeric(x)) {
+    stop("输入必须为数值向量！", call. = FALSE)
+  }
+  mean <- mean(x)
+  sd <- sd(x)  #计算平均值、标准差
+  return(data.frame(mean, sd))
+  }
 Q15 <- func2(c(1,2,3,4,5))
 ```
 
@@ -161,7 +182,9 @@ Q15 <- func2(c(1,2,3,4,5))
 16.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q16。(tips:函数%%用于计算两个数相除的余数)
 ```{r}
 
-fun3 <- function(x = 10) x %% 2 == 0
+fun3 <- function(x = 10) {
+  return(x %% 2 == 0)
+}
 Q16 <- fun3(22) 
 ```
 
@@ -169,7 +192,12 @@ Q16 <- fun3(22)
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 
-func4 <- function(x) {if (x > 0) "Positive" else if (x < 0) "Negative" else "Zero"}
+func4 <- function(x) {if (x > 0) 
+  return("Positive" )
+  else if (x < 0) 
+    return("Negative")
+  else if("x == 0")
+    return("zero")}
 Q17 <- func4(-3)
 ```
 
@@ -183,7 +211,7 @@ func5 <- function(x) {
   else if (x >= 80) {return("B")} 
   else if (x >= 70) {return("C")} 
   else if (x >= 60) {return("D")} 
-  else {return("E")}}
+  else if (x < 60){return("E")}}
 Q18 <- func5(95)
 
 ```
