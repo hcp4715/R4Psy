@@ -99,7 +99,7 @@ Q5 <- Q4$health  # 从Q4中提取health列
 Q5 <- factor(Q5, 
              levels = c("Poor", "Fair", "Good", "Very Good", "Excelent"),
              ordered = TRUE)
-
+sort(Q5)
 # 检查排序结果
 print(levels(Q5))  # 查看因子水平顺序
 summary(Q5)        # 查看各等级的计数
@@ -220,8 +220,7 @@ print(Q13)
 # homework 14
 # 创建函数func
 func <- function(a = 1, b = 1) {
-  (a + b)^2
-}
+  return((a + b)^2)}
 
 # 使用函数计算a=3, b=4时的值
 Q14 <- func(a = 3, b = 4)
