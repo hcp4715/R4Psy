@@ -6,7 +6,6 @@ output:
   pdf_document: default
 ---
 
-
 1.读取 penguin_rawdata.csv(data/penguin/ penguin_rawdata.csv),并赋值给Q1
 
 ```{r homework 1}
