@@ -92,7 +92,9 @@ Q5 <- factor(Q4$health,
              levels = c("Poor", "Fair", "Good", "Very Good", "Excellent"),
              ordered = TRUE)
 
-Q5
+sorted_Q5 <- sort(Q5)
+sorted_Q5
+
 ```
 ---
 6.判断'Poor'和'Fair'是否存在于Q5中，输出逻辑值为Q6_1和Q6_2
@@ -194,12 +196,14 @@ Q14
 15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
 ```{r}
 func2 <- function(x) {
-  data.frame(mean = mean(x), sd = sd(x))
+  result <- data.frame(mean = mean(x), sd = sd(x))
+  return(result)
 }
 
 Q15 <- func2(c(1, 2, 3, 4, 5))
 
 Q15
+
 ```
 
 ---
@@ -218,33 +222,40 @@ Q16
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func4 <- function(x) {
-  if (x > 0) {
+  if (!is.numeric(x) || length(x) != 1) {
+    return("Invalid input")
+  } else if (x > 0) {
     return("Positive")
   } else if (x < 0) {
     return("Negative")
-  } else {
+  } else if (x == 0) {
     return("Zero")
+  } else {
+    return("Invalid input")
   }
 }
 
 Q17 <- func4(-3)
 
 Q17
+
 ```
 
 ---
 18.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q18。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
 func5 <- function(x) {
-  if (x >= 90) {
+  if (!is.numeric(x) || length(x) != 1 || is.na(x) || x < 0 || x > 100) {
+    return("Invalid input")
+  } else if (x >= 90) {
     return("A")
-  } else if (x >= 80) {
+  } else if (x >= 80 && x < 90) {
     return("B")
-  } else if (x >= 70) {
+  } else if (x >= 70 && x < 80) {
     return("C")
-  } else if (x >= 60) {
+  } else if (x >= 60 && x < 70) {
     return("D")
-  } else {
+  } else if (x < 60) {
     return("E")
   }
 }
@@ -252,6 +263,7 @@ func5 <- function(x) {
 Q18 <- func5(95)
 
 Q18
+
 ```
 ---
 
