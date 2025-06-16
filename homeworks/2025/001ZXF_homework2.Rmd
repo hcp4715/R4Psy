@@ -217,15 +217,13 @@ Q15
 16.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q16。(tips:函数%%用于计算两个数相除的余数)
 ```{r}
 
-
 fun3 <- function(x = 10) {
-  if (x %% 2 == 0) {
-    return(TRUE)
-  } else {
-    return(FALSE)
+  if (!is.numeric(x) || x %% 1 != 0) {
+    warning("输入必须为整数", x)
+    return(NA)
   }
+  x %% 2 == 0
 }
-
 
 Q16 <- fun3(22)
 
@@ -237,12 +235,16 @@ Q16
 ```{r}
 
 func4 <- function(x) {
+  if (!is.numeric(x) || x %% 1 != 0) {
+    stop("输入必须为整数")
+  }
+  
   if (x > 0) {
-    return("Positive")
+    "Positive"
   } else if (x < 0) {
-    return("Negative")
+    "Negative"
   } else {
-    return("Zero")
+    "Zero"
   }
 }
 
@@ -256,18 +258,21 @@ Q17
 ```{r}
 
 func5 <- function(x) {
+  if (!is.numeric(x)) stop("输入必须为数值")
+  
   if (x >= 90) {
-    return("A")
-  } else if (x >= 80 && x <= 89) {
-    return("B")
-  } else if (x >= 70 && x <= 79) {
-    return("C")
-  } else if (x >= 60 && x <= 69) {
-    return("D")
+    "A"
+  } else if (x >= 80) {
+    "B"
+  } else if (x >= 70) {
+    "C"
+  } else if (x >= 60) {
+    "D"
   } else {
-    return("E")
+    "E"
   }
 }
+
 
 
 Q18 <- func5(95)
@@ -278,14 +283,20 @@ Q18
 19编写一个函数 func6，接受一个正整数 n 作为输入，使用 for 循环计算 n 的阶乘（factorial），并返回结果。然后使用该函数将 5 的阶乘计算出来，输出为 Q21。（tips：for 循环可以用于重复执行多次运算，将累乘结果保存在一个变量中）
 ```{r}
 
-
 func6 <- function(n) {
+  if (!is.numeric(n) || n < 0 || n %% 1 != 0) {
+    stop("输入必须是正整数")
+  }
+  
+  if (n == 0) return(1)  # 0! = 1
+  
   result <- 1
-  for (i in 1:n) {
+  for (i in 2:n) {  # 优化循环范围（2到n）
     result <- result * i
   }
-  return(result)
+  result
 }
+
 
 
 Q19 <- func6(5)
