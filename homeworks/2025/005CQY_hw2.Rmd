@@ -16,7 +16,7 @@ output:
 
 library(here)
 # 通过here函数构建绝对路径
-Q1 <- read.csv(here("data/penguin/penguin_rawdata.csv"))
+Q1 <- read.csv(here("data", "penguin", "penguin_rawdata.csv"))
 ```
 
 ---
@@ -206,10 +206,11 @@ Q14 <- func(a = 3, b = 4)
 
 # 定义函数
 func2 <- function(x) {
-  data.frame(
+  result <- data.frame(
     mean = mean(x),
     sd = sd(x)
   )
+  return(result)
 }
 
 # 计算指定向量的均值和标准差
@@ -222,7 +223,8 @@ Q15 <- func2(c(1, 2, 3, 4, 5))
 
 # 定义函数
 fun3 <- function(x = 10) {
-  x %% 2 == 0
+  result <- x %% 2 == 0
+  return(result)
 }
 
 # 检验输入 22 的返回值
@@ -235,15 +237,16 @@ Q16 <- fun3(22)
 
 # 定义函数
 func4 <- function(x) {
-     if(x > 0){
-        result = "Positive"
-        return(result)
-     }
-     else if(x < 0){
-             result = "Negative"
-             return(result)
-     }
-      else{print("Zero")}
+  if (!is.numeric(x)) {
+    result <- "Error: Input must be numeric"
+  } else if (x > 0) {
+    result <- "Positive"
+  } else if (x < 0) {
+    result <- "Negative"
+  } else if (x == 0) {  
+    result <- "Zero"
+  }
+  return(result)
 }
 
 # 检验输入 -3 的返回值
@@ -255,22 +258,20 @@ Q17 <- func4(x = -3)
 ```{r}
 
 func5 <- function(x) {
-  if(x >= 90){
-    result = "A"
-    return(result)
-  }
-  else if(x >= 80){
-    result = "B"
-    return(result)
-  }
-  else if(x >= 70){
-    result = "C"
-    return(result)
-  }else if(x >= 60){
-    result = "D"
-    return(result)
-  }
-  else{print("E")}
+  if (!is.numeric(x)) {
+    result <- "Error: Input must be numeric"
+  } else if (x >= 90) {
+    result <- "A"
+  } else if (x >= 80) {
+    result <- "B"
+  } else if (x >= 70) {
+    result <- "C"
+  } else if (x >= 60) {
+    result <- "D"
+  } else if (x < 60) {
+    result <- "E"
+  } 
+  return(result)
 }
 
 # 转换 95 分为等级
