@@ -13,7 +13,6 @@ output: html_document
 
 # 也可以用基础包，输入路径读取
 
-
 library(readr)
 file_path <- "./data/penguin/penguin_rawdata.csv"
 Q1 <- read_csv(file = file_path)
