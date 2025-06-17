@@ -1,0 +1,3 @@
+"0","# 找到所有要读取的文件名"
+"0","# 使用 full.names 参数获取完整路径的文件列表"
+"0","files <- list.files(here::here(""data"", ""match""), pattern = ""data_exp7_rep_match_.*\\.out$"", full.names = TRUE)"

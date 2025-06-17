@@ -1,0 +1,6 @@
+"0","# 所有数据路径"
+"0","files <- list.files(  #<<"
+"0","  ## <- & ="
+"0","  here::here(""data"", ""match""), "
+"0","  pattern = ""data_exp7_rep_match_.*\\.out$"", "
+"0","  full.names = TRUE)"

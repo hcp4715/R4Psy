@@ -1,0 +1,3 @@
+"0","# 计算每个被试两次核心温度的均值，保存为Temperature"
+"0","df1 <- dplyr::mutate(df1, "
+"0","                     Temperature = rowMeans(select(df1, starts_with(""Temperature""))))"

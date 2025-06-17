@@ -1,0 +1,8 @@
+"0","# analyses of RT"
+"0","ANOVA_rt <- afex::aov_ez(data = df.mt.rt.subj, "
+"0","                         id = ""Sub"", "
+"0","                         dv = ""RT_mean"","
+"0","                         within = c(""Identity"", ""Valence"")"
+"0","                           )"
+"2","警告: More than one observation per design cell, aggregating data using `fun_aggregate = mean`.
+To turn off this warning, pass `fun_aggregate = mean` explicitly."

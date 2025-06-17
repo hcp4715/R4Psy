@@ -1,0 +1,12 @@
+"0","# age为num"
+"0","case_when("
+"0","  age < 18 ~ ""Child"","
+"0","  age >= 18 & age < 65 ~ ""Adult"","
+"0","  age >= 65 ~ ""Senior"""
+"0",")"
+"1","[1m[33mError[39m in `case_when()`:[22m
+[38;5;251m[33m![38;5;251m Failed to evaluate the left-hand side of formula 1.[39m
+[1mCaused by error:[22m
+[33m![39m object 'age' not found
+[90mRun `]8;;x-r-run:rlang::last_trace()rlang::last_trace()]8;;` to see where the error occurred.[39m
+"

@@ -1,0 +1,6 @@
+"0","# 选择我们需要的变量"
+"0","df4 <- dplyr::select(df3,"
+"0","                     Sub, Age, Sex, Hand, #人口统计学"
+"0","                     Block, Bin, Trial,   # 试次"
+"0","                     Shape, Label, Match, # 刺激"
+"0","                     Resp, ACC, RT)       # 反应结果"

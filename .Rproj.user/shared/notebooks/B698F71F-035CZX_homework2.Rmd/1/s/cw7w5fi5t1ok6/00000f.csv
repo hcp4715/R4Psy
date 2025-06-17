@@ -1,0 +1,3 @@
+"0","Q10 <- Q10 %>%"
+"0","  mutate(phone_total = rowSums(select(., starts_with(""phone"")), na.rm = TRUE))"
+"0","Q10"

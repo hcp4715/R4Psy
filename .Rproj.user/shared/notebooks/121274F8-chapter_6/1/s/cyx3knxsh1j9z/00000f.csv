@@ -1,0 +1,8 @@
+"0","# 创建一个包含需要反向计分的变量的列表"
+"0","vars_to_reverse <- c(""ALEX4"", ""ALEX12"", ""ALEX14"", ""ALEX16"")"
+"0",""
+"0","# 对列表中的变量进行反向计分"
+"0","df1$ALEX <- bruceR::SUM(df1, "
+"0","                        varrange = ""ALEX1:ALEX16"", "
+"0","                        rev = vars_to_reverse, "
+"0","                        likert = 1:5)"

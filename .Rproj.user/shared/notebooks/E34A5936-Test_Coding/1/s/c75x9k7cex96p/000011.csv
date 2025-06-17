@@ -1,0 +1,5 @@
+"0","ggplot(pg_raw, aes(x = age, y = health, color = factor(sex))) +"
+"0","  geom_point() +"
+"0","  geom_smooth(method = ""lm"", se = FALSE) +"
+"0","  labs(title = ""Age vs. Glucose by Sex"", x = ""Age"", y = ""Total Glucose"", color = ""Sex"")"
+"0",""

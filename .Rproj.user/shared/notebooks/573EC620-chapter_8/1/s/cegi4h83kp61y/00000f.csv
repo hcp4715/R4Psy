@@ -1,0 +1,8 @@
+"0","pg_raw %>% "
+"0","      drop_na(Temperature_t1,Temperature_t2,sex) %>% "
+"0","      ggplot(aes(x = Temperature_t1, "
+"0","                 y = Temperature_t2,"
+"0","                 color = factor(sex))) +"
+"0","      geom_point() + "
+"0","      geom_smooth()  "
+"0",""

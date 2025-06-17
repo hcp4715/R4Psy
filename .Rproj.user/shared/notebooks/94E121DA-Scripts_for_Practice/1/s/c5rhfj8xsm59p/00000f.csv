@@ -1,0 +1,2 @@
+"0","df_dprime %>%"
+"0","      dplyr::select(-c(hit:cr)) "

@@ -1,0 +1,4 @@
+"0",""
+"0","# p <- p_rt1 + p_dprime1 + plot_annotation(tag_levels = 'A') + plot_layout(guides = ""collect"") "
+"0",""
+"0","#  ggsave('part1_plot_posterior.png', p, width = 15, height = 7.5)"

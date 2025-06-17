@@ -1,0 +1,5 @@
+"0","pic_box <- mt_raw %>% "
+"0","      ggplot(aes(x = Label, y = RT)) +"
+"0","      geom_boxplot(staplewidth = 1) +"
+"0","      # 绘制箱线图并添加上下边缘线 "
+"0","      theme_classic()"

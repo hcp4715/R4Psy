@@ -1,0 +1,4 @@
+"0","Q13 <- Q10 %>%"
+"0","  filter(health %in% c(""Good"", ""Very Good"", ""Excelent""),"
+"0","         phone_total >= 36)"
+"0","Q13"

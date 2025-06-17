@@ -1,0 +1,3 @@
+"0",""
+"0","# QQ图"
+"0","qqnorm(norm_data, main = ""QQ Plot"")"

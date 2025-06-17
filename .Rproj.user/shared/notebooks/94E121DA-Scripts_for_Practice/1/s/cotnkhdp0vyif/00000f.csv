@@ -1,0 +1,5 @@
+"0","df_dprime_w <- df_dprime %>%"
+"0","      dplyr::select(-c(hit:cr)) %>%"
+"0","      tidyr::pivot_wider(names_from = ""Shape"", values_from = ""Dprime"")"
+"0",""
+"0","print(df_dprime_w)"

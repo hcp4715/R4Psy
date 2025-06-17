@@ -1,0 +1,2 @@
+"0","# 正态性检验-qq图"
+"0","qqnorm(df$Temperature)"

@@ -1,0 +1,3 @@
+"0","a1 <- utils::read.table(""data/match/data_exp7_rep_match_7302.out"", header = TRUE)"
+"0","DT::datatable(head(a1),"
+"0","              fillContainer = TRUE, options = list(pageLength = 4))"

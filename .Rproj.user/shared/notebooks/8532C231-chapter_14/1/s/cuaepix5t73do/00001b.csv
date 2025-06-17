@@ -1,0 +1,4 @@
+"0",""
+"0","# 绘制beta的QQ图"
+"0","qqnorm(bootstrap_results$t, main = ""Normal Probability Plot for Beta"","
+"0","       xlab = ""Theoretical Quantiles"", ylab = ""Sample Quantiles"")"

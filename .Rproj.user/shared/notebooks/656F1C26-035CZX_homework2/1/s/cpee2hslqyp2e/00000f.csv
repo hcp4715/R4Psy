@@ -1,0 +1,12 @@
+"0","library(readr)"
+"0","library(here)"
+"0","Q1 <- read_csv(here::here(""data/penguin/penguin_rawdata.csv""))"
+"2","[1mRows: [22m[34m1517[39m [1mColumns: [22m[34m232[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m   (7): Site, SNI23, SNI24, SNI25, SNI26, SNI27, phone9
+[32mdbl[39m (225): age, sex, monogamous, romantic, health, exercise, eatdrink, gluctot, artgluctot, smoke, cigs, avgtemp, Temperature_t1, Temperature_t2,..."
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"0","Q1"

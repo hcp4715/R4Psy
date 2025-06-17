@@ -1,0 +1,6 @@
+"0","# 查看单个被试的数据"
+"0","# 查看数据时要注意所需变量的数据类型，如果存在问题需要提前转换"
+"0","p1 <- utils::read.table(""data/match/data_exp7_rep_match_7302.out"", header = TRUE)"
+"0","p2 <- utils::read.table(""data/match/data_exp7_rep_match_7303.out"", header = TRUE)"
+"0",""
+"0","p1"

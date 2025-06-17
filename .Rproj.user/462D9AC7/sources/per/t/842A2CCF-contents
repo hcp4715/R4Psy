@@ -1,0 +1,404 @@
+---
+title             : "A Short Demo of R"
+shorttitle        : "Demo"
+
+author: 
+  - name          : "Hu Chuan-Peng"
+    affiliation   : "1,2"
+    corresponding : yes    # Define only one corresponding author
+    address       : "#122 Ninghai Road, Gulou District, Nanjing, China"
+    email         : "hcp4715@hotmail.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+      - "Supervision"
+  - name          : "Wen Jia Hui"
+    affiliation   : "1"
+    role:
+      - "Writing - Review & Editing"
+
+affiliation:
+  - id            : "1"
+    institution   : "Nanjing Normal University"
+  - id            : "2"
+    institution   : "Chinese Open Science Network"
+
+authornote: |
+  This is a demostration of *papaja*.
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  One or two sentences to put the results into a more **general context**.
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "R, Teaching, "
+wordcount         : "X"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+if (!requireNamespace("pacman", quietly = TRUE)) 
+  {
+   install.packages("pacman") 
+  }             # 检查是否已安装 pacman, 如果未安装，则安装包
+
+pacman::p_load("papaja","here", "tidyverse","report")
+r_refs("r-references.bib")
+```
+
+# Introduction
+R is a powerful programming language for statistical analyses and more. We can use R for the whole workflow after getting our raw data, from pre-processing to the final manuscript!
+
+Here we will demonstrate how to use `papaja` for preparing manuscript in APA 6th style. 
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+# Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+
+```{r pre-processing data, message=FALSE, warning=FALSE}
+
+# 定义原始数据的路径
+dataDir <- here::here("data", "match")
+
+# df_raw_match <- dataDir %>%
+  
+# 读取文件的文件名，仅包括 *rep_match*的文件
+flist <- list.files(dataDir, pattern = "*rep_match.*\\.out", full.names = TRUE)
+
+# 使用朴素的for循环来读取、合并数据
+# rm(df.L)
+for (file in flist){
+      
+  # if the merged df.L doesn't exist, create it
+  if (!exists("df.L")){
+    df.L <- read.table(file, header=TRUE, sep="",stringsAsFactors=F)
+  }
+  
+  # if the merged df.L does exist, append to it
+  if (exists("df.L")){
+    temp_dataset <-read.table(file, header=TRUE, sep="",stringsAsFactors=F)
+    df.L<-rbind(df.L, temp_dataset)
+    rm(temp_dataset)
+  }
+}
+  
+# 替代方法
+# do.call("rbind",lapply(as.list(flist),FUN=function(file){read.table(file, header=TRUE, sep="",stringsAsFactors=F)}))
+
+# render the data in numeric format for future analysis
+cols.num <- c('Sub',"Age","Block","Bin","Trial","RT","ACC")
+df.L[cols.num] <- sapply(df.L[cols.num], as.numeric)  
+
+# remove trials without resposne
+df.L <- df.L[!is.na(df.L$ACC),]
+
+# get the independent varialbes
+# moral valence
+df.L$Morality[grepl("moral", df.L$Shape, fixed=TRUE)]   <- "Good"
+df.L$Morality[grepl("immoral", df.L$Shape, fixed=TRUE)] <- "Bad"
+
+# self-referential
+df.L$Identity[grepl("Self", df.L$Shape, fixed=TRUE)]    <- "Self"
+df.L$Identity[grepl("Other", df.L$Shape, fixed=TRUE)]   <- "Other"
+
+# rename columns
+colnames(df.L)[colnames(df.L)=="Sub"] <- "Subject"
+
+# order the variables
+df.L$Morality <- factor(df.L$Morality, levels = c("Good","Bad"))    
+df.L$Identity <- factor(df.L$Identity, levels = c("Self","Other"))  
+df.L$Match    <- factor(df.L$Match,    levels = c("match","mismatch"))
+
+# change all gender from number to string
+df.L$Sex[df.L$Sex == '1'] <- 'male'
+df.L$Sex[df.L$Sex == '2'] <- 'female'
+
+# optional
+# write.csv(df.L, paste(dataDir,'df_matching_raw.csv', sep = "/"),row.names = F)
+
+### Rule 1: wrong trials numbers because of procedure errors
+excldSub1 <- df.L %>%
+   dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::group_by(Subject, Match, Identity,Morality) %>%
+   dplyr::summarise(N = length(ACC)) %>%  # count the trial # for each condition of each subject
+   dplyr::ungroup() %>%
+   dplyr::filter(N != 75) %>%             # filter the rows that trial Number is not 75
+   dplyr::distinct(Subject) %>%           # find the unique subject ID
+   dplyr::pull(Subject)                   # pull the subj ID as vector
+
+
+### Rule 2:  overall accuracy < 0.5
+excldSub2 <- df.L %>%
+   dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::group_by(Subject) %>%
+   dplyr::summarise(N = length(ACC),
+                    countN = sum(ACC),
+                    ACC = sum(ACC)/length(ACC)) %>%  # count the trial # for each condition of each subject
+   dplyr::ungroup() %>%
+   dplyr::filter(ACC < .5) %>%             # filter the subjects with over all ACC < 0.5
+   dplyr::distinct(Subject) %>%             # find the unique subject ID
+   dplyr::pull(Subject)                     # pull the subj ID as vector
+
+### Rule 3:  one condition with zero ACC
+excldSub3 <- df.L %>%
+   dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::group_by(Subject, Match, Identity,Morality) %>%
+   dplyr::summarise(N = length(ACC),
+                    countN = sum(ACC),
+                    ACC = sum(ACC)/length(ACC)) %>%  # count the trial # for each condition of each subject
+   dplyr::ungroup() %>%
+   dplyr::filter(ACC == 0) %>%             # filter the subjects with over all ACC < 0.5
+   dplyr::distinct(Subject) %>%             # find the unique subject ID
+   dplyr::pull(Subject)                     # pull the subj ID as vector
+
+# Id of all excluded subjects
+excldSubs <- c(excldSub1, excldSub2, excldSub3) 
+
+df.L.V <- df.L %>%
+   # dplyr::mutate(ACC = ifelse(ACC == 1, 1, 0))  %>%  # no response as wrong
+   dplyr::filter(!Subject %in% excldSubs)    # exclude the invalid subjects
+
+# check the number of participants are correct
+# length(unique(df.L.V$Subject)) + length(excldSubs) == length(unique(df.L$Subject))
+
+# excluded correct trials with < 200ms RT
+ratio.excld.trials <- nrow(df.L.V[df.L.V$RT*1000 <= 200 & df.L.V$ACC == 1,])/nrow(df.L.V)  # ratio of invalid trials
+
+df.L.V <- df.L.V %>% dplyr::filter(!(RT <= 0.2 & ACC==1)) # filter invalid trials
+
+## Basic information of the data ####
+df.L.T.basic <- df.L %>%
+   dplyr::select(Subject, Age, Sex) %>%
+   dplyr::distinct(Subject, Age, Sex) %>%
+   dplyr::summarise(subj_N = length(Subject),
+                    female_N = sum(Sex == 'female'),
+                    male_N = sum(Sex == 'male'),
+                    Age_mean = round(mean(Age),2),
+                    Age_sd   = round(sd(Age),2))
+
+# valide data for matching task
+df.L.V.basic <- df.L.V %>%
+   dplyr::select(Subject, Age, Sex) %>%
+   dplyr::distinct(Subject, Age, Sex) %>%
+   dplyr::summarise(subj_N = length(Subject),
+                    female_N = sum(Sex == 'female'),
+                    male_N = sum(Sex == 'male'),
+                    Age_mean = round(mean(Age),2),
+                    Age_sd   = round(sd(Age),2))
+```
+
+
+## Participants
+
+We recruited `r df.L.T.basic$subj_N` participants (`r df.L.T.basic$female_N` females, age = `r df.L.T.basic$Age_mean` $\pm$  `r df.L.T.basic$Age_sd`). ....
+
+## Material
+
+We used *Pyschopy 3* to present stimuli and collect participants' responses. ...
+
+## Procedure
+
+We follow the procedure of Sui et al (2012)
+
+```{r calculate dprime}
+# calculate the number of hit,CR,miss or FA 
+df.L.V$sdt <- NA
+for (i in 1:nrow(df.L.V)){
+      if (df.L.V$ACC[i] == 1 & df.L.V$Match[i] == "match"){
+            df.L.V$sdt[i] <- "hit"
+      } else if (df.L.V$ACC[i] == 1 & df.L.V$Match[i] == "mismatch" ){
+            df.L.V$sdt[i] <- "CR"
+      } else if (df.L.V$ACC[i] == 0 & df.L.V$Match[i] == "match"){
+            df.L.V$sdt[i] <- "miss"
+      } else if (df.L.V$ACC[i] == 0 & df.L.V$Match[i] == "mismatch" ){
+            df.L.V$sdt[i] <- "FA"
+      }
+}
+
+# calculate the number of each for each condition
+df.L.V.SDT <- df.L.V %>%
+   dplyr::group_by(Subject,Age, Sex, Morality, Identity,sdt) %>%
+   dplyr::summarise(N = length(sdt)) %>%
+   dplyr::filter(!is.na(sdt))           # no NAs
+
+df.L.V.SDT_w <- reshape2::dcast(df.L.V.SDT, Subject + Age + Sex + Morality + Identity ~ sdt,value.var = "N")
+
+df.L.V.SDT_w <- df.L.V.SDT_w %>%
+   dplyr::mutate(miss = ifelse(is.na(miss),0,miss), # if not miss trial, to 0
+                 FA   = ifelse(is.na(FA),0,FA),     # if not FA trial, to 0
+                 hitR = hit/(hit + miss),           # calculate the hit rate
+                 faR  = FA/(FA+CR))                 # calculate the FA rate
+
+
+# one way to deal with the extreme values
+for (i in 1:nrow(df.L.V.SDT_w)){
+      if (df.L.V.SDT_w$hitR[i] == 1){
+            df.L.V.SDT_w$hitR[i] <- 1 - 1/(2*(df.L.V.SDT_w$hit[i] + df.L.V.SDT_w$miss[i]))
+      }
+}
+
+for (i in 1:nrow(df.L.V.SDT_w)){
+      if (df.L.V.SDT_w$faR[i] == 0){
+            df.L.V.SDT_w$faR[i] <- 1/(2*(df.L.V.SDT_w$FA[i] + df.L.V.SDT_w$CR[i]))
+      }
+}
+
+# define the d prime function
+dprime <- function(hit,fa) {
+        qnorm(hit) - qnorm(fa)
+}
+
+# calculate the d prime for each condition
+df.L.V.SDT_w$dprime <- mapply(dprime, df.L.V.SDT_w$hitR,df.L.V.SDT_w$faR)
+
+# ANOVA
+
+```
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+# Results
+
+```{r 'dprime', fig.cap="*d* prime.", fig.height=4.5, fig.width=5, warning=FALSE}
+# prepare the data for plotting
+df.plot <- df.L.V.SDT_w %>%
+  dplyr::mutate(Morality =factor(Morality, levels = c('Good', 'Bad')),
+                  # create an extra column for ploting the individual data cross different conditions.
+                Conds = dplyr::case_when(
+                                    (Morality == 'Good' & Identity == 'Self') ~ "0.8",
+                                    (Morality == 'Good' & Identity == 'Other') ~ "1.2",
+                                    (Morality == 'Bad' & Identity == 'Self') ~ "1.8",
+                                    (Morality == 'Bad' & Identity == 'Other') ~ "2.2"),
+                Conds = as.numeric(Conds),
+                Conds_j = jitter(Conds, amount=.06)
+                ) 
+
+# get the summary data
+df.plot.sum_p <- df.plot %>%
+  dplyr::group_by(Morality,Identity) %>%
+  dplyr::summarise(d_mean = mean(dprime),
+                   d_sd = sd(dprime),
+                   se = sd(dprime)/sqrt(n())) %>%
+  dplyr::ungroup()
+
+pd1 <- position_dodge(0.8)
+scaleFUN <- function(x) sprintf("%.2f", x)
+scales_y <- list(
+  # RT = scale_y_continuous(limits = c(400, 900)),
+  dprime = scale_y_continuous(labels=scaleFUN)
+)
+  
+p_df_sum <- df.plot  %>% # dplyr::filter(DVs== 'RT') %>%
+    ggplot(., aes(x = Morality, y = dprime)) +
+    geom_line(aes(x = Conds_j, y = dprime, group = Subject),         # link individual's points by transparent grey lines
+              linetype = 1, size = 0.8, colour = "#000000", alpha = 0.03) + 
+    geom_point(aes(x = Conds_j, y = dprime, group = Subject, colour = as.factor(Identity)),   # plot individual points
+               #colour = "#000000",
+               size = 3, shape = 20, alpha = 0.15) +
+    geom_line(data = df.plot.sum_p, aes(x = as.numeric(Morality), # plot the group means  
+                                        y = d_mean, 
+                                        group = Identity, 
+                                        colour = as.factor(Identity)), 
+    linetype = 1, position = pd1, size = 2) +
+    geom_point(data = df.plot.sum_p, aes(x = as.numeric(Morality), # group mean
+                                         y = d_mean, 
+                                         group = Identity, 
+                                         colour = as.factor(Identity)), 
+    shape = 18, position = pd1, size = 6) +
+    geom_errorbar(data = df.plot.sum_p, aes(x = as.numeric(Morality),  # group error bar.
+                                            y = d_mean, group = Identity, 
+                                            colour = as.factor(Identity),
+                                            ymin = d_mean - 1.96*se, 
+                                            ymax = d_mean + 1.96*se), 
+                  width = .05, position = pd1, size = 2, alpha = 0.75) +
+    scale_colour_brewer(palette = "Dark2") +
+    scale_x_continuous(breaks=c(1, 2),
+                       labels=c("Good",  "Bad")) +
+    scale_fill_brewer(palette = "Dark2") + 
+    theme_bw()+
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          panel.border = element_blank(),
+          text=element_text(family='Times'),
+          legend.title=element_blank(),
+          #legend.text = element_text(size =6),
+          legend.text = element_blank(),
+          legend.position = 'none',
+          plot.title = element_text(lineheight=.8, face="bold", size = 18, margin=margin(0,0,20,0)),
+          axis.text = element_text (size = 18, color = 'black'),
+          axis.title = element_text (size = 18),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.line.x = element_line(color='black', size = 1),    # increase the size of font
+          axis.line.y = element_line(color='black', size = 1),    # increase the size of font
+          strip.text = element_text (size = 16, color = 'black'), # size of text in strips, face = "bold"
+          panel.spacing = unit(1.5, "lines")
+    )
+p_df_sum
+```
+
+See figure \@ref(fig:dprime) for *d* prime of the experiment.
+
+
+```{r ANOVA}
+resANOVA <- afex::aov_ez(id="Subject", dv = "dprime", data = df.L.V.SDT_w, within = c("Identity", "Morality"))
+
+resANOVA2 <- afex::aov_4(dprime ~ Identity * Morality + (Identity * Morality|Subject), data = df.L.V.SDT_w )
+
+# bruceR::MANOVA(df.L.V.SDT_w,subID = "Subject", dv = "dprime", within = c("Identity", "Morality"))
+
+apa_anova <- apa_print(resANOVA)
+```
+
+Morality (`r apa_anova$full$Morality`) has an effect on *d* prime and there is an interaction bewteen these two variables.  `r apa_anova$full$Identity_Morality`.
+
+```{r anovaTable}
+apa_table(
+  apa_anova$table
+  , caption = "A really beautiful ANOVA table."
+  , note = "Note that the column names contain beautiful mathematical copy: This is because the table has variable labels."
+)
+```
+
+# Discussion
+
+Here we show R is powerful.
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::

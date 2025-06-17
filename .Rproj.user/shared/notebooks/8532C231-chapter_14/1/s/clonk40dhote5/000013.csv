@@ -1,0 +1,4 @@
+"0",""
+"0","# 绘制Cohen's d的QQ图"
+"0","qqnorm(bootstrap_results$t, main = ""Normal Probability Plot for Cohen's d"","
+"0","       xlab = ""Theoretical Quantiles"", ylab = ""Sample Quantiles"")"

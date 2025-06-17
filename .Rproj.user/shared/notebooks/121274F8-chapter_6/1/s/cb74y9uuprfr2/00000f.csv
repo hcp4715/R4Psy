@@ -1,0 +1,3 @@
+"0","# 按照Temperature, DEQ处理缺失值"
+"0","df1 <- filter(df1, !is.na(Temperature_t1) "
+"0","              & !is.na(Temperature_t2) & !is.na(DEQ))"

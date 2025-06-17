@@ -1,0 +1,5 @@
+"0","func2 <- function(x) {"
+"0","  data.frame(mean = mean(x), sd = sd(x))"
+"0","}"
+"0","Q15 <- func2(c(1, 2, 3, 4, 5))"
+"0","Q15"

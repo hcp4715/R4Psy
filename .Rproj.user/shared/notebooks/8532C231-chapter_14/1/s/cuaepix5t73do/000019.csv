@@ -1,0 +1,2 @@
+"0","mean_R2 <- mean(bootstrap_results$t)"
+"0","abline(v = mean_R2, col = ""green"", lty = 2)"

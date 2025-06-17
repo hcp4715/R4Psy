@@ -1,0 +1,2 @@
+"0","DT::datatable(head(df1),"
+"0","              fillContainer = TRUE, options = list(pageLength = 4))"

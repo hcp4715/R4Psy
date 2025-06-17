@@ -1,0 +1,7 @@
+"0","# 计算p值"
+"0","p_value <- mean(abs(perRes$permuted_diffs) >= abs(perRes$original_diff))"
+"0","p_value"
+"1","[1]"
+"1"," 0.095"
+"1","
+"

@@ -1,0 +1,2 @@
+"0","quartets::datasaurus_dozen %>%  ## 包中的数据"
+"0","  head(10)"

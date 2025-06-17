@@ -1,0 +1,38 @@
+"0","if (!requireNamespace('pacman', quietly = TRUE)) {"
+"0","    install.packages('pacman')"
+"0","}"
+"0",""
+"0",""
+"0","pacman::p_load("
+"0","  # 本节课需要用到的 packages"
+"0","  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,"
+"0","  # 生成课件"
+"0","  xaringan,xaringanthemer,xaringanExtra)"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/whisker_0.4.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 84066 bytes (82 KB)
+"
+"2","downloaded 82 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/xaringanthemer_0.4.3.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1207501 bytes (1.2 MB)
+"
+"2","downloaded 1.2 MB
+
+"
+"1","程序包‘whisker’打开成功，MD5和检查也通过
+"
+"1","程序包‘xaringanthemer’打开成功，MD5和检查也通过
+"
+"1","
+"
+"1",""
+"1","下载的二进制程序包在
+	C:\Users\蔡振辛\AppData\Local\Temp\RtmpyyvTuU\downloaded_packages里"
+"1",""
+"1","
+"

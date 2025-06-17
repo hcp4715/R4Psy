@@ -1,0 +1,5 @@
+"0","pic_dens <- mt_raw %>% "
+"0","      ggplot() +"
+"0","      # 绘制密度曲线 "
+"0","      geom_density(aes(x = ACC)) +"
+"0","      theme_classic()"

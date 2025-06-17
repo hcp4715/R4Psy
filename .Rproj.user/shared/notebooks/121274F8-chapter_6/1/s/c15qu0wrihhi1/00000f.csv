@@ -1,0 +1,6 @@
+"0","# 计算ALEX"
+"0","df1 <- mutate(df1, "
+"0","              ALEX = rowSums(select(df1, starts_with(""ALEX""))))"
+"0",""
+"0","# 查看数据"
+"0","df1"

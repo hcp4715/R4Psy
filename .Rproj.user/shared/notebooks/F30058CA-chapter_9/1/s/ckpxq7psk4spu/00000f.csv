@@ -1,0 +1,4 @@
+"0","df.penguin <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv')) %>%"
+"0","  dplyr::mutate(subjID = row_number()) %>%"
+"0","  dplyr::select(subjID,Temperature_t1, Temperature_t2) %>%         # 选择变量"
+"0","  dplyr::filter(!is.na(Temperature_t1) & !is.na(Temperature_t2)) "

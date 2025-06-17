@@ -1,0 +1,4 @@
+"0","# 按Site计算Temperature的平均值"
+"0","df1 <- dplyr::group_by(df1, Site)"
+"0","df2 <- dplyr::summarise(df1, mean_Temperature = mean(Temperature), n = n())"
+"0","df1 <- dplyr::ungroup(df1)"
