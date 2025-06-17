@@ -1,121 +1,0 @@
-"0","## NOT SHOW"
-"0","## PLOT GIF"
-"0","pacman::p_load(camcorder,tidyverse,bruceR)"
-"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/gifski_1.32.0-2.zip'
-"
-"2","Content type 'application/zip'"
-"2"," length 1035853 bytes (1011 KB)
-"
-"2","downloaded 1011 KB
-
-"
-"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/magick_2.8.6.zip'
-"
-"2","Content type 'application/zip'"
-"2"," length 24806278 bytes (23.7 MB)
-"
-"2","downloaded 23.7 MB
-
-"
-"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/rsvg_2.6.2.zip'
-"
-"2","Content type 'application/zip'"
-"2"," length 8444236 bytes (8.1 MB)
-"
-"2","downloaded 8.1 MB
-
-"
-"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/svglite_2.1.3.zip'
-"
-"2","Content type 'application/zip'"
-"2"," length 686305 bytes (670 KB)
-"
-"2","downloaded 670 KB
-
-"
-"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/camcorder_0.1.0.zip'
-"
-"2","Content type 'application/zip'"
-"2"," length 1451157 bytes (1.4 MB)
-"
-"2","downloaded 1.4 MB
-
-"
-"1","程序包‘gifski’打开成功，MD5和检查也通过
-"
-"1","程序包‘magick’打开成功，MD5和检查也通过
-"
-"1","程序包‘rsvg’打开成功，MD5和检查也通过
-"
-"1","程序包‘svglite’打开成功，MD5和检查也通过
-"
-"1","程序包‘camcorder’打开成功，MD5和检查也通过
-"
-"1","
-"
-"1",""
-"1","下载的二进制程序包在
-	C:\Users\蔡振辛\AppData\Local\Temp\RtmpyyvTuU\downloaded_packages里"
-"1",""
-"1","
-"
-"0","data = quartets::datasaurus_dozen"
-"0","colors = c('#FF5733','#00CED1','#FFD700',"
-"0","           '#8A2BE2','#32CD32','#4682B4',"
-"0","           '#FF4500','#9400D3','#00FF00',"
-"0","           '#FF1493','#8B0000','#FF69B4','#20B2AA')"
-"0",""
-"0","orders <- data$dataset %>% unique()"
-"0","orders <- c(orders[-1],orders[1])"
-"0",""
-"0","pic <- list()"
-"0","for(i in 1:13) {"
-"0","  "
-"0","    pic[[i]] <- data %>% filter(dataset == orders[i]) %>%"
-"0","      ggplot(aes(x, y)) +"
-"0","      geom_point(color = colors[i]) +"
-"0","      geom_smooth(method = ""lm"", color = 'black')  +"
-"0","      labs(title = paste0('dataset:  ', orders[i])) +"
-"0","      bruceR::theme_bruce() +"
-"0","      theme(title = element_text(size = 20)) "
-"0","}"
-"0",""
-"0","gg_record("
-"0","  dir <- file.path(tempdir(), ""recording""), "
-"0","  device = ""png"","
-"0","  width = 5,"
-"0","  height = 5,"
-"0","  units = ""in"","
-"0","  dpi = 500"
-"0",")"
-"0",""
-"0","for(i in 1:13){"
-"0","  pic[[i]] %>% print()"
-"0","}"
-"0",""
-"0","gg_playback(name = file.path(paste0(getwd(),'/picture/chp7/'), ""dino.gif""),"
-"0","            first_image_duration = 1,"
-"0","            last_image_duration = 3,"
-"0","            frame_duration = 1,loop = F,"
-"0","            playback = T,last_as_first = F,"
-"0",")"
-"2","Inserting image 1 at 0.00s (6%)..."
-"2","Inserting image 2 at 1.00s (13%)..."
-"2","Inserting image 3 at 2.00s (20%)..."
-"2","Inserting image 4 at 3.00s (26%)..."
-"2","Inserting image 5 at 4.00s (33%)..."
-"2","Inserting image 6 at 5.00s (40%)..."
-"2","Inserting image 7 at 6.00s (46%)..."
-"2","Inserting image 8 at 7.00s (53%)..."
-"2","Inserting image 9 at 8.00s (60%)..."
-"2","Inserting image 10 at 9.00s (66%)..."
-"2","Inserting image 11 at 10.00s (73%)..."
-"2","Inserting image 12 at 11.00s (80%)..."
-"2","Inserting image 13 at 12.00s (86%)..."
-"2","Inserting image 14 at 13.00s (93%)..."
-"2","Inserting image 15 at 14.00s (100%)..."
-"2","
-Encoding to gif..."
-"2"," done!
-"
-"0","gg_stop_recording()"

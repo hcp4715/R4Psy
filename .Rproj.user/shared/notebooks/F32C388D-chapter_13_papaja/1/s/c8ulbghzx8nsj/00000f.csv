@@ -1,3 +1,0 @@
-"0","# Seed for random number generation"
-"0","set.seed(42)"
-"0","knitr::opts_chunk$set(cache.extra = knitr::rand_seed)"

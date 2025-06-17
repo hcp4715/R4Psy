@@ -1,4 +1,0 @@
-"0","df.pg.raw <- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',"
-"0","                       header = T, "
-"0","                       sep="","","
-"0","                       stringsAsFactors = FALSE) "

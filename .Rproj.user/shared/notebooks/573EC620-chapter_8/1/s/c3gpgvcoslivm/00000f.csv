@@ -1,8 +1,0 @@
-"0","library(showtext)"
-"0","showtext::showtext_auto(enable = T)"
-"0","quartets::datasaurus_dozen %>% "
-"0","  filter(dataset == 'dino') %>% "
-"0","  ggplot(aes(x,y)) + geom_point(color ='#20B2AA') + "
-"0","  theme_bruce() + "
-"0","  labs(title = '请记住这只 DINO !!!') + "
-"0","  theme(plot.title = element_text(size = 20)) "

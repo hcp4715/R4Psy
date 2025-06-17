@@ -1,7 +1,0 @@
-"0","pic_box_1 <- df8 %>% "
-"0","      ggplot(aes(x = Shape, y = hit)) +"
-"0","      geom_boxplot(staplewidth = 1) +"
-"0","      # 绘制箱线图并添加上下边缘线 "
-"0","      theme_classic()"
-"0",""
-"0","pic_box_1"

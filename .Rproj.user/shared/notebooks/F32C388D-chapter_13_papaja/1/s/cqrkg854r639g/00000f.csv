@@ -1,6 +1,0 @@
-"0","# sample data from a normal distribution"
-"0","a <- rnorm(n = 150, mean = 0, sd = 2)"
-"0",""
-"0","a_N <- length(a)"
-"0","a_mean <- mean(a)"
-"0","a_sd <- sd(a)"

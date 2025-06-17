@@ -1,3 +1,0 @@
-"0","ggplot(df, aes(Temperature)) +"
-"0","    geom_histogram(aes(y =..density..), color='black', fill='white', bins=30) +"
-"0","    geom_density(alpha=.5, fill='red')"

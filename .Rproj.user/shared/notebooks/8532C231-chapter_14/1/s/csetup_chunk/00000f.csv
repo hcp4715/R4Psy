@@ -1,8 +1,0 @@
-"0","## 准备工作"
-"0","if (!requireNamespace('pacman', quietly = TRUE)) {"
-"0","    install.packages('pacman')"
-"0","}"
-"0",""
-"0","pacman::p_load(here, tidyverse, ggplot2, papaja, bruceR)"
-"0",""
-"0","options(scipen=99999,digits = 5)"

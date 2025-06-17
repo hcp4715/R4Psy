@@ -1,8 +1,0 @@
-"0","## NOT RUN"
-"0","## 上节课介绍了write.csv,也可使用bruceR::export"
-"0","bruceR::export("
-"0","  df3, "
-"0","  file = here::here(""data"", ""match"",""match_raw.csv""))"
-"0",""
-"0","## 当然，export 不仅可以保存数据，也可以输出模型结果"
-"0",""

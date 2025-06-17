@@ -1,3 +1,0 @@
-"0","skimr::skim(mt_raw) %>% "
-"0","  capture.output() %>% "
-"0","  .[25:41]"

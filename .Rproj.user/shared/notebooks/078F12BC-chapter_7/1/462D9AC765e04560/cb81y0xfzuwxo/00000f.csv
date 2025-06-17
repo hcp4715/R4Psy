@@ -1,4 +1,0 @@
-"0","## 看起来如何？"
-"0","iris %>% group_by(Species) %>% summarize_all(mean) %>%"
-"0","ungroup %>% gather(measure, value, -Species) %>%"
-"0","arrange(value)"

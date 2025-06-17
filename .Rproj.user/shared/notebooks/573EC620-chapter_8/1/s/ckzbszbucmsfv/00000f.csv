@@ -1,8 +1,0 @@
-"0","pic_mix <- mt_raw %>% "
-"0","      ggplot(aes(x = RT,"
-"0","                 ## 直方图的统计结果通过after_stat(density)传递给了密度图"
-"0","                 y = after_stat(density))) +  "
-"0","      geom_histogram() +"
-"0","      geom_density() +"
-"0","      # 设定绘图风格"
-"0","      theme_classic()"

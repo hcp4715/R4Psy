@@ -1,6 +1,0 @@
-"0","## 尝试将两个图层叠加在一起"
-"0","mt_raw %>% "
-"0","      ggplot(aes(x = ACC))+"
-"0","      geom_histogram(bins = 40) + "
-"0","      geom_density() +"
-"0","      theme_classic()"

@@ -1,8 +1,0 @@
-"0","Q4 <- Q3 %>%"
-"0","  mutate(health = recode(health,"
-"0","                         `5` = ""Excelent"","
-"0","                         `4` = ""Very Good"","
-"0","                         `3` = ""Good"","
-"0","                         `2` = ""Fair"","
-"0","                         `1` = ""Poor""))"
-"0","Q4"

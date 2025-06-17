@@ -1,4 +1,0 @@
-"0","# 将Shape变量拆分"
-"0","df4 <- tidyr::extract(df4, Shape, into = c(""Valence"", ""Identity""),"
-"0","                      regex = ""(moral|immoral)(Self|Other)"", remove = FALSE)"
-"0","df4 <- dplyr::filter(df4, Match == ""match"" & Valence == ""moral"") "

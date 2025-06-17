@@ -1,2 +1,0 @@
-"0","mean_beta <- mean(bootstrap_results$t)"
-"0","abline(v = mean_beta, col = ""green"", lty = 2)"

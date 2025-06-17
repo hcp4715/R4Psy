@@ -1,8 +1,0 @@
-"0","gender <- c(""男"",""女"",""女"",""男"")"
-"0","gender1 <- factor(gender, levels = c('男','女'))"
-"0","score <- c(97,99,95,96)"
-"0","letter <- c(""A"",""A"",""B"",""B"")"
-"0","logic <- c(TRUE, FALSE, TRUE, FALSE)"
-"0","data <- data.frame(gender1, score, letter, logic)"
-"0",""
-"0","print(data)"

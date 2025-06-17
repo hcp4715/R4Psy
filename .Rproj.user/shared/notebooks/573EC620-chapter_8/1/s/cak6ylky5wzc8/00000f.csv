@@ -1,6 +1,0 @@
-"0","# 以penguin问卷中前后体温为例"
-"0",""
-"0","p1 <- pg_raw %>%"
-"0","      ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量"
-"0","                 y = Temperature_t2)) "
-"0","p1 ## 坐标轴名称已对应，虽然图片为空"

@@ -1,6 +1,0 @@
-"0","# 读取数据"
-"0","pg_raw <- bruceR::import(here::here("
-"0","  ""data"", ""penguin"",""penguin_rawdata.csv""))"
-"0",""
-"0","mt_raw <- bruceR::import(here::here("
-"0","  ""data"", ""match"",""match_raw.csv"")) "

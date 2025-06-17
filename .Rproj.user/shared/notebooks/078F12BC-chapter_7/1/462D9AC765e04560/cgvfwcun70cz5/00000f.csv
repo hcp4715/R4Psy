@@ -1,7 +1,0 @@
-"0","### 是不是更整洁一些"
-"0","iris %>%"
-"0","  dplyr::group_by(Species) %>%"
-"0","  dplyr::summarize_if(is.numeric, mean) %>%"
-"0","  dplyr::ungroup() %>%"
-"0","  tidyr::gather(measure, value, -Species) %>%"
-"0","  dplyr::arrange(value)"

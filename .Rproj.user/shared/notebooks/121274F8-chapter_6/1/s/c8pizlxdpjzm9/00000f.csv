@@ -1,2 +1,0 @@
-"0","# 导入数据"
-"0","df1 <- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))"

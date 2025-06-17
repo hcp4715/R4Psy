@@ -1,7 +1,0 @@
-"0","#| code-fold: true    #指示折叠或展开代码"
-"0","#| code-summary: ""expand for full code""    #代码块说明文字"
-"0","#| fig-align: ""center""      #设置图形居中显示"
-"0",""
-"0","# 直方图"
-"0","hist(norm_data, probability = TRUE, main = ""Histogram and PDF Comparison"","
-"0","     xlab = ""Values"", ylab = ""Density"", col = ""lightblue"", border = ""black"")"

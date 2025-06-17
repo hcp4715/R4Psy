@@ -1,5 +1,0 @@
-"0","pic_his <- mt_raw %>% "
-"0","      # 确定映射到x轴的变量"
-"0","      ggplot(aes(x = ACC)) + "
-"0","      geom_histogram(bins = 40) +"
-"0","      theme_classic()"

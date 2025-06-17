@@ -1,3 +1,0 @@
-"0","df <- df.penguin %>% "
-"0","  select(subjID, climate, romantic, Temperature) "
-"0","  "

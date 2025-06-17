@@ -1,2 +1,0 @@
-"0","DT::datatable(head(df.penguin),"
-"0","              fillContainer = TRUE, options = list(pageLength = 4))"

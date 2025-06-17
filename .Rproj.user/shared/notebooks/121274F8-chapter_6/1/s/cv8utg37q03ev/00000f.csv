@@ -1,5 +1,0 @@
-"0","# 转换数据类型"
-"0","# 这里数据类型是正确的，只是示例"
-"0","df1 <- dplyr::mutate(df1, "
-"0","                     Temperature_t1_new = as.numeric(Temperature_t1), "
-"0","                     Temperature_t2 = as.numeric(Temperature_t2))"

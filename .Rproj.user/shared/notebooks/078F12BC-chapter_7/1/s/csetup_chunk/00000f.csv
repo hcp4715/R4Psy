@@ -1,6 +1,0 @@
-"0","knitr::opts_chunk$set("
-"0","  fig.width=9, fig.height=4, fig.retina=2, "
-"0","  out.width=""100%"","
-"0","  message = FALSE,"
-"0","  warning = F"
-"0",")"

@@ -1,3 +1,0 @@
-"0","# 将两个被试的数据合并"
-"0","df3 <- base::rbind(p1, p2)"
-"0","df3 <- dplyr::bind_rows(p1, p2)"

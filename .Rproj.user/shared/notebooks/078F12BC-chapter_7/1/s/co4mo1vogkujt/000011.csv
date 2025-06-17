@@ -1,4 +1,0 @@
-"0","# 分实验条件计算"
-"0","df4 <- dplyr::group_by(df4, Sub, Shape, Label, Match)"
-"0","df4 <- dplyr::summarise(df4, mean_ACC = mean(ACC), mean_RT = mean(RT))"
-"0","df4 <- dplyr::ungroup(df4)"

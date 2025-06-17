@@ -1,8 +1,0 @@
-"0","# 加载包后函数前不需要注明包，此处只是为了提示函数属于哪个包"
-"0","# 选择我们需要的变量：Temperature_t1, Temperature_t2, SNI28-32, DEQ, romantic, ALEX1-16"
-"0","df1 <- dplyr::select(df1, "
-"0","                     Temperature_t1, Temperature_t2, "
-"0","                     socialdiversity, "
-"0","                     Site, DEQ, "
-"0","                     romantic, "
-"0","                     ALEX1:ALEX16)"

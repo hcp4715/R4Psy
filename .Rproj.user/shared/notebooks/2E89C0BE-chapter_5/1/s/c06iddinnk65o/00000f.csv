@@ -1,3 +1,0 @@
-"0","df <- data.frame(matrix(ncol = 3, nrow = 0))"
-"0","x <- c(""name"", ""age"", ""gender"")"
-"0","colnames(df) <- x"

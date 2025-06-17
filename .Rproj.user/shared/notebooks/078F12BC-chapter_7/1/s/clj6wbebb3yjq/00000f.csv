@@ -1,4 +1,0 @@
-"0","# 可以将清华的镜像设置为下载的镜像"
-"0","# options(repos = c(CRAN = ""https://mirrors.tuna.tsinghua.edu.cn/CRAN/""))"
-"0","# 导入所需R包"
-"0","library(tidyverse)"
