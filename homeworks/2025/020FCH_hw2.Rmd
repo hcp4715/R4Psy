@@ -1,0 +1,330 @@
+title: "Test1"
+author: "Fangru"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+1.读取 penguin_rawdata.csv(data/penguin/ penguin_rawdata.csv),并赋值给Q1
+
+```{r homework 1}
+# 有多种写法
+# 用 here::here 函数进行查找
+library(here)
+Q1 <- read.csv(here("data", "penguin", "penguin_rawdata.csv"))
+
+# 也可以用基础包，输入路径读取
+Q1 <- read.csv("data/penguin/penguin_rawdata.csv")
+
+```
+
+---
+2.根据下列图片中自己所在的位置（所在行代表应选取的站点；所在列代表在固定站点后、应选取的特定的行；如Tsinghua (1,20)，即表示学号尾号为302001的同学完成作业时，需要选出“Tsinghua”这站点数据的第1到第20行的数据（提示：在Tidyverse中可以调用slice函数来选定相应的列）。
+![pic1](picture/homework/pic1.png)
+
+```{r homework 2}
+# 同样存在多种方法
+# dplyr
+
+library(dplyr)
+
+Q2 <- Q1 %>%
+  filter(Site == "Oxford") %>%
+  slice(15:34)
+
+
+# Base R
+#Oxford_rows <- Q1[Q1$Site == "Oxford", ]  # 筛选出 Oxford 的数据
+#Q2 <- Oxford_rows[15:34, ]     # 选出其中的第15到34行
+
+```
+
+---
+3. 在Q2中，进一步选择保留“health”和“phone1-9”等变量，赋值给Q3；查看这几个变量的数据类型，用注释进行记录;如果有数据类型为文字，需要转化为数字
+```{r homework 3}
+# 选择变量,同样，这里同样存在多种方法
+# dplyr
+
+#library(dplyr)
+
+#Q3 <- Q1 %>%
+#  filter(Site == "Oxford") %>%
+#  slice(15:34) %>%
+#  select(health, starts_with("phone"))
+
+# Base R
+Q3 <- Q2[, c("health", paste0("phone", 1:9))]
+
+# 查看数据类型
+str(Q3)
+# health: int  3 3 3 3 2 2 2 5 3 4 ...
+# phone1: int  5 2 4 1 5 1 3 1 2 5 ...
+# phone2: int  5 4 4 3 4 1 4 2 3 5 ...
+# phone3: int  2 2 2 1 4 1 3 1 3 4 ...
+# phone4: int  5 3 4 3 4 1 3 2 2 5 ...
+# phone5: int  5 2 4 1 4 1 1 1 2 4 ...
+# phone6: int  5 1 2 1 5 1 3 1 3 2 ...
+# phone7: int  5 4 3 1 5 1 1 1 3 5 ...
+# phone8: int  3 1 4 1 3 1 1 2 1 3 ...
+# phone9: chr  "5" "2" "2" "2" ...
+
+#转化，完成后可重新查看数据类型检查
+#phone9输出结果为文本型
+Q3$phone9 <- as.numeric(Q3$phone9)
+str(Q3$phone9)
+
+```
+
+---
+4.将“health”中的数值改为文字（5= Excelent; 4 = Very Good; 3 = Good; 2 = Fair; 1 = Poor），并记录为Q4（tips：可参考chapter_6所学内容）
+```{r homework 4}
+# 推荐用tidyverse进行操作
+library(dplyr)
+
+Q4 <- Q3 %>%
+  mutate(health = case_when(
+    health == 5 ~ "Excellent",
+    health == 4 ~ "Very Good",
+    health == 3 ~ "Good",
+    health == 2 ~ "Fair",
+    health == 1 ~ "Poor",
+    TRUE ~ NA_character_  # 处理其他情况，避免报错
+  ))
+
+```
+
+---
+5.将 health 赋值给Q5，并按从“Poor”到“Excelent”进行排序(tips:通过转化成因子型，可以按照特定方式排序）
+```{r homework 5}
+
+# 将 health 列转换为有序因子，赋值给 Q5
+Q5 <- factor(Q3$health,
+             levels = 1:5,
+             labels = c("Poor", "Fair", "Good", "Very Good", "Excellent"),
+             ordered = TRUE)
+
+# 按从 "Poor" 到 "Excellent" 顺序排序 Q5
+Q5 <- Q5[order(Q5)]
+
+# 输出 Q5（以向量/列表形式展示）
+print(Q5)
+
+```
+---
+6.判断'Poor'和'Fair'是否存在于Q5中，输出逻辑值为Q6_1和Q6_2
+```{r homework 6}
+# 判断 "Poor" 是否存在于 Q5，结果是 TRUE 或 FALSE
+Q6_1 <- "Poor" %in% Q5
+
+# 判断 "Fair" 是否存在于 Q5，结果是 TRUE 或 FALSE
+Q6_2 <- "Fair" %in% Q5
+
+# 输出结果
+Q6_1  # 是否包含 "Poor"
+Q6_2  # 是否包含 "Fair"
+
+```
+---
+7.用paste()函数将Q5中的元素连接成一个字符串，中间用英文逗号隔开，并输出为Q7(tips:可以使用"?"查看函数功能)
+```{r homework 7}
+
+# 将 Q5 中的元素用逗号连接为一个字符串
+Q7 <- paste(Q5, collapse = ",")
+
+# 输出 Q7
+print(Q7)
+
+
+```
+
+---
+8.使用str_length()函数计算Q5中每个元素的长度，并输出为Q8(tips:可以使用"?"查看函数功能)
+```{r homework 8}
+library(stringr)
+
+# 使用 str_length() 计算 Q5 中每个字符串的长度
+Q8 <- str_length(Q5)
+
+# 输出 Q8
+print(Q8)
+
+```
+
+9.使用str_sub()函数，提取Q5中每个元素的第一个字母，并输出为Q9(tips:可以使用"?"查看函数功能)
+```{r homework 9}
+
+# 加载 stringr 包（如尚未加载）
+library(stringr)
+
+# 使用 str_sub 提取每个元素的第一个字母
+Q9 <- str_sub(Q5, start = 1, end = 1)
+
+# 输出 Q9
+print(Q9)
+
+```
+
+---
+10.在数据框Q4中新增一列，列名为Num，即这组数据的被试编号，其值为当前所在行，输出新数据框为Q10(tips:可用dplyr中的row_number()函数，或Base R中的nrow()函数,得到数据框的行数)
+```{r homework 10}
+# 同样存在多种方法
+# dplyr
+library(dplyr)
+
+Q10 <- Q4 %>%
+  mutate(Num = row_number())
+
+# Base R
+Q10 <- Q4
+Q10$Num <- 1:nrow(Q4)
+
+```
+
+---
+11.找出数据框Q10中健康在'Good'及以上的被试的编号，输出为Q11。
+```{r homework 11}
+
+# 筛选出健康为 Good 及以上的被试编号
+Q11 <- Q10 %>%
+  filter(health >= "Good") %>%
+  pull(Num)  # 提取被试编号列
+print(Q11)
+```
+
+---
+12.在数据框Q10中新增一列"phone_total"，计算被试的phone总分(tips:一个一个录入的效率较低，可参考chapter6提供的简便方法)
+```{r homework 12}
+# dplyr
+library(dplyr)
+
+Q10 <- Q10 %>%
+  mutate(phone_total = rowSums(select(., starts_with("phone")), na.rm = TRUE))
+#select(., starts_with("phone"))：选出所有以 "phone" 开头的列（比如 phone1, phone2, ...）
+#rowSums(...)对这些列按行求和
+#na.rm = TRUE：忽略缺失值（NA），避免报错
+
+# Base R
+# Q10$phone_total <- rowSums(
+  # Q10[,grepl('^phone',names(Q10))],
+  # na.rm = TRUE
+#)
+
+
+```
+
+---
+13.在数据框中查找：健康在'Good'及以上，且phone_total >= 36的所有被试信息，并输出为数据框 Q13。
+```{r}
+# 筛选
+Q13 <- Q10 %>%
+  filter(health >= "Good",phone_total >= 36) %>%
+  pull(Num)  # 提取被试编号列
+print(Q13)
+
+```
+
+---
+(以下题为独立题目，与此前题目无关)
+14.创建一个名为func的函数，输入两个参数 a 和 b (默认值：a=1,b=1)，返回它们的和的平方((a + b)^2)。并使用func函数，计算 a=3 和 b=4 时的值，输出为Q14。
+```{r}
+#创建函数
+func <- function(a = 1, b = 1) {
+  (a + b)^2
+}
+#使用func函数计算a=3 和 b=4 时的值
+Q14 <- func(a = 3, b = 4)
+print(Q14)  # 输出应为 (3 + 4)^2 = 49
+
+```
+
+---
+15.创建一个名为 func2 的函数，该函数接受一个数值向量x作为输入，并返回一个数据框，要求：第一列为该向量的均值(列名为mean)，第二列为该向量的标准差(列名为sd)。使用该函数计算向量 c(1, 2, 3, 4, 5) 的平均值和标准差，并将结果输出为Q15。(tips:函数mean()和sd()分别用于计算向量的均值和标准差)
+```{r}
+#创建函数func2
+func2 <- function(x) {
+  data.frame(
+    mean = mean(x),
+    sd = sd(x)
+  )
+}
+#使用该函数计算向量 c(1, 2, 3, 4, 5) 的均值和标准差，并赋值给 Q15
+Q15 <- func2(c(1, 2, 3, 4, 5))
+print(Q15)
+
+```
+
+---
+16.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q16。(tips:函数%%用于计算两个数相除的余数)
+```{r}
+#创建函数func3
+fun3 <- function(x = 10) {
+  (x %% 2) == 0
+}
+#测试输入 22，结果赋值给 Q16
+Q16 <- fun3(22)
+print(Q16)  # 应该输出 TRUE，因为22是偶数
+
+```
+
+---
+17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
+```{r}
+#创建函数func4
+func4 <- function(x) {
+  if (x > 0) {
+    return("Positive")
+  } else if (x < 0) {
+    return("Negative")
+  } else {
+    return("Zero")
+  }
+}
+#测试输入 -3，结果赋值给 Q17
+Q17 <- func4(-3)
+print(Q17)  # 应该输出 "Negative"
+
+```
+
+---
+18.编写一个函数 func5，接受一个数值x作为输入，表示学生的分数。该函数的功能是将分数转换成对应的等级，分数大于等于90为"A"，80到89为"B"，70到79为"C"，60到69为"D"，小于60为"E"。然后使用该函数将95分转换成等级，输出为 Q18。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
+```{r}
+func5 <- function(x) {
+  if (x >= 90) {
+    return("A")
+  } else if (x >= 80) {
+    return("B")
+  } else if (x >= 70) {
+    return("C")
+  } else if (x >= 60) {
+    return("D")
+  } else {
+    return("E")
+  }
+}
+#将95转换为等级
+Q18 <- func5(95)
+print(Q18)  # 应该输出 "A"
+
+```
+---
+
+19编写一个函数 func6，接受一个正整数 n 作为输入，使用 for 循环计算 n 的阶乘（factorial），并返回结果。然后使用该函数将 5 的阶乘计算出来，输出为 Q19。（tips：for 循环可以用于重复执行多次运算，将累乘结果保存在一个变量中）
+```{r}
+func6 <- function(n) {
+  result <- 1
+  for (i in 1:n) {
+    result <- result * i
+  }
+  return(result)
+}
+
+Q19 <- func6(5)
+
+Q19
+```
+---
+
+
+
+
