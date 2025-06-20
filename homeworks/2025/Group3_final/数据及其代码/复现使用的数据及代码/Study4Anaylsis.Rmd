@@ -1,0 +1,703 @@
+---
+title: "Study4Analysis"
+author: "Steve Rathje"
+date: "6/7/2021"
+output: html_document
+---
+
+## Set Working Directory
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "D:/R homework/data")
+```
+
+## Install Packages
+```{r cars, include = FALSE}
+library(psych)
+library(dplyr)
+library(tidyverse)
+library(jtools)
+library(ggpubr)
+library(rstatix)
+library(tidyverse)
+library(Rmisc)
+library(jtools)
+library(report)
+library(rockchalk)
+# install.packages("cowplot")
+library(cowplot)
+# library(colortools)
+
+# if(!require(devtools)) install.packages("devtools")
+# devtools::install_github("kassambara/ggpubr")
+```
+
+## Read in file, exclusions, rename variables 
+```{r}
+data <- read_csv("Study4AnonymizedData.csv")
+
+#Distinct IP Addresses
+#data <- data %>% distinct(IPAddress, .keep_all = TRUE)
+
+#选取未通过注意力检验的参与者的 Prolific ID  
+#不存在Prolific ID，经过查找发现了ResponseId
+FailedAttentionCheck <- ifelse(data$Q114 != 35, data$ResponseId, NA)
+plyr::count(FailedAttentionCheck)
+#统计未通过注意力检验的参与者数量  
+plyr::count(data$Q114 != 35)
+
+
+#剔除未通过注意力检验且随机作答的参与者（预注册的排除标准）
+data <- subset(data, data$Q114 == 35)
+plyr::count(subset(data, data$Random == 1))
+data <- subset(data, data$Random == 2)
+nrow(data)
+
+```
+
+## Recode Important Variables （编码重要变量）
+```{r}
+#将政治倾向重新编码为二元变量（是否为共和党）
+data$isRepub <- ifelse(data$DemRep_C > 3, 1, 0)
+
+#保守主义得分（直接赋值）  
+data$PoliticalOrientation <- data$DemRep_C
+
+#重新编码投票变量（0 = 投给希拉里, 1 = 投给特朗普）
+data$Vote <- ifelse(data$POTUS2016 == 1, 0, data$POTUS2016) 
+data$Vote <- ifelse(data$Vote == 2, 1, data$Vote)
+data$Vote <- ifelse(data$Vote > 1, NA, data$Vote)
+
+#重新编码实验条件变量（0 = 准确性/有来源，1 = 控制/有来源，3 = 准确性/无来源，4 = 控制/无来源）
+data$Condition <- as.factor(data$condition)
+
+#按党派划分为共和党和民主党参与者  
+dataRepub <- subset(data, data$isRepub == 1)
+dataDem <- subset(data, data$isRepub == 0)
+
+#外群体厌恶变量（对立政党情感评分的相反数）  
+data$outgrouphate <- ifelse(data$isRepub == 1, (100 - data$FeelingDem_1), (100 - data$FeelingRepub_1))
+data$ingrouplove <- ifelse(data$isRepub == 1, data$FeelingRepub_1, data$FeelingDem_1)
+#情感极化 = 内群体喜爱 + 外群体厌恶 
+data$affectivepolarization <- data$ingrouplove + data$outgrouphate 
+#重新编码党派立场强度（中间偏1，极端偏3）  
+data$strengthpartisanship <- car::recode(data$DemRep_C, "1 = 3; 2 = 2; 3 = 1; 4 = 1; 5 = 2; 6 = 3")
+
+```
+
+## Characteristics of sample（描述统计）
+```{r}
+
+#sample size
+nrow(data)
+
+#number of repubs (Repub = 1)
+plyr::count(data$isRepub)
+
+plyr::count(data$Condition)
+
+#Political Orientation
+plyr::count(data$DemRep_C)
+
+#gender (1 = Male, 2 = Female, 4 = Trans Male, 5 = Trans/Non-Binary)
+plyr::count(data$Gender)
+
+data$isFemale <- ifelse(data$Gender == 2, 1, 0)
+
+#race
+plyr::count(data$Ethnicity)
+
+#Mean Age
+mean(data$Age, na.rm = TRUE)
+SD(data$Age)
+
+```
+
+## Create Dichotomous Measures （创建二元变量——新闻真实性）
+```{r}
+# 二元正确识别得分（如果准确率大于3则为1，否则为0）
+data$DT1Bin <- ifelse(data$AccuracyDT1 > 3, 1, 0)
+data$DT2Bin <- ifelse(data$AccuracyDT2 > 3, 1, 0)
+data$DT3Bin <- ifelse(data$AccuracyDT3 > 3, 1, 0)
+data$DT4Bin <- ifelse(data$AccuracyDT4 > 3, 1, 0)
+data$RT1Bin <- ifelse(data$AccuracyRT1 > 3, 1, 0)
+data$RT2Bin <- ifelse(data$AccuracyRT2 > 3, 1, 0)
+data$RT3Bin <- ifelse(data$AccuracyRT3 > 3, 1, 0)
+data$RT4Bin <- ifelse(data$AccuracyRT4 > 3, 1, 0)
+data$DF1Bin <- ifelse(data$AccuracyDF1 > 3, 1, 0)
+data$DF2Bin <- ifelse(data$AccuracyDF2 > 3, 1, 0)
+data$DF3Bin <- ifelse(data$AccuracyDF3 > 3, 1, 0)
+data$DF4Bin <- ifelse(data$AccuracyDF4 > 3, 1, 0)
+data$RF1Bin <- ifelse(data$AccuracyRF1 > 3, 1, 0)
+data$RF2Bin <- ifelse(data$AccuracyRF2 > 3, 1, 0)
+data$RF3Bin <- ifelse(data$AccuracyRF3 > 3, 1, 0)
+data$RF4Bin <- ifelse(data$AccuracyRF4 > 3, 1, 0)
+
+# 统计识别为“真实”新闻（true news）的条数
+data$TrueBin <-     data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin +
+                      data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin
+
+# 统计识别为“虚假”新闻（false news）的条数
+data$FalseBin <-    data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin +
+                      data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+# 真伪辨识能力（真实减去虚假）
+data$truthDiscernBin <- data$TrueBin - data$FalseBin
+
+# 区分党派的真实新闻识别
+data$TrueDemBin <- data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin
+  
+data$TrueRepubBin <- data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin
+
+# 区分党派的虚假新闻识别
+data$FalseDemBin <- data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin 
+
+data$FalseRepubBin <- data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+# 每位被试看到的民主党/共和党新闻条数
+data$DemBin <- data$TrueDemBin + data$FalseDemBin
+data$RepubBin <- data$TrueRepubBin + data$FalseRepubBin
+
+# 重新计算总的真实新闻识别得分（应与 TrueBin 相等）
+data$TrueBin <- data$TrueDemBin + data$TrueRepubBin
+
+# 民主党和共和党新闻被识别的百分比（总共8条每类新闻）
+data$DemPercent <- (data$DemBin / 8)*100
+data$RepubPercent <- (data$RepubBin / 8)*100
+
+# 综合准确率得分 = 真实新闻得分 + （16条虚假新闻中未误判的条数）
+data$AccuracyScore <- data$TrueBin + (8 - data$FalseBin)
+
+# 满奖金（AccuracyScore > 15 且在条件 0 或 3 中）
+fullbonus <- ifelse(data$AccuracyScore > 15 & (data$Condition == 0 | data$Condition == 3), data$ResponseId, NA)
+
+# 半奖金（AccuracyScore 在 14 或 15 且在条件 0 或 3 中）
+halfbonus <- ifelse(data$AccuracyScore > 13 & data$AccuracyScore < 16 & (data$Condition == 0 | data$Condition == 3), data$ResponseId, NA)
+
+# 准确率百分比（满分16分）
+data$PercentAccurate <- (data$AccuracyScore/16)*100
+
+```
+
+## 1-Way ANOVA -- Truth Discernment（真相辨别）
+```{r}
+
+# 获取描述性统计信息（每个条件下的均值和置信区间）
+data %>% 
+  group_by(Condition) %>%
+  get_summary_stats(truthDiscernBin, type = "mean_ci")
+
+# 根据是否为共和党支持者进行子集划分
+# 提取共和党参与者数据（isRepub == 1）
+dataRepub <- subset(data, data$isRepub == 1)
+# 提取民主党参与者数据（isRepub == 0）
+dataDem <- subset(data, data$isRepub == 0)
+
+# 可视化：绘制共和党参与者在不同条件下的真相辨别箱线图
+ggboxplot(dataRepub,  x = "Condition", y = "truthDiscernBin")
+
+# 检验方差齐性假设（Levene检验）
+# data %>% levene_test(truthDiscernBin ~ Condition)
+
+# 如果数据不满足方差齐性，可以使用 Welch ANOVA（更稳健的检验方法）【提示性注释】
+# 如果 assumptions aren't met（比如方差齐性不成立），建议用 welch_anova_test()
+
+# 执行单因素方差分析（ANOVA）：检验不同条件对真相辨别的影响是否显著
+res.aov <- data %>% anova_test(truthDiscernBin ~ Condition) 
+res.aov  # 输出结果，包括F值、p值、偏η²等信息
+
+# 事后比较分析：进行 Tukey HSD 多重比较，检验哪些组别之间有显著差异
+pwc <- data %>% tukey_hsd(truthDiscernBin ~ Condition)
+pwc  # 显示每一组之间的均值差异、置信区间和显著性水平
+
+# （可选）另一种事后比较方法：独立样本 t 检验
+# pwc <- data %>% t_test(truthDiscernBin ~ Condition)
+
+# 计算每个组的置信区间（95%）
+group.CI(data$truthDiscernBin ~ Condition, data, ci = 0.95)
+
+# 计算条件组之间的效应量（Cohen's d）：衡量实际差异大小
+data %>% cohens_d(truthDiscernBin ~ Condition)
+
+
+```
+
+## Political Congruence Variable (Dichotomous)（政治倾向一致性）
+
+```{r}
+# 对于共和党参与者，CongruentBin 是他们识别的共和党新闻条数，否则是民主党新闻条数
+data$CongruentBin <- ifelse(data$isRepub == 1, data$RepubBin, data$DemBin)
+data$IncongruentBin <- ifelse(data$isRepub == 1, data$DemBin, data$RepubBin)
+
+# 正确识别的政治一致新闻条数 / 非一致新闻条数
+data$CongruentTrueBin <- ifelse(data$isRepub == 1, data$TrueRepubBin, data$TrueDemBin)
+data$IncongruentTrueBin <- ifelse(data$isRepub == 1, data$TrueDemBin, data$TrueRepubBin)
+
+# 错误识别的政治一致新闻条数 / 非一致新闻条数
+data$CongruentFalseBin <- ifelse(data$isRepub == 1, data$FalseRepubBin, data$FalseDemBin)
+data$IncongruentFalseBin <- ifelse(data$isRepub == 1, data$FalseDemBin, data$FalseRepubBin)
+
+# 政治一致性偏好得分（政治一致 - 不一致的差值）
+data$partisanGapBin <- data$CongruentBin - data$IncongruentBin
+data$partisanGapTrueBin <- data$CongruentTrueBin - data$IncongruentTrueBin
+data$partisanGapFalseBin <- data$CongruentFalseBin - data$IncongruentFalseBin
+```
+
+## 1-Way ANOVA -- Partisan Bias（党派偏差）
+```{r}
+
+#Get descriptive stats（描述）
+data %>% 
+  group_by(Condition) %>%
+  get_summary_stats(partisanGapBin, type = "mean_ci")
+
+# 0 = accuracy, 1 = control, 2 = politics, 3 = mixed 
+
+# Normality by groups plot （标准化）
+ggqqplot(data, "partisanGapBin", facet.by = "Condition")
+
+# Homogeniety of Variance
+# plot(model, 1)
+
+data %>% levene_test(partisanGapBin ~ Condition)
+
+# If assumptions aren't met, do welch_anova_test()
+#关闭科学计数法
+options(scipen = 100)
+
+# ANOVA test: 
+res.aov <- data %>% anova_test(partisanGapBin ~ Condition)
+res.aov
+
+# Pairwise comparisons with corrections for multiple comparisons
+pwc <- data %>% tukey_hsd(partisanGapBin ~ Condition, scipen = n)
+pwc
+
+pwc <- data %>% t_test(partisanGapBin ~ Condition)
+pwc
+
+group.CI(data$partisanGapBin ~ Condition, data, ci = 0.95)
+data %>% cohens_d(partisanGapBin ~ Condition)
+
+```
+
+## Create Combined Plots（合并图形）
+```{r}
+#未生成TruthDiscernPlot
+metagrid <- plot_grid(TruthDiscernPlot,
+                      PartisanBiasPlot,
+                      BrokenUpGraph,
+                      ncol = 2,
+                      labels = c("A", "B", "C"),
+                      rel_widths = c(1, 1))
+metagrid
+ggsave("MainGraphStudy3.png", width = 8, height = 4)
+
+```
+
+# Truth Discern Sharing （真相辨别分享）
+```{r}
+data$TrueShare <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + ##Fix This
+                       data$ShareDT4 +
+                       data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4) / 8
+
+data$FalseShare <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4 + 
+                       data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4) / 8
+
+data$TruthDiscernSharing <- data$TrueShare - data$FalseShare 
+
+data$TrueDemShare <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + 
+                       data$ShareDT4) / 4
+
+data$TrueRepubShare <- (data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4) / 4
+
+data$FalseDemShare <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4) / 4
+
+data$FalseRepubShare <- (data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4) / 4
+
+data$DemShare <- (data$TrueDemShare + data$FalseDemShare)/2
+data$RepubShare <- (data$TrueRepubShare + data$FalseRepubShare)/2
+#查看condition有哪些水平
+unique(data$Condition)
+# #T检验并不适用，改成单因素方差分析
+# #t.test(TruthDiscernSharing ~ Condition, data = data)
+res.aov <- data %>% anova_test(TruthDiscernSharing ~ Condition)
+res.aov
+data %>% 
+  tukey_hsd(TruthDiscernSharing ~ Condition)
+```
+
+## Political Congruence SHARING（政治一致性分享）
+
+```{r}
+# 依据党派身份设置一致性和不一致性信息的分享得分
+data$CongruentShare <- ifelse(data$isRepub == 1, data$RepubShare, data$DemShare)
+data$IncongruentShare <- ifelse(data$isRepub == 1, data$DemShare, data$RepubShare)
+
+# 一致性真实新闻分享（符合其党派的真实新闻）
+data$CongruentTrueShare <- ifelse(data$isRepub == 1, data$TrueRepubShare, data$TrueDemShare)
+# 不一致真实新闻分享
+data$IncongruentTrueShare <- ifelse(data$isRepub == 1, data$TrueDemShare, data$TrueRepubShare)
+
+# 一致性虚假新闻分享
+data$CongruentFalseShare <- ifelse(data$isRepub == 1, data$FalseRepubShare, data$FalseDemShare)
+# 不一致虚假新闻分享（⚠️ 注意此处结尾变量名可能有误，应为 IncongruentFalseShare）
+data$IncongruentFalseShare <- ifelse(data$isRepub == 1, data$FalseDemShare, data$FalseRepubShare)
+
+# 总体党派偏差分享指标（一致减不一致）
+data$partisanGapShare <- data$CongruentShare - data$IncongruentShare
+data$partisanGapTrueShare <- data$CongruentTrueShare - data$IncongruentTrueShare
+data$partisanGapFalseShare <- data$CongruentFalseShare - data$IncongruentFalseShare  # 修复变量名
+
+```
+
+# 1-Way ANOVA Truth Discern Sharing
+```{r}
+
+# 对 "TruthDiscernSharing" 在不同 Condition（条件）下执行单因素方差分析（ANOVA）
+res.aov <- data %>% anova_test(TruthDiscernSharing ~ Condition)
+res.aov
+
+# 同样方法，分析 IncongruentTrueShare 在各条件下是否存在显著差异
+res.aov <- data %>% anova_test(IncongruentTrueShare ~ Condition)
+res.aov
+
+# 分析 FalseShare（虚假信息分享得分）在各条件下是否显著不同
+res.aov <- data %>% anova_test(FalseShare ~ Condition)
+res.aov
+
+# 可视化：绘制 TruthDiscernSharing 在不同 Condition 下的箱线图
+ggboxplot(data, x = "Condition", y = "TruthDiscernSharing")
+
+# 多重比较（Tukey HSD），用于分析 FalseShare 在不同条件之间的差异
+pwc <- data %>% tukey_hsd(FalseShare ~ Condition)
+pwc
+pwc <- data %>% tukey_hsd(IncongruentTrueShare ~ Condition)
+pwc
+
+# 创建一个新的变量 "Source"，将 Condition = 0 或 1 的归类为“Source”，否则为“No Source”
+data$Source <- ifelse(data$Condition == 0 | data$Condition == 1, "Source", "No Source")
+data$Source <- factor(data$Source)  # 转换为因子变量，便于后续分析
+
+# 创建另一个新变量 "Accuracy"，将 Condition = 0 或 2 归为 “Accuracy”，其余归为 “Control”
+data$Accuracy <- ifelse(data$Condition == 0 | data$Condition == 2, "Accuracy", "Control")
+data$Accuracy <- factor(data$Accuracy)
+
+# data %>% anova_test(TruthDiscernSharing ~ Condition)
+# View(res.aov)
+# pwc <- data %>% tukey_hsd(TruthDiscernSharing ~ Condition)
+# pwc
+
+
+```
+
+## Create Percentage Variables(创建百分比变量)
+
+```{r}
+
+data$CongruentTruePercent <- (data$CongruentTrueBin / 4)*100 
+data$IncongruentTruePercent <- (data$IncongruentTrueBin / 4)*100 
+data$CongruentFalsePercent <- (data$CongruentFalseBin / 4)*100 
+data$IncongruentFalsePercent <- (data$IncongruentFalseBin / 4)*100 
+
+```
+
+## Incongruent True -- Pre-Registered One Way ANOVA (是否分党派?)
+
+```{r}
+#取消科学计数法
+options(scipen=999)
+res.aov <- data %>% anova_test(IncongruentTruePercent ~ Condition)
+res.aov
+
+##Tukey Pairwise Comparisons(事后检验)
+pwc <- data %>% tukey_hsd(IncongruentTruePercent ~ Condition)
+pwc 
+
+group.CI(data$IncongruentTruePercent ~ data$Condition, data = data, ci = 0.95)
+data %>% cohens_d(IncongruentTruePercent ~ condition)
+data %>% cohens_d(CongruentTruePercent ~ Condition)
+data %>% cohens_d(IncongruentFalsePercent ~ Condition)
+data %>% cohens_d(CongruentFalsePercent ~ Condition)
+
+# data %>% t_test(IncongruentTruePercent ~ Condition) 
+# data %>% t_test(IncongruentTruePercent ~ Condition)
+
+
+```
+
+
+## 4X2X2 ANOVA(Perceived Accuracy感知准确性)
+
+```{r}
+# 设置图形主题：清除背景和网格线，设置轴线为黑色
+cleanup = theme(panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(), 
+                panel.background = element_blank(),
+                axis.line = element_line(color = "black"))
+#将原始得分转化为百分比（每人最多可分享4条）
+data$CongruentTruePercent <- (data$CongruentTrueBin / 4)*100 
+data$IncongruentTruePercent <- (data$IncongruentTrueBin / 4)*100 
+data$CongruentFalsePercent <- (data$CongruentFalseBin / 4)*100 
+data$IncongruentFalsePercent <- (data$IncongruentFalseBin / 4)*100 
+#整理数据
+anova <- data %>%
+  gather(key = "PoliticalCongruence", value = "PerceivedAccuracy", CongruentTruePercent , IncongruentTruePercent, CongruentFalsePercent, IncongruentFalsePercent) %>%
+  convert_as_factor(PoliticalCongruence)
+
+#创建新变量Veracity
+anova$Veracity <- ifelse(anova$PoliticalCongruence == "CongruentTruePercent" | anova$PoliticalCongruence == "IncongruentTruePercent", "True", "False")
+xtabs(~anova$Veracity)
+
+#创建新变量PoliticalCongruence
+anova$PoliticalCongruence <- ifelse(anova$PoliticalCongruence == "CongruentTruePercent" | anova$PoliticalCongruence == "CongruentFalsePercent", "Politically Congruent", "Politically Incongruent")
+
+#condition
+anova$Condition <- factor(anova$condition, levels = c(0, 1, 2), labels = c("Control", "Financial Incentive", "Non-Financial Accuracy Motivation"))
+
+anova$Veracity <- factor(anova$Veracity, levels = c("True", "False"))
+
+#分组计算均值和置信区间
+anovagroup <- anova %>%
+  dplyr::select(ResponseId, PoliticalCongruence, Veracity, PerceivedAccuracy, Condition) %>% 
+  dplyr::group_by(ResponseId, PoliticalCongruence, Veracity, Condition) %>%
+  get_summary_stats(PerceivedAccuracy, type = "mean_ci")  # 指定要汇总的变量
+View(anovagroup)
+
+#Calculate Anova
+
+options(scipen = 10000000)
+#Condition 为被试间变量；PoliticalCongruence 和 Veracity 为被试内变量
+res.aov <- anova_test(data = anova, 
+                      dv = PerceivedAccuracy,
+                      between = Condition, 
+                      wid = ResponseId,
+                      within = c(PoliticalCongruence, Veracity))
+View(res.aov)
+
+options(scipen = 10000000)
+get_anova_table(res.aov)
+View(res.aov)
+
+#计算效应量
+# data %>% cohens_d(PerceivedAccuracy ~ condition)
+# cohen.d(anova$PoliticalCongruence, anova$PerceivedAccuracy)
+
+# options(scipen = 100)
+# pwc <- data %>% t_test(IncongruentTruePercent ~ Condition)
+# pwc
+# 
+# View(pwc)
+
+# ggboxplot(anova, x = "ConditionFactor", y = "PerceivedAccuracy", color = "Veracity", palette = "jco", facet.by = "PoliticalCongruence") 
+
+```
+
+## Cognitive Reflection(认知反思)
+```{r}
+data$CR1Correct <- ifelse(data$CR1 == 4, 1, 0)
+data$CR2Correct <- ifelse(data$CR2 == 10, 1, 0)
+data$CR3Correct <- ifelse(data$CR3 == 39, 1, 0)
+
+data$CRSum <- data$CR1Correct + data$CR2Correct + data$CR3Correct
+
+```
+
+## Political Knowledge(政治知识)
+```{r}
+data$PK1Correct <- ifelse(data$`PK1(3)` == 3, 1, 0) 
+data$PK2Correct <- ifelse(data$`PK2(2)` == 2, 1, 0)
+data$PK3Correct <- ifelse(data$`PK3(1)` == 1, 1, 0)
+data$PK4Correct <- ifelse(data$`PK4(2)` == 2, 1, 0)
+data$PK5Correct <- ifelse(data$`PK5(1)` == 1, 1, 0)
+
+data$PKSum <- data$PK1Correct + data$PK2Correct + data$PK3Correct + data$PK4Correct + data$PK5Correct
+```
+
+# GGPlot - Truth Discernment(真相辨别)
+
+```{r}
+
+data$ConditionFactor <- factor(data$Condition, levels = c(0, 1, 2), labels = c("Control","Accuracy (Financial)", "Accuracy (Non-Financial)"))
+
+data <- data
+
+TruthDiscernPlot3 <- ggplot(data, aes(ConditionFactor, truthDiscernBin)) + 
+  stat_summary(fun = mean, geom = "bar",
+                 fill = "#00869A",
+                 width = 0.6) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  coord_cartesian(ylim = c(0, 3.5)) +
+  scale_fill_manual(values=colors) + 
+  ##geom_point(position=position_jitter(width =.15)) +
+  theme_apa() +
+  xlab("") + 
+  ylab("Truth Discernment")
+TruthDiscernPlot3
+
+IncongruentTruePlot <- ggplot(data, aes(ConditionFactor, IncongruentTruePercent)) + 
+  stat_summary(fun = mean, geom = "bar",
+                 fill = "#00869A",
+                 width = 0.6) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  scale_fill_manual(values=colors) + 
+  ##geom_point(position=position_jitter(width =.15)) +
+  theme_apa() +
+  xlab("") + 
+  ylab("Incongruent-True Articles Rated As True")
+IncongruentTruePlot
+
+```
+
+## Partisan Bias PLOT 
+```{r}
+
+data$ConditionFactor <- factor(data$Condition, levels = c(0, 1, 2), labels = c("Control","Accuracy (Financial)", "Accuracy (Non-Financial)"))
+
+PartisanBiasPlot3 <- ggplot(data, aes(ConditionFactor, partisanGapBin)) + 
+  stat_summary(fun = mean, geom = "bar", 
+                 fill = "#C23C59",
+                 width = 0.6) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  coord_cartesian(ylim = c(0, 3.5)) +
+  scale_fill_manual(values=colors) + 
+  ##geom_point(position=position_jitter(width =.15)) +
+  theme_apa() +
+  xlab("") + 
+  ylab("Partisan Bias") 
+PartisanBiasPlot3
+
+```
+
+## 4X2X2 PLOT
+
+```{r}
+
+anova$ConditionFactor <- factor(anova$condition, levels = c(0, 1, 2), labels = c("Control","Accuracy (Financial)", "Accuracy (Non-Financial)"))
+
+BrokenUpGraph <- ggplot(anova, aes(ConditionFactor, PerceivedAccuracy, fill = Veracity)) + 
+  stat_summary(fun = mean, geom = "bar", position = "dodge", width = 0.7) + 
+  stat_summary(fun.data = mean_cl_normal,  position = position_dodge(0.7), width = 0.3, geom = "errorbar") + 
+  facet_wrap(~PoliticalCongruence) + 
+  scale_fill_manual("Veracity",values = c("#3AA6D0", "#FFB600")) + 
+  ylab("Percent Rated as Accurate") +
+  xlab("") + 
+  theme_apa() +
+  theme(legend.position = "none")
+BrokenUpGraph
+ggsave("BrokenUpGraph.png", width = 10, height = 4)
+
+leg <- get_legend(ggplot(anova, aes(ConditionFactor, PerceivedAccuracy, fill = Veracity)) + 
+  stat_summary(fun = mean, geom = "bar", position = "dodge", width = 0.7) + 
+  stat_summary(fun.data = mean_cl_normal,  position = position_dodge(0.7), width = 0.3, geom = "errorbar") + 
+  facet_wrap(~PoliticalCongruence) + 
+  scale_fill_manual("Veracity",values = c("#3AA6D0", "#FFB600")) + 
+  ylab("Percent Rated as Accurate") +
+  xlab("") + 
+  theme_apa(legend.pos = "bottom", legend.font.size = 12))
+
+
+```
+
+## Moderation By Ideology(按意识形态进行调节分析)
+
+```{r}
+# 创建一个新的变量：如果是“非金钱动机”（condition == 2），则标记为 1；否则为 0
+data$ConditionNonFinancialBin <- ifelse(data$condition == 2, 1, 0)
+# 把原来是“金钱激励”（condition == 1）的行设置为 NA（排除在非金钱 vs 控制组分析之外）
+data$ConditionNonFinancialBin <- ifelse(data$condition == 1, NA, data$ConditionNonFinancialBin)
+# 创建一个新的变量：对比金钱激励 vs 控制组（即 condition == 0 或 1），大于等于 2 的设为 NA
+data$ConditionBin <- ifelse(data$condition < 2, data$condition, NA)
+# 对 truthDiscernSharing 在控制组与金钱激励组之间进行 t 检验
+t.test(TruthDiscernSharing ~ ConditionBin, data = data)#前文Truth是大写
+
+# 使用广义线性模型（glm）检验：非金钱激励与党派身份（共和党）是否交互影响 partisanGapBin
+lm <- glm(partisanGapBin ~ ConditionNonFinancialBin*isRepub, data = data)
+summary(lm)
+
+# 检验：金钱激励与认知反思（CRSum）的交互是否影响 truthDiscernBin
+lm <- glm(truthDiscernBin ~ ConditionBin*CRSum, data = data)
+summary(lm)
+
+# 检验：金钱激励与政治知识（PKSum）的交互是否影响 truthDiscernBin
+lm <- glm(truthDiscernBin ~ ConditionBin*PKSum, data = data)
+summary(lm)
+
+#金钱激励与党派身份是否交互影响 partisanGapBin
+lm <- glm(partisanGapBin ~ ConditionBin*isRepub, data = data)
+summary(lm)
+
+#金钱激励与党派身份是否交互影响 truthDiscernBin
+lm <- glm(truthDiscernBin ~ ConditionBin*isRepub, data = data)
+summary(lm)
+
+#金钱激励与党派身份是否交互影响 IncongruentTrueBin（辨识与党派不一致且真实的新闻）
+lm <- glm(IncongruentTrueBin ~ ConditionBin*isRepub, data = data)
+summary(lm)
+
+# 将数据根据党派身份分为民主党（isRepub == 0）与共和党（isRepub == 1）两个子集
+dataDem <- subset(data, data$isRepub == 0)
+dataRepub <- subset(data, data$isRepub == 1)
+
+library(report)
+# 在共和党组中，比较控制组和金钱激励组在 truthDiscernBin 上是否有显著差异（并格式化输出）
+t.test(truthDiscernBin ~ ConditionBin, data = dataRepub) %>% report()
+
+# 比较 partisanGapBin（党派偏差）在共和党组中是否因条件不同而显著变化
+t.test(partisanGapBin ~ ConditionBin, data = dataRepub) %>% report()
+
+# 比较 IncongruentTrueBin 在共和党组中的显著性差异
+t.test(IncongruentTrueBin ~ ConditionBin, data = dataRepub) %>% report()
+
+# 重复以上三项分析，在民主党组中进行
+t.test(truthDiscernBin ~ ConditionBin, data = dataDem) %>% report()
+t.test(partisanGapBin ~ ConditionBin, data = dataDem) %>% report()
+t.test(IncongruentTrueBin ~ ConditionBin, data = dataDem) %>% report()
+
+
+```
