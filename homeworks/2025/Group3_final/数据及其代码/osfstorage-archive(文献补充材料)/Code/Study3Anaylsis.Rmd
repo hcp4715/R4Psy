@@ -1,0 +1,913 @@
+---
+title: "Study3Analysis"
+author: "Steve Rathje"
+date: "6/7/2021"
+output: html_document
+---
+
+## Set Working Directory
+```{r setup, include=FALSE}
+setwd("/Users/steverathje/Desktop/Financial\ Nudge\ fake\ News")
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Install Packages
+```{r cars, include = FALSE}
+library(psych)
+library(dplyr)
+library(tidyverse)
+library(jtools)
+library(ggpubr)
+library(rstatix)
+library(tidyverse)
+install.packages("Rmisc")
+library(Rmisc)
+library(jtools)
+library(rockchalk)
+
+install.packages("colortools")
+library(colortools)
+
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("kassambara/ggpubr")
+```
+
+## Read in file, exclusions, rename variables 
+```{r}
+data <- read_csv("DataAugust17.csv")
+
+#Distinct IP Addresses
+#data <- data %>% distinct(IPAddress, .keep_all = TRUE)
+
+#get Prolific IDs of those who failed attention checks
+FailedAttentionCheck <- ifelse(data$Q114 != 35, data$PROLIFIC_PID, NA)
+plyr::count(FailedAttentionCheck)
+
+plyr::count(data$Q114 != 35)
+#FailedAttentionCheck
+
+#Exclude those who failed the attention check and responded randomly (pre-registered exclusion criteria)
+plyr::count(subset(data, data$Q114 == 35))
+data <- subset(data, data$Q114 == 35)
+plyr::count(subset(data, data$Random == 1))
+data <- subset(data, data$Random == 2)
+
+```
+
+## Recode Important Variables 
+```{r}
+#Recode political oriention into binary (is Repub) variable
+data$isRepub <- ifelse(data$DemRep_C > 3, 1, 0)
+
+#Conservatism
+data$PoliticalOrientation <- data$DemRep_C
+
+#Vote
+data$Vote <- ifelse(data$POTUS2016 == 1, 0, data$POTUS2016) 
+data$Vote <- ifelse(data$Vote == 2, 1, data$Vote)
+data$Vote <- ifelse(data$Vote > 1, NA, data$Vote)
+
+#Recode Condition Variable (0 = Accuracy/Source, 1 = Control/Source, 3 = Accuracy/No Source, 4 = Control/No Source)
+data$Condition <- as.factor(data$condition)
+
+#Split into Repub and Dem 
+dataRepub <- subset(data, data$isRepub == 1)
+dataDem <- subset(data, data$isRepub == 0)
+
+#Outgroup hate variable
+data$outgrouphate <- ifelse(data$isRepub == 1, (100 - data$FeelingDem_1), (100 - data$FeelingRepub_1))
+data$ingrouplove <- ifelse(data$isRepub == 1, data$FeelingRepub_1, data$FeelingDem_1)
+data$affectivepolarization <- data$ingrouplove + data$outgrouphate
+data$strengthpartisanship <- car::recode(data$DemRep_C, "1 = 3; 2 = 2; 3 = 1; 4 = 1; 5 = 2; 6 = 3")
+```
+
+## Characteristics of sample
+```{r}
+
+#sample size
+nrow(data)
+
+#number of repubs (Repub = 1)
+plyr::count(data$isRepub)
+
+plyr::count(data$Condition)
+
+#Political Orientation
+plyr::count(data$DemRep_C)
+
+#gender (1 = Male, 2 = Female, 4 = Trans Male, 5 = Trans/Non-Binary)
+plyr::count(data$Gender)
+
+data$isFemale <- ifelse(data$Gender == 2, 1, 0)
+
+#race
+plyr::count(data$Ethnicity)
+
+#Mean Age
+mean(data$Age, na.rm = TRUE)
+SD(data$Age)
+
+```
+
+## Create Dichotomous Measures 
+```{r}
+#Binary Accuracy Scores
+data$DT1Bin <- ifelse(data$AccuracyDT1 > 3, 1, 0)
+data$DT2Bin <- ifelse(data$AccuracyDT2 > 3, 1, 0)
+data$DT3Bin <- ifelse(data$AccuracyDT3 > 3, 1, 0)
+data$DT4Bin <- ifelse(data$AccuracyDT4 > 3, 1, 0)
+data$DT5Bin <- ifelse(data$AccuracyDT5 > 3, 1, 0)
+data$DT6Bin <- ifelse(data$AccuracyDF6 > 3, 1, 0) ## Correct This
+
+data$RT1Bin <- ifelse(data$AccuracyRT1 > 3, 1, 0)
+data$RT2Bin <- ifelse(data$AccuracyRT2 > 3, 1, 0)
+data$RT3Bin <- ifelse(data$AccuracyRT3 > 3, 1, 0)
+data$RT4Bin <- ifelse(data$AccuracyRT4 > 3, 1, 0)
+data$RT5Bin <- ifelse(data$AccuracyRT5 > 3, 1, 0)
+data$RT6Bin <- ifelse(data$AccuracyRT6 > 3, 1, 0)
+
+data$DF1Bin <- ifelse(data$AccuracyDF1 > 3, 1, 0)
+data$DF2Bin <- ifelse(data$AccuracyDF2 > 3, 1, 0)
+data$DF3Bin <- ifelse(data$AccuracyDF3 > 3, 1, 0)
+data$DF4Bin <- ifelse(data$AccuracyDF4 > 3, 1, 0)
+data$DF5Bin <- ifelse(data$AccuracyDF5 > 3, 1, 0)
+data$DF6Bin <- ifelse(data$AccuracyDF6 > 3, 1, 0)
+
+data$RF1Bin <- ifelse(data$AccuracyRF1 > 3, 1, 0)
+data$RF2Bin <- ifelse(data$AccuracyRF2 > 3, 1, 0)
+data$RF3Bin <- ifelse(data$AccuracyRF3 > 3, 1, 0)
+data$RF4Bin <- ifelse(data$AccuracyRF4 > 3, 1, 0)
+data$RF5Bin <- ifelse(data$AccuracyRF5 > 3, 1, 0)
+data$RF6Bin <- ifelse(data$AccuracyRF6 > 3, 1, 0)
+
+data$TrueBin <-     data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin +
+                      data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin
+
+data$FalseBin <-    data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin +
+                      data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+data$TrueBinFull <-   data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin +
+                      data$DT5Bin + 
+                      data$DT6Bin + 
+                      data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin + 
+                      data$RT5Bin + 
+                      data$RT6Bin
+
+data$FalseBinFull <-  data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin +
+                      data$DF5Bin + 
+                      data$DF6Bin + 
+                      data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin + 
+                      data$RF5Bin + 
+                      data$RF6Bin 
+
+data$truthDiscernBin <- data$TrueBin - data$FalseBin
+data$truthDiscernBinFull <- data$TrueBinFull - data$FalseBinFull
+
+data$TrueDemBinFull <- data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin +
+                      data$DT5Bin + 
+                      data$DT6Bin
+
+data$TrueDemBin <- data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin 
+  
+data$TrueRepubBin <- data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin 
+
+data$FalseDemBin <- data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin 
+
+data$FalseRepubBin <- data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+data$RepubBin <- data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin + 
+                      data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+data$DemBin <- data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin + 
+                      data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin 
+
+##Now with all 24 items: 
+
+data$FalseRepubBinFull <- data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin + 
+                      data$RF5Bin + 
+                      data$RF6Bin 
+
+data$TrueDemBinFull <- data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin + 
+                      data$DT5Bin + 
+                      data$DT6Bin 
+  
+data$TrueRepubBinFull <- data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin + 
+                      data$RT5Bin + 
+                      data$RT6Bin 
+
+data$FalseDemBinFull <- data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin + 
+                      data$DF5Bin + 
+                      data$DF6Bin 
+
+data$DemBinFull <- data$TrueDemBinFull + data$FalseDemBinFull
+data$RepubBinFull <- data$TrueRepubBinFull + data$FalseRepubBinFull
+data$TrueBinFull <- data$TrueDemBinFull + data$TrueRepubBinFull
+data$FalseBinFull <- data$FalseDemBinFull + data$FalseRepubBinFull
+
+data$DemPercent <- (data$DemBinFull / 8)*100
+data$RepubPercent <- (data$RepubBinFull / 8)*100
+
+data$AccuracyScoreFull <- data$TrueBinFull + (12 - data$FalseBinFull)
+
+##FullBonus
+fullbonus <- ifelse(data$AccuracyScoreFull > 22 & (data$Condition == 0 | data$Condition == 3), data$PROLIFIC_PID, NA)
+
+halfbonus <- ifelse(data$AccuracyScore > 13 & data$AccuracyScore < 16 & (data$Condition == 0 | data$Condition == 3), data$PROLIFIC_PID, NA)
+  
+data$PercentAccurate <- (data$AccuracyScoreFull/24)*100
+
+```
+
+## Pre-Registered 2-Way ANOVA -- Truth Discernment
+```{r}
+
+#Get descriptive stats
+data %>% 
+  group_by(Condition) %>%
+  get_summary_stats(truthDiscernBin, type = "mean_ci")
+
+# 0 = accuracy, 1 = control, 2 = politics, 3 = mixed 
+
+dataRepub <- subset(data, data$isRepub == 1)
+dataDem <- subset(data, data$isRepub == 0)
+
+#Visualization
+ggboxplot(dataRepub,  x = "Condition", y = "truthDiscernBinFull")
+
+#Identify Outliers
+data %>% 
+  group_by(Condition) %>%
+  identify_outliers(truthDiscernBin)
+
+# Analyze residuals by building a linear model
+model  <- lm(truthDiscernBinFull  ~ Condition, data = data)
+
+# Create a QQ plot of residuals
+ggqqplot(residuals(model))
+shapiro_test(residuals(model))
+
+# Check normality by groups
+data %>% 
+  group_by(Condition) %>%
+  shapiro_test(truthDiscernBinFull)
+
+# Normality by groups plot 
+ggqqplot(data, "truthDiscernBin", facet.by = "Condition")
+
+# Homogeniety of Variance
+plot(model, 1)
+
+#data %>% levene_test(truthDiscernBin ~ Condition)
+
+# If assumptions aren't met, do welch_anova_test()
+
+# ANOVA test: 
+
+#res.aov <- data %>% anova_test(truthDiscernBin ~ Condition)
+#res.aov
+
+# 2 by 2 ANOVA
+
+data$Source <- ifelse(data$Condition == 0 | data$Condition == 1, "Source", "No Source")
+data$Source <- factor(data$Source)
+data$Accuracy <- ifelse(data$Condition == 0 | data$Condition == 2, "Accuracy", "Control")
+data$Accuracy <- factor(data$Accuracy)
+
+data %>% anova_test(truthDiscernBin ~ Accuracy*Source)
+res.aov
+
+data %>% anova_test(truthDiscernBinFull ~ Accuracy*Source)
+res.aov
+
+# Pairwise comparisons
+pwc <- data %>% tukey_hsd(truthDiscernBin ~ Accuracy*Source)
+pwc
+
+pwc2 <- data %>% tukey_hsd(truthDiscernBinFull ~ Condition)
+
+group.CI(data$truthDiscernBinFull ~ Condition, data, ci = 0.95)
+data %>% cohens_d(truthDiscernBinFull ~ Condition)
+
+```
+
+## Political Congruence Variable (Dichotomous)
+
+```{r}
+data$CongruentBin <- ifelse(data$isRepub == 1, data$RepubBin, data$DemBin)
+data$IncongruentBin <- ifelse(data$isRepub == 1, data$DemBin, data$RepubBin)
+
+data$CongruentTrueBin <- ifelse(data$isRepub == 1, data$TrueRepubBin, data$TrueDemBin)
+data$IncongruentTrueBin <- ifelse(data$isRepub == 1, data$TrueDemBin, data$TrueRepubBin)
+data$CongruentFalseBin <- ifelse(data$isRepub == 1, data$FalseRepubBin, data$FalseDemBin)
+data$IncongruentFalseBin <- ifelse(data$isRepub == 1, data$FalseDemBin, data$FalseRepubBin)
+
+data$partisanGapBin <- data$CongruentBin - data$IncongruentBin
+data$partisanGapTrueBin <- data$CongruentTrueBin - data$IncongruentTrueBin
+data$partisanGapFalseBin <- data$CongruentFalseBin - data$IncongruentFalseBin
+```
+
+## Pre-Registered 2 by 2 ANOVA -- Partisan Bias
+```{r}
+
+#Get descriptive stats
+data %>% 
+  group_by(Condition) %>%
+  get_summary_stats(partisanGapBin, type = "mean_ci")
+
+# 0 = accuracy, 1 = control, 2 = politics, 3 = mixed 
+
+#Visualization
+ggboxplot(data, x = "Condition", y = "partisanGapBin")
+
+#Identify Outliers
+data %>% 
+  group_by(Condition) %>%
+  identify_outliers(partisanGapBin)
+
+# Analyze residuals by building a linear model
+model  <- lm(partisanGapBin ~ Condition, data = data)
+
+# Create a QQ plot of residuals
+ggqqplot(residuals(model))
+shapiro_test(residuals(model))
+
+# Check normality by groups
+data %>% 
+  group_by(Condition) %>%
+  shapiro_test(partisanGapBin)
+
+# Normality by groups plot 
+ggqqplot(data, "partisanGapBin", facet.by = "Condition")
+
+# Homogeniety of Variance
+plot(model, 1)
+
+data %>% levene_test(partisanGapBin ~ Condition)
+
+# If assumptions aren't met, do welch_anova_test()
+
+options(scipen = 100)
+
+# ANOVA test: 
+res.aov <- data %>% anova_test(partisanGapBin ~ Accuracy*Source)
+res.aov
+
+# Pairwise comparisons with corrections for multiple comparisons
+pwc <- data %>% tukey_hsd(partisanGapBin ~ Accuracy*Source, scipen = n)
+pwc
+
+group.CI(data$partisanGapTrueBin ~ Condition, data, ci = 0.95)
+data %>% cohens_d(partisanGapBin ~ Condition)
+
+```
+
+## Partisan Bias Dodge 
+```{r}
+
+dataBias <- data %>%
+  gather(key = "PartisanBias", value = "Bias", partisanGapTrueBin, partisanGapFalseBin) %>%
+  convert_as_factor(PartisanBias)
+
+PartisanBiasPlotDodge <- ggplot(dataBias, aes(ConditionFactor, Bias, fill = PartisanBias)) + 
+  stat_summary(fun = mean, geom = "bar", 
+                 position = "dodge",
+                 width = 0.6) +
+  stat_summary(fun.data = mean_cl_normal,  position = position_dodge(0.7), width = 0.3, geom = "errorbar") +
+  coord_cartesian(ylim = c(0, 2)) +
+  scale_fill_manual("Veracity",values = c("#599ad3", "#F8766D")) + 
+  ##geom_point(position=position_jitter(width =.15)) +
+  theme_apa() +
+  xlab("") + 
+  ylab("Partisan Bias") 
+PartisanBiasPlotDodge
+
+ggplot(anova, aes(ConditionFactor, PerceivedAccuracy, fill = Veracity)) + 
+  stat_summary(fun = mean, geom = "bar", position = "dodge", width = 0.7) + 
+  stat_summary(fun.data = mean_cl_normal,  position = position_dodge(0.7), width = 0.3, geom = "errorbar") + 
+  facet_wrap(~PoliticalCongruence) + 
+  scale_fill_manual("Veracity",values = c("#599ad3", "#F8766D")) + 
+  ylab("Percent Rated as Accurate") +
+  xlab("") + 
+  theme_apa()
+
+```
+
+## Create Combined Plots
+```{r}
+metagrid <- plot_grid(TruthDiscernPlot,
+                      PartisanBiasPlot,
+                      BrokenUpGraph,
+                      ncol = 2,
+                      labels = c("A", "B", "C"),
+                      rel_widths = c(1, 1))
+metagrid
+ggsave("MainGraphStudy3.png", width = 8, height = 4)
+
+```
+
+# Truth Discern Sharing 
+```{r}
+data$TrueShare <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + ##Fix This
+                       data$ShareDT4 +
+                       data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4) / 8
+
+data$TrueShareFull <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + 
+                       data$ShareDT4 +
+                       data$ShareDT5 + 
+                       data$ShareDF6 + ##Fix This
+                       data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4 + 
+                       data$ShareRT5 + 
+                       data$ShareRT6) / 8
+
+data$FalseShare <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4 + 
+                       data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4) / 8
+
+data$FalseShareFull <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4 + 
+                       data$ShareDF5 + 
+                       data$ShareDF6 + 
+                       data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4 + 
+                       data$ShareRF5 + 
+                       data$ShareRF6) / 8
+
+data$TruthDiscernSharing <- data$TrueShare - data$FalseShare 
+data$TruthDiscernSharingFull <- data$TrueShareFull - data$FalseShareFull
+
+data$TrueDemShare <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + 
+                       data$ShareDT4) / 4
+
+data$TrueRepubShare <- (data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4) / 4
+
+data$FalseDemShare <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4) / 4
+
+data$FalseRepubShare <- (data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4) / 4
+
+data$DemShare <- (data$TrueDemShare + data$FalseDemShare)/2
+data$RepubShare <- (data$TrueRepubShare + data$FalseRepubShare)/2
+```
+
+## Political Congruence SHARING
+
+```{r}
+data$CongruentShare <- ifelse(data$isRepub == 1, data$RepubShare, data$DemShare)
+data$IncongruentShare <- ifelse(data$isRepub == 1, data$DemShare, data$RepubShare)
+
+data$CongruentTrueShare <- ifelse(data$isRepub == 1, data$TrueRepubShare, data$TrueDemShare)
+data$IncongruentTrueShare <- ifelse(data$isRepub == 1, data$TrueDemShare, data$TrueRepubShare)
+data$CongruentFalseShare <- ifelse(data$isRepub == 1, data$FalseRepubShare, data$FalseDemShare)
+data$IncongruentFalseShare <- ifelse(data$isRepub == 1, data$FalseDemShare, data$FalseRepubShare)
+
+data$partisanGapShare <- data$CongruentShare - data$IncongruentShare
+data$partisanGapTrueShare <- data$CongruentTrueShare - data$IncongruentTrueShare
+data$partisanGapFalseShare <- data$CongruentFalseShare - data$IncongruentFalseBin
+```
+
+#ANOVA Truth Discern Sharing
+```{r}
+
+res.aov <- data %>% anova_test(TruthDiscernSharing ~ Condition)
+res.aov
+
+res.aov <- data %>% anova_test(TrueShare ~ Condition)
+res.aov
+
+res.aov <- data %>% anova_test(FalseShare ~ Condition)
+res.aov
+
+ggboxplot(data, x = "Condition", y = "TruthDiscernSharing")
+
+pwc <- data %>% tukey_hsd(FalseShare ~ Condition)
+pwc
+
+data$Source <- ifelse(data$Condition == 0 | data$Condition == 1, "Source", "No Source")
+data$Source <- factor(data$Source)
+data$Accuracy <- ifelse(data$Condition == 0 | data$Condition == 2, "Accuracy", "Control")
+data$Accuracy <- factor(data$Accuracy)
+
+data %>% anova_test(TruthDiscernSharing ~ Accuracy*Source)
+res.aov
+
+# Pairwise comparisons with corrections for multiple comparisons
+pwc <- data %>% tukey_hsd(TruthDiscernSharing ~ Condition)
+pwc
+
+```
+
+## 4X2X2 ANOVA
+
+```{r}
+
+cleanup = theme(panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(), 
+                panel.background = element_blank(),
+                axis.line = element_line(color = "black"))
+
+data$CongruentTruePercent <- (data$CongruentTrueBin / 6)*100 
+data$IncongruentTruePercent <- (data$IncongruentTrueBin / 6)*100 
+data$CongruentFalsePercent <- (data$CongruentFalseBin / 6)*100 
+data$IncongruentFalsePercent <- (data$IncongruentFalseBin / 6)*100 
+
+anova <- data %>%
+  gather(key = "PoliticalCongruence", value = "PerceivedAccuracy", CongruentTruePercent , IncongruentTruePercent, CongruentFalsePercent, IncongruentFalsePercent) %>%
+  convert_as_factor(PoliticalCongruence)
+
+anova$Veracity <- ifelse(anova$PoliticalCongruence == "CongruentTruePercent" | anova$PoliticalCongruence == "IncongruentTruePercent", "True", "False")
+
+anova$PoliticalCongruence <- ifelse(anova$PoliticalCongruence == "CongruentTruePercent" | anova$PoliticalCongruence == "CongruentFalsePercent", "Politically Congruent", "Politically Incongruent")
+
+anova$Source <- ifelse(anova$Condition == 0 | anova$Condition == 1, "Yes", "No")
+anova$Incentive <- ifelse(anova$Condition == 0 | anova$Condition == 2, "Yes", "No")
+
+anova$Veracity <- factor(anova$Veracity, levels = c("True", "False"))
+
+anovagroup <- anova %>%
+  dplyr::select(ResponseId, PoliticalCongruence, Source, Veracity, PerceivedAccuracy, Incentive) %>% 
+  dplyr::group_by(PoliticalCongruence, Source, Veracity, Incentive) %>%
+  get_summary_stats(type = "mean_ci") 
+
+View(anovagroup)
+
+#Calculate Anova
+
+?anova_test()
+
+res.aov <- anova_test(data = anova, 
+                      dv = PerceivedAccuracy,
+                      between = c(Source, Incentive), 
+                      wid = ResponseId,
+                      within = c(PoliticalCongruence, Veracity))
+
+options(scipen = 10000000)
+get_anova_table(res.aov)
+View(res.aov)
+
+cohen.d(anova$PoliticalCongruence, anova$PerceivedAccuracy)
+
+##Tukey Pairwise Comparisons
+pwc <- anova  %>% tukey_hsd(PerceivedAccuracy ~ Incentive*PoliticalCongruence*Source*Veracity)
+pwc
+
+View(pwc)
+
+group.CI(data$IncongruentTruePercent ~ data$ConditionFactor, data, ci = 0.95)
+data %>% cohens_d(IncongruentTruePercent ~ ConditionFactor)
+data %>% cohens_d(CongruentTruePercent ~ ConditionFactor)
+data %>% cohens_d(IncongruentFalsePercent ~ ConditionFactor)
+data %>% cohens_d(CongruentFalsePercent ~ ConditionFactor)
+
+# ggboxplot(anova, x = "ConditionFactor", y = "PerceivedAccuracy", color = "Veracity", palette = "jco", facet.by = "PoliticalCongruence") 
+
+```
+
+## Cognitive Reflection
+```{r}
+data$CR1Correct <- ifelse(data$CR1 == 4, 1, 0)
+data$CR2Correct <- ifelse(data$CR2 == 10, 1, 0)
+data$CR3Correct <- ifelse(data$CR3 == 39, 1, 0)
+
+data$CRSum <- data$CR1Correct + data$CR2Correct + data$CR3Correct
+
+```
+
+## Political Knowledge
+```{r}
+data$PK1Correct <- ifelse(data$`PK1(3)` == 3, 1, 0) 
+data$PK2Correct <- ifelse(data$`PK2(2)` == 2, 1, 0)
+data$PK3Correct <- ifelse(data$`PK3(1)` == 1, 1, 0)
+data$PK4Correct <- ifelse(data$`PK4(2)` == 2, 1, 0)
+data$PK5Correct <- ifelse(data$`PK5(1)` == 1, 1, 0)
+
+data$PKSum <- data$PK1Correct + data$PK2Correct + data$PK3Correct + data$PK4Correct + data$PK5Correct
+```
+
+## Open-Mindedness
+
+```{r}
+
+data$O1Recode <- car::recode(data$O1, "32 = 5; 31 = 4; 30 = 3; 29 = 2; 28 = 1")
+data$O2Recode <- car::recode(data$O2, "28 = 5; 29 = 4; 30 = 3; 31 = 2; 32 = 1")
+data$O3Recode <- car::recode(data$O3, "28 = 5; 29 = 4; 30 = 3; 31 = 2; 32 = 1")
+data$O4Recode <- car::recode(data$O4, "28 = 5; 29 = 4; 30 = 3; 31 = 2; 32 = 1")
+data$O5Recode <- car::recode(data$O5, "32 = 5; 31 = 4; 30 = 3; 29 = 2; 28 = 1")
+data$O6Recode <- car::recode(data$O6, "32 = 5; 31 = 4; 30 = 3; 29 = 2; 28 = 1")
+
+data$IH <- (data$O1Recode + data$O2Recode + data$O3Recode + data$O4Recode + data$O5Recode)/5
+
+corr.test(data$IH, data$truthDiscernBin)
+
+```
+
+## APA Correlation Tables
+```{r}
+
+corrdata <- cbind(data$truthDiscernBin, 
+                  data$TruthDiscernSharing,
+                  data$partisanGapBin, 
+                  data$CRSum, 
+                  data$PKSum,
+                  data$outgrouphate, 
+                  data$ingrouplove,
+                  data$PoliticalOrientation,
+                  data$Vote,
+                  data$SM_Freq)
+labels = c("Truth Discernment", "Sharing Discernment", "Partisan Bias", "Cognitive Reflection", "Political Knowledge", "Outgroup Hate", "Ingroup Love", "Political Conservatism", "Voted Trump", "Social Use") 
+colnames(corrdata) = labels
+
+corrdata2 <- cbind(
+                  data$Age,
+                  data$isFemale,
+                  data$Education,
+                  data$Income, 
+                  data$SM_Freq)
+
+#labels2 = ("Age", "Gender", "Education", "Income", "Social Media Use")
+
+#APA Correlation Table
+apa.cor.table(corrdata, filename="corrtable.doc", table.number=1)
+
+#Create Correlation Matrix
+M <- cor(corrdata, use = "pairwise.complete.obs", method = "pearson")
+
+res1 <- cor.mtest(M, conf.level = 0.95, adjust = "none")
+
+#mutal information 
+#Create Correlation Plot
+corrplot(M, p.mat = res1$p, method = "color", type = "upper", tl.srt = 45,
+         sig.level = c(.001, .01, .05), pch.cex = .9, number.font = 0.25,  tl.col = "black", tl.cex = 0.6, 
+         insig = "label_sig", pch.col = "white", order = "original")
+
+```
+
+# GGPlot - Truth Discernment
+
+```{r}
+
+data$ConditionFactor <- factor(data$Condition, levels = c(0, 1, 2, 3), labels = c("Accuracy (Source)","Control (Source)", "Accuracy (No Source)", "Control (No Source)"))
+
+data3 <- data
+
+TruthDiscernPlot3 <- ggplot(data3, aes(ConditionFactor, truthDiscernBin)) + 
+  stat_summary(fun = mean, geom = "bar",
+                 fill = "#00869A",
+                 width = 0.6) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  coord_cartesian(ylim = c(0, 3.5)) +
+  scale_fill_manual(values=colors) + 
+  ##geom_point(position=position_jitter(width =.15)) +
+  theme_apa() +
+  xlab("") + 
+  ylab("Truth Discernment")
+TruthDiscernPlot3
+
+```
+
+## Partisan Bias PLOT 
+```{r}
+
+data$ConditionFactor <- factor(data$Condition, levels = c(0, 1, 2, 3), labels = c("Accuracy (Source)","Control (Source)", "Accuracy (No Source)", "Control (No Source)"))
+
+PartisanBiasPlot3 <- ggplot(data3, aes(ConditionFactor, partisanGapBin)) + 
+  stat_summary(fun = mean, geom = "bar", 
+                 fill = "#C23C59",
+                 width = 0.6) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  coord_cartesian(ylim = c(0, 3.5)) +
+  scale_fill_manual(values=colors) + 
+  ##geom_point(position=position_jitter(width =.15)) +
+  theme_apa() +
+  xlab("") + 
+  ylab("Partisan Bias") 
+PartisanBiasPlot3
+
+```
+
+## 4X2X2 PLOT
+
+```{r}
+
+anova3 <- anova
+
+anova3$ConditionFactor <- factor(anova3$Condition, levels = c(0, 1, 2, 3), labels = c("Accuracy (Source)","Control (Source)", "Accuracy (No Source)", "Control (No Source)"))
+
+BrokenUpGraph3 <- ggplot(anova3, aes(ConditionFactor, PerceivedAccuracy, fill = Veracity)) + 
+  stat_summary(fun = mean, geom = "bar", position = "dodge", width = 0.7) + 
+  stat_summary(fun.data = mean_cl_normal,  position = position_dodge(0.7), width = 0.3, geom = "errorbar") + 
+  facet_wrap(~PoliticalCongruence) + 
+  scale_fill_manual("Veracity",values = c("#3AA6D0", "#FFB600")) + 
+  ylab("Percent Rated as Accurate") +
+  xlab("") + 
+  theme_apa() +
+  theme(legend.position = "none")
+BrokenUpGraph3
+ggsave("BrokenUpGraph.png", width = 8, height = 4)
+
+leg <- get_legend(ggplot(anova3, aes(ConditionFactor, PerceivedAccuracy, fill = Veracity)) + 
+  stat_summary(fun = mean, geom = "bar", position = "dodge", width = 0.7) + 
+  stat_summary(fun.data = mean_cl_normal,  position = position_dodge(0.7), width = 0.3, geom = "errorbar") + 
+  facet_wrap(~PoliticalCongruence) + 
+  scale_fill_manual("Veracity",values = c("#3AA6D0", "#FFB600")) + 
+  ylab("Percent Rated as Accurate") +
+  xlab("") + 
+  theme_apa(legend.pos = "bottom", legend.font.size = 12))
+
+
+```
+
+## Combine the graphs into one
+
+```{r}
+
+combinedPlotsStudy1 <- plot_grid(TruthDiscernPlot3,
+                            PartisanBiasPlot3,
+                            labels = c("A", "B"))
+
+ggsave("combinedPlotsStudy3.png", width = 11, height = 5)
+
+BrokenUpGraph3
+
+ggsave("BrokenUpGraph3.png", width = 12, height = 5)
+
+combinedPlotsStudy3 <- plot_grid(combinedPlotsStudy1,
+                            BrokenUpGraph3,
+                            nrow = 3,
+                            rel_heights = c(1, 1.1, 0.3),
+                            labels = c('', 'C')) + draw_grob(leg, vjust = 0.4)
+combinedPlotsStudy3
+
+ggsave("CombinedStudy3.png", width = 11, height = 8)
+
+#                            labels = c('', 'C')) + draw_grob(leg, vjust = 0.3, hjust = -0.6)
+
+# combinedStudy3Plots <- plot_grid(TruthDiscernPlot1,
+#                                   PartisanBiasPlot1, 
+#                                   BrokenUpGraph1, 
+#                                   ncol = 2,
+#                                   nrow = 2,
+#                                   rel_widths = c(1, 1, 2),
+#                                   rel_heights = c(1, 1, 1.5),
+#                                   labels = c("A", "B", "C"))
+# combinedStudy3Plots
+# 
+# combinedStudy3Plots <- plot_grid(BrokenUpGraph1,
+#                                   BrokenUpGraph2,
+#                                   BrokenUpGraph3,
+#                                   nrow = 3,
+#                                   rel_heights = c(1, 1, 1),
+#                                   labels = c("Study 1", "Study 2", "Study 3"))
+# combinedStudy3Plots
+
+ggsave("combinedStudy3Plots.png", width = 10, height = 12)
+
+?ggsave()
+
+```
+
+## Combine All Data
+
+```{r}
+
+setwd("/Users/steverathje/Desktop/Financial\ Nudge\ fake\ News")
+data1 <- read_csv("Study\ 1\ Analysis/FullDataStudy1.csv")
+data2 <- read_csv("Study\ 2\ Analysis/Study2RawData.csv")
+data3 <- read_csv("Study\ 3\ Analysis\ /Study3FullData.csv")
+data <- rbind.fill(data1, data2, data3)
+
+##run prior code
+
+data$Condition <- ifelse(is.na(data$random), data$condition, data$random)
+
+data$ConditionBin <- ifelse(data$Condition < 2, data$Condition, NA)
+xtabs(~data$ConditionBin)
+
+```
+
+## Moderation by Ideology
+
+```{r}
+
+dataInt <- subset(data, is.na(data$ConditionBin) == FALSE)
+lm <- glm(truthDiscernBin ~ Condition*isRepub, data = dataInt)
+summary(lm)
+
+plotSlopes(lm, plotLegend = FALSE, plotx="PoliticalOrientation", 
+           modx="Condition", x)
+
+plotSlopes(moderation, plotLegend = FALSE, plotx="Conservatism", 
+           modx="Condition", modxVals="std.dev.", ylim = c(-0.1, 1), legendArgs = "none", gridArgs = "none", legendPct = FALSE, interval = "conf", plotPoints = FALSE, ylab = "Sharing Discernment") 
+
+dataDem <- subset(dataInt, dataInt$isRepub == 0)
+dataRepub <- subset(dataInt, dataInt$isRepub == 1)
+
+t.test(truthDiscernBin ~ Condition, data = dataRepub) %>% report()
+t.test(partisanGapBin ~ Condition, data = dataRepub) %>% report()
+t.test(IncongruentTrueBin ~ Condition, data = dataRepub) %>% report()
+
+t.test(truthDiscernBin ~ Condition, data = dataDem) %>% report()
+t.test(partisanGapBin ~ Condition, data = dataDem) %>% report()
+t.test(IncongruentTrueBin ~ Condition, data = dataDem) %>% report()
+
+View(dataInt$partisanGapBin)
+
+```
+
+##
+```{r}
+
+```
+
+
