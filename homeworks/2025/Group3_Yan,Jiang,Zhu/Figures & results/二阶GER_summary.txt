@@ -1,0 +1,93 @@
+lavaan 0.6-19 ended normally after 18 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        12
+
+  Number of observations                         17946
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                              3987.657    2944.568
+  Degrees of freedom                                 9           9
+  P-value (Chi-square)                           0.000       0.000
+  Scaling correction factor                                  1.354
+    Satorra-Bentler correction                                    
+
+Model Test Baseline Model:
+
+  Test statistic                             47798.110   45492.307
+  Degrees of freedom                                15          15
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.051
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.917       0.935
+  Tucker-Lewis Index (TLI)                       0.861       0.892
+                                                                  
+  Robust Comparative Fit Index (CFI)                         0.917
+  Robust Tucker-Lewis Index (TLI)                            0.861
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)            -205231.066 -205231.066
+  Loglikelihood unrestricted model (H1)    -203237.238 -203237.238
+                                                                  
+  Akaike (AIC)                              410486.132  410486.132
+  Bayesian (BIC)                            410579.674  410579.674
+  Sample-size adjusted Bayesian (SABIC)     410541.538  410541.538
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.157       0.135
+  90 Percent confidence interval - lower         0.153       0.131
+  90 Percent confidence interval - upper         0.161       0.138
+  P-value H_0: RMSEA <= 0.050                    0.000       0.000
+  P-value H_0: RMSEA >= 0.080                    1.000       1.000
+                                                                  
+  Robust RMSEA                                               0.157
+  90 Percent confidence interval - lower                     0.152
+  90 Percent confidence interval - upper                     0.162
+  P-value H_0: Robust RMSEA <= 0.050                         0.000
+  P-value H_0: Robust RMSEA >= 0.080                         1.000
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.059       0.059
+
+Parameter Estimates:
+
+  Standard errors                           Robust.sem
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+  PF =~                                                                 
+    PANDEMIC_FATIG    1.624    0.011  141.943    0.000    1.624    0.799
+    PANDEMIC_FATIG    1.769    0.010  174.067    0.000    1.769    0.856
+    PANDEMIC_FATIG    1.422    0.012  115.806    0.000    1.422    0.710
+    PANDEMIC_FATIG    1.095    0.014   80.317    0.000    1.095    0.570
+    PANDEMIC_FATIG    1.312    0.013  102.364    0.000    1.312    0.654
+    PANDEMIC_FATIG    1.306    0.013  103.179    0.000    1.306    0.671
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+   .PANDEMIC_FATIG    1.491    0.027   56.024    0.000    1.491    0.361
+   .PANDEMIC_FATIG    1.140    0.024   48.493    0.000    1.140    0.267
+   .PANDEMIC_FATIG    1.985    0.028   69.965    0.000    1.985    0.496
+   .PANDEMIC_FATIG    2.490    0.028   90.360    0.000    2.490    0.675
+   .PANDEMIC_FATIG    2.307    0.027   84.484    0.000    2.307    0.573
+   .PANDEMIC_FATIG    2.077    0.028   74.823    0.000    2.077    0.549
+    PF                1.000                               1.000    1.000
+
+R-Square:
+                   Estimate
+    PANDEMIC_FATIG    0.639
+    PANDEMIC_FATIG    0.733
+    PANDEMIC_FATIG    0.504
+    PANDEMIC_FATIG    0.325
+    PANDEMIC_FATIG    0.427
+    PANDEMIC_FATIG    0.451
+
