@@ -1,3 +1,0 @@
-task1's repo:https://github.com/zhikeng202202/zhikeng202502.git
-
-task2's repo:https://github.com/zhikeng202202/R4Psy.git
