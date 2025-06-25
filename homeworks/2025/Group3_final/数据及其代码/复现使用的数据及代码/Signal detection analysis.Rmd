@@ -1,0 +1,602 @@
+---
+title: "Signal detection Analysis"
+author: "Steve Rathje"
+date: "6/18/2025"
+output: html_document
+---
+
+## Set Working Directory 
+
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "D:/R homework/data")
+```
+
+
+## Install Packages
+
+```{r cars}
+library(psych)
+library(dplyr)
+library(tidyverse)
+library(jtools)
+library(ggpubr)
+library(rstatix)
+library(tidyverse)
+library(Rmisc)
+library(jtools)
+library(rockchalk)
+library(readr)
+library(report)
+library(BayesFactor)
+library(readr)
+library(ggplot2)
+library(ggsignif)
+library(ggstatsplot)
+library(plyr)
+library(wesanderson)
+library(cowplot)
+#install.packages("report")
+```
+
+#Read in all datasets 
+
+```{r}
+
+#读取数据
+data1 <- read_csv("Study1AnonymizedData.csv") #511
+data2 <- read_csv("Study2AnonymizedData.csv") #1113
+data3 <- read_csv("Study3AnonymizedData.csv") #1010
+data4 <- read_csv("Study4AnonymizedData.csv") #1007
+
+#添加study列，数据合并后区分数据来源
+data1$study <- 1
+data2$study <- 2
+data3$study <- 3
+data4$study <- 4
+
+#对数据4的condition条件进行重新编码
+data4$condition <- car::recode(data4$condition, "0=1;1=0;2=2")
+
+#合并数据，使用“rbind.fill"，列数不完全匹配也能进行合并
+data <- rbind.fill(data1, data2, data3, data4) #3686
+
+#检查Q114列的缺失值，使用“sum”可直接报告缺失值数量
+# count(is.na(data1$Q114))
+# count(is.na(data2$Q114))
+# count(is.na(data3$Q114))
+sum(is.na(data1$Q114)) 
+sum(is.na(data2$Q114)) 
+sum(is.na(data3$Q114)) 
+
+#使用交叉表，查看random变量的分布
+xtabs(~data2$Random)
+xtabs(~data3$Random)
+
+```
+
+## Exclude Exclusions
+
+```{r pressure, echo=FALSE}
+
+colnames(data)
+#选取未通过注意力检验的参与者的 Prolific ID  
+#不存在Prolific ID，经过查找发现了ResponseId
+FailedAttentionCheck <- ifelse(data$Q114 != 35, data$ResponseId, NA)
+plyr::count(FailedAttentionCheck)
+
+#统计未通过注意力检验的参与者数量  
+plyr::count(data$Q114 != 35)  
+
+#剔除未通过注意力检验且随机作答的参与者（预注册的排除标准） 
+plyr::count(subset(data, data$Q114 == 35)) 
+data <- subset(data, data$Q114 == 35) #将通过注意力测试的数据，赋值给data
+plyr::count(subset(data, data$Random == 1))
+#保留非随机作答的被试
+data <- subset(data, data$Random == 2) #3364 - proper sample size :) 
+
+```
+
+##编码重要变量
+```{r}
+#将政治倾向重新编码为二元变量（是否为共和党）
+data$isRepub <- ifelse(data$DemRep_C > 3, 1, 0)
+
+#保守主义得分（直接赋值）  
+data$PoliticalOrientation <- data$DemRep_C
+
+#重新编码投票变量（0 = 投给希拉里, 1 = 投给特朗普）
+data$Vote <- ifelse(data$POTUS2016 == 1, 0, data$POTUS2016) 
+data$Vote <- ifelse(data$Vote == 2, 1, data$Vote)
+data$Vote <- ifelse(data$Vote > 1, NA, data$Vote)
+
+#重新编码实验条件变量（0 = 准确性/有来源，1 = 控制/有来源，3 = 准确性/无来源，4 = 控制/无来源）
+data$Condition <- as.factor(data$condition)
+
+#按党派划分为共和党和民主党参与者  
+dataRepub <- subset(data, data$isRepub == 1)
+dataDem <- subset(data, data$isRepub == 0)
+
+#外群体厌恶变量（对立政党情感评分的相反数）  
+data$outgrouphate <- ifelse(data$isRepub == 1, (100 - data$FeelingDem_1), (100 - data$FeelingRepub_1))
+data$ingrouplove <- ifelse(data$isRepub == 1, data$FeelingRepub_1, data$FeelingDem_1)
+#情感极化 = 内群体喜爱 + 外群体厌恶 
+data$affectivepolarization <- data$ingrouplove + data$outgrouphate 
+#重新编码党派立场强度（中间偏1，极端偏3）  
+data$strengthpartisanship <- car::recode(data$DemRep_C, "1 = 3; 2 = 2; 3 = 1; 4 = 1; 5 = 2; 6 = 3")
+
+```
+
+## 描述统计信息
+```{r}
+#查看样本人数
+nrow(data)
+
+#统计共和党人数 (Repub = 1)
+plyr::count(data$isRepub)
+
+#统计condition条件下的人数
+plyr::count(data$Condition)
+
+#统计不同政治取向的人数
+plyr::count(data$DemRep_C)
+
+#统计性别分布(1 = Male, 2 = Female, 4 = Trans Male, 5 = Trans/Non-Binary)
+plyr::count(data$Gender)
+#创建新变量，重新编码性别
+data$isFemale <- ifelse(data$Gender == 2, 1, 0)
+
+#种族
+plyr::count(data$Ethnicity)
+
+#计算平均年龄
+mean(data$Age, na.rm = TRUE)
+
+```
+
+## 创建二元变量（新闻的真实性） 
+
+```{r}
+# 二元正确识别得分（如果准确率大于3则为1，否则为0）
+data$DT1Bin <- ifelse(data$AccuracyDT1 > 3, 1, 0)
+data$DT2Bin <- ifelse(data$AccuracyDT2 > 3, 1, 0)
+data$DT3Bin <- ifelse(data$AccuracyDT3 > 3, 1, 0)
+data$DT4Bin <- ifelse(data$AccuracyDT4 > 3, 1, 0)
+data$RT1Bin <- ifelse(data$AccuracyRT1 > 3, 1, 0)
+data$RT2Bin <- ifelse(data$AccuracyRT2 > 3, 1, 0)
+data$RT3Bin <- ifelse(data$AccuracyRT3 > 3, 1, 0)
+data$RT4Bin <- ifelse(data$AccuracyRT4 > 3, 1, 0)
+data$DF1Bin <- ifelse(data$AccuracyDF1 > 3, 1, 0)
+data$DF2Bin <- ifelse(data$AccuracyDF2 > 3, 1, 0)
+data$DF3Bin <- ifelse(data$AccuracyDF3 > 3, 1, 0)
+data$DF4Bin <- ifelse(data$AccuracyDF4 > 3, 1, 0)
+data$RF1Bin <- ifelse(data$AccuracyRF1 > 3, 1, 0)
+data$RF2Bin <- ifelse(data$AccuracyRF2 > 3, 1, 0)
+data$RF3Bin <- ifelse(data$AccuracyRF3 > 3, 1, 0)
+data$RF4Bin <- ifelse(data$AccuracyRF4 > 3, 1, 0)
+
+# 二元分享得分（如果评分大于3则为1，否则为0）
+data$ShareDT1Bin <- ifelse(data$ShareDT1 > 3, 1, 0)
+data$ShareDT2Bin <- ifelse(data$ShareDT2 > 3, 1, 0)
+data$ShareDT3Bin <- ifelse(data$ShareDT3 > 3, 1, 0)
+data$ShareDT4Bin <- ifelse(data$ShareDT4 > 3, 1, 0)
+data$ShareRT1Bin <- ifelse(data$ShareRT1 > 3, 1, 0)
+data$ShareRT2Bin <- ifelse(data$ShareRT2 > 3, 1, 0)
+data$ShareRT3Bin <- ifelse(data$ShareRT3 > 3, 1, 0)
+data$ShareRT4Bin <- ifelse(data$ShareRT4 > 3, 1, 0)
+data$ShareDF1Bin <- ifelse(data$ShareDF1 > 3, 1, 0)
+data$ShareDF2Bin <- ifelse(data$ShareDF2 > 3, 1, 0)
+data$ShareDF3Bin <- ifelse(data$ShareDF3 > 3, 1, 0)
+data$ShareDF4Bin <- ifelse(data$ShareDF4 > 3, 1, 0)
+data$ShareRF1Bin <- ifelse(data$ShareRF1 > 3, 1, 0)
+# 这里可能是笔误，应为 ShareRF2
+data$ShareRF2Bin <- ifelse(data$ShareRF2 > 3, 1, 0)  
+data$ShareRF3Bin <- ifelse(data$ShareRF3 > 3, 1, 0)
+data$ShareRF4Bin <- ifelse(data$ShareRF4 > 3, 1, 0)
+
+# 统计识别为“真实”新闻（true news）的条数
+data$TrueBin <-     data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin +
+                      data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin
+
+# 统计识别为“虚假”新闻（false news）的条数
+data$FalseBin <-    data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin +
+                      data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+# 真伪辨识能力（真实减去虚假）
+data$truthDiscernBin <- data$TrueBin - data$FalseBin
+
+# 区分党派的真实新闻识别
+data$TrueDemBin <- data$DT1Bin +
+                      data$DT2Bin + 
+                      data$DT3Bin +
+                      data$DT4Bin
+  
+data$TrueRepubBin <- data$RT1Bin +
+                      data$RT2Bin + 
+                      data$RT3Bin +
+                      data$RT4Bin
+
+# 区分党派的虚假新闻识别
+data$FalseDemBin <- data$DF1Bin +
+                      data$DF2Bin + 
+                      data$DF3Bin +
+                      data$DF4Bin 
+
+data$FalseRepubBin <- data$RF1Bin +
+                      data$RF2Bin + 
+                      data$RF3Bin +
+                      data$RF4Bin
+
+# 每位被试看到的民主党/共和党新闻条数
+data$DemBin <- data$TrueDemBin + data$FalseDemBin
+data$RepubBin <- data$TrueRepubBin + data$FalseRepubBin
+
+# 重新计算总的真实新闻识别得分（应与 TrueBin 相等）
+data$TrueBin <- data$TrueDemBin + data$TrueRepubBin
+
+# 民主党和共和党新闻被识别的百分比（总共8条每类新闻）
+data$DemPercent <- (data$DemBin / 8)*100
+data$RepubPercent <- (data$RepubBin / 8)*100
+
+# 综合准确率得分 = 真实新闻得分 + （16条虚假新闻中未误判的条数）
+data$AccuracyScore <- data$TrueBin + (8 - data$FalseBin)
+
+# 满奖金（AccuracyScore > 15 且在条件 0 或 3 中）
+fullbonus <- ifelse(data$AccuracyScore > 15 & (data$Condition == 0 | data$Condition == 3), data$ResponseId, NA)
+
+# 半奖金（AccuracyScore 在 14 或 15 且在条件 0 或 3 中）
+halfbonus <- ifelse(data$AccuracyScore > 13 & data$AccuracyScore < 16 & (data$Condition == 0 | data$Condition == 3), data$ResponseId, NA)
+
+# 准确率百分比（满分16分）
+data$PercentAccurate <- (data$AccuracyScore/16)*100
+
+
+```
+
+## 创建政治立场一致性变量（二元）
+
+```{r}
+
+# 对于共和党参与者，CongruentBin 是他们识别的共和党新闻条数，否则是民主党新闻条数
+data$CongruentBin <- ifelse(data$isRepub == 1, data$RepubBin, data$DemBin)
+data$IncongruentBin <- ifelse(data$isRepub == 1, data$DemBin, data$RepubBin)
+
+# 正确识别的政治一致新闻条数 / 非一致新闻条数
+data$CongruentTrueBin <- ifelse(data$isRepub == 1, data$TrueRepubBin, data$TrueDemBin)
+data$IncongruentTrueBin <- ifelse(data$isRepub == 1, data$TrueDemBin, data$TrueRepubBin)
+
+# 错误识别的政治一致新闻条数 / 非一致新闻条数
+data$CongruentFalseBin <- ifelse(data$isRepub == 1, data$FalseRepubBin, data$FalseDemBin)
+data$IncongruentFalseBin <- ifelse(data$isRepub == 1, data$FalseDemBin, data$FalseRepubBin)
+
+# 政治一致性偏好得分（政治一致 - 不一致的差值）
+data$partisanGapBin <- data$CongruentBin - data$IncongruentBin
+data$partisanGapTrueBin <- data$CongruentTrueBin - data$IncongruentTrueBin
+data$partisanGapFalseBin <- data$CongruentFalseBin - data$IncongruentFalseBin
+
+
+
+
+```
+
+# 真相辨别分享
+```{r}
+head(data$ShareDT3)
+head(data$`ShareDT2...20`)
+head(data$`ShareDT2...26`)
+head(data$`ShareDT2...30`)
+# 若 ShareDT3 缺失，则用 ShareDT2...20替代
+data$ShareDT3 <- ifelse(is.na(data$ShareDT3), data$ShareDT2...20, data$ShareDT3)
+
+# 计算平均的真实新闻分享意愿（TrueShare）：对所有4个民主党 + 4个共和党的真实新闻条目求平均
+data$TrueShare <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + 
+                       data$ShareDT4 +
+                       data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4) / 8
+
+# 计算虚假新闻分享意愿（FalseShare）
+data$FalseShare <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4 + 
+                       data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4) / 8
+
+# 计算二分类的真实新闻分享比例（TrueShareBin，可能是“是否分享”的二值判断）
+data$TrueShareBin <- (data$ShareDT1Bin +
+                       data$ShareDT2Bin + 
+                       data$ShareDT3Bin + 
+                       data$ShareDT4Bin +
+                       data$ShareRT1Bin + 
+                       data$ShareRT2Bin + 
+                       data$ShareRT3Bin + 
+                       data$ShareRT4Bin) / 8
+
+# 计算虚假新闻的二分类分享比例
+data$FalseShareBin <- (data$ShareDF1Bin + 
+                       data$ShareDF2Bin + 
+                       data$ShareDF3Bin + 
+                       data$ShareDF4Bin + 
+                       data$ShareRF1Bin +
+                       data$ShareRF2Bin + 
+                       data$ShareRF3Bin + 
+                       data$ShareRF4Bin) / 8
+
+# 真相辨别指标：真实新闻分享 - 虚假新闻分享
+data$TruthDiscernSharing <- data$TrueShare - data$FalseShare
+data$TruthDiscernSharingBin <- data$TrueShareBin - data$FalseShareBin
+
+# 将真实新闻分享意愿区分为民主党来源和共和党来源
+data$TrueDemShare <- (data$ShareDT1 +
+                       data$ShareDT2 + 
+                       data$ShareDT3 + 
+                       data$ShareDT4) / 4
+data$TrueRepubShare <- (data$ShareRT1 + 
+                       data$ShareRT2 + 
+                       data$ShareRT3 + 
+                       data$ShareRT4) / 4
+
+# 同理，虚假新闻部分
+data$FalseDemShare <- (data$ShareDF1 + 
+                       data$ShareDF2 + 
+                       data$ShareDF3 + 
+                       data$ShareDF4) / 4
+data$FalseRepubShare <- (data$ShareRF1 +
+                       data$ShareRF2 + 
+                       data$ShareRF3 + 
+                       data$ShareRF4) / 4
+
+# 分别计算总体的民主党与共和党新闻的平均分享意愿（真实与虚假混合）
+data$DemShare <- (data$TrueDemShare + data$FalseDemShare)/2
+data$RepubShare <- (data$TrueRepubShare + data$FalseRepubShare)/2
+
+
+```
+
+##政治一致性分享
+
+```{r}
+
+# 根据受试者党派（isRepub: 1=共和党人）决定政治一致/不一致的新闻分享意愿
+data$CongruentShare <- ifelse(data$isRepub == 1, data$RepubShare, data$DemShare)
+data$IncongruentShare <- ifelse(data$isRepub == 1, data$DemShare, data$RepubShare)
+
+# 同理，真实新闻的政治一致性分享
+data$CongruentTrueShare <- ifelse(data$isRepub == 1, data$TrueRepubShare, data$TrueDemShare)
+data$IncongruentTrueShare <- ifelse(data$isRepub == 1, data$TrueDemShare, data$TrueRepubShare)
+
+# 虚假新闻的政治一致性分享
+data$CongruentFalseShare <- ifelse(data$isRepub == 1, data$FalseRepubShare, data$FalseDemShare)
+data$IncongruentFalseShare <- ifelse(data$isRepub == 1, data$FalseDemShare, data$FalseRepubShare)
+
+# 计算政治一致性差异指标（党派偏差）
+data$partisanGapShare <- data$CongruentShare - data$IncongruentShare
+data$partisanGapTrueShare <- data$CongruentTrueShare - data$IncongruentTrueShare
+# 疑似笔误，应为 `IncongruentFalseShare`
+data$partisanGapFalseShare <- data$CongruentFalseShare - data$IncongruentFalseShare 
+
+
+```
+
+## 认知反思测验
+```{r}
+
+# 三道 CR 问题的作答正确性判定
+data$CR1Correct <- ifelse(data$CR1 == 4, 1, 0)
+data$CR2Correct <- ifelse(data$CR2 == 10, 1, 0)
+data$CR3Correct <- ifelse(data$CR3 == 39, 1, 0)
+
+# 总分为三题正确数
+data$CRSum <- data$CR1Correct + data$CR2Correct + data$CR3Correct
+
+
+```
+##  政治知识测验
+```{r}
+# 各题正确选项用问卷中选项号匹配
+data$PK1Correct <- ifelse(data$`PK1(3)` == 3, 1, 0) 
+data$PK2Correct <- ifelse(data$`PK2(2)` == 2, 1, 0)
+data$PK3Correct <- ifelse(data$`PK3(1)` == 1, 1, 0)
+data$PK4Correct <- ifelse(data$`PK4(2)` == 2, 1, 0)
+data$PK5Correct <- ifelse(data$`PK5(1)` == 1, 1, 0)
+
+# 总分为正确题数
+data$PKSum <- data$PK1Correct + data$PK2Correct + data$PK3Correct + data$PK4Correct + data$PK5Correct
+
+```
+
+## Open-Mindedness(心态开放？)
+
+```{r}
+
+# 不同题项的分值编码方向不同，使用 recode 标准化为同一方向（高分 = 更开放）
+data$O1Recode <- car::recode(data$O1, "32 = 5; 31 = 4; 30 = 3; 29 = 2; 28 = 1")
+data$O2Recode <- car::recode(data$O2, "28 = 5; 29 = 4; 30 = 3; 31 = 2; 32 = 1")
+data$O3Recode <- car::recode(data$O3, "28 = 5; 29 = 4; 30 = 3; 31 = 2; 32 = 1")
+data$O4Recode <- car::recode(data$O4, "28 = 5; 29 = 4; 30 = 3; 31 = 2; 32 = 1")
+data$O5Recode <- car::recode(data$O5, "32 = 5; 31 = 4; 30 = 3; 29 = 2; 28 = 1")
+data$O6Recode <- car::recode(data$O6, "32 = 5; 31 = 4; 30 = 3; 29 = 2; 28 = 1")
+
+# 平均得分作为开放心态量表总分（此处仅用了 O1~O5）
+#为什么只用了O1-O5
+data$IH <- (data$O1Recode + data$O2Recode + data$O3Recode + data$O4Recode + data$O5Recode)/5
+
+
+```
+
+## 创建实验条件变量
+
+```{r}
+
+# 若 random 缺失，则使用 condition 列来生成 Condition 变量
+data$Condition <- ifelse(is.na(data$random), as.numeric(data$condition), data$random)
+
+# 检查 data4 数据框中的 condition 列
+data4$condition
+
+# 二分类条件变量（如只保留前两个条件）
+data$ConditionBin <- ifelse(data$Condition < 2, data$Condition, NA)
+
+# 检查二分类变量中的缺失情况
+xtabs(~is.na(data$ConditionBin))
+
+# T检验，查看条件变量在 partisanGapTrueBin 上的影响
+t.test(partisanGapTrueBin ~ ConditionBin, data = data) %>% report()
+
+
+```
+
+## Signal Detection Analysis
+
+```{r}
+
+
+# 查看不同实验条件下的频数分布
+xtabs(~data$ConditionBin)
+"ConditionBin" %in% colnames(data)
+# 计算d'敏感性指标(使用Hautus(1995)的log-linear规则校正)
+# 校正方法：在真实和虚假的准确/不准确计数上加0.5，避免极端比例(0或1)
+data <- data %>% filter(ConditionBin %in% c("0", "1"))
+# 真实新闻判断校正
+data$real_accurate <- data$TrueBin + .5  # 正确识别真实新闻的数量校正
+data$real_inaccurate <- (8 - data$TrueBin) + .5  # 错误拒绝真实新闻的数量校正
+# 虚假新闻判断校正  
+data$fake_accurate <- data$FalseBin + .5  # 错误接受虚假新闻的数量校正
+data$fake_inaccurate <- (8 - data$FalseBin) + .5  # 正确拒绝虚假新闻的数量校正
+
+# 计算命中率(正确识别真实新闻的比例)和虚报率(错误接受虚假新闻的比例)
+data$hit_rate <- (data$real_accurate) / (data$real_inaccurate + data$real_accurate)
+data$fa_rate <- (data$fake_accurate) / (data$fake_accurate + data$fake_inaccurate)
+
+# 计算d'值(敏感性指标)：命中率和虚报率的Z分数之差
+data$dprime <- qnorm(data$hit_rate) - qnorm(data$fa_rate)
+max(data$dprime)  # 查看最大d'值
+
+# 计算判断标准c：命中率和虚报率Z分数的平均值取负
+data$c <- -1*(qnorm(data$hit_rate) + qnorm(data$fa_rate)) / 2
+
+# 对不同实验条件进行d'和c的t检验
+t.test(dprime ~ ConditionBin, data = data) %>% report()
+t.test(c ~ ConditionBin, data = data) %>% report()
+
+# 计算政治立场一致新闻的d'和c(同上逻辑，但只使用一致新闻的数据)
+data$real_accurate_C <- data$CongruentTrueBin + .5
+data$real_inaccurate_C <- (4 - data$CongruentTrueBin) + .5
+data$fake_accurate_C <- data$CongruentFalseBin + .5 
+data$fake_inaccurate_C <- (4 - data$CongruentFalseBin) + .5
+
+data$hit_rate_C <- (data$real_accurate_C) / (data$real_inaccurate_C + data$real_accurate_C)
+data$fa_rate_C <- (data$fake_accurate_C) / (data$fake_accurate_C + data$fake_inaccurate_C)
+
+data$dprime_C <- qnorm(data$hit_rate_C) - qnorm(data$fa_rate_C)
+max(data$dprime)
+
+data$cprime_C <- -1*(qnorm(data$hit_rate_C) + qnorm(data$fa_rate_C)) / 2
+
+t.test(dprime_C ~ ConditionBin, data = data) %>% report()
+t.test(cprime_C ~ ConditionBin, data = data) %>% report()
+
+# 计算政治立场不一致新闻的d'和c(同上逻辑，但只使用不一致新闻的数据)
+data$real_accurate_I <- data$IncongruentTrueBin + .5
+data$real_inaccurate_I <- (4 - data$IncongruentTrueBin) + .5
+data$fake_accurate_I <- data$IncongruentFalseBin + .5 
+data$fake_inaccurate_I <- (4 - data$IncongruentFalseBin) + .5
+
+data$hit_rate_I <- (data$real_accurate_I) / (data$real_inaccurate_I + data$real_accurate_I)
+data$fa_rate_I <- (data$fake_accurate_I) / (data$fake_accurate_I + data$fake_inaccurate_I)
+
+data$dprime_I <- qnorm(data$hit_rate_I) - qnorm(data$fa_rate_I)
+max(data$dprime)
+
+data$cprime_I <- -1*(qnorm(data$hit_rate_I) + qnorm(data$fa_rate_I)) / 2
+
+t.test(dprime_I ~ ConditionBin, data = data) %>% report()
+t.test(cprime_I ~ ConditionBin, data = data) %>% report()
+
+# d'值的方差分析(ANOVA)
+# 将数据转换为长格式，便于分析
+anova <- data %>%
+  gather(key = "PoliticalCongruence", value = "DPrime", dprime_C, dprime_I) %>%
+  convert_as_factor(PoliticalCongruence, ConditionBin)
+
+# 重命名因子水平
+anova$PoliticalCongruence <- ifelse(anova$PoliticalCongruence == "dprime_C", "政治立场一致", "政治立场不一致")
+anova$Condition <- factor(anova$ConditionBin, levels = c(0, 1), labels = c("准确性条件","控制条件"))
+
+# 计算各组描述统计量
+anovagroup <- anova %>%
+  dplyr::select(ResponseId, PoliticalCongruence, Condition, DPrime) %>% 
+  dplyr::group_by(PoliticalCongruence, Condition) %>%
+  get_summary_stats(type = "mean_ci") 
+
+anova_clean <- anova %>% drop_na(DPrime, Condition, ResponseId, PoliticalCongruence)
+# 进行混合设计方差分析(被试间因素：实验条件；被试内因素：政治立场一致性)
+res.aov <- anova_test(data = anova_clean, 
+                      dv = DPrime,
+                      between = Condition, 
+                      wid = ResponseId,
+                      within = PoliticalCongruence)
+
+# 事后比较(Tukey HSD检验)
+posthoc <- anova %>% 
+  tukey_hsd(DPrime ~ Condition*PoliticalCongruence)
+View(posthoc)
+
+# 计算各组置信区间
+group.CI(DPrime ~ Condition*PoliticalCongruence, anova, ci = 0.95)
+
+# 补充t检验
+t.test(DPrime ~ Condition, data = anova) %>% report()
+t.test(dprime_I ~ ConditionBin, data = data) %>% report()
+
+# C'值的方差分析(同上逻辑，但分析判断标准c)
+anova <- data %>%
+  gather(key = "PoliticalCongruence", value = "CPrime", cprime_C, cprime_I) %>%
+  convert_as_factor(PoliticalCongruence, ConditionBin)
+
+anova$PoliticalCongruence <- ifelse(anova$PoliticalCongruence == "cprime_C", "政治立场一致", "政治立场不一致")
+anova$Condition <- factor(anova$ConditionBin, levels = c(0, 1), labels = c("准确性条件","控制条件"))
+
+anovagroup <- anova %>%
+  dplyr::select(ResponseId, PoliticalCongruence, Condition, CPrime) %>% 
+  dplyr::group_by(PoliticalCongruence, Condition) %>%
+  get_summary_stats(type = "mean_ci") 
+
+anova_clean <- anova %>% drop_na(CPrime, Condition, ResponseId, PoliticalCongruence)
+res.aov <- anova_test(data = anova_clean, 
+                      dv = CPrime,
+                      between = Condition, 
+                      wid = ResponseId,
+                      within = PoliticalCongruence)
+
+posthoc <- anova %>% 
+  tukey_hsd(CPrime ~ Condition*PoliticalCongruence)
+View(posthoc)
+
+t.test(cprime_I ~ ConditionBin, data = data) %>% report()
+
+# 计算政治立场不一致新闻d'的置信区间
+group.CI(dprime_I ~ ConditionBin, data = data)
+
+
+
+```
+
+
