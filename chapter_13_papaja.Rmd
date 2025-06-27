@@ -1,5 +1,5 @@
 ---
-title             : "Lecture 12: Preparing journal artical with *papaja*"
+title             : "Lecture 13: Preparing journal artical with *papaja*"
 shorttitle        : "papaja"
 
 author: 
@@ -32,9 +32,9 @@ authornote: |
 abstract: |
   Psychological science has encountered a serious replication crisis. 
   
-  To make self-correction of the field, researchers actively reform the current practices and increase the opennes, transparency, and reproducibility of studies in the field. Using R language for data analyses is recommended by many. With increasingly emphases on computational reproduciblity, *papaja* was developed to combine data analysis and manuscript preparation.
+  To improve the credibility of the field, researchers actively reform the current practices and increase the opennes, transparency, and reproducibility of published. Using R language for data analyses is highly recommended. To increase computational reproduciblity of results, Aust & Barth developed *papaja*, which combines data analyses and manuscript preparation into a single RMD file.
   
-  The current chapter aims to demonstrate how to use *papaja*. 
+  This chapter aims to demonstrate how to use *papaja*. 
   
   We will introduce the package and key elements of the it.
   
@@ -42,7 +42,7 @@ abstract: |
   
   This demo and practice will further enhance the student's experience in computational reproducibility.
   
-  By spreading the ideas of reproducbility and teaching papaja, this class will increase the computational reprodcubility.
+  By spreading the ideas of reproducbility and teaching papaja, we aimed to improve the credibility of Psychological Science as a whole.
   
   <!-- https://tinyurl.com/ybremelq -->
   
@@ -50,8 +50,8 @@ keywords          : "Reproducibility, R, Teaching, Demonstration"
 wordcount         : "X"
 
 bibliography      : 
-  - "chapter_12-r-references.bib"
-  - "chapter_12-citation.bib"
+  - "chapter_13-r-references.bib"
+  - "chapter_13-citation.bib"
 
 floatsintext      : no
 linenumbers       : yes
@@ -67,14 +67,21 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r setup, include = FALSE}
+rm(list = ls()) # 清空全局环境
 # 检查是否已安装 pacman
 if (!requireNamespace("pacman", quietly = TRUE)) {
   install.packages("pacman") }   # 如果未安装，则安装包
 
 # 使用p_load来载入需要的包
-pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans")
+pacman::p_load("dplyr", "tidyr", "ggplot2", "patchwork", "papaja", "afex", "emmeans", "tinytex")
 
-r_refs("chapter_12-r-references.bib")
+## 安装tinytex，否则无法完成PDF生成(注意: 安装tinytex需要科学上网)
+if (!tinytex::is_tinytex()) {
+  tinytex::install_tinytex() # 安装TinyTeX
+}
+
+# create a bib file for reference
+r_refs("chapter_13-r-references.bib")
 ```
 
 ```{r analysis-preferences}
@@ -91,7 +98,41 @@ To fully integrate R in the life-cycle of psychological research, using R for pr
 
 Fortunately, we now have *papaja* [@R-papaja], which enable us to prepare journal article that formatted as required by APA. 
 
-Below we will demonstrate how to use *papaja* to generate an APA formatted PDF. Note that we will use the data from perceptual matching task, which was from [@Hu_2020]. The data analysis for this dataset has been showed in previous classes.
+Below we will demonstrate how to use *papaja* to generate an APA formatted PDF. Note that we will use the data from perceptual matching task, which was from [@Hu_2020]. The data analysis for this dataset has been showed in previous lectures.
+
+The prerequisite knowledge of using *papaja* include: (1) R language; (2) R Markdown, which share grammar with Latex for formulas, see [R Markdonw Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/); (3) APA style.
+
+Here are some examples of common R Markdown syntax:
+
+-     `#`: header
+-     `##`: sub-header
+-     `###`: sub-sub-header
+-     `*text*`: italic text
+-     `**text**`: bold text
+-     `~~text~~`: strikethrough text
+-     `[link](https://example.com)`: hyperlink
+-     `![caption](image.png)`: image with caption
+
+`$math$`: inline math (e.g., $y_{i,j} = \alpha + \beta X_i$ )
+
+-     `$$math$$`: block math
+
+font color: Roses are \textcolor{red}{red}, violets are \textcolor{blue}{blue}.
+
+One key advantage of using *papaja* is that you can use variable names instead of a specific values in the text. Which means you do not need to update the text when your input (and thus the value) updated. 
+
+Now, let do this using a simple example.
+
+```{r example for variable}
+# sample data from a normal distribution
+a <- rnorm(n = 200, mean = 0, sd = 2)
+
+a_N <- length(a)
+a_mean <- mean(a)
+a_sd <- sd(a)
+```
+
+We sampled `r a_N` number from a normal distribution, and we found that mean of the these data are: M = `r a_mean`, SD = `r a_sd`.
 
 Here we will try to reproduce what has been reported in @Hu_2020. Thus, we adopted the code from: https://github.com/hcp4715/moralSelf_ddm. 
 
@@ -193,7 +234,7 @@ The data was collected using the same settings as described in the pilot study, 
   * The questionnaires were different from the pilot study.
 
 ## Data analysis
-We used `r cite_r("chapter_12-r-references.bib", pkgs = c("afex", "emmeans", "ggplot2", "dplyr", "tidyr", "patchwork", "r-base"), withhold=FALSE)` for all our analyses. The results from Frequentist hypothesis testing (i.e., ANOVA and *t*-tests) will be reported below.
+We used `r cite_r("chapter_13-r-references.bib", pkgs = c("afex", "emmeans", "ggplot2", "dplyr", "tidyr", "patchwork", "r-base"), withhold=FALSE)` for all our analyses. The results from Frequentist hypothesis testing (i.e., ANOVA and *t*-tests) will be reported below.
 
 # Results
 
@@ -274,7 +315,7 @@ p1_rt <- df.mt.rt.sum %>%
                       position = position_dodge(0.5)) + 
   ggplot2::geom_errorbar(aes(ymin=grand_Mean - 1.96 * grand_SE,
                              ymax=grand_Mean + 1.96 * grand_SE),
-                         width=.1,
+                         width=.2,
                          position = position_dodge(0.5),
                          ) +
   ggplot2::scale_y_continuous(limits = c(450, 900)) +
@@ -312,41 +353,40 @@ y_axis_title <- expression(paste("Senesitivity (", italic("d'"), ")"))
 
 
 p1_dp <- df.mt.dp.sum %>%
-  ggplot2::ggplot(., 
-                  aes(x = Identity,
-                      y = grand_Mean,
-                      group = Valence,
-                      color = Valence)) +
-  ggplot2::geom_line(position = position_dodge(0.5)) +
-  ggplot2::geom_point(size = 10,
-                      position = position_dodge(0.5)) + 
-  ggplot2::geom_errorbar(aes(ymin=grand_Mean - 1.96 * grand_SE,
-                             ymax=grand_Mean + 1.96 * grand_SE),
-                         width=.1,
-                         position = position_dodge(0.5),
-                         ) +
+      ggplot2::ggplot(., 
+                      aes(x = Identity,
+                          y = grand_Mean,
+                          group = Valence,
+                          color = Valence)) +
+      ggplot2::geom_line(position = position_dodge(0.5)) +
+      ggplot2::geom_point(size = 10,
+                          position = position_dodge(0.5)) + 
+      ggplot2::geom_errorbar(aes(ymin=grand_Mean - 1.96 * grand_SE,
+                                 ymax=grand_Mean + 1.96 * grand_SE),
+                             width=.2,
+                             position = position_dodge(0.5)) +
   # ggplot2::scale_y_continuous(limits = c(450, 900)) +
-  labs(y = y_axis_title,
-       x = element_blank())  + 
-  ggplot2::geom_point(data = df.mt.dp.subj.m.plot,
-                       aes(x=conds,
-                           y=Dprime,
-                           group = Sub),
-                      position = pd,
-                      size = 4,
-                      color="#000000",
-                      alpha = 0.2) + 
-  ggplot2::geom_line(data = df.mt.dp.subj.m.plot,
-                     aes(x=conds,
-                         y=Dprime,
-                         group=Sub),
-                     position = pd,
-                     linetype = 1,
-                     linewidth=0.8,
-                     color="#000000",
-                     alpha=0.1) +
-  papaja::theme_apa(base_size = 25,
-                    base_family = "Times")
+      labs(y = y_axis_title,
+           x = element_blank())  + 
+      ggplot2::geom_point(data = df.mt.dp.subj.m.plot,
+                          aes(x=conds,
+                              y=Dprime,
+                              group = Sub),
+                          position = pd,
+                          size = 4,
+                          color="#000000",
+                          alpha = 0.2) + 
+      ggplot2::geom_line(data = df.mt.dp.subj.m.plot,
+                         aes(x=conds,
+                             y=Dprime,
+                             group=Sub),
+                         position = pd,
+                         linetype = 1,
+                         linewidth=0.8,
+                         color="#000000",
+                         alpha=0.1) +
+      papaja::theme_apa(base_size = 25,
+                        base_family = "Times") 
 # p1_dp
 ```
 

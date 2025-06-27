@@ -1,993 +1,686 @@
 ---
-title: ""
-author: "Pac_B"
-date: ""
+title: "Lecture 7"
+subtitle: "Data Preprocessing"
+author: "Hu Chuan-Peng (PhD)"
+institute: "Nanjing Normal University"
+date: "2025/04/02"
 output:
   xaringan::moon_reader:
-    css: [default, css/Custumed_Style.css,css/zh-CN.css]
+    css: [default, css/Font_Style.css]
     lib_dir: libs
     nature:
-      highlightLines: true
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
-      seal: true
-      ratio: 16:9
-params:
-  output_dir: "../output"
 ---
-
-
-
 class: center, middle
-<span style="font-size: 50px;">**第七章**</span> <br>
-<span style="font-size: 50px;">__如何探索数据: __</span> <br>
-<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
+<span style="font-size: 60px;">第七讲</span> <br>
+<span style="font-size: 50px;">Tidyverse数据预处理与函数</span> <br>
+<br>
+<br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
-<span style="font-size: 20px;"> </span> <br>
-<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
-<span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
+<span style="font-size: 30px;">2025/04/02</span> <br>
+<br>
+<br>
+<br>
+<br>
+---
+<br>
+<span style="font-size: 40px;">回顾：问卷数据的处理和实验数据的导入</span></center> <br>
+<br>
+<span style="font-size: 40px;">问卷数据的处理</span></center> <br>
+<br>
+<span style="font-size: 30px;">&emsp; Step1：选择变量[select]<br>
+<span style="font-size: 30px;">&emsp; Step2：检查数据类型[glimpse, as族函数]<br>
+<span style="font-size: 30px;">&emsp; Step3：处理缺失值[filter, is.na]<br>
+<span style="font-size: 30px;">&emsp; Step4：反向计分[mutate, case_when]<br>
+<span style="font-size: 30px;">&emsp; Step5：计算所需变量[mutate]<br>
+<span style="font-size: 30px;">&emsp; Step6：分组求统计量 [group_by, summarise]
+<br>
+---
+<br>
+<span style="font-size: 40px;">回顾：问卷数据的处理和实验数据的导入</span></center> <br>
+<br>
+<span style="font-size: 40px;">实验数据的导入</span></center> <br>
+<br>
+- ## <font size = 5.0> (1) 找到所有要读取的文件名；</font>
+<br>
+- ## <font size = 5.0> (2) 以文件名形成的向量为基础，使用for loop逐个文件进行操作;</font>
+<br>
+- ## <font size = 5.0> (3) 将每次循环中读取的数据与之前已经读取的数据进行合并;</font>
+<br>
+- ## <font size = 5.0> (4) 循环每个文件，直到全部读取完成，删除中间变量.</font>
+<br>
+---
+- 那么要如何利用for loop批量导入数据呢？<br>
+      - (1) 找到所有要读取的文件名 --> <br>
+      - (2) 以文件名形成的向量为基础，使用for loop逐个文件进行操作 --> <br>
+      - (3) 将每次循环中读取的数据与之前已经读取的数据进行合并 --> <br>
+      - (4) 循环每个文件，直到全部读取完成，删除中间变量。
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  fig.width=9, fig.height=4, fig.retina=2, 
-  out.width="100%",
-  message = FALSE,
-  warning = F
-)
+```{r 5.1 R package}
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+# 导入所需R包
+library(tidyverse)
 ```
 
-```{css extra.css, echo=FALSE}
-/* ---- extra.css ---- */
-.bigfont {
-  font-size: 30px;
-}
-.size5{
-font-size: 20px;
-}
-.tit_font{
-font-size: 60px;
-}
-
+```{r for loop list.files, error=FALSE}
+# 找到所有要读取的文件名
+# 使用 full.names 参数获取完整路径的文件列表
+files <- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
 ```
-
-
-
+*P.S.尽管函数叫list.files，但它得到的变量的属性是value，而不是list*
 
 ---
-# Packages
-```{r}
-if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
-}
-
-
-pacman::p_load(
-  # 本节课需要用到的 packages
-  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
-  # 生成课件
-  xaringan,xaringanthemer,xaringanExtra)
-```
-
-
----
-class: inverse center middle
-.tit_font[
-回顾
-]
-
-???
--   回顾
-
--   数据探索与描述统计
-
--   为什么可视化
-
--   为什么用 ggplot 画图
-
--   ggplot 绘图的原理
-
--   基本图形简介
-  -   散点图
-  -   柱状图
-  -   密度图
-  -   
-
-
----
-## 7.0.1  批量导入数据
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
-```
-
-
-.panelset[
-.panel[.panel-name[获取地址]
-```{r }
-# 所有数据路径
-files <- list.files(  #<<
-  ## <- & =
-  here::here("data", "match"), 
-  pattern = "data_exp7_rep_match_.*\\.out$", 
-  full.names = TRUE)
-```
-
-
-
-.panel[.panel-name[数据类型转换]
-
-```{r}
-convert_data_types <- function(df) {
-  df <- df %>% 
-    dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
-                  Sub = as.numeric(Sub),Age = as.numeric(Age),
-                  Sex = as.character(Sex),Hand = as.character(Hand),
-                  Block = as.numeric(Block),Bin = as.numeric(Bin),
-                  Trial = as.numeric(Trial),Shape = as.character(Shape),
-                  Label = as.character(Label),Match = as.character(Match),
-                  CorrResp = as.character(CorrResp),Resp = as.character(Resp),
-                  ACC = as.numeric(ACC),RT = as.numeric(RT))
+- # <font size = 5.5> 实验数据的导入  </font>
+- 定义函数用于数据类转换
+```{r df.mt.out.fl}
+# 定义函数用于数据类型转换，可以暂时不管
+convert_data_types = function(df) {
+  df <- df %>%
+    dplyr::mutate(Date = as.character(Date),
+                  Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),
+                  Age = as.numeric(Age),
+                  Sex = as.character(Sex),
+                  Hand = as.character(Hand),
+                  Block = as.numeric(Block),
+                  Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),
+                  Shape = as.character(Shape),
+                  Label = as.character(Label),
+                  Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),
+                  Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),
+                  RT = as.numeric(RT))
   return(df)
 }
 ```
 
-.panel[.panel-name[批量合并]
-```{r }
-df3 <- data.frame() 
+---
+- # <font size = 5.5> 实验数据的导入  </font>
+- 建立并将数据存入数据框
+```{r}
+# 创建一个空的数据框来存储读取的数据
+df3 <- data.frame()
 
-for (i in seq_along(files)) {
-  # 读取
-  df <- read.table(files[i], header = TRUE) %>%  
-    dplyr::filter(Date != "Date") %>%  
-    convert_data_types() 
-  # 合并
-  df3 <- dplyr::bind_rows(df3, df) 
+# 循环读取每个文件，处理数据并添加到数据框中
+for (i in seq_along(files)) { # 重复"读取到的.out个数"的次数
+  # 读取数据文件
+  df <- read.table(files[i], header = TRUE) 
+  # 使用 filter 函数过滤掉 Date 列值为 "Date" 的行
+  df <- dplyr::filter(df, Date != "Date") 
+  # 调用函数进行数据类型转换
+  df <- convert_data_types(df)
+  # 使用 bind_rows() 函数将当前数据框与之前的数据框合并
+  df3 <- dplyr::bind_rows(df3, df)
 }
-# 删除临时变量
+
+# 清除中间变量
 rm(df, files, i)
 ```
 
-.panel[.panel-name[保存数据]
+---
+- # <font size = 5.5> 实验数据的导入  </font>
+- 使用lapply也能完成批量导入与合并。lapply思维难度更高，但代码更简洁。<br>
 
-```{r eval=FALSE}
-## NOT RUN
-## 上节课介绍了write.csv,也可使用bruceR::export
-bruceR::export(
-  df3, 
-  file = here::here("data", "match","match_raw.csv"))
+```{r error=FALSE}
+# 获取所有的.out文件名
+files <- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
 
-## 当然，export 不仅可以保存数据，也可以输出模型结果
+# 读取每个.out文件，并进行数据清洗
+df3 <- lapply(files, function(file) {
+  df <- read.table(file, header = TRUE)
+  df <- dplyr::filter(df, Date != "Date") # 过滤掉 Date 列值为 "Date" 的行
+  df <- mutate(df, 
+               convert_data_types(df)
+              ) # 进行数据类型转换和数据清洗
+  return(df)
+})
 
+# 合并所有数据框
+df3 <- dplyr::bind_rows(df3)
+
+# 清除中间变量
+rm(files)
 ```
+---
+- # <font size = 5.5> 实验数据的导入  </font>
+- 保存合并的数据文件。<br>
 
-.panel[.panel-name[修改列名-rename]
-```{r}
-## 修改第一列列名 Date 为小写 date
-df3 %>% dplyr::rename(  ## new_name = old_name
-  date = Date
-) %>% colnames()  
-
-## 将全部列名都变成小写
-df3 %>% dplyr::rename_with(
-  ## 将字符向量全部变成小写； ~ 声明这是一个函数，.代表前面的数据(df3)传到.所在的位置
-  ~tolower(.)   #<<
-  ## 即使用 tolower()对所有列名进行批量处理
-  ##
-) %>% colnames()
-
+```{r error=FALSE}
+write.csv(df3, 
+          file = here::here("data", "match","match_raw.csv"),
+          row.names = FALSE)
 ```
-
-
-
-]
-]
-]
-]
-]
-]
-
-???
--   解释 变量赋值与参数接受符号差别
-
--   代码规范性，R 对缩进换行不敏感
-
--   export 函数
-
+---
+<h1 lang="en" style="font-size: 60px;">Contents</h1>
+<br>
+<span style="font-size: 40px;">7.1 基于Tidyverse的数据预处理（续）</span></center> <br>
+<span style="font-size: 30px;">&emsp;7.1.1 研究问题 & 数据情况回顾</span></center> <br>
+<span style="font-size: 30px;">&emsp;7.1.2 操作步骤 (tidyr)</span></center> <br>
+<span style="font-size: 30px;">&emsp;7.1.3 小结 </span></center> <br>
+<br>
+<span style="font-size: 40px;">7.2 函数的概念与自定义函数</span></center> <br>
+<span style="font-size: 30px;">&emsp;7.2.1 函数的概念与类别 </span></center> <br>
+<span style="font-size: 30px;">&emsp;7.2.2 调用函数 </span></center> <br>
+<span style="font-size: 30px;">&emsp;7.2.3 自定义函数 </span></center> <br>
+<br>
 
 ---
-## 7.0.2  代码书写规范
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
+- 以[Hu et al.,2020](https://doi.org/10.1525/collabra.301)中的反应时数据作为示例<br>
+<br>
+- **研究问题**：探究人们对自我相关刺激的优先加工是否仅在某些条件下发生<br>
+- **研究假设**：无论参与何种任务，与积极概念（好我）建立联结的自我形状会在反应时间和准确性上表现更快更准确<br>
+<img src="./picture/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
 
-```{r eval=FALSE}
-## 看起来如何？
-iris %>% group_by(Species) %>% summarize_all(mean) %>%
-ungroup %>% gather(measure, value, -Species) %>%
-arrange(value)
+---
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
+- **研究结果**：<br>
+<br>
+<img src="./picture/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+
+---
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
+- 主要变量：<br>
+Shape/Label: 屏幕呈现的图形代表的概念<br>
+Match: 图形与呈现的标签是否匹配<br>
+ACC: 被试的判断是否正确，1 = "正确", 0 = "错误", -1, 2表示未按键或按了两个键的情况，属于无效作答<br>
+RT: 被试做出判断的反应时，[200,1500]的反应时纳入分析<br>
+
+```{r example of singal rawdata_matchtask DT, echo=FALSE}
+a1 <- utils::read.table("data/match/data_exp7_rep_match_7302.out", header = TRUE)
+DT::datatable(head(a1),
+              fillContainer = TRUE, options = list(pageLength = 4))
 ```
 
---
-```{r eval=FALSE}
-### 是不是更整洁一些
-iris %>%
-  dplyr::group_by(Species) %>%
-  dplyr::summarize_if(is.numeric, mean) %>%
+---
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤</span></center><br>
+- **本课数据预处理目标**：计算Match-Moral条件下时RT的自我优势效应(SPE)。<br>
+
+&emsp;&emsp; **Step1: 批量读取并合并数据[for loop] (已演示)**<br>
+&emsp;&emsp; Step2: 选择变量[select]<br>
+&emsp;&emsp; Step3: 处理缺失值[drop_na, filter]<br>
+&emsp;&emsp; **Step4: 分实验条件计算变量[group_by, summarise]**<br>
+&emsp;&emsp; **Step5: 拆分变量[extract, filter]**<br>
+&emsp;&emsp; **Step6: 将长数据转为宽数据[pivot_wide]**<br>
+&emsp;&emsp; Step7: 计算实验条件为Match-Moral时RT的自我优势效应[mutate, select]<br>
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step2: 选择变量[select]</span></center><br>
+
+```{r example of total part1 rawdata_matchtask,message=FALSE}
+# 选择我们需要的变量
+df4 <- dplyr::select(df3,
+                     Sub, Age, Sex, Hand, #人口统计学
+                     Block, Bin, Trial,   # 试次
+                     Shape, Label, Match, # 刺激
+                     Resp, ACC, RT)       # 反应结果
+```
+
+```{r example of total part1 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df4, 10),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step3: 处理缺失值[drop_na, filter]</span></center><br>
+
+```{r example of total part2 rawdata_matchtask,message=FALSE}
+# 删除缺失值，选择符合标准的被试
+df4 <- tidyr::drop_na(df4) # 删除含有缺失值的行
+df4 <- dplyr::filter(df4, Hand == "R",      # 选择右利手被试
+                    ACC == 0 | ACC == 1 ,   # 排除无效应答（ACC = -1 OR 2)
+                    RT >= 0.2 & RT <= 1.5)  # 选择RT属于[200,1500]
+```
+
+```{r example of total part2 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df4, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
+
+```{r example of total part3 rawdata_matchtask,message=FALSE}
+# 分实验条件计算
+df4 <- dplyr::group_by(df4, Sub, Shape, Label, Match)
+df4 <- dplyr::summarise(df4, mean_ACC = mean(ACC), mean_RT = mean(RT))
+df4 <- dplyr::ungroup(df4)
+```
+
+```{r example of total part3 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df4, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
+- group_by和summarise函数<br>
+&emsp;group_by：定义分组变量<br>
+&emsp;summarise：通过与mean、median等函数协作，对变量进行汇总<br>
+![dplyr_pic1](picture/chp6/dplyr_pic1.png)
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
+- group_by和summarise函数<br>
+&emsp;group_by+summarise：对各组变量进行汇总<br>
+![dplyr_pic2](picture/chp6/dplyr_pic2.png)
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
+
+```{r example of total part4 rawdata_matchtask}
+# 将Shape变量拆分
+df4 <- tidyr::extract(df4, Shape, into = c("Valence", "Identity"),
+                      regex = "(moral|immoral)(Self|Other)", remove = FALSE)
+df4 <- dplyr::filter(df4, Match == "match" & Valence == "moral") 
+```
+
+```{r example of total part4 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df4, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
+- extract函数<br>
+&emsp; extract(data = data, col = x1, into = c("x1a", "x1b"),regex = "([[:alnum:]]+)-([[:alnum:]]+)")
+![dplyr_pic3](picture/chp6/dplyr_pic3.png)
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
+```{r example of total part5 rawdata_matchtask}
+# 将长数据转为宽数据
+df4 <- dplyr::select(df4, Sub, Identity, mean_RT)
+df4 <- tidyr::pivot_wider(df4, names_from = "Identity", values_from = "mean_RT")
+```
+
+```{r example of total part5 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df4, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
+- pivot_wide函数<br>
+&emsp; pivot_wider(names_from = var1, values_from = var2)<br>
+&emsp; names_from：其值将用作列名称的列<br>
+&emsp; values_from：其值将用作单元格值的列<br>
+![dplyr_pic4](picture/chp6/dplyr_pic4.png)
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤 </span></center><br>
+```{r example of total part6 rawdata_matchtask}
+# 计算SPE
+df4 <- dplyr::mutate(df4, moral_SPE = Self - Other)
+df4 <- dplyr::select(df4, Sub, moral_SPE) 
+```
+
+```{r example of total part6 rawdata_matchtask DT, echo=FALSE}
+DT::datatable(head(df4, 24),
+              fillContainer = TRUE, options = list(pageLength = 5))
+```
+
+---
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.2 操作步骤</span></center><br>
+```{r example of total rawdata_matchtask, message=FALSE}
+# 用管道操作符合并以上代码
+df4 <- df3 %>%
+  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
+                Block, Bin, Trial,   # 试次
+                Shape, Label, Match, # 刺激
+                Resp, ACC, RT) %>%  # 反应结果
+  tidyr::drop_na() %>%               #删除缺失值
+  dplyr::filter(Hand == "R",         # 选择右利手被试
+                ACC == 0 | ACC == 1, # 排除无效应答（ACC = -1 OR 2)
+                RT >= 0.2 & RT <= 1.5) %>%  # 选择RT属于[200,1500]
+  dplyr::group_by(Sub,Shape, Label, Match) %>%
+  dplyr::summarise(mean_ACC = mean(ACC), mean_RT = mean(RT)) %>%
   dplyr::ungroup() %>%
-  tidyr::gather(measure, value, -Species) %>%
-  dplyr::arrange(value)
-## 有没有自动挡…
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+              regex = "(moral|immoral)(Self|Other)", remove = FALSE) %>%
+  dplyr::filter(Match == "match" & Valence == "moral") %>%
+  dplyr::select(Sub, Identity, mean_RT) %>%
+  tidyr::pivot_wider(names_from="Identity", values_from="mean_RT") %>%
+  dplyr::mutate(moral_SPE=Self - Other)
 ```
-
-
-.footnote[
------
-参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
-]
-
-
-
 ---
-## 7.0.2  代码书写规范
-
-
-```{r eval=FALSE}
-## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
-## 或者点击 Code --> Reformat Code (快捷键冲突)
-## 自动增加空格与缩进
-## 选中下面代码看看效果，尽管效果有限
-## 还是平时养成书写习惯更好
-
-files <- list.files(
-  here::here("data","match"),
-  pattern = "data_exp7_rep_match_.*\\.out$",
-  full.names = TRUE
-)
-```
-
-
-
-.footnote[
------
-参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
-]
-
-
----
-## 7.0.3  数据清洗
-.pull-left[
-### 列操作
--   增加、修改、删除(mutate)
--   列筛选(select & tidyseletion)
-
-### 行操作
-
--   条件过滤(filter)
--   行索引(slice)
-
-### 数据框
--   列/行合并：
-    bind_cols & bind_rows
-
--   匹配合并：
-    left_join, right_join, full_join
-
--   修改列名：
-    rownames or dplyr::rename
-    
--   长/宽数据转换：
-    pivot_longer, pivot_wider
-]
-
-
-.pull-right[
-
-### 分组计算
-
--   group_by/ungroup
-
--   summarise
-
--   rowMeans or bruceR::MEAN(or SUM)
-
--   case_when()
-
--   多列选取：across()
-
+# <h1 lang="en">7.1 反应时数据</h1>
+<span style="font-size: 30px;">7.1.3 小结</span></center><br>
 <br>
-### 字符串(stringr package)
--   str_xxx()系列  
-
-<br>
-### 函数式编程(purrr package)
-
--   map()系列，类似 apply() 系列  
-
-]
-
-
-
----
-class: center,middle
-
-
-<span style="font-size: 50px;">**第七章**</span> <br>
-<span style="font-size: 50px;">__如何探索数据: __</span> <br>
-<span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
-
-
----
-class: inverse,center,middle
-
-.bigfont[
-数据已经清洗完成，下面应该做的是……]
---
-.bigfont[
-<br>
-查看数据内容？
-<br>
-建模分析？
-<br>
-......
-]
-
-
---
-.bigfont[
-先看一个数据(quartets::datasaurus_dozen)
-]
-
-
-
----
-
-.panelset[
-.panel[.panel-name[view]
-```{r}
-quartets::datasaurus_dozen %>%  ## 包中的数据
-  head(10)
-```
-
-.panel[.panel-name[`str()`]
-```{r}
-quartets::datasaurus_dozen %>%  ## 包中的数据
-  str()
-```
-
-
-.panel[.panel-name[`summary()`]
-```{r}
-summary(datasaurus_dozen)
-```
-
-
-]]]]
-
-
----
-class: middle,center
-.tit_font[
-好像没什么问题…  
-
-]
-
---
-.tit_font[
-<br>
-作图看看呢
-]
-
----
-## 
-```{r echo=FALSE,eval=FALSE}
-## NOT SHOW
-## PLOT GIF
-pacman::p_load(camcorder,tidyverse,bruceR)
-data = quartets::datasaurus_dozen
-colors = c('#FF5733','#00CED1','#FFD700',
-           '#8A2BE2','#32CD32','#4682B4',
-           '#FF4500','#9400D3','#00FF00',
-           '#FF1493','#8B0000','#FF69B4','#20B2AA')
-
-orders <- data$dataset %>% unique()
-orders <- c(orders[-1],orders[1])
-
-pic <- list()
-for(i in 1:13) {
+- separate() 把一个变量的单元格内的字符串拆成两份，变成两个变量 <br>
+  **更适合用于按固定分隔符分割字符串，如将“2022-02-25”分成“2022”、“02”和“25”三列** <br>
   
-    pic[[i]] <- data %>% filter(dataset == orders[i]) %>%
-      ggplot(aes(x, y)) +
-      geom_point(color = colors[i]) +
-      geom_smooth(method = "lm", color = 'black')  +
-      labs(title = paste0('dataset:  ', orders[i])) +
-      bruceR::theme_bruce() +
-      theme(title = element_text(size = 20)) 
-}
-
-gg_record(
-  dir <- file.path(tempdir(), "recording"), 
-  device = "png",
-  width = 5,
-  height = 5,
-  units = "in",
-  dpi = 500
-)
-
-for(i in 1:13){
-  pic[[i]] %>% print()
-}
-
-gg_playback(name = file.path(paste0(getwd(),'/picture/chp7/'), "dino.gif"),
-            first_image_duration = 1,
-            last_image_duration = 3,
-            frame_duration = 1,loop = F,
-            playback = T,last_as_first = F,
-)
-gg_stop_recording()
-```
-
-```{r echo=FALSE,fig.align='center',out.width='50%'}
-knitr::include_graphics('picture/chp7/dino.gif')
-```
-
-
-```{r echo=FALSE,fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center',eval = FALSE}
-
-### NOT RUN
-quartets::datasaurus_dozen %>% 
-  ggplot(aes(x, y, color = dataset)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  facet_wrap(~ dataset)
-```
-
-
-
-
-
----
-layout: true
-# 7.1  探索性数据分析
-
----
-
-.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
-**探索性数据分析(Exploratory Data Analysis, EDA)**
-]
-
-> In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
-
-
-```{r,echo=FALSE,out.width="50%",fig.align='center'}
-knitr::include_graphics("https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png")
-```
-
-
-
----
-
-.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
-
-.pull-left[
-.bigfont[
--   有哪些变量？
--   变量的类型？
--   变量的分布？
--   变量间关系？
-]
-]
-
-
-.pull-right[
-
-```{r eval = T}
-# 读取数据
-pg_raw <- bruceR::import(here::here(
-  "data", "penguin","penguin_rawdata.csv"))
-
-mt_raw <- bruceR::import(here::here(
-  "data", "match","match_raw.csv")) 
-```
-
-]
-
----
-.panelset[
-.panel[.panel-name[`head`]
-```{r, out.width = "10px"}
-DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
-```
-
-.panel[.panel-name[`str`]
-```{r}
-mt_raw %>% 
-  str() 
-```
-
-]]]
-
----
-## 常用函数
-
-.panelset[
-.panel[.panel-name[`summary`]
-```{r,out.width="10%"}
-
-summary(mt_raw) %>% 
-  knitr::kable() # 注：kable函数只为了输出
-```
-
-
-.panel[.panel-name[`skimr::skim()--1`]
-```{r}
-skimr::skim(mt_raw) %>% 
-  capture.output() %>% 
-  .[1:12]
-```
-
-.panel[.panel-name[`skimr::skim()--2`]
-
-```{r}
-skimr::skim(mt_raw) %>% 
-  capture.output() %>% 
-  .[13:24]
-```
-
-
-.panel[.panel-name[`skimr::skim()--3`]
-```{r}
-skimr::skim(mt_raw) %>% 
-  capture.output() %>% 
-  .[25:41]
-```
-
-.panel[.panel-name[`bruceR::Describe()`]
-
-```{r,warning=FALSE}
-bruceR::Describe(mt_raw) %>% 
-  capture.output() %>% 
-  .[2:17] ## 可以使用 file参数输出 Word
-```
-
-
-]]]]]]
-
-
-
----
-layout: false
-class: inverse middle center
-
-
-.tit_font[
-但是...<br>还不够
-]
-
----
-# 7.2  数据可视化
-## 7.2.1 可视化的重要性
-
-.pull-left[
-.size5[
-Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
-
--   A quick and easy way to check our data make sense, and to identify any unusual trends.
-
--   A way to honestly present the features of our data to anyone who reads our research.
-]
-]
-
---
-.pull-right[
-```{r echo=FALSE,fig.width=5,out.width='90%',fig.align='default'}
-library(showtext)
-showtext::showtext_auto(enable = T)
-quartets::datasaurus_dozen %>% 
-  filter(dataset == 'dino') %>% 
-  ggplot(aes(x,y)) + geom_point(color ='#20B2AA') + 
-  theme_bruce() + 
-  labs(title = '请记住这只 DINO !!!') + 
-  theme(plot.title = element_text(size = 20)) 
-```
-
-]
-<br>
-<br>
-
-.size5[
-绘图的方式有很多，如 Base graphics, grid, lattice,plotly...为什么使用<span style="color: red;">ggplot2</span>?
-]
-
-
-
----
-# 7.2  数据可视化
-## 7.2.2 为何使用 ggplot2?
-<br>
-.size5[
-* 化繁为简：大量的默认值
-
-* 精准定制：所有元素均可控
-
-* 易于叠加：丰富的信息
-
-* 日益丰富的生态系统 [https://r-graph-gallery.com/](https://r-graph-gallery.com/)
-
-]
-
-
-.bigfont[
-总之，好看、业界标杆，举个例子:
-]
-
----
-## 7.2.2 为何使用 ggplot?
-
-```{r echo=FALSE,out.width='63%',fig.align='center'}
-knitr::include_graphics('picture/chp7/exmp2.png')
-```
-
-
----
-## 7.2.2 为何使用 ggplot?
-
-```{r echo=FALSE,out.width='63%',fig.align='center'}
-knitr::include_graphics('picture/chp7/exmp1.png')
-```
-
-
-.footnote[
------
-Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker circulation over the past millennium. Nature 622, 93–100 (2023). https://doi.org/10.1038/s41586-023-06447-0
-]
-
-
-
----
-## 7.2.3 ggplot2 的逻辑
-.left-column[
-.bigfont[
--   数据映射
-]
-]
-
-.right-column[
-```{r echo=FALSE,out.width='75%'}
-knitr::include_graphics('picture/chp7/mapping.jpg')
-```
-]
-
-
-
----
-## 7.2.3 ggplot2 的逻辑
-
-.left-column[
-.bigfont[
--   数据映射
-
--   图层叠加
-]
-]
-
-.right-column[
-```{r echo=FALSE,out.width='70%'}
-knitr::include_graphics('https://psyteachr.github.io/data-skills-v1/images/layers.png')
-```
-]
-
-
----
-## 7.2.3 ggplot2 的逻辑
-
-.left-column[
-.bigfont[
--   数据映射
-
--   图层叠加
-
--   Code展示
-]]
-
-.right-column[
-.panelset[
-.panel[.panel-name[数据映射]
-```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
-# 以penguin问卷中前后体温为例
-
-p1 <- pg_raw %>% 
-  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
-             y = Temperature_t2)) 
-p1 ## 坐标轴名称已对应，虽然图片为空
+- extract() 类似于separate <br>
+  **更适合用于从字符串中提取特定的信息，如将“John Smith”分成“John”和“Smith”两列** <br>
   
-```
+- unite() 把多个列（字符串）整合为一列 <br>
 
+- pivot_longer() 把宽数据转化为长数据 <br>
 
-.panel[.panel-name[添加图层-散点]
-```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center'}
-p1 + geom_point()
-```
-.panel[.panel-name[添加图层-拟合曲线]
-```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center'}
-p1 + geom_point() + geom_smooth(method = 'lm')
-```
-
-.panel[.panel-name[改变映射]
-```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
-pg_raw %>% 
-  drop_na(Temperature_t1,Temperature_t2,sex) %>% 
-  ggplot(aes(x = Temperature_t1, 
-             y = Temperature_t2,
-             color = factor(sex))) +
-  geom_point() + geom_smooth()  
-
-```
-
-
-
-]]]]]]
-
-
-???
--   映射与添加图层是两个概念，映射后可以不进行绘图
-
--   图层的添加使用 + 
-
--   除了 x 和 y，仍然有其他变量进行映射，如 color
+- pivot_wider() 把长数据转化为宽数据 <br>   
+  
+- drop_na() 删除缺失值
 
 ---
-## 7.2.4 单个图片的组成
-
-```{r echo=FALSE,out.width='70%',fig.align='center'}
-knitr::include_graphics('picture/chp7/comps1.png')
-
-```
-
-
-
----
-## 7.2.4 单个图片的组成
-
-```{r echo=FALSE,out.width='75%',fig.align='center'}
-knitr::include_graphics('picture/chp7/comps2.png')
-
-```
-
-
-
----
-layout: true
-# 7.3 常用图形
-
-
----
-## 直方图
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.1 什么是函数
 <font size=5>
-对于连续变量，我们可以使用直方图进行可视化。
-以认知实验中被试的反应时数据为例。
+&emsp;&emsp;sqrt()、getwd()、here()、mean()等都是R中的函数。
+<br>
+&emsp;&emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
 </font>
 <br>
 
-.pull-left[
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
-pic_his <- mt_raw %>% 
-  # 确定映射到x轴的变量
-  ggplot(aes(x = RT)) + 
-  geom_histogram(bins = 40) +
-  theme_classic()
-```
-]
-
-.pull-right[
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
-pic_his 
-```
-]
-
-
 ---
-## 密度图
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.1 函数分类
 <font size=5>
-&emsp;&emsp;同样的我们可以使用密度图来描述反应时的分布情况。
-</font>
-
-.pull-left[
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
-pic_dens <- mt_raw %>% ggplot()+
-  # 绘制密度曲线
-  geom_density(aes(x = RT)) +
-  theme_classic()
-```
-]
-
-.pull-right[
-
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
-pic_dens
-```
-]
+已有函数<br>
+&emsp;&emsp;R base; <br>
+&emsp;&emsp;R packages; <br>
+&emsp;&emsp;functions from other sources<br>
+<font size=5>
+自定义函数<br>
+&emsp;&emsp;自己命名和创建函数
 
 ---
-## 直方图 + 密度图
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.2 函数调用
+<font size=5>
+-首先需要下载函数所在的R包（部分R包在下载R时已经自动下载）<br>
+&emsp;&emsp;install.pcakages("R包名称")<br>
+-然后需要加载R包<br>
+&emsp;&emsp;library(R包名称)<br>
+-已下载的R包，也可以直接 R包::函数名称 来调用函数<br>
 
-.pull-left[
-```{r eval=FALSE}
-## 尝试将两个图层叠加在一起
-mt_raw %>% ggplot(aes(x = RT))+
-  geom_histogram(bins = 40) + 
-  geom_density() +
-  theme_classic()
-```
-]
-
-
-.pull-right[
-```{r echo=FALSE,fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE}
-
-mt_raw %>% ggplot(aes(x = RT))+
-  geom_histogram(bins = 40) + 
-  geom_density() +
-  theme_classic()
-```
-似乎密度曲线没有显示…
-原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
-如果仔细观察 x 坐标轴还是能看到细微差异的。
-]
-
-
+-不同的R包中可能会有相同的函数名，为了避免调用错误，推荐使用：R包::函数名称<br>
 
 ---
-## 直方图 + 密度图
-.pull-left[
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%'}
-pic_mix <- mt_raw %>% 
-  ggplot(aes(x = RT,
-  ## 直方图的统计结果通过after_stat(density)传递给了密度图
-        y = after_stat(density))) +  #<<
-  geom_histogram() +
-  geom_density() +
-  theme_classic()
-# 设定绘图风格
-```
-]
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.2 函数调用
+![error4](./picture/chp5/error4.png)
+<font size = 5>
+未加载时不能直接调用函数
+--
 
-.pull-right[
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
-pic_mix
-```
-]
-
----
-## 箱线图
-
-除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。这里我们利用箱线图看看不同Label的RT如何。
-
-
-.pull-left[
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='50%'}
-pic_box <- mt_raw %>% ggplot(aes(
-  x = Label,
-  y = RT)) +
-  geom_boxplot(staplewidth = 1) +
-  # 绘制箱线图并添加上下边缘线
-  theme_classic()
-```
-
-
-]
-.pull-right[
-```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE,out.width='100%',echo=FALSE}
-pic_box
-```
-]
-
-.footnote[
-----
-矩形中间线为中位数，上下两条线分别为上四分位数和下四分位数；
-1.5个四分位距(Q3-Q1)以外的值为离群值；geom_boxplot默认使用1.5IQR
-]
----
-layout: true
-# 7.4 Explore data with DataExplorer
-
----
-
-
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='80%',eval=FALSE}
- DataExplorer::plot_str(mt_raw)
-```
-
-```{r echo=FALSE,out.width='65%'}
-knitr::include_graphics('picture/chp7/plotstr.png')
+```{r}
+here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
+library(here)
+here()
 ```
 
 ---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.2 函数调用
 
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
-DataExplorer::plot_intro(mt_raw)
+```{r 5.7 read.csv}
+df.pg.raw <- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
+                       header = T, 
+                       sep=",",
+                       stringsAsFactors = FALSE) 
 ```
 
+&emsp;&emsp;`df.pg.raw` 变量名 <br>
+&emsp;&emsp;`utils` 函数所在的R包 <br>
+&emsp;&emsp;`read.csv` 函数名 <br>
+&emsp;&emsp;`file` 参数：文件路径 <br>
+&emsp;&emsp;`header` 参数：是否将第一行作为列名 <br>
+&emsp;&emsp;`sep` 参数：指定分隔符 <br>
+&emsp;&emsp;`stringsAsFactors` 参数：是否将字符型数据转化为因子 <br>
 
 ---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数
+<font size = 5>
+函数定义通常由以下几个部分组成：<br>
+&emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。<br>
+&emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。<br>
+&emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。<br>
+&emsp;-返回值: 指定函数的输出结果，使用关键字`return`。<br>
+--
 
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
- DataExplorer::plot_missing(mt_raw)
+```{r 5.7 mysum}
+# 定义一个函数：输入x和y，返回3倍x和5倍y的和
+mysum <- function(x,y){
+  result = 3*x+5*y
+  return(result)
+}
+# mysum: 自定义的函数名
+# x,y:  形式参数
+# result = 3*x+5*y: 函数体
+# return(result): 返回值
+
+#调用函数,x=1,y=2
+mysum(1, 2)
+mysum(y=1, x=2)
 ```
 
 ---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数（小练习）
+<font size = 5>
+- 小练习: 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。计算a = 1, b = 2, c = 3时返回的值<br>
 
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
- DataExplorer::plot_bar(mt_raw)
+```{r 5.7 myabc}
+# 自定义函数：计算 (a+b)/c
+# myabc <- ***{
+  # result = ****
+  # return(result)}
+
+# 计算abc分别为1,2,3时的值
+#myabc(1, 2, 3)  # 结果：1
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
 ```
 
 ---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数
+<font size = 5>
+<br>我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
+--
+![error7](./picture/chp5/error7.png)
+--
+<font size = 5>
+<br>在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
 
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
- DataExplorer::plot_bar(mt_raw, by="Match")
+```{r}
+mysum2 <- function(x = 6,y = 7){
+  result = 3*x+5*y
+  return(result)
+}
+mysum2()
+mysum2(5)
+```
+---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数(小练习)
+<font size = 5>
+- 小练习：<br>
+&emsp;1 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。<br>
+**&emsp;2 设置a、b、c的默认值为3、2、1<br>**
+- 通过这个练习，你将学习如何为函数添加默认值
+
+```{r 5.7 myabc2}
+# myabc <- function(a = ***, b = ***, c = ***){
+#   result = ***
+#   return(***)
+# }
+# myabc(***)
+
+# 用合理的代码替换以上“***”,删除每行前的“#”,即可运行
 ```
 
 ---
-
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
-DataExplorer::plot_histogram(mt_raw)
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数
+<font size = 5>
+在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算<br>
+--
+![error8](./picture/chp5/error8.png)
+--
+<font size = 5>
+自定义函数时可以手动添加报错信息。<br>
+只有在输入的内容符合要求时才可以正常运行，否则报错。<br>
+此处判断是否符合要求本质上是一种逻辑判断。<br>
+--
+![if-else](./picture/chp5/if-else.png)
+---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数
+```{r mysum3}
+mysum3 <- function(x = 6,y = 7){
+  if(is.numeric(x) & is.numeric(y)){
+    result = 3*x+5*y
+    return(result)}
+  else{print("x and y must be number")}
+}
+# print：输出指定的内容
+# is.numeric:判断是否为数值型。是则返回T，否则返回F
+# & : 表示“且”
+mysum3(5,6)
+mysum3('a','b')
 ```
 
-
 ---
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数(小练习)
+<font size = 5>
+- 小练习：<br>
+&emsp;1 定义一个函数,输入值a,b,c,返回(a+b)/c;<br>
+&emsp;2 设置a、b、c的默认值为3、2、1;<br>
+**&emsp;当c为0时报错“c should not be 0”**
+- 通过这个练习，你将学习如何为函数添加报错信息
 
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
- DataExplorer::plot_qq(pg_raw[,2:10])
+```{r 5 myabc3}
+#myabc <- function(***){
+#  if(***){
+#    result = ***
+#    return(***)
+#  }
+#  else{print(***)}
+#}
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
 ```
 
 ---
-
-```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
-DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
+# <h1 lang="zh-CN">7.2 函数</h1>
+## 7.2.3 自定义函数(小练习)
+```{r myabc4}
+#示例
+myabc <- function(a = 3, b = 2, c = 1){
+  if(c!=0){
+    result = (a+b)/c
+    return(result)
+  }
+  else{print('c should not be 0')}
+}
+```
+---
+# <h1 lang="zh-CN">7.2 函数</h1>
+- 函数在数据处理种的运用
+```{r 7.2 example}
+convert_data_types = function(df) {
+  df <- df %>%
+    dplyr::mutate(Date = as.character(Date),
+                  Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),
+                  Age = as.numeric(Age),
+                  Sex = as.character(Sex),
+                  Hand = as.character(Hand),
+                  Block = as.numeric(Block),
+                  Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),
+                  Shape = as.character(Shape),
+                  Label = as.character(Label),
+                  Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),
+                  Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),
+                  RT = as.numeric(RT))
+  return(df)
+}
 ```
 
 ---
-## 使用ggpairs
+# <h1 lang="en">7.2 函数</h1>
+<span style="font-size: 30px;">综合练习</span></center><br>
 
-.panelset[
-```{r panelset=TRUE}
-## 以 penguin project 数据中 ALEX, stress和 ECR 为例
-pg_raw %>% 
-  mutate(
-    # 计算均值
-    m_ALEX = bruceR::MEAN(.,
-      var = 'ALEX',items = 1:16,rev = c(4,12,14,16)),
-    m_stress = bruceR::MEAN(.,
-      var = 'stress',items = 1:14,rev = c(4:7,9,10,13)
-    ),
-    m_ECR = bruceR::MEAN(.,
-      var = 'ECR',items = 1:36
-    )
-  ) %>% 
-  select(contains('m_')) %>% 
-  GGally::ggpairs()
+- 定义一个函数用于计算$d'$ 
+
+- 计算不同Shape情况下(immoralself，moralself，immoralother，moralother)<br> 基于信号检测论(match为信号，mismatch噪音)的$d'$
+<br>
+
+提示：<br> 
+- (1) $d′$ = ${Z_{击中率}−Z_{虚报率}}$ = $\frac{M_{SN}-M_N}{\sigma_N}$ <br><br>
+- (2) $击中率$ = $\frac{击中次数}{信号总次数}$ <br><br>
+- (3) $虚报率$ = $\frac{虚报次数}{噪音总次数}$ 
+<br>
+
+---
+- 1 以下是计算击中(hit)、虚报(fa)、漏报(miss)和正确否定(cr)的代码<br>
+```{r, 6.3_prec, eval=FALSE}
+# 去掉下面#的部分，将***替换成合适的变量，补全代码
+dplyr::summarise(
+      # *** = length(ACC[Match == "match" & ACC == 1]),
+      # *** = length(ACC[Match == "mismatch" & ACC == 0]),
+      # *** = length(ACC[Match == "match" & ACC == 0]),
+      # *** = length(ACC[Match == "mismatch" & ACC == 1]),
 ```
-
-]
+- 2 可以使用正态分布的累积分布函数（qnorm）来计算 $d′$ 值，以下为代码<br>
+```{r, 6.3_prec2, eval=FALSE}
+        Dprime = qnorm(
+        ifelse(hit / (hit + miss) < 1,
+               hit / (hit + miss),        # 击中率
+               1 - 1 / (2 * (hit + miss)) # 避免击中率为1时的极端情况
+              )
+        ) 
+             - qnorm(
+        ifelse(fa / (fa + cr) > 0,
+              fa / (fa + cr),     # 虚报率
+              1 / (2 * (fa + cr)) # 避免虚报率为0时的极端情况
+              )
+                    )
+      ) 
+```
+---
+# <h1 lang="en">7.2 函数</h1>
+<span style="font-size: 30px;">综合练习</span></center><br>
+- **练习思路**<br>
+<br>
+Step1: 选择需要的变量 <br>
+<br>
+Step2: 基于Sub, Shape分组[extract,filter] <br>
+<br>
+Step3: 使用计算公式，计算d'值 <br>
+<br>
+Step4: 删除击中、虚报、误报、正确拒绝四个不需要的变量 <br>
+<br>
+Step5: 长转宽，得到每个Shape情况下的信号检测论d值[pivot_wide] <br>
 
 ---
-layout: false
-#练习
-.bigfont[
-1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
-
-2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
-
-3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
- 
-]
-
-#探索
-.bigfont[
-1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
-
-2. 学会使用大语言模型进行学习，进行精准地提问。
-]
-
----
-# 参考阅读
-.bigfont[
--   [R Graphics Cookbook](https://r-graphics.org/)
-
--   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
-]
+# <h1 lang="en">7.2 函数</h1>
+<span style="font-size: 30px;">综合练习</span></center><br>
+- **答案参考**<br>
+<br>
+<img src="./picture/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">

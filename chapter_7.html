@@ -1,1129 +1,797 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>chapter_7.knit</title>
+    <title>Lecture 7</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <meta name="author" content="Hu Chuan-Peng (PhD)" />
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
-    <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.30/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
-    <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
-    <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+    <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
+class: center, middle, inverse, title-slide
 
-
-
-
-class: center, middle
-&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2024-04-19&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
-
-
-
-&lt;style type="text/css"&gt;
-/* ---- extra.css ---- */
-.bigfont {
-  font-size: 30px;
-}
-.size5{
-font-size: 20px;
-}
-.tit_font{
-font-size: 60px;
-}
-
-&lt;/style&gt;
-
-
-
-
----
-# Packages
-
-```r
-if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
-}
-
-
-pacman::p_load(
-  # 本节课需要用到的 packages
-  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
-  # 生成课件
-  xaringan,xaringanthemer,xaringanExtra)
-```
-
-
----
-class: inverse center middle
-.tit_font[
-回顾
+.title[
+# Lecture 7
+]
+.subtitle[
+## Data Preprocessing
+]
+.author[
+### Hu Chuan-Peng (PhD)
+]
+.institute[
+### Nanjing Normal University
+]
+.date[
+### 2025/04/02
 ]
 
-???
--   回顾
-
--   数据探索与描述统计
-
--   为什么可视化
-
--   为什么用 ggplot 画图
-
--   ggplot 绘图的原理
-
--   基本图形简介
-  -   散点图
-  -   柱状图
-  -   密度图
-  -   
-
-
 ---
-## 7.0.1  批量导入数据
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第七讲&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;Tidyverse数据预处理与函数&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025/04/02&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+---
+&lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;回顾：问卷数据的处理和实验数据的导入&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;问卷数据的处理&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step1：选择变量[select]&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step2：检查数据类型[glimpse, as族函数]&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step3：处理缺失值[filter, is.na]&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step4：反向计分[mutate, case_when]&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step5：计算所需变量[mutate]&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step6：分组求统计量 [group_by, summarise]
+&lt;br&gt;
+---
+&lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;回顾：问卷数据的处理和实验数据的导入&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;实验数据的导入&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (1) 找到所有要读取的文件名；&lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (2) 以文件名形成的向量为基础，使用for loop逐个文件进行操作;&lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (3) 将每次循环中读取的数据与之前已经读取的数据进行合并;&lt;/font&gt;
+&lt;br&gt;
+- ## &lt;font size = 5.0&gt; (4) 循环每个文件，直到全部读取完成，删除中间变量.&lt;/font&gt;
+&lt;br&gt;
+---
+- 那么要如何利用for loop批量导入数据呢？&lt;br&gt;
+      - (1) 找到所有要读取的文件名 --&gt; &lt;br&gt;
+      - (2) 以文件名形成的向量为基础，使用for loop逐个文件进行操作 --&gt; &lt;br&gt;
+      - (3) 将每次循环中读取的数据与之前已经读取的数据进行合并 --&gt; &lt;br&gt;
+      - (4) 循环每个文件，直到全部读取完成，删除中间变量。
 
 
+``` r
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+# 导入所需R包
+library(tidyverse)
+```
 
-.panelset[
-.panel[.panel-name[获取地址]
-
-```r
-# 所有数据路径
-*files &lt;- list.files(
-  ## &lt;- &amp; =
-  here::here("data", "match"), 
-  pattern = "data_exp7_rep_match_.*\\.out$", 
-  full.names = TRUE)
+```
+## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
 ```
 
 
+``` r
+# 找到所有要读取的文件名
+# 使用 full.names 参数获取完整路径的文件列表
+files &lt;- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
+```
+*P.S.尽管函数叫list.files，但它得到的变量的属性是value，而不是list*
 
-.panel[.panel-name[数据类型转换]
+---
+- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
+- 定义函数用于数据类转换
 
-
-```r
-convert_data_types &lt;- function(df) {
-  df &lt;- df %&gt;% 
-    dplyr::mutate(Date = as.character(Date),Prac = as.character(Prac),
-                  Sub = as.numeric(Sub),Age = as.numeric(Age),
-                  Sex = as.character(Sex),Hand = as.character(Hand),
-                  Block = as.numeric(Block),Bin = as.numeric(Bin),
-                  Trial = as.numeric(Trial),Shape = as.character(Shape),
-                  Label = as.character(Label),Match = as.character(Match),
-                  CorrResp = as.character(CorrResp),Resp = as.character(Resp),
-                  ACC = as.numeric(ACC),RT = as.numeric(RT))
+``` r
+# 定义函数用于数据类型转换，可以暂时不管
+convert_data_types = function(df) {
+  df &lt;- df %&gt;%
+    dplyr::mutate(Date = as.character(Date),
+                  Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),
+                  Age = as.numeric(Age),
+                  Sex = as.character(Sex),
+                  Hand = as.character(Hand),
+                  Block = as.numeric(Block),
+                  Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),
+                  Shape = as.character(Shape),
+                  Label = as.character(Label),
+                  Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),
+                  Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),
+                  RT = as.numeric(RT))
   return(df)
 }
 ```
 
-.panel[.panel-name[批量合并]
+---
+- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
+- 建立并将数据存入数据框
 
-```r
-df3 &lt;- data.frame() 
+``` r
+# 创建一个空的数据框来存储读取的数据
+df3 &lt;- data.frame()
 
-for (i in seq_along(files)) {
-  # 读取
-  df &lt;- read.table(files[i], header = TRUE) %&gt;%  
-    dplyr::filter(Date != "Date") %&gt;%  
-    convert_data_types() 
-  # 合并
-  df3 &lt;- dplyr::bind_rows(df3, df) 
+# 循环读取每个文件，处理数据并添加到数据框中
+for (i in seq_along(files)) { # 重复"读取到的.out个数"的次数
+  # 读取数据文件
+  df &lt;- read.table(files[i], header = TRUE) 
+  # 使用 filter 函数过滤掉 Date 列值为 "Date" 的行
+  df &lt;- dplyr::filter(df, Date != "Date") 
+  # 调用函数进行数据类型转换
+  df &lt;- convert_data_types(df)
+  # 使用 bind_rows() 函数将当前数据框与之前的数据框合并
+  df3 &lt;- dplyr::bind_rows(df3, df)
 }
-# 删除临时变量
+
+# 清除中间变量
 rm(df, files, i)
 ```
 
-.panel[.panel-name[保存数据]
+---
+- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
+- 使用lapply也能完成批量导入与合并。lapply思维难度更高，但代码更简洁。&lt;br&gt;
 
 
-```r
-## NOT RUN
-## 上节课介绍了write.csv,也可使用bruceR::export
-bruceR::export(
-  df3, 
-  file = here::here("data", "match","match_raw.csv"))
+``` r
+# 获取所有的.out文件名
+files &lt;- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
 
-## 当然，export 不仅可以保存数据，也可以输出模型结果
+# 读取每个.out文件，并进行数据清洗
+df3 &lt;- lapply(files, function(file) {
+  df &lt;- read.table(file, header = TRUE)
+  df &lt;- dplyr::filter(df, Date != "Date") # 过滤掉 Date 列值为 "Date" 的行
+  df &lt;- mutate(df, 
+               convert_data_types(df)
+              ) # 进行数据类型转换和数据清洗
+  return(df)
+})
+
+# 合并所有数据框
+df3 &lt;- dplyr::bind_rows(df3)
+
+# 清除中间变量
+rm(files)
 ```
+---
+- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
+- 保存合并的数据文件。&lt;br&gt;
 
-.panel[.panel-name[修改列名-rename]
 
-```r
-## 修改第一列列名 Date 为小写 date
-df3 %&gt;% dplyr::rename(  ## new_name = old_name
-  date = Date
-) %&gt;% colnames()  
+``` r
+write.csv(df3, 
+          file = here::here("data", "match","match_raw.csv"),
+          row.names = FALSE)
 ```
-
-```
-##  [1] "date"     "Prac"     "Sub"      "Age"      "Sex"      "Hand"    
-##  [7] "Block"    "Bin"      "Trial"    "Shape"    "Label"    "Match"   
-## [13] "CorrResp" "Resp"     "ACC"      "RT"
-```
-
-```r
-## 将全部列名都变成小写
-df3 %&gt;% dplyr::rename_with(
-  ## 将字符向量全部变成小写； ~ 声明这是一个函数，.代表前面的数据(df3)传到.所在的位置
-* ~tolower(.)
-  ## 即使用 tolower()对所有列名进行批量处理
-  ##
-) %&gt;% colnames()
-```
-
-```
-##  [1] "date"     "prac"     "sub"      "age"      "sex"      "hand"    
-##  [7] "block"    "bin"      "trial"    "shape"    "label"    "match"   
-## [13] "corrresp" "resp"     "acc"      "rt"
-```
-
-
-
-]
-]
-]
-]
-]
-]
-
-???
--   解释 变量赋值与参数接受符号差别
-
--   代码规范性，R 对缩进换行不敏感
-
--   export 函数
-
+---
+&lt;h1 lang="en" style="font-size: 60px;"&gt;Contents&lt;/h1&gt;
+&lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;7.1 基于Tidyverse的数据预处理（续）&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.1.1 研究问题 &amp; 数据情况回顾&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.1.2 操作步骤 (tidyr)&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.1.3 小结 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 40px;"&gt;7.2 函数的概念与自定义函数&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.2.1 函数的概念与类别 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.2.2 调用函数 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.2.3 自定义函数 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
 
 ---
-## 7.0.2  代码书写规范
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.1 问题 &amp; 数据&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+- 以[Hu et al.,2020](https://doi.org/10.1525/collabra.301)中的反应时数据作为示例&lt;br&gt;
+&lt;br&gt;
+- **研究问题**：探究人们对自我相关刺激的优先加工是否仅在某些条件下发生&lt;br&gt;
+- **研究假设**：无论参与何种任务，与积极概念（好我）建立联结的自我形状会在反应时间和准确性上表现更快更准确&lt;br&gt;
+&lt;img src="./picture/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+
+---
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.1 问题 &amp; 数据&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+- **研究结果**：&lt;br&gt;
+&lt;br&gt;
+&lt;img src="./picture/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+
+---
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.1 问题 &amp; 数据&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+- 主要变量：&lt;br&gt;
+Shape/Label: 屏幕呈现的图形代表的概念&lt;br&gt;
+Match: 图形与呈现的标签是否匹配&lt;br&gt;
+ACC: 被试的判断是否正确，1 = "正确", 0 = "错误", -1, 2表示未按键或按了两个键的情况，属于无效作答&lt;br&gt;
+RT: 被试做出判断的反应时，[200,1500]的反应时纳入分析&lt;br&gt;
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-54bd8acaf355768d0a6e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-54bd8acaf355768d0a6e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10","02-May-2018_14:23:13","02-May-2018_14:23:15","02-May-2018_14:23:17"],["Exp","Exp","Exp","Exp","Exp","Exp"],[7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22],["female","female","female","female","female","female"],["R","R","R","R","R","R"],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,2,3,4,5,6],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf","immoralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","immoralSelf"],["mismatch","mismatch","mismatch","mismatch","match","match"],["n","n","n","n","m","m"],["m","n","n",null,"m","m"],[0,1,1,-1,1,1],[0.7561,0.7043,0.9903,1.042,0.8207,0.7547]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Label","targets":11},{"name":"Match","targets":12},{"name":"CorrResp","targets":13},{"name":"Resp","targets":14},{"name":"ACC","targets":15},{"name":"RT","targets":16}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- **本课数据预处理目标**：计算Match-Moral条件下时RT的自我优势效应(SPE)。&lt;br&gt;
+
+&amp;emsp;&amp;emsp; **Step1: 批量读取并合并数据[for loop] (已演示)**&lt;br&gt;
+&amp;emsp;&amp;emsp; Step2: 选择变量[select]&lt;br&gt;
+&amp;emsp;&amp;emsp; Step3: 处理缺失值[drop_na, filter]&lt;br&gt;
+&amp;emsp;&amp;emsp; **Step4: 分实验条件计算变量[group_by, summarise]**&lt;br&gt;
+&amp;emsp;&amp;emsp; **Step5: 拆分变量[extract, filter]**&lt;br&gt;
+&amp;emsp;&amp;emsp; **Step6: 将长数据转为宽数据[pivot_wide]**&lt;br&gt;
+&amp;emsp;&amp;emsp; Step7: 计算实验条件为Match-Moral时RT的自我优势效应[mutate, select]&lt;br&gt;
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step2: 选择变量[select]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
 
 
-```r
-## 看起来如何？
-iris %&gt;% group_by(Species) %&gt;% summarize_all(mean) %&gt;%
-ungroup %&gt;% gather(measure, value, -Species) %&gt;%
-arrange(value)
+``` r
+# 选择我们需要的变量
+df4 &lt;- dplyr::select(df3,
+                     Sub, Age, Sex, Hand, #人口统计学
+                     Block, Bin, Trial,   # 试次
+                     Shape, Label, Match, # 刺激
+                     Resp, ACC, RT)       # 反应结果
 ```
 
---
+<div class="datatables html-widget html-fill-item" id="htmlwidget-0ba186698393fc853c62" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-0ba186698393fc853c62">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,2,3,4,5,6,7,8,9,10],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","immoralSelf","moralOther","moralSelf","immoralSelf","moralOther"],["mismatch","mismatch","mismatch","mismatch","match","match","match","match","mismatch","mismatch"],["m","n","n",null,"m","m","m","m","n","n"],[0,1,1,-1,1,1,1,1,1,1],[0.7561,0.7043,0.9903,1.042,0.8207,0.7547,0.5429,0.9009,0.9550999999999999,0.6952]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7,12,13]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Label","targets":9},{"name":"Match","targets":10},{"name":"Resp","targets":11},{"name":"ACC","targets":12},{"name":"RT","targets":13}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
-```r
-### 是不是更整洁一些
-iris %&gt;%
-  dplyr::group_by(Species) %&gt;%
-  dplyr::summarize_if(is.numeric, mean) %&gt;%
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step3: 处理缺失值[drop_na, filter]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 删除缺失值，选择符合标准的被试
+df4 &lt;- tidyr::drop_na(df4) # 删除含有缺失值的行
+df4 &lt;- dplyr::filter(df4, Hand == "R",      # 选择右利手被试
+                    ACC == 0 | ACC == 1 ,   # 排除无效应答（ACC = -1 OR 2)
+                    RT &gt;= 0.2 &amp; RT &lt;= 1.5)  # 选择RT属于[200,1500]
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b5e412fb539805225b0a" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b5e412fb539805225b0a">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,1],["immoralSelf","moralOther","immoralOther","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf","moralOther","immoralOther","moralOther","moralSelf","immoralOther","immoralSelf","moralSelf","moralSelf","immoralSelf","moralOther","immoralOther","moralSelf","immoralOther","immoralOther","moralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","moralOther","moralSelf","immoralSelf","moralOther","moralSelf","immoralOther","moralOther","immoralSelf","immoralOther","moralSelf","immoralSelf","moralSelf","immoralSelf","moralOther","moralOther","moralSelf","immoralOther","moralOther","moralSelf"],["mismatch","mismatch","mismatch","match","match","match","match","mismatch","mismatch","mismatch","match","match","mismatch","match","mismatch","mismatch","match","match","match","mismatch","match","match","mismatch","match"],["m","n","n","m","m","m","m","n","n","n","m","m","m","m","n","n","m","n","m","n","m","m","n","m"],[0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1],[0.7561,0.7043,0.9903,0.8207,0.7547,0.5429,0.9009,0.9550999999999999,0.6952,0.7593,0.7135,0.5656,0.5357,0.8078,0.96,0.6661,0.6962,0.8803,0.5785,0.7845,0.8146,0.6548,0.8789,0.7131]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7,12,13]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Label","targets":9},{"name":"Match","targets":10},{"name":"Resp","targets":11},{"name":"ACC","targets":12},{"name":"RT","targets":13}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 分实验条件计算
+df4 &lt;- dplyr::group_by(df4, Sub, Shape, Label, Match)
+df4 &lt;- dplyr::summarise(df4, mean_ACC = mean(ACC), mean_RT = mean(RT))
+df4 &lt;- dplyr::ungroup(df4)
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-3be0a54491ab8d4c83da" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-3be0a54491ab8d4c83da">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7303,7303,7303,7303,7303,7303,7303,7303],["immoralOther","immoralOther","immoralOther","immoralOther","immoralSelf","immoralSelf","immoralSelf","immoralSelf","moralOther","moralOther","moralOther","moralOther","moralSelf","moralSelf","moralSelf","moralSelf","immoralOther","immoralOther","immoralOther","immoralOther","immoralSelf","immoralSelf","immoralSelf","immoralSelf"],["immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf"],["match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch","mismatch","mismatch","match","match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch"],[0.8888888888888888,0.7857142857142857,0.9333333333333333,1,0.7058823529411765,0.8636363636363635,1,0.9166666666666666,0.7777777777777778,1,0.9555555555555556,1,0.9230769230769231,0.5,0.7777777777777778,0.8863636363636364,0.7777777777777778,0.875,0.8666666666666667,0.9285714285714286,0.7647058823529411,0.711111111111111,0.8666666666666667,0.6923076923076923],[0.6717288888888889,0.7355285714285714,0.7479333333333333,0.7298153846153846,0.7260058823529412,0.7123159090909091,0.697,0.822175,0.6578833333333334,0.7552615384615384,0.60298,0.7282857142857143,0.7412384615384615,0.7712333333333333,0.7380944444444445,0.697540909090909,0.7167022222222222,0.74600625,0.7791133333333333,0.7363214285714286,0.7959352941176471,0.7246755555555555,0.7592333333333333,0.7829307692307692]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>mean_ACC<\/th>\n      <th>mean_RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Shape","targets":2},{"name":"Label","targets":3},{"name":"Match","targets":4},{"name":"mean_ACC","targets":5},{"name":"mean_RT","targets":6}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- group_by和summarise函数&lt;br&gt;
+&amp;emsp;group_by：定义分组变量&lt;br&gt;
+&amp;emsp;summarise：通过与mean、median等函数协作，对变量进行汇总&lt;br&gt;
+![dplyr_pic1](picture/chp6/dplyr_pic1.png)
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- group_by和summarise函数&lt;br&gt;
+&amp;emsp;group_by+summarise：对各组变量进行汇总&lt;br&gt;
+![dplyr_pic2](picture/chp6/dplyr_pic2.png)
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 将Shape变量拆分
+df4 &lt;- tidyr::extract(df4, Shape, into = c("Valence", "Identity"),
+                      regex = "(moral|immoral)(Self|Other)", remove = FALSE)
+df4 &lt;- dplyr::filter(df4, Match == "match" &amp; Valence == "moral") 
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-413ab80e74fe024b8278" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-413ab80e74fe024b8278">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7303,7303,7304,7304,7305,7305,7306,7306,7307,7307,7308,7308,7309,7309,7310,7310,7311,7311,7312,7312,7313,7313],["moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf"],["moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral"],["Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self"],["moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf"],["match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match"],[0.9555555555555556,0.8863636363636364,0.8863636363636364,0.9333333333333333,0.8333333333333333,0.9866666666666667,0.9333333333333333,0.9324324324324325,0.9866666666666667,0.7972972972972973,0.8266666666666667,0.8888888888888888,0.8918918918918919,0.9466666666666667,0.76,0.9459459459459459,0.96,0.96,0.92,0.8533333333333333,0.7361111111111113,0.9864864864864865,0.6338028169014085,0.4109589041095889],[0.60298,0.697540909090909,0.7167772727272728,0.6557266666666667,0.7493875,0.552276,0.5991426666666667,0.588072972972973,0.5805133333333333,0.7772581081081081,0.703596,0.6617236111111111,0.7399135135135135,0.623512,0.6938013333333334,0.6045945945945946,0.5399080000000001,0.570092,0.5290586666666667,0.5445226666666667,0.7493319444444444,0.6192027027027027,0.5500957746478873,0.5352452054794521]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>mean_ACC<\/th>\n      <th>mean_RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,7,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Shape","targets":2},{"name":"Valence","targets":3},{"name":"Identity","targets":4},{"name":"Label","targets":5},{"name":"Match","targets":6},{"name":"mean_ACC","targets":7},{"name":"mean_RT","targets":8}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- extract函数&lt;br&gt;
+&amp;emsp; extract(data = data, col = x1, into = c("x1a", "x1b"),regex = "([[:alnum:]]+)-([[:alnum:]]+)")
+![dplyr_pic3](picture/chp6/dplyr_pic3.png)
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+``` r
+# 将长数据转为宽数据
+df4 &lt;- dplyr::select(df4, Sub, Identity, mean_RT)
+df4 &lt;- tidyr::pivot_wider(df4, names_from = "Identity", values_from = "mean_RT")
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-112b8c3affb7457d501e" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-112b8c3affb7457d501e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7303,7304,7305,7306,7307,7308,7309,7310,7311,7312,7313,7314,7315,7316,7317,7318,7319,7321,7322,7323,7324,7325,7326],[0.60298,0.7167772727272728,0.7493875,0.5991426666666667,0.5805133333333333,0.703596,0.7399135135135135,0.6938013333333334,0.5399080000000001,0.5290586666666667,0.7493319444444444,0.5500957746478873,0.699122972972973,0.6574680555555555,0.706812,0.8046028571428572,0.6787253333333333,0.739204,0.6298386666666667,0.6224260273972603,0.7255148648648648,0.8345594202898551,0.64298,0.5947810810810811],[0.697540909090909,0.6557266666666667,0.552276,0.588072972972973,0.7772581081081081,0.6617236111111111,0.623512,0.6045945945945946,0.570092,0.5445226666666667,0.6192027027027027,0.5352452054794521,0.7473794520547945,0.4947851351351351,0.6139613333333334,0.7520785714285714,0.6541418918918919,0.6909533333333333,0.6113506849315068,0.7169767123287671,0.6991608108108108,0.7507830985915493,0.58462,0.637777027027027]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Other<\/th>\n      <th>Self<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Other","targets":2},{"name":"Self","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- pivot_wide函数&lt;br&gt;
+&amp;emsp; pivot_wider(names_from = var1, values_from = var2)&lt;br&gt;
+&amp;emsp; names_from：其值将用作列名称的列&lt;br&gt;
+&amp;emsp; values_from：其值将用作单元格值的列&lt;br&gt;
+![dplyr_pic4](picture/chp6/dplyr_pic4.png)
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+``` r
+# 计算SPE
+df4 &lt;- dplyr::mutate(df4, moral_SPE = Self - Other)
+df4 &lt;- dplyr::select(df4, Sub, moral_SPE) 
+```
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e49c7308baa304ed03c3" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e49c7308baa304ed03c3">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7303,7304,7305,7306,7307,7308,7309,7310,7311,7312,7313,7314,7315,7316,7317,7318,7319,7321,7322,7323,7324,7325,7326],[0.09456090909090908,-0.06105060606060608,-0.1971115,-0.01106969369369371,0.1967447747747748,-0.04187238888888889,-0.1164015135135136,-0.08920673873873874,0.03018399999999999,0.01546400000000003,-0.1301292417417417,-0.01485056916843519,0.04825647908182151,-0.1626829204204204,-0.09285066666666664,-0.0525242857142858,-0.02458344144144142,-0.04825066666666666,-0.01848798173515986,0.09455068493150687,-0.026354054054054,-0.08377632169830573,-0.05835999999999997,0.04299594594594591]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>moral_SPE<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"moral_SPE","targets":2}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+``` r
+# 用管道操作符合并以上代码
+df4 &lt;- df3 %&gt;%
+  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
+                Block, Bin, Trial,   # 试次
+                Shape, Label, Match, # 刺激
+                Resp, ACC, RT) %&gt;%  # 反应结果
+  tidyr::drop_na() %&gt;%               #删除缺失值
+  dplyr::filter(Hand == "R",         # 选择右利手被试
+                ACC == 0 | ACC == 1, # 排除无效应答（ACC = -1 OR 2)
+                RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%  # 选择RT属于[200,1500]
+  dplyr::group_by(Sub,Shape, Label, Match) %&gt;%
+  dplyr::summarise(mean_ACC = mean(ACC), mean_RT = mean(RT)) %&gt;%
   dplyr::ungroup() %&gt;%
-  tidyr::gather(measure, value, -Species) %&gt;%
-  dplyr::arrange(value)
-## 有没有自动挡…
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+              regex = "(moral|immoral)(Self|Other)", remove = FALSE) %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "moral") %&gt;%
+  dplyr::select(Sub, Identity, mean_RT) %&gt;%
+  tidyr::pivot_wider(names_from="Identity", values_from="mean_RT") %&gt;%
+  dplyr::mutate(moral_SPE=Self - Other)
 ```
-
-
-.footnote[
------
-参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
-]
-
-
-
 ---
-## 7.0.2  代码书写规范
-
-
-
-```r
-## 使用 Ctrl + Shift + A  (cmd+shift+A in Mac) 
-## 或者点击 Code --&gt; Reformat Code (快捷键冲突)
-## 自动增加空格与缩进
-## 选中下面代码看看效果，尽管效果有限
-## 还是平时养成书写习惯更好
-
-files&lt;-list.files(
-here::here("data","match"), 
-pattern="data_exp7_rep_match_.*\\.out$", 
-full.names=TRUE)
-```
-
-
-
-.footnote[
------
-参考链接：[tidyverse style guide](https://style.tidyverse.org/index.html)
-]
-
-
----
-## 7.0.3  数据清洗
-.pull-left[
-### 列操作
--   增加、修改、删除(mutate)
--   列筛选(select &amp; tidyseletion)
-
-### 行操作
-
--   条件过滤(filter)
--   行索引(slice)
-
-### 数据框
--   列/行合并：
-    bind_cols &amp; bind_rows
-
--   匹配合并：
-    left_join, right_join, full_join
-
--   修改列名：
-    rownames or dplyr::rename
-    
--   长/宽数据转换：
-    pivot_longer, pivot_wider
-]
-
-
-.pull-right[
-
-### 分组计算
-
--   group_by/ungroup
-
--   summarise
-
--   rowMeans or bruceR::MEAN(or SUM)
-
--   case_when()
-
--   多列选取：across()
-
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.3 小结&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
 &lt;br&gt;
-### 字符串(stringr package)
--   str_xxx()系列  
+- separate() 把一个变量的单元格内的字符串拆成两份，变成两个变量 &lt;br&gt;
+  **更适合用于按固定分隔符分割字符串，如将“2022-02-25”分成“2022”、“02”和“25”三列** &lt;br&gt;
+  
+- extract() 类似于separate &lt;br&gt;
+  **更适合用于从字符串中提取特定的信息，如将“John Smith”分成“John”和“Smith”两列** &lt;br&gt;
+  
+- unite() 把多个列（字符串）整合为一列 &lt;br&gt;
 
-&lt;br&gt;
-### 函数式编程(purrr package)
+- pivot_longer() 把宽数据转化为长数据 &lt;br&gt;
 
--   map()系列，类似 apply() 系列  
-
-]
-
-
-
----
-class: center,middle
-
-
-&lt;span style="font-size: 50px;"&gt;**第七章**&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;__如何探索数据: __&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
-
+- pivot_wider() 把长数据转化为宽数据 &lt;br&gt;   
+  
+- drop_na() 删除缺失值
 
 ---
-class: inverse,center,middle
-
-.bigfont[
-数据已经清洗完成，下面应该做的是……]
---
-.bigfont[
-&lt;br&gt;
-查看数据内容？
-&lt;br&gt;
-建模分析？
-&lt;br&gt;
-......
-]
-
-
---
-.bigfont[
-先看一个数据(quartets::datasaurus_dozen)
-]
-
-
-
----
-
-.panelset[
-.panel[.panel-name[view]
-
-```r
-quartets::datasaurus_dozen %&gt;%  ## 包中的数据
-  head(10)
-```
-
-```
-## # A tibble: 10 × 3
-##    dataset     x     y
-##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
-##  1 dino     55.4  97.2
-##  2 dino     51.5  96.0
-##  3 dino     46.2  94.5
-##  4 dino     42.8  91.4
-##  5 dino     40.8  88.3
-##  6 dino     38.7  84.9
-##  7 dino     35.6  79.9
-##  8 dino     33.1  77.6
-##  9 dino     29.0  74.5
-## 10 dino     26.2  71.4
-```
-
-.panel[.panel-name[`str()`]
-
-```r
-quartets::datasaurus_dozen %&gt;%  ## 包中的数据
-  str()
-```
-
-```
-## tibble [1,846 × 3] (S3: tbl_df/tbl/data.frame)
-##  $ dataset: chr [1:1846] "dino" "dino" "dino" "dino" ...
-##  $ x      : num [1:1846] 55.4 51.5 46.2 42.8 40.8 ...
-##  $ y      : num [1:1846] 97.2 96 94.5 91.4 88.3 ...
-##  - attr(*, "spec")=
-##   .. cols(
-##   ..   dataset = col_character(),
-##   ..   x = col_double(),
-##   ..   y = col_double()
-##   .. )
-```
-
-
-.panel[.panel-name[`summary()`]
-
-```r
-summary(datasaurus_dozen)
-```
-
-```
-##    dataset                x               y           
-##  Length:1846        Min.   :15.56   Min.   : 0.01512  
-##  Class :character   1st Qu.:41.07   1st Qu.:22.56107  
-##  Mode  :character   Median :52.59   Median :47.59445  
-##                     Mean   :54.27   Mean   :47.83510  
-##                     3rd Qu.:67.28   3rd Qu.:71.81078  
-##                     Max.   :98.29   Max.   :99.69468
-```
-
-
-]]]]
-
-
----
-class: middle,center
-.tit_font[
-好像没什么问题…  
-
-]
-
---
-.tit_font[
-&lt;br&gt;
-作图看看呢
-]
-
----
-## 
-
-
-&lt;img src="picture/chp7/dino.gif" width="50%" style="display: block; margin: auto;" /&gt;
-
-
-
-
-
-
-
-
----
-layout: true
-# 7.1  探索性数据分析
-
----
-
-.bigfont[了解原始数据的特点，做到心中有数，属于一个更广泛的概念：  
-**探索性数据分析(Exploratory Data Analysis, EDA)**
-]
-
-&gt; In statistics, exploratory data analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics, often with visual methods (Wikipedia).  
-
-
-&lt;img src="https://blog.escueladedatosvivos.ai/content/images/2020/12/main_img.png" width="50%" style="display: block; margin: auto;" /&gt;
-
-
-
----
-
-.bigfont[进行EDA是为了更加了解自己的数据，从而做出基本的判断，但每一次探索背后都对应着特定的问题。我们可以先从几个基础的简单问题开始:]
-
-.pull-left[
-.bigfont[
--   有哪些变量？
--   变量的类型？
--   变量的分布？
--   变量间关系？
-]
-]
-
-
-.pull-right[
-
-
-```r
-# 读取数据
-pg_raw &lt;- bruceR::import(here::here(
-  "data", "penguin","penguin_rawdata.csv"))
-
-mt_raw &lt;- bruceR::import(here::here(
-  "data", "match","match_raw.csv")) 
-```
-
-]
-
----
-.panelset[
-.panel[.panel-name[`head`]
-
-```r
-DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
-```
-
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-26dcb7370cc352016475" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-26dcb7370cc352016475">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10"],["Exp","Exp","Exp"],[7302,7302,7302],[22,22,22],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[1,2,3],["immoralSelf","moralOther","immoralOther"],["immoralOther","moralSelf","moralOther"],["mismatch","mismatch","mismatch"],["n","n","n"],["m","n","n"],[0,1,1],[0.7561,0.7043,0.9903000000000001]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-
-.panel[.panel-name[`str`]
-
-```r
-mt_raw %&gt;% 
-  str() 
-```
-
-```
-## 'data.frame':	25920 obs. of  16 variables:
-##  $ Date    : chr  "02-May-2018_14:23:06" "02-May-2018_14:23:08" "02-May-2018_14:23:10" "02-May-2018_14:23:13" ...
-##  $ Prac    : chr  "Exp" "Exp" "Exp" "Exp" ...
-##  $ Sub     : int  7302 7302 7302 7302 7302 7302 7302 7302 7302 7302 ...
-##  $ Age     : int  22 22 22 22 22 22 22 22 22 22 ...
-##  $ Sex     : chr  "female" "female" "female" "female" ...
-##  $ Hand    : chr  "R" "R" "R" "R" ...
-##  $ Block   : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ Bin     : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ Trial   : int  1 2 3 4 5 6 7 8 9 10 ...
-##  $ Shape   : chr  "immoralSelf" "moralOther" "immoralOther" "moralSelf" ...
-##  $ Label   : chr  "immoralOther" "moralSelf" "moralOther" "immoralSelf" ...
-##  $ Match   : chr  "mismatch" "mismatch" "mismatch" "mismatch" ...
-##  $ CorrResp: chr  "n" "n" "n" "n" ...
-##  $ Resp    : chr  "m" "n" "n" NA ...
-##  $ ACC     : int  0 1 1 -1 1 1 1 1 1 1 ...
-##  $ RT      : num  0.756 0.704 0.99 1.042 0.821 ...
-```
-
-]]]
-
----
-## 常用函数
-
-.panelset[
-.panel[.panel-name[`summary`]
-
-```r
-summary(mt_raw) %&gt;% 
-  knitr::kable() # 注：kable函数只为了输出
-```
-
-
-
-|   |    Date         |    Prac         |     Sub      |     Age      |    Sex          |    Hand         |    Block     |     Bin      |    Trial     |   Shape         |   Label         |   Match         |  CorrResp       |    Resp         |     ACC        |      RT       |
-|:--|:----------------|:----------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:----------------|:----------------|:----------------|:----------------|:----------------|:---------------|:--------------|
-|   |Length:25920     |Length:25920     |Min.   : 7302 |Min.   :18.00 |Length:25920     |Length:25920     |Min.   :1.000 |Min.   :1.000 |Min.   : 1.00 |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Min.   :-1.0000 |Min.   :0.1060 |
-|   |Class :character |Class :character |1st Qu.: 7313 |1st Qu.:19.00 |Class :character |Class :character |1st Qu.:1.000 |1st Qu.:1.000 |1st Qu.: 6.75 |Class :character |Class :character |Class :character |Class :character |Class :character |1st Qu.: 1.0000 |1st Qu.:0.6104 |
-|   |Mode  :character |Mode  :character |Median : 7324 |Median :20.00 |Mode  :character |Mode  :character |Median :1.000 |Median :2.000 |Median :12.50 |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Median : 1.0000 |Median :0.7019 |
-|   |NA               |NA               |Mean   : 8853 |Mean   :20.83 |NA               |NA               |Mean   :1.611 |Mean   :2.417 |Mean   :12.50 |NA               |NA               |NA               |NA               |NA               |Mean   : 0.7959 |Mean   :0.7150 |
-|   |NA               |NA               |3rd Qu.: 7336 |3rd Qu.:22.00 |NA               |NA               |3rd Qu.:2.000 |3rd Qu.:3.000 |3rd Qu.:18.25 |NA               |NA               |NA               |NA               |NA               |3rd Qu.: 1.0000 |3rd Qu.:0.8053 |
-|   |NA               |NA               |Max.   :73370 |Max.   :28.00 |NA               |NA               |Max.   :3.000 |Max.   :5.000 |Max.   :24.00 |NA               |NA               |NA               |NA               |NA               |Max.   : 2.0000 |Max.   :1.1831 |
-
-
-.panel[.panel-name[`skimr::skim()--1`]
-
-```r
-skimr::skim(mt_raw) %&gt;% 
-  capture.output() %&gt;% 
-  .[1:12]
-```
-
-```
-##  [1] "── Data Summary ────────────────────────"
-##  [2] "                           Values"       
-##  [3] "Name                       mt_raw"       
-##  [4] "Number of rows             25920 "       
-##  [5] "Number of columns          16    "       
-##  [6] "_______________________          "       
-##  [7] "Column type frequency:           "       
-##  [8] "  character                9     "       
-##  [9] "  numeric                  7     "       
-## [10] "________________________         "       
-## [11] "Group variables            None  "       
-## [12] ""
-```
-
-.panel[.panel-name[`skimr::skim()--2`]
-
-
-```r
-skimr::skim(mt_raw) %&gt;% 
-  capture.output() %&gt;% 
-  .[13:24]
-```
-
-```
-##  [1] "── Variable type: character ────────────────────────────────────────────────────"
-##  [2] "  skim_variable n_missing complete_rate min max empty n_unique whitespace"       
-##  [3] "1 Date                  0         1      20  20     0    24362          0"       
-##  [4] "2 Prac                  0         1       3   3     0        1          0"       
-##  [5] "3 Sex                   0         1       1   6     0        4          0"       
-##  [6] "4 Hand                  0         1       1   1     0        2          0"       
-##  [7] "5 Shape                 0         1       9  12     0        4          0"       
-##  [8] "6 Label                 0         1       9  12     0        4          0"       
-##  [9] "7 Match                 0         1       5   8     0        2          0"       
-## [10] "8 CorrResp              0         1       1   1     0        2          0"       
-## [11] "9 Resp                658         0.975   1   5     0        9          0"       
-## [12] ""
-```
-
-
-.panel[.panel-name[`skimr::skim()--3`]
-
-```r
-skimr::skim(mt_raw) %&gt;% 
-  capture.output() %&gt;% 
-  .[25:41]
-```
-
-```
-##  [1] "── Variable type: numeric ──────────────────────────────────────────────────────"
-##  [2] "  skim_variable n_missing complete_rate     mean       sd       p0      p25"     
-##  [3] "1 Sub                   0             1 8853.    9932.    7302     7313    "     
-##  [4] "2 Age                   0             1   20.8      2.48    18       19    "     
-##  [5] "3 Block                 0             1    1.61     0.803    1        1    "     
-##  [6] "4 Bin                   0             1    2.42     1.36     1        1    "     
-##  [7] "5 Trial                 0             1   12.5      6.92     1        6.75 "     
-##  [8] "6 ACC                   0             1    0.796    0.464   -1        1    "     
-##  [9] "7 RT                    0             1    0.715    0.151    0.106    0.610"     
-## [10] "       p50      p75     p100 hist "                                              
-## [11] "1 7324     7336     73370    ▇▁▁▁▁"                                              
-## [12] "2   20       22        28    ▇▂▁▁▁"                                              
-## [13] "3    1        2         3    ▇▁▃▁▃"                                              
-## [14] "4    2        3         5    ▇▇▃▃▃"                                              
-## [15] "5   12.5     18.2      24    ▇▇▆▇▇"                                              
-## [16] "6    1        1         2    ▁▂▁▇▁"                                              
-## [17] "7    0.702    0.805     1.18 ▁▂▇▅▁"
-```
-
-.panel[.panel-name[`bruceR::Describe()`]
-
-
-```r
-bruceR::Describe(mt_raw) %&gt;% 
-  capture.output() %&gt;% 
-  .[2:17] ## 可以使用 file参数输出 Word
-```
-
-```
-##  [1] "────────────────────────────────────────────────────────────────────────────────────"
-##  [2] "               N (NA)     Mean      SD |   Median     Min      Max Skewness Kurtosis"
-##  [3] "────────────────────────────────────────────────────────────────────────────────────"
-##  [4] "Date*      25920      12218.64 6999.30 | 12220.50    1.00 24362.00     0.00    -1.19"
-##  [5] "Prac*      25920          1.00    0.00 |     1.00    1.00     1.00      NaN      NaN"
-##  [6] "Sub        25920       8852.59 9931.83 |  7324.00 7302.00 73370.00     6.34    38.22"
-##  [7] "Age        25920         20.83    2.48 |    20.00   18.00    28.00     1.09     0.35"
-##  [8] "Sex*       25920          3.27    0.65 |     3.00    1.00     4.00    -0.84     1.58"
-##  [9] "Hand*      25920          1.98    0.15 |     2.00    1.00     2.00    -6.34    38.22"
-## [10] "Block      25920          1.61    0.80 |     1.00    1.00     3.00     0.82    -0.97"
-## [11] "Bin        25920          2.42    1.36 |     2.00    1.00     5.00     0.67    -0.82"
-## [12] "Trial      25920         12.50    6.92 |    12.50    1.00    24.00     0.00    -1.20"
-## [13] "Shape*     25920          2.50    1.12 |     2.50    1.00     4.00     0.00    -1.36"
-## [14] "Label*     25920          2.49    1.11 |     2.00    1.00     4.00     0.02    -1.35"
-## [15] "Match*     25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
-## [16] "CorrResp*  25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
-```
-
-
-]]]]]]
-
-
-
----
-layout: false
-class: inverse middle center
-
-
-.tit_font[
-但是...&lt;br&gt;还不够
-]
-
----
-# 7.2  数据可视化
-## 7.2.1 可视化的重要性
-
-.pull-left[
-.size5[
-Before we do any statistical analyses or present any summary statistics, we should visualise our data as it is:  
-
--   A quick and easy way to check our data make sense, and to identify any unusual trends.
-
--   A way to honestly present the features of our data to anyone who reads our research.
-]
-]
-
---
-.pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-25-1.png" width="90%" /&gt;
-
-]
-&lt;br&gt;
-&lt;br&gt;
-
-.size5[
-绘图的方式有很多，如 Base graphics, grid, lattice,plotly...为什么使用&lt;span style="color: red;"&gt;ggplot2&lt;/span&gt;?
-]
-
-
-
----
-# 7.2  数据可视化
-## 7.2.2 为何使用 ggplot2?
-&lt;br&gt;
-.size5[
-* 化繁为简：大量的默认值
-
-* 精准定制：所有元素均可控
-
-* 易于叠加：丰富的信息
-
-* 日益丰富的生态系统 [https://r-graph-gallery.com/](https://r-graph-gallery.com/)
-
-]
-
-
-.bigfont[
-总之，好看、业界标杆，举个例子:
-]
-
----
-## 7.2.2 为何使用 ggplot?
-
-&lt;img src="picture/chp7/exmp2.png" width="63%" style="display: block; margin: auto;" /&gt;
-
-
----
-## 7.2.2 为何使用 ggplot?
-
-&lt;img src="picture/chp7/exmp1.png" width="63%" style="display: block; margin: auto;" /&gt;
-
-
-.footnote[
------
-Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker circulation over the past millennium. Nature 622, 93–100 (2023). https://doi.org/10.1038/s41586-023-06447-0
-]
-
-
-
----
-## 7.2.3 ggplot2 的逻辑
-.left-column[
-.bigfont[
--   数据映射
-]
-]
-
-.right-column[
-&lt;img src="picture/chp7/mapping.jpg" width="75%" /&gt;
-]
-
-
-
----
-## 7.2.3 ggplot2 的逻辑
-
-.left-column[
-.bigfont[
--   数据映射
-
--   图层叠加
-]
-]
-
-.right-column[
-&lt;img src="https://psyteachr.github.io/data-skills-v1/images/layers.png" width="70%" /&gt;
-]
-
-
----
-## 7.2.3 ggplot2 的逻辑
-
-.left-column[
-.bigfont[
--   数据映射
-
--   图层叠加
-
--   Code展示
-]]
-
-.right-column[
-.panelset[
-.panel[.panel-name[数据映射]
-
-```r
-# 以penguin问卷中前后体温为例
-
-p1 &lt;- pg_raw %&gt;% 
-  ggplot(aes(x = Temperature_t1, # 确定映射到xy轴的变量
-             y = Temperature_t2)) 
-p1 ## 坐标轴名称已对应，虽然图片为空
-```
-
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-30-1.png" width="50%" style="display: block; margin: auto;" /&gt;
-
-
-.panel[.panel-name[添加图层-散点]
-
-```r
-p1 + geom_point()
-```
-
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-31-1.png" width="60%" style="display: block; margin: auto;" /&gt;
-.panel[.panel-name[添加图层-拟合曲线]
-
-```r
-p1 + geom_point() + geom_smooth(method = 'lm')
-```
-
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
-
-.panel[.panel-name[改变映射]
-
-```r
-pg_raw %&gt;% 
-  drop_na(Temperature_t1,Temperature_t2,sex) %&gt;% 
-  ggplot(aes(x = Temperature_t1, 
-             y = Temperature_t2,
-             color = factor(sex))) +
-  geom_point() + geom_smooth()  
-```
-
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-33-1.png" width="50%" style="display: block; margin: auto;" /&gt;
-
-
-
-]]]]]]
-
-
-???
--   映射与添加图层是两个概念，映射后可以不进行绘图
-
--   图层的添加使用 + 
-
--   除了 x 和 y，仍然有其他变量进行映射，如 color
-
----
-## 7.2.4 单个图片的组成
-
-&lt;img src="picture/chp7/comps1.png" width="70%" style="display: block; margin: auto;" /&gt;
-
-
-
----
-## 7.2.4 单个图片的组成
-
-&lt;img src="picture/chp7/comps2.png" width="75%" style="display: block; margin: auto;" /&gt;
-
-
-
----
-layout: true
-# 7.3 常用图形
-
-
----
-## 直方图
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.1 什么是函数
 &lt;font size=5&gt;
-对于连续变量，我们可以使用直方图进行可视化。
-以认知实验中被试的反应时数据为例。
+&amp;emsp;&amp;emsp;sqrt()、getwd()、here()、mean()等都是R中的函数。
+&lt;br&gt;
+&amp;emsp;&amp;emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
 &lt;/font&gt;
 &lt;br&gt;
 
-.pull-left[
-
-```r
-pic_his &lt;- mt_raw %&gt;% 
-  # 确定映射到x轴的变量
-  ggplot(aes(x = RT)) + 
-  geom_histogram(bins = 40) +
-  theme_classic()
-```
-]
-
-.pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-37-1.png" width="100%" /&gt;
-]
-
-
 ---
-## 密度图
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.1 函数分类
 &lt;font size=5&gt;
-&amp;emsp;&amp;emsp;同样的我们可以使用密度图来描述反应时的分布情况。
-&lt;/font&gt;
-
-.pull-left[
-
-```r
-pic_dens &lt;- mt_raw %&gt;% ggplot()+
-  # 绘制密度曲线
-  geom_density(aes(x = RT)) +
-  theme_classic()
-```
-]
-
-.pull-right[
-
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
-]
+已有函数&lt;br&gt;
+&amp;emsp;&amp;emsp;R base; &lt;br&gt;
+&amp;emsp;&amp;emsp;R packages; &lt;br&gt;
+&amp;emsp;&amp;emsp;functions from other sources&lt;br&gt;
+&lt;font size=5&gt;
+自定义函数&lt;br&gt;
+&amp;emsp;&amp;emsp;自己命名和创建函数
 
 ---
-## 直方图 + 密度图
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.2 函数调用
+&lt;font size=5&gt;
+-首先需要下载函数所在的R包（部分R包在下载R时已经自动下载）&lt;br&gt;
+&amp;emsp;&amp;emsp;install.pcakages("R包名称")&lt;br&gt;
+-然后需要加载R包&lt;br&gt;
+&amp;emsp;&amp;emsp;library(R包名称)&lt;br&gt;
+-已下载的R包，也可以直接 R包::函数名称 来调用函数&lt;br&gt;
 
-.pull-left[
-
-```r
-## 尝试将两个图层叠加在一起
-mt_raw %&gt;% ggplot(aes(x = RT))+
-  geom_histogram(bins = 40) + 
-  geom_density() +
-  theme_classic()
-```
-]
-
-
-.pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-41-1.png" width="100%" /&gt;
-似乎密度曲线没有显示…
-原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
-如果仔细观察 x 坐标轴还是能看到细微差异的。
-]
-
-
+-不同的R包中可能会有相同的函数名，为了避免调用错误，推荐使用：R包::函数名称&lt;br&gt;
 
 ---
-## 直方图 + 密度图
-.pull-left[
-
-```r
-pic_mix &lt;- mt_raw %&gt;% 
-  ggplot(aes(x = RT,
-  ## 直方图的统计结果通过after_stat(density)传递给了密度图
-*       y = after_stat(density))) +
-  geom_histogram() +
-  geom_density() +
-  theme_classic()
-# 设定绘图风格
-```
-]
-
-.pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-43-1.png" width="100%" /&gt;
-]
-
----
-## 箱线图
-
-除了单个变量的可视化，我们可以尝试将两个变量的关系可视化。这里我们利用箱线图看看不同Label的RT如何。
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.2 函数调用
+![error4](./picture/chp5/error4.png)
+&lt;font size = 5&gt;
+未加载时不能直接调用函数
+--
 
 
-.pull-left[
-
-```r
-pic_box &lt;- mt_raw %&gt;% ggplot(aes(
-  x = Label,
-  y = RT)) +
-  geom_boxplot(staplewidth = 1) +
-  # 绘制箱线图并添加上下边缘线
-  theme_classic()
+``` r
+here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
 ```
 
-
-]
-.pull-right[
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-45-1.png" width="100%" /&gt;
-]
-
-.footnote[
-----
-矩形中间线为中位数，上下两条线分别为上四分位数和下四分位数；
-1.5个四分位距(Q3-Q1)以外的值为离群值；geom_boxplot默认使用1.5IQR
-]
----
-layout: true
-# 7.4 Explore data with DataExplorer
-
----
-
-
-
-```r
- DataExplorer::plot_str(mt_raw)
+```
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
 ```
 
-&lt;img src="picture/chp7/plotstr.png" width="65%" /&gt;
-
----
-
-
-```r
-DataExplorer::plot_intro(mt_raw)
+``` r
+library(here)
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-48-1.png" width="70%" /&gt;
-
-
----
-
-
-```r
- DataExplorer::plot_missing(mt_raw)
+```
+## here() starts at /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-49-1.png" width="70%" /&gt;
-
----
-
-
-```r
- DataExplorer::plot_bar(mt_raw)
+``` r
+here()
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-50-1.png" width="70%" /&gt;
-
----
-
-
-```r
- DataExplorer::plot_bar(mt_raw, by="Match")
+```
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-51-1.png" width="70%" /&gt;
-
 ---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.2 函数调用
 
 
-```r
-DataExplorer::plot_histogram(mt_raw)
+``` r
+df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
+                       header = T, 
+                       sep=",",
+                       stringsAsFactors = FALSE) 
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-52-1.png" width="70%" /&gt;
-
+&amp;emsp;&amp;emsp;`df.pg.raw` 变量名 &lt;br&gt;
+&amp;emsp;&amp;emsp;`utils` 函数所在的R包 &lt;br&gt;
+&amp;emsp;&amp;emsp;`read.csv` 函数名 &lt;br&gt;
+&amp;emsp;&amp;emsp;`file` 参数：文件路径 &lt;br&gt;
+&amp;emsp;&amp;emsp;`header` 参数：是否将第一行作为列名 &lt;br&gt;
+&amp;emsp;&amp;emsp;`sep` 参数：指定分隔符 &lt;br&gt;
+&amp;emsp;&amp;emsp;`stringsAsFactors` 参数：是否将字符型数据转化为因子 &lt;br&gt;
 
 ---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数
+&lt;font size = 5&gt;
+函数定义通常由以下几个部分组成：&lt;br&gt;
+&amp;emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。&lt;br&gt;
+&amp;emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。&lt;br&gt;
+&amp;emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。&lt;br&gt;
+&amp;emsp;-返回值: 指定函数的输出结果，使用关键字`return`。&lt;br&gt;
+--
 
 
-```r
- DataExplorer::plot_qq(pg_raw[,2:10])
+``` r
+# 定义一个函数：输入x和y，返回3倍x和5倍y的和
+mysum &lt;- function(x,y){
+  result = 3*x+5*y
+  return(result)
+}
+# mysum: 自定义的函数名
+# x,y:  形式参数
+# result = 3*x+5*y: 函数体
+# return(result): 返回值
+
+#调用函数,x=1,y=2
+mysum(1, 2)
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-53-1.png" width="70%" /&gt;
-
----
-
-
-```r
-DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
+```
+## [1] 13
 ```
 
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-54-1.png" width="70%" /&gt;
-
----
-## 使用ggpairs
-
-.panelset[
-.panel[.panel-name[Code]
-
-```r
-## 以 penguin project 数据中 ALEX, stress和 ECR 为例
-pg_raw %&gt;% 
-  mutate(
-    # 计算均值
-    m_ALEX = bruceR::MEAN(.,
-      var = 'ALEX',items = 1:16,rev = c(4,12,14,16)),
-    m_stress = bruceR::MEAN(.,
-      var = 'stress',items = 1:14,rev = c(4:7,9,10,13)
-    ),
-    m_ECR = bruceR::MEAN(.,
-      var = 'ECR',items = 1:36
-    )
-  ) %&gt;% 
-  select(contains('m_')) %&gt;% 
-  GGally::ggpairs()
+``` r
+mysum(y=1, x=2)
 ```
 
-
-
-]
-
-.panel[.panel-name[Output]
-
-&lt;img src="chapter_7_files/figure-html/unnamed-chunk-55-1.png" width="100%" /&gt;
-
-]
-
-]
+```
+## [1] 11
+```
 
 ---
-layout: false
-#练习
-.bigfont[
-1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数（小练习）
+&lt;font size = 5&gt;
+- 小练习: 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。计算a = 1, b = 2, c = 3时返回的值&lt;br&gt;
 
-2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
 
-3. 读取penguin数据，选择自己感兴趣的两个变量进行处理并画出散点图。
- 
-]
+``` r
+# 自定义函数：计算 (a+b)/c
+# myabc &lt;- ***{
+  # result = ****
+  # return(result)}
 
-#探索
-.bigfont[
-1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
+# 计算abc分别为1,2,3时的值
+#myabc(1, 2, 3)  # 结果：1
 
-2. 学会使用大语言模型进行学习，进行精准地提问。
-]
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
 
 ---
-# 参考阅读
-.bigfont[
--   [R Graphics Cookbook](https://r-graphics.org/)
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数
+&lt;font size = 5&gt;
+&lt;br&gt;我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
+--
+![error7](./picture/chp5/error7.png)
+--
+&lt;font size = 5&gt;
+&lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
 
--   [ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/index.html)
-]
+
+``` r
+mysum2 &lt;- function(x = 6,y = 7){
+  result = 3*x+5*y
+  return(result)
+}
+mysum2()
+```
+
+```
+## [1] 53
+```
+
+``` r
+mysum2(5)
+```
+
+```
+## [1] 50
+```
+---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数(小练习)
+&lt;font size = 5&gt;
+- 小练习：&lt;br&gt;
+&amp;emsp;1 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。&lt;br&gt;
+**&amp;emsp;2 设置a、b、c的默认值为3、2、1&lt;br&gt;**
+- 通过这个练习，你将学习如何为函数添加默认值
+
+
+``` r
+# myabc &lt;- function(a = ***, b = ***, c = ***){
+#   result = ***
+#   return(***)
+# }
+# myabc(***)
+
+# 用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数
+&lt;font size = 5&gt;
+在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算&lt;br&gt;
+--
+![error8](./picture/chp5/error8.png)
+--
+&lt;font size = 5&gt;
+自定义函数时可以手动添加报错信息。&lt;br&gt;
+只有在输入的内容符合要求时才可以正常运行，否则报错。&lt;br&gt;
+此处判断是否符合要求本质上是一种逻辑判断。&lt;br&gt;
+--
+![if-else](./picture/chp5/if-else.png)
+---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数
+
+``` r
+mysum3 &lt;- function(x = 6,y = 7){
+  if(is.numeric(x) &amp; is.numeric(y)){
+    result = 3*x+5*y
+    return(result)}
+  else{print("x and y must be number")}
+}
+# print：输出指定的内容
+# is.numeric:判断是否为数值型。是则返回T，否则返回F
+# &amp; : 表示“且”
+mysum3(5,6)
+```
+
+```
+## [1] 45
+```
+
+``` r
+mysum3('a','b')
+```
+
+```
+## [1] "x and y must be number"
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数(小练习)
+&lt;font size = 5&gt;
+- 小练习：&lt;br&gt;
+&amp;emsp;1 定义一个函数,输入值a,b,c,返回(a+b)/c;&lt;br&gt;
+&amp;emsp;2 设置a、b、c的默认值为3、2、1;&lt;br&gt;
+**&amp;emsp;当c为0时报错“c should not be 0”**
+- 通过这个练习，你将学习如何为函数添加报错信息
+
+
+``` r
+#myabc &lt;- function(***){
+#  if(***){
+#    result = ***
+#    return(***)
+#  }
+#  else{print(***)}
+#}
+
+#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+## 7.2.3 自定义函数(小练习)
+
+``` r
+#示例
+myabc &lt;- function(a = 3, b = 2, c = 1){
+  if(c!=0){
+    result = (a+b)/c
+    return(result)
+  }
+  else{print('c should not be 0')}
+}
+```
+---
+# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
+- 函数在数据处理种的运用
+
+``` r
+convert_data_types = function(df) {
+  df &lt;- df %&gt;%
+    dplyr::mutate(Date = as.character(Date),
+                  Prac = as.character(Prac),
+                  Sub = as.numeric(Sub),
+                  Age = as.numeric(Age),
+                  Sex = as.character(Sex),
+                  Hand = as.character(Hand),
+                  Block = as.numeric(Block),
+                  Bin = as.numeric(Bin),
+                  Trial = as.numeric(Trial),
+                  Shape = as.character(Shape),
+                  Label = as.character(Label),
+                  Match = as.character(Match),
+                  CorrResp = as.character(CorrResp),
+                  Resp = as.character(Resp),
+                  ACC = as.numeric(ACC),
+                  RT = as.numeric(RT))
+  return(df)
+}
+```
+
+---
+# &lt;h1 lang="en"&gt;7.2 函数&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;综合练习&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+- 定义一个函数用于计算$d'$ 
+
+- 计算不同Shape情况下(immoralself，moralself，immoralother，moralother)&lt;br&gt; 基于信号检测论(match为信号，mismatch噪音)的$d'$
+&lt;br&gt;
+
+提示：&lt;br&gt; 
+- (1) `\(d′\)` = `\({Z_{击中率}−Z_{虚报率}}\)` = `\(\frac{M_{SN}-M_N}{\sigma_N}\)` &lt;br&gt;&lt;br&gt;
+- (2) `\(击中率\)` = `\(\frac{击中次数}{信号总次数}\)` &lt;br&gt;&lt;br&gt;
+- (3) `\(虚报率\)` = `\(\frac{虚报次数}{噪音总次数}\)` 
+&lt;br&gt;
+
+---
+- 1 以下是计算击中(hit)、虚报(fa)、漏报(miss)和正确否定(cr)的代码&lt;br&gt;
+
+``` r
+# 去掉下面#的部分，将***替换成合适的变量，补全代码
+dplyr::summarise(
+      # *** = length(ACC[Match == "match" &amp; ACC == 1]),
+      # *** = length(ACC[Match == "mismatch" &amp; ACC == 0]),
+      # *** = length(ACC[Match == "match" &amp; ACC == 0]),
+      # *** = length(ACC[Match == "mismatch" &amp; ACC == 1]),
+```
+- 2 可以使用正态分布的累积分布函数（qnorm）来计算 `\(d′\)` 值，以下为代码&lt;br&gt;
+
+``` r
+        Dprime = qnorm(
+        ifelse(hit / (hit + miss) &lt; 1,
+               hit / (hit + miss),        # 击中率
+               1 - 1 / (2 * (hit + miss)) # 避免击中率为1时的极端情况
+              )
+        ) 
+             - qnorm(
+        ifelse(fa / (fa + cr) &gt; 0,
+              fa / (fa + cr),     # 虚报率
+              1 / (2 * (fa + cr)) # 避免虚报率为0时的极端情况
+              )
+                    )
+      ) 
+```
+---
+# &lt;h1 lang="en"&gt;7.2 函数&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;综合练习&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- **练习思路**&lt;br&gt;
+&lt;br&gt;
+Step1: 选择需要的变量 &lt;br&gt;
+&lt;br&gt;
+Step2: 基于Sub, Shape分组[extract,filter] &lt;br&gt;
+&lt;br&gt;
+Step3: 使用计算公式，计算d'值 &lt;br&gt;
+&lt;br&gt;
+Step4: 删除击中、虚报、误报、正确拒绝四个不需要的变量 &lt;br&gt;
+&lt;br&gt;
+Step5: 长转宽，得到每个Shape情况下的信号检测论d值[pivot_wide] &lt;br&gt;
+
+---
+# &lt;h1 lang="en"&gt;7.2 函数&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;综合练习&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+- **答案参考**&lt;br&gt;
+&lt;br&gt;
+&lt;img src="./picture/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightLines": true,
 "highlightStyle": "github",
-"countIncrementalSlides": false,
-"seal": true,
-"ratio": "16:9"
+"highlightLines": true,
+"countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
