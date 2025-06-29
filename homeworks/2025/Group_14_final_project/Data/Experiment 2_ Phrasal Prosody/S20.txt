@@ -1,0 +1,23 @@
+Subject Name:	S20	
+Subject Birth Date:	19/07/2013	
+Test Date:	31/01/2015	
+Observer:		
+Condition:	N-Switch	
+Cell Number:		
+Comments		
+Phase	Habituation	Habituation	Habituation	Habituation	Habituation	Test	Test	Test	
+Trial	1	2	3	4	Total	1	2	Total	
+Stim. Name	H2-spin-doripe-nom	H1-cart-bamoule-verbe	H2-spin-doripe-nom	H1-cart-bamoule-verbe		T2-cart-doripe-nom	T2-cart-doripe-nom		
+Center Mon. File	penguin_spin_pros.mov	penguin_cart_pros.mov	penguin_spin_pros.mov	penguin_cart_pros.mov		penguin_cart_pros.mov	penguin_cart_pros.mov		
+Sound File	doripe_nom.wav	bamoule_verbe.wav	doripe_nom.wav	bamoule_verbe.wav		doripe_nom.wav	doripe_nom.wav		
+Trial Duration	50.1	0.1	0.1	0.1	50.3	0.1	0.1	0.2	
+AG On Time	7.3	6.4	2.0	5.2	20.9	2.5	4.9	7.4	
+AG Latency	0.2	0.6	0.4	0.5	1.7	0.5	0.8	1.3	
+Left Look Time	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	
+Center Look Time	49.8	13.4	15.5	12.2	90.9	27.4	22.0	49.5	
+Right Look Time	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	
+Total Look Time	49.8	13.4	15.5	12.2	90.9	27.4	22.0	49.5	
+Left Looks	0	0	0	0	0	0	0	0	
+Center Looks	1	1	1	1	4	1	1	2	
+Right Looks	0	0	0	0	0	0	0	0	
+Total Looks	1	1	1	1	4	1	1	2	
