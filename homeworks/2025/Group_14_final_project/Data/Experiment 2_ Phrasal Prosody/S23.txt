@@ -1,0 +1,23 @@
+Subject Name:	S23	
+Subject Birth Date:	20/07/2013	
+Test Date:	04/02/2015	
+Observer:		
+Condition:	V-Switch	
+Cell Number:		
+Comments		
+Phase	Habituation	Habituation	Habituation	Habituation	Habituation	Habituation	Habituation	Habituation	Test	Test	Test	
+Trial	1	2	3	4	5	6	7	Total	1	2	Total	
+Stim. Name	H3-cart-bamoule-nom	H4-spin-doripe-verbe	H4-spin-doripe-verbe	H3-cart-bamoule-nom	H3-cart-bamoule-nom	H4-spin-doripe-verbe	H4-spin-doripe-verbe		T6-cart-doripe-verbe	T6-cart-doripe-verbe		
+Center Mon. File	penguin_cart_pros.mov	penguin_spin_pros.mov	penguin_spin_pros.mov	penguin_cart_pros.mov	penguin_cart_pros.mov	penguin_spin_pros.mov	penguin_spin_pros.mov		penguin_cart_pros.mov	penguin_cart_pros.mov		
+Sound File	bamoule_nom.wav	doripe_verbe.wav	doripe_verbe.wav	bamoule_nom.wav	bamoule_nom.wav	doripe_verbe.wav	doripe_verbe.wav		doripe_verbe.wav	doripe_verbe.wav		
+Trial Duration	50.1	50.1	50.1	0.1	50.1	0.1	0.1	200.7	0.1	0.1	0.1	
+AG On Time	4.6	1.0	1.1	1.1	0.9	1.0	1.5	11.1	1.6	1.4	3.0	
+AG Latency	0.1	0.2	0.2	0.3	0.4	0.7	0.5	2.5	0.5	0.4	0.9	
+Left Look Time	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	
+Center Look Time	49.9	49.8	49.8	29.0	49.7	26.8	11.6	266.6	6.8	23.4	30.1	
+Right Look Time	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	
+Total Look Time	49.9	49.8	49.8	29.0	49.7	26.8	11.6	266.6	6.8	23.4	30.1	
+Left Looks	0	0	0	0	0	0	0	0	0	0	0	
+Center Looks	1	1	1	1	1	1	1	7	1	1	2	
+Right Looks	0	0	0	0	0	0	0	0	0	0	0	
+Total Looks	1	1	1	1	1	1	1	7	1	1	2	
