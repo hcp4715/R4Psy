@@ -219,7 +219,7 @@ fa.parallel(
              "PANDEMIC_FATIGUE_6", "PANDEMIC_FATIGUE_7", "PANDEMIC_FATIGUE_8", "PANDEMIC_FATIGUE_9", "PANDEMIC_FATIGUE_10")]
   EF <- EF[complete.cases(EF),]
   
-  # Polychoric correlaiton matrix 
+  # Polychoric correlation matrix 
   POL <- polychoric(EF)
   
   # Kaiser-Meyer-Olkin statistic (KMOS) and Bartlett’s test of sphericity (BTS) and
