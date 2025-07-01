@@ -1,0 +1,407 @@
+---
+title: "MetaSheep Analysis - Run Model-Free Statistical Analyses and Plotting"
+author: "MC"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+code_folding: show
+number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load libraries
+```{r load libraries, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(patchwork)
+library(plyr)
+library(dplyr)
+library(sjPlot)
+library(here)
+library(pracma)
+library(rstatix)
+library(ggpubr)
+library(tidyr)
+library(hrbrthemes)
+library(viridis)
+library(lme4)
+library(lmerTest)
+library(effectsize)
+library(emmeans)
+library(brms)
+library(RColorBrewer)
+library(distributional)
+library(ggdist)
+library(bayestestR)
+```
+
+### Setup parameters for brms
+```{r setParams}
+iter=5000
+warmup = 1000
+chains=4
+cores=4
+```
+
+### Loading Data and Setting Paths 
+原来是分析的实验一的，这里把路径换位实验三
+**更新：实验三的数据无法进行以下分析，因为任务和实验条件不一样**
+```{r load data}
+dataPath = here::here("Data/")
+resultDir = here::here("Results/modelFree/")
+
+# load in data
+load(file=file.path(dataPath,"expFitNoiseRaw.RData"))
+experiment = exp_fitNoiseRaw
+# experiment = expDataAll
+print(experiment)
+```
+
+### Clean Dataframes
+```{r clean dataframes, message=FALSE}
+# 将数据转换成因子型
+experiment$correctFact = as.factor(experiment$discrimination_is_correct)
+experiment$ID = as.factor(experiment$ID)
+experiment$posteriorFactor = as.factor(experiment$posteriorFactor)
+# experiment$posteriorFactor = as.factor(experiment$priorLevel)
+experiment$condition = as.factor(experiment$condition)
+
+# Rearrange dataframe to analyse effect of decision type (prior vs target)
+# 创建priors数据框：仅保留与"先验决策"相关的变量
+priors = data.frame(subj = experiment$ID, coh = experiment$prior_coherence, precFactor = experiment$priorLevel, correct = experiment$prior_is_correct)
+# 创建targets数据框：仅保留与"目标决策"相关的变量
+targets = data.frame(subj = experiment$ID, coh = experiment$target_coherence, precFactor = experiment$targetLevel, correct = experiment$discrimination_is_correct)
+# 为priors数据框添加"type"列，标记数据类型为"prior"（先验决策）
+priors$type = "prior"
+# 为targets数据框添加"type"列，标记数据类型为"target"（目标决策）
+targets$type = "target"
+# 按行合并priors和targets数据框，生成统一的decisions数据框
+decisions = rbind(priors, targets)
+decisions$correctFact = as.factor(decisions$correct)
+```
+
+# Manipulation Checks
+
+## Regression Analysis
+### Logistic Mixed Effect Model
+```{r model maniCheck, echo=TRUE, results='hide', message=FALSE}
+# 使用lme4包中的glmer()函数构建混合效应模型
+logRegFactME = glmer(correctFact ~ type*precFactor + (1|subj), data=decisions, family=binomial)
+# 使用car包的Anova函数进行（默认）类型II方差分析
+car::Anova(logRegFactME)
+
+# 计算边际均值估计和两两比较（type与precFactor的交互）
+# pairwise ~ type*precFactor：同时考虑type和precFactor的所有水平组合
+emm = emmeans(logRegFactME, pairwise ~ type*precFactor, adjust = "Bonferroni", lmer.df = "satterthwaite")
+# 简单效应分析：在每个type水平下比较precFactor
+# 使用simple=参数指定分别比较哪个变量的不同水平
+pairs(emm, simple="precFactor", type="response") 
+# 简单效应分析：在每个precFactor水平下比较type
+pairs(emm, simple="type", type="response")
+# 计算边际均值的95%置信区间（响应尺度）
+confint(emm, level=0.95, type="response")
+
+# 仅考虑precFactor主效应的边际均值估计和两两比较
+emm1 = emmeans(logRegFactME, pairwise ~ precFactor, adjust = "Bonferroni", lmer.df = "satterthwaite")
+# 比较precFactor各水平之间的差异
+pairs(emm1, simple="precFactor", type="response") 
+# 计算precFactor各水平边际均值的95%置信区间
+confint(emm1, level=0.95,type="response")
+
+# 仅考虑type主效应的边际均值估计和两两比较
+emm2 = emmeans(logRegFactME, pairwise ~ type, adjust = "Bonferroni", lmer.df = "satterthwaite")
+# 比较type各水平之间的差异
+pairs(emm2, simple="type", type="response")
+# 计算type各水平边际均值的95%置信区间
+confint(emm2, level=0.95, type="response")
+```
+
+### Bayes Factors
+```{r bf maniCheck, echo=TRUE, eval=FALSE}
+#BF analysis
+model1 = glmer(correctFact ~ precFactor + (1|subj), data = decisions, family = binomial)
+model2 = glmer(correctFact ~ type + (1|subj), data = decisions, family = binomial)
+model3 = glmer(correctFact ~ type + precFactor + (1|subj), data = decisions, family = binomial)
+fullModel = glmer(correctFact ~ type*precFactor + (1|subj), data = decisions, family = binomial)
+
+bayestestR::bayesfactor_models(fullModel, denominator = model3)
+bayestestR::bayesfactor_models(model3, denominator = model2)
+bayestestR::bayesfactor_models(model3, denominator = model1)
+```
+
+### Plotting
+```{r maniCheck, message=FALSE}
+priorAcc = experiment %>% dplyr::group_by(ID, priorLevel) %>%
+  dplyr::summarize(acc = sum(prior_is_correct)/length(prior_is_correct))
+priorAcc$subject = as.factor(priorAcc$ID)
+
+priorAcc$priorLevel[priorAcc$priorLevel=="high"] = "H"
+priorAcc$priorLevel[priorAcc$priorLevel=="medium"] = "M"
+priorAcc$priorLevel[priorAcc$priorLevel=="low"] = "L"
+priorAcc$priorLevel = as.factor(priorAcc$priorLevel)
+priorAcc$priorLevel = ordered(priorAcc$priorLevel, levels=c("L","M","H"))
+priorAcc$precision = priorAcc$priorLevel
+priorAcc = priorAcc[,-c(2)]
+priorAcc$decision = "Lead Decision"
+targAcc = experiment %>% dplyr::group_by(ID, posteriorFactor) %>%
+  dplyr::summarize(acc = sum(discrimination_is_correct)/length(discrimination_is_correct))
+targAcc$posteriorFactor = ordered(targAcc$posteriorFactor, levels = c("L", "M", "H"))
+targAcc$precision = targAcc$posteriorFactor
+targAcc = targAcc[,-c(2)]
+targAcc$decision = "Target Decision"
+accs = rbind(priorAcc, targAcc)
+
+dodge <- position_dodge(width = 0.5)
+manicheckPlot = ggplot(accs, aes(x=precision, y = acc)) +
+  facet_wrap(~decision, strip.position = "top") +
+  stat_slab(aes(thickness = stat(pdf*n)), scale = 0.5, position=dodge, alpha=1, trim=FALSE,fill="#D1E3ED",color="black",size=0.2) +
+  stat_dotsinterval(side = "bottom", scale = 0.5, slab_size = 0.2, quantiles = 21, position=dodge,slab_shape=21,slab_color="black",slab_fill="#D1E3ED") +
+  labs(y = "Accuracy", x = "Information Level") +
+  theme(axis.text.x = element_text(size=12), axis.title.x = element_text(size=14),
+        axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), strip.text = element_text(size=14),strip.placement="inside", 
+        legend.text = element_text(size=12), legend.title = element_text(size=14), legend.position = "right") 
+```
+
+### Plot
+```{r maniCheck plot, fig.height = 4, fig.width = 9, echo=FALSE}
+manicheckPlot
+```
+
+# Type 1 Analysis
+
+## Regression Analysis
+### Logistic Mixed Effect Model
+```{r model decisionLevel, results='hide', message=FALSE}
+logAccsNoBias = glmer(discrimination_is_correct ~ posteriorFactor*condition + (1|ID), data=experiment, family=binomial(link=logit))
+car::Anova(logAccsNoBias)
+logAccs = glmer(discrimination_is_correct ~ posteriorFactor*condition*fitBiasRaw + (1|ID), data=experiment, family=binomial)
+car::Anova(logAccs)
+
+emm_options(lmerTest.limit = 148800)
+emm1 = emmeans(logAccsNoBias, pairwise ~ condition, adjust = "Bonferroni", lmer.df = "satterthwaite", type="response")
+pairs(emm1, simple="condition", type="response") 
+confint(emm1, level=0.95, type="response")
+
+emm2 = emmeans(logAccsNoBias, pairwise ~ posteriorFactor, adjust = "Bonferroni", lmer.df = "satterthwaite", type="response")
+pairs(emm2, simple="posteriorFactor", type="response") 
+confint(emm2, level=0.95, type="response")
+
+```
+
+### Bayes Factors
+```{r bf decisionLevel, results='hide', message=FALSE, eval=FALSE}
+# BF analysis
+run = TRUE
+if (run){
+  # 模型 1：仅包含 posteriorFactor 和随机截距
+  type1_1 = brm(discrimination_is_correct ~ posteriorFactor + (1|ID), data = experiment, family = bernoulli,  save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores) # remove file to update model!
+  # 模型 2：仅包含 condition 和随机截距
+  type1_2 = brm(discrimination_is_correct ~ condition + (1|ID), data = experiment, family = bernoulli,  save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores) # remove file to update model!
+  # 模型 3：包含 posteriorFactor、condition 主效应和随机截距
+  type1_3 = brm(discrimination_is_correct ~ posteriorFactor + condition + (1|ID), data = experiment, family = bernoulli,  save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores) # remove file to update model!
+  # 模型4：全模型，包含 posteriorFactor、condition 主效应、交互作用和随机截距
+  type1_full = brm(discrimination_is_correct ~ posteriorFactor*condition + (1|ID), data = experiment, family = bernoulli,  save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores) # remove file to update model!
+  
+  # 保存所有拟合好的模型到指定目录
+  save(type1_1, file=file.path(resultDir, "brm_type1_1.RData"))
+  save(type1_2, file=file.path(resultDir, "brm_type1_2.RData"))
+  save(type1_3, file=file.path(resultDir, "brm_type1_3.RData"))
+  save(type1_full, file=file.path(resultDir, "brm_type1_full.RData"))
+  
+}else{
+  # 若run=FALSE，直接加载已保存的模型（避免重复计算）
+  load(file=file.path(resultDir, "brm_type1_1.RData"))
+  load(file=file.path(resultDir, "brm_type1_2.RData"))
+  load(file=file.path(resultDir, "brm_type1_3.RData"))
+  load(file=file.path(resultDir, "brm_type1_full.RData"))
+}
+
+# 贝叶斯因子分析（模型比较）
+# 比较全模型（type1_full）与模型3（type1_3）：检验交互效应的证据
+bayestestR::bayesfactor_models(type1_full, denominator = type1_3)
+# 比较模型3（type1_3）与模型2（type1_2）：检验posteriorFactor主效应的证据
+bayestestR::bayesfactor_models(type1_3, denominator = type1_2)
+# 比较模型3（type1_3）与模型2（type1_2）：检验condition主效应的证据
+bayestestR::bayesfactor_models(type1_3, denominator = type1_1)
+```
+
+```{r}
+type1_full
+```
+
+
+### Plotting
+```{r decisionLevel, message=FALSE}
+targAccPerCond_perSubj = experiment %>% 
+  dplyr::group_by(posteriorFactor, condition) %>%
+  dplyr::summarize(
+    priorAcc = sum(prior_is_correct)/length(prior_is_correct),
+    # priorSD = sd(prior_is_correct),  # 添加先验准确率的标准差
+    targetAcc = sum(discrimination_is_correct)/length(discrimination_is_correct),
+    # targetSD = sd(discrimination_is_correct)  # 标准差
+  )
+targAccPerCond_perSubj$posteriorFactor = ordered(targAccPerCond_perSubj$posteriorFactor, levels = c("L", "M", "H"))
+targAccPerCond_perSubj$condition = as.factor(targAccPerCond_perSubj$condition)
+levels(targAccPerCond_perSubj$condition) = c("Stronger-Lead", "Stronger-Target")
+
+targAccPerCond_perSubj
+
+dodge <- position_dodge(width = 0.5)
+accPlot = ggplot(targAccPerCond_perSubj, aes(x=posteriorFactor, y = targetAcc, fill=condition)) +
+  stat_slab(aes(thickness = stat(pdf*n)), scale = 0.3, position=dodge, alpha=1, trim=FALSE) +
+  stat_dotsinterval(side = "bottom", scale = 0.3, slab_size = NA, quantiles = 21, position=dodge) +
+  scale_fill_manual(values=c("#F4CC08", "#C73030")) + 
+  #theme_minimal() +
+  labs(x = "Posterior Information", y = "Target Decision Accuracy", fill = "Condition") +
+  theme(axis.text.x = element_text(size=12), axis.title.x = element_text(size=14),
+        axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), 
+        legend.text = element_text(size=12), legend.title = element_text(size=14), legend.position = "bottom") 
+```
+
+### Plot
+```{r decisionLevel plot, fig.height = 4, fig.width = 9, echo=FALSE}
+accPlot
+```
+
+# Type 2 Analysis
+
+## Regression Analysis
+### Linear Mixed Effect Model
+```{r model confLevel, results='hide', message=FALSE}
+# 建立包含posteriorFactor，condition，correctFact以及随机截距和随机斜率的混合效应模型
+confModel_lme = lmer(conf ~ posteriorFactor*condition*correctFact + (correctFact+condition|ID), data=experiment)
+# 进行方差分析
+anova(confModel_lme)
+
+summary(confModel_lme)
+F_to_eta2(10.89, 1, 14838, ci = 0.95)
+F_to_eta2(23.53, 2, 14832, ci = 0.95)
+
+emm_options(lmerTest.limit = 15000)
+emm1 = emmeans(confModel_lme, pairwise ~ condition:correctFact, adjust = "Bonferroni", lmer.df = "satterthwaite")
+emmeans(confModel_lme, pairwise ~ posteriorFactor:correctFact, adjust = "Bonferroni", lmer.df = "satterthwaite")
+emm2 = emmeans(confModel_lme, pairwise ~ condition:correctFact:posteriorFactor, adjust = "Bonferroni", lmer.df = "satterthwaite")
+pairs(emm1, simple="condition") 
+pairs(emm2, simple="condition")
+
+lowCorrect = experiment %>% dplyr::filter(posteriorFactor=="L",correctFact==TRUE)
+null = lmer(conf ~ 1 + (condition|ID), data=lowCorrect)
+LC = lmer(conf ~ condition + (condition|ID), data=lowCorrect)
+bayesfactor_models(LC, denominator=null)
+
+mediumCorrect = experiment %>% dplyr::filter(posteriorFactor=="M",correctFact==TRUE)
+null = lmer(conf ~ 1 + (condition|ID), data=mediumCorrect)
+MC = lmer(conf ~ condition + (condition|ID), data=mediumCorrect)
+bayesfactor_models(MC, denominator=null)
+
+highCorrect = experiment %>% dplyr::filter(posteriorFactor=="H",correctFact==TRUE)
+null = lmer(conf ~ 1 + (condition|ID), data=highCorrect)
+HC = lmer(conf ~ condition + (condition|ID), data=highCorrect)
+bayesfactor_models(HC, denominator=null)
+
+lowIncorrect = experiment %>% dplyr::filter(posteriorFactor=="L",correctFact==FALSE)
+null = lmer(conf ~ 1 + (1|ID), data=lowIncorrect)
+LI = lmer(conf ~ condition + (1|ID), data=lowIncorrect)
+bayesfactor_models(LI, denominator=null)
+
+mediumIncorrect = experiment %>% dplyr::filter(posteriorFactor=="M",correctFact==FALSE)
+null = lmer(conf ~ 1 + (condition|ID), data=mediumIncorrect)
+MI = lmer(conf ~ condition + (condition|ID), data=mediumIncorrect)
+bayesfactor_models(MI, denominator=null)
+
+highIncorrect = experiment %>% dplyr::filter(posteriorFactor=="H",correctFact==FALSE)
+null = lmer(conf ~ 1 + (condition|ID), data=highIncorrect)
+HI = lmer(conf ~ condition + (condition|ID), data=highIncorrect)
+bayesfactor_models(HI, denominator=null)
+
+
+# With Bias
+confModel_lme2 = lmer(conf ~ posteriorFactor*condition*correctFact*fitBiasRaw + (condition+correctFact|ID), data=experiment)
+anova(confModel_lme2)
+
+# Correct only
+correctData = experiment %>% dplyr::filter(discrimination_is_correct==TRUE)
+correctModelNull = lmer(conf ~ posteriorFactor + (condition|ID), data=correctData)
+correctModel1 = lmer(conf ~ posteriorFactor + condition + (condition|ID), data=correctData)
+anova(correctModel1)
+
+# Incorrect only
+incorrectData = experiment %>% dplyr::filter(discrimination_is_correct==FALSE)
+incorrectModelNull = lmer(conf ~ posteriorFactor + (condition|ID), data=incorrectData)
+incorrectModel1 = lmer(conf ~ posteriorFactor + condition + (condition|ID), data=incorrectData)
+anova(incorrectModel1)
+
+```
+
+### Bayes Factors
+```{r bf confLevel, results='hide',eval=FALSE}
+#BF analysis
+run = TRUE
+if (run){
+  type2_1 = brm(conf ~ posteriorFactor + condition + correctFact + correctFact:posteriorFactor + correctFact:condition + (correctFact+condition|ID), data = experiment, save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores)
+type2_2 = brm(conf ~ posteriorFactor + condition + correctFact + posteriorFactor:condition + correctFact:condition + (correctFact+condition|ID), data = experiment, save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores)
+type2_3 = brm(conf ~ posteriorFactor + condition + correctFact + correctFact:posteriorFactor +  posteriorFactor:condition + (correctFact+condition|ID), data = experiment, save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores)
+type2_4 = brm(conf ~ posteriorFactor + condition + correctFact + correctFact:posteriorFactor +  posteriorFactor:condition + correctFact:condition + (correctFact+condition|ID), data = experiment, save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores)
+type2_full = brm(conf ~ posteriorFactor*condition*correctFact + (correctFact+condition|ID), data = experiment, save_pars = save_pars(all=TRUE), control = list(adapt_delta = 0.99), sample_prior=T, chains=chains, iter=iter, warmup=warmup, cores=cores)
+
+save(type2_1, file=file.path(resultDir, "brm_type2_1.RData"))
+save(type2_2, file=file.path(resultDir, "brm_type2_2.RData"))
+save(type2_3, file=file.path(resultDir, "brm_type2_3.RData"))
+save(type2_4, file=file.path(resultDir, "brm_type2_4.RData"))
+save(type2_full, file=file.path(resultDir, "brm_type2_full.RData"))
+  
+}else{
+  load(file=file.path(resultDir, "brm_type2_1.RData"))
+  load(file=file.path(resultDir, "brm_type2_2.RData"))
+  load(file=file.path(resultDir, "brm_type2_3.RData"))
+  load(file=file.path(resultDir, "brm_type2_4.RData"))
+  load(file=file.path(resultDir, "brm_type2_full.RData"))
+}
+
+bayesfactor_models(type2_full, denominator = type2_4) # testing 3-way interaction
+bayesfactor_models(type2_4, denominator = type2_3) # testing correctFact:condition
+bayesfactor_models(type2_4, denominator = type2_2) # testing correctFact:posterior
+bayesfactor_models(type2_4, denominator = type2_1) # testing posterior:condition
+
+bayesfactor_models(correctModel1, denominator = correctModelNull)
+bayesfactor_models(incorrectModel1, denominator = incorrectModelNull)
+```
+
+### Plotting
+```{r confLevel, message=FALSE}
+conf_perSubj_Cond = experiment %>% dplyr::group_by(ID, posteriorFactor, condition, discrimination_is_correct) %>%
+  dplyr::summarize(meanConf = mean(conf))
+
+conf_perSubj_Cond$posteriorFactor = as.ordered(conf_perSubj_Cond$posteriorFactor)
+conf_perSubj_Cond$discrimination_is_correct = as.factor(conf_perSubj_Cond$discrimination_is_correct)
+levels(conf_perSubj_Cond$discrimination_is_correct) = c("Incorrect", "Correct")
+conf_perSubj_Cond$condition = as.factor(conf_perSubj_Cond$condition)
+levels(conf_perSubj_Cond$condition) = c("Stronger-Lead", "Stronger-Target")
+conf_perSubj_Cond$posteriorFactor = ordered(conf_perSubj_Cond$posteriorFactor, levels = c("L", "M", "H"))
+
+dodge = position_dodge(width=0.8)
+confPlot = ggplot(conf_perSubj_Cond, aes(x=posteriorFactor, y = meanConf, fill=condition)) +
+  stat_slab(aes(thickness = stat(pdf*n)), scale = 0.4, position=dodge, alpha=1,trim=FALSE) +
+  stat_dotsinterval(side = "bottom", scale = 0.4, slab_size = NA, quantiles = 21, position=dodge) +
+  facet_wrap(~discrimination_is_correct)+
+  scale_fill_manual(values=c("#F4CC08", "#C73030")) + 
+  labs(x = "Posterior Information", y = "Mean Confidence", fill = "Condition") +
+  theme(axis.text.x = element_text(size=12), axis.title.x = element_text(size=14),
+        axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), 
+        legend.text = element_text(size=12), legend.title = element_text(size=14), 
+        strip.text = element_text(size=12),legend.position = "bottom") 
+```
+
+### Plot
+```{r confLevel plot, fig.height = 4, fig.width = 9, echo=FALSE}
+confPlot
+```
+
