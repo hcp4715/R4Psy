@@ -11,11 +11,18 @@ output:
 ```{r homework 1}
 # 有多种写法
 # 用 here::here 函数进行查找
+
+
+# 也可以用基础包，输入路径读取
+library(here)
+Q1 <- read.csv(here("data", "penguin", "penguin_rawdata.csv"))
+=======
 install.packages("here")
 library(here)
 Q1 <- read.csv(here("data", "penguin", "penguin_rawdata.csv"))
 # 也可以用基础包，输入路径读取
 Q1 <- read.csv("data/penguin/penguin_rawdata.csv")
+
 
 ```
 
@@ -37,6 +44,31 @@ head(Q2)
 ---
 3. 在Q2中，进一步选择保留“health”和“phone1-9”等变量，赋值给Q3；查看这几个变量的数据类型，用注释进行记录;如果有数据类型为文字，需要转化为数字
 ```{r homework 3}
+
+# 1选择变量,同样，这里同样存在多种方法
+Q3 <- Q2 %>% select(health, matches("phone[1-9]"))
+
+# 2查看数据类型
+str(Q3)
+#注释记录
+#'data.frame':	20 obs. of  10 variables:
+ #$ health: int  3 3 3 3 2 2 3 3 2 2 ...
+ #$ phone1: int  2 3 4 4 2 5 5 4 4 4 ...
+# $ phone2: int  1 4 2 4 2 4 4 4 4 4 ...
+ #$ phone3: int  1 3 2 4 2 3 2 2 1 4 ...
+ #$ phone4: int  1 4 4 4 2 4 4 4 4 4 ...
+ #$ phone5: int  1 4 4 4 3 5 4 3 1 4 ...
+ #$ phone6: int  1 4 4 4 3 4 4 4 1 4 ...
+ #$ phone7: int  2 5 2 4 4 5 5 2 4 2 ...
+ #$ phone8: int  1 4 4 4 4 4 4 4 4 3 ...
+ #$ phone9: chr  "3" "4" "4" "4" ...
+#3转化使用mutate(across())对字符型列进行转换，完成后重新查看数据类型检查
+Q3 <- Q3 %>% mutate(across(where(is.character), as.numeric)) 
+
+# 4再次查看数据类型以确认转换成功
+str(Q3)
+#输出为phone9: num  3 4 4 4 4 4 5 3 4 5 ...
+
 # 选择变量,同样，这里同样存在多种方法
 # dplyr
 Q3 <- Q2 %>% 
@@ -56,12 +88,30 @@ str(Q3)
 #转化，完成后可重新查看数据类型检查
 Q3 <- Q3 %>%
   mutate(across(where(is.character) | where(is.factor), as.numeric))
+
 ```
 
 ---
 4.将“health”中的数值改为文字（5= Excelent; 4 = Very Good; 3 = Good; 2 = Fair; 1 = Poor），并记录为Q4（tips：可参考chapter_6所学内容）
 ```{r homework 4}
 # 推荐用tidyverse进行操作
+
+Q4 <- Q3 %>%
+  mutate(
+    health = case_when(
+      health == 5 ~ "Excelent",
+      health == 4 ~ "Very Good",
+      health == 3 ~ "Good",
+      health == 2 ~ "Fair",
+      health == 1 ~ "Poor",
+      TRUE ~ NA_character_  # 处理可能的异常值
+    )
+  )
+
+# 查看转换后的结果
+glimpse(Q4)
+head(Q4)
+
 library(dplyr)
 Q4 <- Q3 %>% 
   mutate(health = case_when)
@@ -72,6 +122,7 @@ Q4 <- Q3 %>%
     health == 1 ~ "Poor",
     TRUE ~ as.character(health)
 head(Q4)    
+
 ```
 
 ---
@@ -194,30 +245,74 @@ Q15
 ---
 16.创建一个名为 fun3 的函数，该函数接受一个整数x作为输入(默认值：x=10)，并返回 TRUE（如果输入是偶数）或 FALSE（如果输入是奇数）。并检验该函数对输入 22 的返回值，输出为Q16。(tips:函数%%用于计算两个数相除的余数)
 ```{r}
+
+# 创建函数fun3
+fun3 <- function(x = 10) {
+  # 检查输入是否为整数
+  if(!is.numeric(x) || x %% 1 != 0) {
+    warning("输入值必须是整数")
+    return(NA)
+  }
+  
+  # 判断奇偶性
+  if(x %% 2 == 0) {
+    return(TRUE)  # 偶数
+  } else {
+    return(FALSE) # 奇数
+  }
+}
+
+# 检验函数对输入22的返回值
+Q16 <- fun3(22)
+
+# 输出结果
+
 fun3 <- function(x = 10) {
   return(x %% 2 == 0)  # 判断是否为偶数
 }
 Q16 <- fun3(22)
+
 Q16
 ```
 
 ---
 17.编写一个函数 func4，接受一个整数x作为输入，并返回Positive（如果输入是正数），Negative（如果输入是负数），Zero（如果输入是零）。并检验该函数对输入 -3 的返回值，输出为Q17。(tips:if...else语法可以用于根据条件返回不同的值，else if语法可以用于多个条件的判断)
 ```{r}
+
+# 创建函数func4
+func4 <- function(x) {
+  # 输入验证
+  if(!is.numeric(x) || length(x) != 1) {
+    stop("输入必须是单个数值")
+  }
+  
+  # 判断数值类型
+  if(x > 0) {
+    return("Positive")
+  } else if(x < 0) {
+
 # 定义函数 func4
 func4 <- function(x) {
   if (x > 0) {
     return("Positive")
   } else if (x < 0) {
+
     return("Negative")
   } else {
     return("Zero")
   }
 }
 
+# 检验函数对输入-3的返回值
+Q17 <- func4(-3)
+
+# 输出结果
+Q17
+
 # 测试输入 -3 并保存为 Q17
 Q17 <- func4(-3)
 Q17 #"Negative"
+
 ```
 
 ---
