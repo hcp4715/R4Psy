@@ -1,0 +1,199 @@
+---
+title: "研究1代码复现"
+author: "GSY、BYR"
+date: "2025-06-14"
+output: html_document
+---
+
+```{r}
+#数据清洗####
+#加载包和导入数据#####
+options(scipen=999) #去除科学计数法
+rm(list = ls()) #清除当前环境中的所有变量
+#加载包
+library(dplyr)
+library(tidyr)
+library(lavaan)
+library(psych)
+library(effectsize)
+```
+
+
+```{r}
+#读取数据
+data <- read.csv("C:/Users/86150/Desktop/Study 1 data.csv")
+
+#数据预处理
+#筛选数据
+data <- data %>%
+  filter(consent == 1) %>% #筛选出那些 consent 变量为 1 的观测值，这意味着只保留那些同意参与研究的样本。
+  filter(no_pictures == 1) #进一步筛选出那些 no_pictures 变量为 1 的观测值，这可能意味着排除了没有图片数据的样本。
+#两次 filter 操作都是顺序执行的，最终 data 只保留同时满足这两个条件的观测值。
+
+table(data$condition)
+#生成 data 数据集中 condition 变量的频数表，这将显示不同条件下观测值的分布情况。
+```
+
+```{r}
+#人口统计信息#####
+##Label participant gender category
+
+table(data$gender)
+##生成 data 数据集中 gender 变量的频数表，显示gender列中不同值的分布情况
+data <- data %>%
+  mutate(gender_cat = ifelse(grepl("flu", gender, ignore.case = TRUE), "nonbinary",
+                             ifelse(grepl("f", gender, ignore.case = TRUE), "woman",
+                                    ifelse(grepl("oma", gender, ignore.case = TRUE), "woman",
+                                           ifelse(grepl("m", gender, ignore.case = TRUE), "man",
+                                                  ifelse(grepl("bin", gender, ignore.case = TRUE), "nonbinary", NA))))),
+#使用 mutate 函数创建了一个新的列 gender_cat，并根据 gender 列的值进行分类：
+#如果 gender 列的值包含 “flu”（不区分大小写），则 gender_cat 列的值为 “nonbinary”。
+#如果 gender 列的值包含 “f”（不区分大小写），则 gender_cat 列的值为 “woman”。
+#如果 gender 列的值包含 “oma”（不区分大小写），则 gender_cat 列的值为 “woman”。
+#如果 gender 列的值包含 “m”（不区分大小写），则 gender_cat 列的值为 “man”。
+#如果 gender 列的值包含 “bin”（不区分大小写），则 gender_cat 列的值为 “nonbinary”。
+#如果以上条件都不满足，则 gender_cat 列的值为 NA。         
+                  gender_dummy = ifelse(gender_cat == "man", 1,
+                               ifelse(gender_cat =="woman", 0,
+                                      ifelse(gender_cat == "nonbinary", 0, NA))))
+#使用 mutate 函数创建了一个新的列 gender_dummy，并根据 gender_cat 列的值进行二进制编码：
+#如果 gender_cat 列的值为 “man”，则 gender_dummy 列的值为 1。
+#如果 gender_cat 列的值为 “woman”，则 gender_dummy 列的值为 0。
+#如果 gender_cat 列的值为 “nonbinary”，则 gender_dummy 列的值为 0。
+#如果 gender_cat 列的值不是上述任何一种情况，则 gender_dummy 列的值为 NA。
+
+table(data$gender_cat)
+#生成 data 数据集中 gender_cat 变量的频数表，显示 gender_cat 列中不同值的分布情况
+table(data$gender_dummy)
+#生成 data 数据集中 gender_dummy 变量的频数表，显示 gender_dummy 列中不同值的分布情况
+describe(data$age)
+#使用了 describe() 函数来对 age 进行描述性统计分析,提供数据的计数、均值、标准差等信息。
+
+table(data$ethnicity_eastasian)
+table(data$ethnicity_white)
+table(data$ethnicity_southasian)
+table(data$ethnicity_hispanic)
+table(data$ethnicity_black)
+table(data$ethnicity_nativeamerican)
+table(data$ethnicity_other)
+table(data$ethnicity_7_TEXT)
+#使用table()函数创建不同种族被试（领导者）的频数表，对ethnicity_eastasian、ethnicity_white等列的数据进行计数
+#可视化
+ethnicity_eastasian <- 29
+ethnicity_white <- 209
+ethnicity_southasian <- 19
+ethnicity_hispanic <- 50
+ethnicity_black <- 80
+ethnicity_nativeamerican <- 15
+ethnicity_other <- 5
+frequencies <- c(ethnicity_eastasian, ethnicity_white, ethnicity_southasian, ethnicity_hispanic, ethnicity_black, ethnicity_nativeamerican, ethnicity_other)
+ethnicity_names <- c("East Asian", "White", "South Asian", "Hispanic", "Black", "Native American", "Other")
+pie(frequencies, labels = ethnicity_names, main = "Ethnicity Distribution")
+```
+
+
+
+```{r}
+#计算被试（领导者）领导不同性别员工时各维度得分的平均值####
+data <- data %>%
+  rowwise() %>% #进行逐行操作
+  mutate(dominance_women = mean(c(dom1_women_1, dom1_women_2, dom1_women_3, dom1_women_4,
+                                  dom2_women_1, dom2_women_2, dom2_women_3, dom2_women_4)),#计算女性支配性的平均值
+         communion_women = mean(c(perceptions_women_1, perceptions_women_2)),#计算女性群体体的平均值
+         agency_women = mean(c(perceptions_women_3, perceptions_women_4))) %>% #计算女性能动性的平均值
+  mutate(dominance_men = mean(c(dom1_men_1, dom1_men_2, dom1_men_3, dom1_men_4,
+                                dom2_men_1, dom2_men_2, dom2_men_3, dom2_men_4)),#计算男性支配性的平均值
+         communion_men = mean(c(perceptions_men_1, perceptions_men_2)),#计算男性群体体的平均值
+         agency_men = mean(c(perceptions_men_3, perceptions_men_4)))#计算女性能动性的平均值
+```
+
+
+
+```{r}
+#将上述领导者，领导不同员工性别下的各维度得分进一步整理汇总。####
+data <- data %>%
+  mutate(dominance = ifelse(condition == "women", dominance_women,
+                            ifelse(condition == "men", dominance_men, NA)),#支配力
+         communion = ifelse(condition == "women", communion_women,
+                            ifelse(condition == "men", communion_men, NA)),#共同体感
+         warm = ifelse(condition == "women", perceptions_women_1,
+                       ifelse(condition == "men", perceptions_men_1, NA)),#温暖
+         goodnatured = ifelse(condition == "women", perceptions_women_2,
+                              ifelse(condition == "men", perceptions_men_2, NA)),#和善
+         agency = ifelse(condition == "women", agency_women,
+                         ifelse(condition == "men", agency_men, NA)),#能动性
+         confident = ifelse(condition == "women", perceptions_women_3,
+                         ifelse(condition == "men", perceptions_men_3, NA)),#自信
+         assertive = ifelse(condition == "women", perceptions_women_4,
+                            ifelse(condition == "men", perceptions_men_4, NA)))#果断
+```
+
+
+```{r}
+#计算量表信度#####
+  #女性群体
+   #支配性
+with(data, psych::alpha(data.frame(dom1_women_1, dom1_women_2, dom1_women_3, dom1_women_4, dom2_women_1, dom2_women_2, dom2_women_3, dom2_women_4), na.rm=TRUE, check.keys=FALSE))
+   #群体性
+corr.test(data$perceptions_women_1, data$perceptions_women_2)
+   #能动性
+corr.test(data$perceptions_women_3, data$perceptions_women_4)
+
+  #男性群体
+   #支配性
+with(data, psych::alpha(data.frame(dom1_men_1, dom1_men_2, dom1_men_3, dom1_men_4, dom2_men_1, dom2_men_2, dom2_men_3, dom2_men_4), na.rm=TRUE, check.keys=FALSE))
+   #群体性
+corr.test(data$perceptions_men_1, data$perceptions_men_2)
+   #能动性
+corr.test(data$perceptions_men_3, data$perceptions_men_4)
+```
+
+
+```{r}
+#分析####
+  #主要分析
+   #t-test
+var.test(dominance ~ d_man_group, data = data)#检查了不同组之间方差的齐性
+t.test(dominance ~ d_man_group, data = data, var.equal = TRUE)#方差齐性的t检验
+t.test(dominance ~ d_man_group, data = data, var.equal = FALSE)#方差不齐性的t检验
+#对男性和女性的dominance变量进行了描述性统计
+describe(data$dominance_men)
+describe(data$dominance_women)
+
+   #计算在男性员工和女性员工条件下，领导者（被试）支配性变量差异检验的效应量大小
+cohen.d(dominance ~ d_man_group, data = data)
+```
+
+
+```{r}
+  #线性回归模型分析
+summary(lm(dominance ~ d_man_group, data = data))
+summary(lm(dominance ~ gender_dummy, data = data))
+
+
+  #方差分析
+model <- lm(dominance ~ d_man_group * gender_dummy, data = data)
+#使用 lm() 函数拟合一个线性模型，其中 dominance 是响应变量，d_man_group 和 gender_dummy 是预测变量，并且考虑了它们的交互作用 (d_man_group * gender_dummy)。
+anova(model)
+#使用 anova() 函数对拟合的模型进行方差分析。
+eta_squared(model)
+#计算 eta 平方（η²），它是衡量效应大小的指标之一。
+cohen.d(dominance ~ gender_dummy, data = data)
+#用于计算 Cohen’s d，它是男性被试和女性被试dominance差异的效应量。Cohen’s d 可以帮助我们理解两组之间的实际差异程度。
+```
+
+```{r}
+ #中介分析
+  #communion是中介变量
+communion.mod <- '
+dominance ~ b*communion + cprime*d_man_group
+communion ~ a* d_man_group
+indirect:=a*b
+total:=indirect + cprime'
+summary(sem(communion.mod, data = data,  estimator = "ML", 
+            mimic     = "Mplus",
+            se = "boot",
+            bootstrap = 10000), ci = TRUE)  
+#这段代码定义了一个中介分析的结构方程模型，并通过 lavaan 包在 R 中进行拟合，同时设置了最大似然估计方法和 bootstrap 方法来计算标准误差和置信区间。
+```
+
