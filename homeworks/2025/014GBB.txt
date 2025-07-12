@@ -1,5 +1,0 @@
-task1 repo:
-https://github.com/guobinbing/Rstudy.git
-
-task2 repo:
-https://github.com/guobinbing/R4Psyfork.git

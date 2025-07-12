@@ -1,5 +1,0 @@
-task1's repo: https://github.com/chantly99/test.git 
-
-task2's repo: https://github.com/chantly99/R4Psy.git
-
-Thanks!

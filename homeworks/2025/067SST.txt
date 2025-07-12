@@ -1,2 +1,0 @@
-https://github.com/stare111/R4Psy.git
-git remote add origin https://github.com/stare111/new.git
