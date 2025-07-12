@@ -1,0 +1,23 @@
+Subject Name:	S133	
+Subject Birth Date:	11/10/2013	
+Test Date:	25/04/2015	
+Observer:		
+Condition:	V-Switch	
+Cell Number:		
+Comments		
+Phase	Habituation	Habituation	Habituation	Habituation	Habituation	Test	Test	Test	
+Trial	1	2	3	4	Total	1	2	Total	
+Stim. Name	cart-elle-bamoule-V	spin-une-doripe-N	cart-elle-bamoule-V	spin-une-doripe-N		spin-elle-bamoule-V	spin-elle-bamoule-V		
+Center Mon. File	peng_cart_nv.mov	peng_spin_nv.mov	peng_cart_nv.mov	peng_spin_nv.mov		peng_spin_nv.mov	peng_spin_nv.mov		
+Sound File	elle_bamoule.wav	une_doripe.wav	elle_bamoule.wav	une_doripe.wav		elle_bamoule.wav	elle_bamoule.wav		
+Trial Duration	37.1	0.1	0.1	0.1	37.3	0.1	0.1	0.1	
+AG On Time	75.9	0.9	1.2	2.8	80.7	1.2	2.0	3.2	
+AG Latency	0.6	0.5	0.6	0.3	1.9	0.5	0.6	1.1	
+Left Look Time	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	
+Center Look Time	36.5	7.9	12.6	13.3	70.3	12.1	31.4	43.5	
+Right Look Time	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	
+Total Look Time	36.5	7.9	12.6	13.3	70.3	12.1	31.4	43.5	
+Left Looks	0	0	0	0	0	0	0	0	
+Center Looks	1	1	1	1	4	1	1	2	
+Right Looks	0	0	0	0	0	0	0	0	
+Total Looks	1	1	1	1	4	1	1	2	
