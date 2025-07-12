@@ -1,0 +1,559 @@
+---
+title: "Experiment 3"
+output: pdf_document
+---
+
+# General preparations
+
+## Load libraries
+```{r,message=FALSE}
+library(mousetrap)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(afex)
+library(MBESS)
+library(ordinal)
+```
+
+## Custom ggplot2 theme
+```{r}
+theme_set(theme_classic()+ 
+  theme(
+    axis.line = element_line(colour = "black"),
+    axis.ticks = element_line(colour = "black"),
+    axis.text = element_text(colour = "black"),
+    panel.border = element_rect(colour = "black", fill=NA)
+  ))
+```
+
+## Custom functions
+```{r}
+# Function to compute confidence interval for partial eta-squared
+get_partial_etas <- function(anova_table, conf.level=.90){
+  partial_etas <- sapply(row.names(anova_table),function(i){
+    F <- anova_table[i,"F"]
+    df1 <- anova_table[i,"num Df"]
+    df2 <- anova_table[i,"den Df"]
+    ci <- conf.limits.ncf(F.value=F,conf.level=conf.level,df.1=df1,df.2=df2)
+    return(
+      c(pes=((F*df1)/(F*df1+df2)),
+        lower=ci$Lower.Limit/(ci$Lower.Limit+df1+df2+1),
+        upper=ci$Upper.Limit/(ci$Upper.Limit+df1+df2+1)))
+  })
+  return(t(partial_etas))
+}
+```
+
+
+## Data import
+```{r}
+raw_data <- read.csv("../data/exp3.csv")
+raw_data$Typicality <- factor(raw_data$Condition,levels=c("Typical","Atypical"))
+raw_data$group <- factor(raw_data$group,levels=c("static","rtmax","initmax","dynamic"))
+```
+
+# Correctness - analysis including all trials
+
+## Percent of correct trials per condition
+```{r}
+with(raw_data,table(group, correct)/c(table(group)))
+```
+
+## Chi-squared test
+```{r}
+chisq.test(with(raw_data,table(group, correct)),correct = FALSE)
+```
+
+## Generalized linear mixed model
+```{r}
+# use default contrasts (dummy coding with static as baseline)
+contrasts(raw_data$group)
+summary(glmer(correct~(1|subject_nr)+group,family="binomial",data=raw_data))
+```
+
+
+# Correctness - analysis excluding trials in rtmax condition > limit
+
+## Exclude trials in rtmax condition above time limit
+```{r}
+# Count eligible and non-eligible trials in rtmax condition
+n_eligible <- sum(with(raw_data,group=="rtmax" & response!="None"))
+n_noneligible <- sum(with(raw_data,group=="rtmax" & response=="None"))
+
+# Percent trials in rtmax condition above total time limit
+n_noneligible/(n_eligible+n_noneligible)
+
+# Exclude non-eligible trials
+raw_data <- subset(raw_data, response!="None")
+```
+
+## Percent of correct trials per condition
+```{r}
+with(raw_data,table(group, correct)/c(table(group)))
+```
+
+## Chi-squared test
+```{r}
+chisq.test(with(raw_data,table(group, correct)),correct = FALSE)
+```
+
+## Generalized linear mixed model
+```{r}
+summary(glmer(correct~(1|subject_nr)+group,family="binomial",data=raw_data))
+```
+
+## Exclude incorrect trials
+```{r}
+raw_data <- subset(raw_data, correct==1)
+```
+
+
+# Trajectory preprocessing
+```{r}
+mt_data <- mt_import_mousetrap(raw_data,
+  xpos_label = c("xpos_initial_phase","xpos_get_response"),
+  ypos_label = c("ypos_initial_phase","ypos_get_response"),
+  timestamps_label = c("timestamps_initial_phase","timestamps_get_response"))
+mt_data <- mt_remap_symmetric(mt_data)
+mt_data <- mt_align_start(mt_data, start=c(0,0))
+mt_data <- mt_derivatives(mt_data)
+mt_data <- mt_measures(mt_data)
+mt_data <- mt_time_normalize(mt_data)
+```
+
+
+# Manipulation check using per participant mean of time variables
+
+## Aggregate data per participant and condition
+```{r}
+mt_data$measures$RT_initial <- mt_data$data$response_time_initial_phase
+mt_data$measures$IT <- mt_data$measures$initiation_time
+mt_data$measures$RT_post <- mt_data$data$response_time_get_response
+
+agg_times <- mt_aggregate_per_subject(mt_data,
+  use_variables = c("RT_initial","IT","RT","RT_post"),
+  use2_variables = "group",subject_id="subject_nr")
+```
+
+## Descriptives
+```{r}
+mean_times <- agg_times %>%
+  group_by(group) %>%
+  summarize(
+    N = n(),
+    M_RT_inital = mean(RT_initial),
+    SD_RT_initial = sd(RT_initial),
+    M_IT = mean(IT),
+    SD_IT = sd(IT),
+    M_RT = mean(RT),
+    SD_RT = sd(RT)
+    ) %>%
+  as.data.frame()
+print(mean_times, digits=5)
+
+# RT post (interesting mostly for dynamic condition)
+agg_times %>%
+  group_by(group) %>%
+  summarize(
+    M_RT_post = mean(RT_post),
+    SD_RT_post = sd(RT_post)
+  )%>%
+  as.data.frame()
+```
+
+## Specify contrasts (used in contrast analyses later)
+```{r}
+contrast_matrix_separate <- list(
+  rtmax_vs_static = c(-1,1,0,0),
+  initmax_vs_static = c(-1,0,1,0),
+  dynamic_vs_static= c(-1,0,0,1))
+```
+
+## Compare RT initial
+```{r}
+# ANOVA
+anova_RT_initial <- aov_ez(data=agg_times,dv = "RT_initial", between = "group", id = "subject_nr")
+nice(anova_RT_initial,es = c("pes","ges"))
+
+# Partial eta-squared including 90 % CI
+round(get_partial_etas(anova_RT_initial$anova_table, conf.level=.90),2)
+
+# Contrast analysis
+anova_RT_initial_grid <- lsmeans(anova_RT_initial,~group)
+contrast(anova_RT_initial_grid,contrast_matrix_separate)
+```
+
+## Compare initiation time
+```{r}
+# ANOVA
+anova_IT <- aov_ez(data=agg_times,dv = "IT", between = "group", id = "subject_nr")
+nice(anova_IT,es = c("pes","ges"))
+
+# Partial eta-squared including 90 % CI
+round(get_partial_etas(anova_IT$anova_table, conf.level=.90),2)
+
+# Contrast analysis
+anova_IT_grid <- lsmeans(anova_IT,~group)
+contrast(anova_IT_grid,contrast_matrix_separate)
+```
+
+## Compare total RT
+```{r}
+# ANOVA
+anova_RT <- aov_ez(data=agg_times,dv = "RT", between = "group", id = "subject_nr")
+nice(anova_RT,es = c("pes","ges"))
+
+# Partial eta-squared including 90 % CI
+round(get_partial_etas(anova_RT$anova_table, conf.level=.90),2)
+
+# Contrast analysis
+anova_RT_grid <- lsmeans(anova_RT,~group)
+contrast(anova_RT_grid,contrast_matrix_separate)
+```
+
+# Manipulation check using per participant median of time variables
+
+## Aggregate data per participant and condition
+```{r}
+agg_times <- mt_aggregate_per_subject(mt_data,
+  use_variables = c("IT","RT_initial","RT"),
+  use2_variables = "group",subject_id="subject_nr",
+  .funs="median")
+```
+
+## Descriptives
+```{r}
+mean_times <- agg_times %>%
+  group_by(group) %>%
+  summarize(
+    N = n(),
+    M_RT_inital = mean(RT_initial),
+    SD_RT_initial = sd(RT_initial),
+    M_IT = mean(IT),
+    SD_IT = sd(IT),
+    M_RT = mean(RT),
+    SD_RT = sd(RT)
+    ) %>%
+  as.data.frame()
+
+print(mean_times, digits=5)
+```
+
+## Compare RT initial
+```{r}
+# ANOVA
+anova_RT_initial <- aov_ez(data=agg_times,dv = "RT_initial", between = "group", id = "subject_nr")
+nice(anova_RT_initial,es = c("pes","ges"))
+
+# Partial eta-squared including 90 % CI
+round(get_partial_etas(anova_RT_initial$anova_table, conf.level=.90),2)
+
+# Contrast analysis
+anova_RT_initial_grid <- lsmeans(anova_RT_initial,~group)
+contrast(anova_RT_initial_grid,contrast_matrix_separate)
+```
+
+## Compare initiation time
+```{r}
+# ANOVA
+anova_IT <- aov_ez(data=agg_times,dv = "IT", between = "group", id = "subject_nr")
+nice(anova_IT,es = c("pes","ges"))
+
+# Partial eta-squared including 90 % CI
+round(get_partial_etas(anova_IT$anova_table, conf.level=.90),2)
+
+# Contrast analysis
+anova_IT_grid <- lsmeans(anova_IT,~group)
+contrast(anova_IT_grid,contrast_matrix_separate)
+```
+
+## Compare total RT
+```{r}
+# ANOVA
+anova_RT <- aov_ez(data=agg_times,dv = "RT", between = "group", id = "subject_nr")
+nice(anova_RT,es = c("pes","ges"))
+
+# Partial eta-squared including 90 % CI
+round(get_partial_etas(anova_RT$anova_table, conf.level=.90),2)
+
+# Contrast analysis
+anova_RT_grid <- lsmeans(anova_RT,~group)
+contrast(anova_RT_grid,contrast_matrix_separate)
+```
+
+
+# Aggregate trajectory curvature
+
+## Average time-normalized tajectories
+```{r,fig.height=2, fig.width=6}
+mt_plot_aggregate(mt_data, use = "tn_trajectories", facet_col = "group",
+  x = "xpos", y = "ypos", color = "Typicality", subject_id = "subject_nr")+
+  xlab("x coordinate (px)") + ylab("y coordinate (px)")+
+  scale_color_manual(values = c("black","grey60"))
+```
+
+## Comparison of MAD aggregated per participant
+
+### Aggregate data per participant and condition
+```{r}
+agg_mad <- mt_aggregate_per_subject(mt_data, subject_id = "subject_nr",
+  use_variables = "MAD", use2_variables = c("Typicality","group"))
+```
+
+### Descriptives and paired t-tests 
+```{r,message=FALSE}
+mad_table <- agg_mad %>%
+  group_by(group) %>%
+  select(MAD,group,Typicality) %>%
+  summarize(
+    N =  length(MAD[Typicality=="Typical"]),
+    M_t = mean(MAD[Typicality=="Typical"]),
+    SD_t = sd(MAD[Typicality=="Typical"]),
+    M_a = mean(MAD[Typicality=="Atypical"]),
+    SD_a = sd(MAD[Typicality=="Atypical"]),
+    t = t.test(MAD[Typicality=="Atypical"],MAD[Typicality=="Typical"],paired=TRUE)$statistic,
+    p = t.test(MAD[Typicality=="Atypical"],MAD[Typicality=="Typical"],paired=TRUE)$p.value,
+    d = (M_a-M_t)/sd(MAD[Typicality=="Atypical"]-MAD[Typicality=="Typical"])
+    )
+
+mad_table %>%
+  as.data.frame() %>%
+  print(digits=3)
+```
+
+### Figure
+```{r,fig.height=3.2, fig.width=4}
+ggplot(agg_mad,aes(x=Typicality,y=MAD,linetype=group,group=group))+
+  geom_line(stat="summary",fun.y="mean")+
+  geom_point(stat="summary",fun.y="mean")+
+  geom_errorbar(stat="summary",fun.data="mean_se",width=.2,linetype=1)+
+  scale_linetype_manual(values=c(1,2,3,4))+
+  coord_cartesian(ylim=c(0,700))
+```
+
+### ANOVA
+```{r}
+anova_mad <- aov_ez(data=agg_mad, dv = "MAD", between = "group", within = "Typicality",
+                    id = "subject_nr")
+nice(anova_mad,es = c("pes","ges"))
+
+# 90 % confidence interval for partial eta-squared
+round(get_partial_etas(anova_mad$anova_table, conf.level=.90),2)
+```
+
+## Contrast analyses
+```{r}
+# Retrieve grid
+anova_mad_grid <- lsmeans(anova_mad,~Typicality:group)
+
+# Specify contrasts
+contrast_matrix_complete <- list(
+  typicality_static = c(-1,1,0,0,0,0,0,0),
+  rtmax_static_main=  c(-1,-1,1,1,0,0,0,0)/2,
+  initmax_static_main = c(-1,-1,0,0,1,1,0,0)/2,
+  dynamic_static_main = c(-1,-1,0,0,0,0,1,1)/2,
+  rtmax_static_int = c(1,-1,-1,1,0,0,0,0),
+  initmax_static_int = c(1,-1,0,0,-1,1,0,0),
+  dynamic_static_int = c(1,-1,0,0,0,0,-1,1))
+
+# Test contrasts
+contrast(anova_mad_grid,contrast_matrix_complete)
+```
+
+
+# Distribution of trajectory shapes
+
+## Bimodality coefficient
+```{r}
+# Standardize MAD per participant
+mt_data <- mt_standardize(mt_data, use_variables = "MAD", within = "subject_nr")
+
+# Calculate bimodality coefficient
+mt_check_bimodality(mt_data, use_variables = "z_MAD",
+  grouping_variables = c("group","Typicality"), methods = "BC")
+```
+
+
+## Smoothed heatmaps
+```{r,fig.height=1.1, fig.width=6}
+heatmap_smoothed <- mt_heatmap_ggplot(mt_data,
+  xres = 1000,
+  smooth_radius = 20,
+  n_shades = 10,
+  mean_image = 0.2,
+  colors=c("white","black"),
+  facet_col="group")
+heatmap_smoothed+
+  theme(strip.background = element_rect(colour = NA))
+```
+
+
+## Prototype classification (standard set)
+
+### Plot prototypes
+```{r,fig.height=1.5}
+mt_plot(mt_prototypes,facet_col="mt_id",only_ggplot = TRUE)+
+  geom_path()+
+  facet_grid(cols = vars(factor(mt_id,levels=rownames(mt_prototypes))))+
+  theme(axis.text=ggplot2::element_blank(),axis.ticks=ggplot2::element_blank()) 
+```
+
+### Map trajectories onto prototypes
+```{r}
+mt_data <- mt_spatialize(mt_data)
+mt_data <- mt_map(mt_data,prototypes = mt_prototypes,
+  save_as = "measures", grouping_variables = "group")
+mt_data$data$prototype_label <- mt_data$measures$prototype_label
+```
+
+### Classified trajectories per group
+
+#### Relative frequencies
+```{r,fig.height=4.5}
+prototype_percentages <- mt_data$data %>%
+  group_by(group,prototype_label) %>%
+  summarise(n=n()) %>%
+  mutate(Percent=paste(round(100*n/sum(n)),"%",sep=""))
+
+mt_plot(mt_data, use = "sp_trajectories",
+  x = "xpos", y = "ypos", facet_col = "prototype_label", facet_row="group",alpha=.2)+
+  xlab("x coordinate (px)") + ylab("y coordinate (px)")+
+  geom_text(data=prototype_percentages,aes(label=Percent),x=650,y=50)+
+  scale_y_continuous(breaks=c(0,500,1000))+
+  coord_cartesian(xlim=c(-900,900))
+```
+
+#### Chi-squared test
+```{r}
+chisq.test(with(mt_data$data,table(group, prototype_label)))
+```
+
+
+### Classified trajectories per group X typicality condition
+
+#### Relative frequencies
+```{r,fig.height=3.2, fig.width=6}
+rel_freq_agg <- mt_data$data %>%
+  group_by(group,Typicality,prototype_label) %>%
+  summarise(n=n()) %>%
+  mutate(Percent=n/sum(n))
+
+spread(rel_freq_agg[,-4],"prototype_label","Percent",fill = 0) %>%
+  as.data.frame()%>%
+  print(digits=2)
+
+ggplot(rel_freq_agg,aes(x=Typicality,y=Percent,fill=forcats::fct_rev(prototype_label)))+
+  geom_bar(stat="identity",color="black")+
+  scale_fill_brewer(type="seq",name="Classification")+
+  facet_grid(.~group)
+```
+
+#### Ordinal mixed regression
+```{r}
+contrasts(mt_data$data$Typicality) <- c(-0.5,0.5)
+# use default contrasts for group (dummy coding with static as baseline)
+contrasts(mt_data$data$group)
+summary(clmm(prototype_label~Typicality*group+(1|subject_nr),data=mt_data$data))
+```
+
+
+
+## Prototype classification (extended prototype set)
+
+### Extend prototype set
+Include prototypes that move up all the way to the top of the screen and then...
+* left to the chosen option (upleft)
+* right to the non-chosen option and then left (upCoM)
+* left to the chosen option, then right to the non-chosen option, then left again (upCoM2)
+
+```{r,fig.height=1.5}
+mt_prototypes_ext <- mt_add_trajectory(mt_prototypes,
+   xpos = c(0,0,-1), ypos = c(0,1.5,1.5), id = "upleft"
+)
+
+mt_prototypes_ext <- mt_add_trajectory(mt_prototypes_ext,
+   xpos = c(0,0,1,-1), ypos = c(0,1.5,1.5,1.5), id = "upCoM"
+)
+
+mt_prototypes_ext <- mt_add_trajectory(mt_prototypes_ext,
+   xpos = c(0,0,-1,1,-1), ypos = c(0,1.5,1.5,1.5,1.5), id = "upCoM2"
+)
+
+prototype_labels_extended <- 
+  c("straight","curved","upleft","cCoM","upCoM","dCoM","upCoM2","dCoM2")
+
+mt_plot(mt_prototypes_ext,facet_col="mt_id",only_ggplot = TRUE)+
+  geom_path()+
+  facet_grid(cols = vars(factor(mt_id,levels=prototype_labels_extended)))+
+  theme(axis.text=ggplot2::element_blank(),axis.ticks=ggplot2::element_blank()) 
+```
+
+
+### Map trajectories onto prototypes 
+```{r}
+mt_data <- mt_spatialize(mt_data)
+mt_data <- mt_map(mt_data,prototypes = mt_prototypes_ext,
+  save_as="measures", grouping_variables = "group")
+
+# Create variable that contains all prototypes in increasing order
+mt_data$data$prototype_label <- factor(mt_data$measures$prototype_label,
+  levels=prototype_labels_extended)
+
+# Create variable that sets "up" prototypes equal to their curved equivalent
+mt_data$data$prototype_label_red <- factor(mt_data$measures$prototype_label,
+  levels=c("straight","curved","upleft","cCoM","upCoM","dCoM","upCoM2","dCoM2"),
+  labels=c("straight","curved","curved","cCoM","cCoM", "dCoM","dCoM2", "dCoM2"))
+```
+
+
+### Classified trajectories per group
+
+#### Relative frequencies
+```{r,fig.height=4.5}
+prototype_percentages <- mt_data$data %>%
+  group_by(group,prototype_label) %>%
+  summarise(n=n()) %>%
+  mutate(Percent=paste(round(100*n/sum(n)),"%",sep=""))
+
+mt_plot(mt_data, use = "sp_trajectories",
+  x = "xpos", y = "ypos", facet_col = "prototype_label", facet_row="group",alpha=.2)+
+  xlab("x coordinate (px)") + ylab("y coordinate (px)")+
+  geom_text(data=prototype_percentages,aes(label=Percent),x=650,y=50)+
+  scale_y_continuous(breaks=c(0,500,1000))+
+  coord_cartesian(xlim=c(-900,900))
+```
+
+#### Chi-squared test
+```{r}
+chisq.test(with(mt_data$data,table(group, prototype_label)))
+```
+
+
+### Classified trajectories per group X typicality condition
+
+#### Relative frequencies
+```{r,fig.height=3.2, fig.width=6}
+rel_freq_agg <- mt_data$data %>%
+  group_by(group,Typicality,prototype_label) %>%
+  summarise(n=n()) %>%
+  mutate(Percent=n/sum(n), Percent_rounded = round(Percent,2))
+
+spread(rel_freq_agg[,-c(4:5)],"prototype_label","Percent_rounded",fill = 0) %>%
+  as.data.frame()
+
+ggplot(rel_freq_agg,aes(x=Typicality,y=Percent,fill=forcats::fct_rev(prototype_label)))+
+  geom_bar(stat="identity",color="black")+
+  scale_fill_brewer(type="seq",name="Classification")+
+  facet_grid(.~group)
+```
+
+#### Ordinal mixed regressions (treating all prototypes as ordered)
+```{r}
+summary(clmm(prototype_label~Typicality*group+(1|subject_nr),data=mt_data$data))
+```
+
+#### Ordinal mixed regressions (treating "up" and curved prototypes equal)
+```{r}
+summary(clmm(prototype_label_red~Typicality*group+(1|subject_nr),data=mt_data$data))
+```
