@@ -70,6 +70,11 @@ root_dir
 |....
 ```
 
+## Source vs rendered artifacts (源文件 vs 渲染文件)
+- Source files (edit these): `chapter_*.Rmd`, `chapter_14.qmd`, `Demo.Rmd`, `chapter_13_papaja.Rmd`
+- Rendered artifacts (do not hand-edit): `chapter_*.html`, `*_files/`, `output/`, PDFs/PPTX, `libs/`
+- If you update a source file, re-render to regenerate the corresponding artifacts.
+
 ## 课程大纲
 
 |      | 主题  | 子主题 |
