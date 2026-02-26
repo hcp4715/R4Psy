@@ -1,14 +1,16 @@
-
-#  R files
+# R session / project files
 .Rhistory
 .RData
 .Rproj.user
 *.Rproj
 
-## Mac OS files
+# macOS
 .DS_Store
 
-## files for html
-*_files/*
+# Rendered intermediates (keep *.html)
+*_files/
+output/
+
+# Local/temporary course files
 Survey_in_Lec1.xlsx
 chapter_5_update_1.Rmd

@@ -1,97 +1,277 @@
-# R语言在心理学研究中的应用 (R for psychological research)
+# 📘 R语言在心理学研究中的应用 (R for Psychological Research)
 
-## 关于(About)
+> Graduate course materials for the School of Psychology, Nanjing Normal University.
+> 南京师范大学心理学院研究生课程材料仓库。
 
-This is a repo for the R course for graduate students, School of Psychology, Nanjing Normal University, Nanjing, China.
+**Last updated / 最后更新**: 2026-02-26
 
-Instructor: Prof. Hu Chuan-Peng
+## 🧭 Quick Access / 快速导航
 
-Teaching assistants (2024 Spring): Yiqun Chen; Jiahui Wen; Tingting Wu
+- [📖 Course Overview / 课程简介](#-course-overview--课程简介)
+- [👩‍🏫 Teaching Team / 授课团队](#-teaching-team--授课团队)
+- [📂 Repository Structure / 仓库结构](#-repository-structure--仓库结构)
+- [🗂️ What to Edit / 编辑哪些文件](#️-what-to-edit--编辑哪些文件)
+- [🚦 Source vs Rendered Policy / 源文件与产物规范](#-source-vs-rendered-policy--源文件与产物规范)
+- [🛠️ Beginner Setup Guide / 新手环境配置图文](#️-beginner-setup-guide--新手环境配置图文)
+- [❓ FAQ / 常见问题](#-faq--常见问题)
+- [📜 License / 许可协议](#-license--许可协议)
 
-Teaching assistants (2023 Spring): Yuki; Hejia Sun; Zheng Cai; Songshi Bai; Caiyu Tian
+## 📖 Course Overview / 课程简介
 
-此仓库为南京师范大学心理学研究生课程相关课件，授课内容所转为文字稿，见[https://github.com/hcp4715/R4PsyBook](https://github.com/hcp4715/R4PsyBook); 2024年春季课程的录屏见[这里](https://space.bilibili.com/252509184/lists/2314135)
+This repository contains slides, practice materials, demo materials, and guest lecture content for the graduate-level R course.
 
-教师：胡传鹏博士(hcp4715 AT hotmail DOT com)
+本仓库包含研究生课程《R语言在心理学研究中的应用》的课件、练习、演示与嘉宾讲座材料。
 
-助教(2025 Spring)：周方茹
+课程文字稿请见: [R4PsyBook](https://github.com/hcp4715/R4PsyBook)
 
-助教(2024 Spring)：陈逸群; 温佳慧；武婷婷
+2024春季录屏: [Bilibili 列表](https://space.bilibili.com/252509184/lists/2314135)
 
-助教(2023 Spring)：yuki; 孙禾嘉；蔡镇；柏松石；田彩玉
+## 👩‍🏫 Teaching Team / 授课团队
 
+- **Instructor / 教师**: Prof. Hu Chuan-Peng (胡传鹏)
+- **Contact / 联系方式**: `hcp4715 AT hotmail DOT com`
+- **TA (2026 Spring)**: 孙心茹
+- **TA (2025 Spring)**: 周方茹
+- **TA (2024 Spring)**: 陈逸群, 温佳慧, 武婷婷
+- **TA (2023 Spring)**: Yuki, 孙禾嘉, 蔡镇, 柏松石, 田彩玉
 
-## 版权与许可(License)
+## 📂 Repository Structure / 仓库结构
 
-本仓库中的代码与文字，均由胡传鹏教授与助教团队所创建，采用CC-BY-4.0的版本许可，如需要使用，请引用本仓库网址。
-
-本仓库内容对资料出处均进行详细引用，如果侵权，请随时联系。
-
-Shield: [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
-
-This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
-
-[![CC BY 4.0](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
-
-## 本Repo的文件夹结构(folder structure of this repo)
-
-```         
-root_dir
-|
-|----chapter_1.pptx   # slides for chapter 1
-|----chapter_2.pptx   # slides for chapter 2
-|----chapter_3.Rmd    # Rmarkdown for chapter 3
-|----chapter_3.html   # html for chapter 3
-|----chapter_4.Rmd    # Rmarkdown for chapter 4
-|----chapter_4.html   # html for chapter 4
-|----chapter_5.Rmd    # Rmarkdown for chapter 5
-|----chapter_5.html   # html for chapter 5
-|----chapter_6.Rmd    # Rmarkdown for chapter 6
-|----chapter_6.html   # html for chapter 6
-|----chapter_7.Rmd    # Rmarkdown for chapter 7
-|----chapter_7.html   # html for chapter 7
-|---- ...
-|----Demo.Rmd         # Rmarkdown for demostration
-|
-|----css/             # folder for Xaringan
-|----data/            # folder for data used in the lecture
-|     |----- match    # folder for match data
-|     |----- penguin  # folder for penguin data
-| 
-|----libs/            # folder for Xaringan
-|
-|----output/          # folder for Xaringan output?
-|
-|----picture/         # folder for picture in html
-|     |----- chp3     # folder for pictures in chapter 3
-|     |----- chp4     # folder for pictures in chapter 4
-|     |----- ...
-|
-|....
+```text
+R4Psy/
+├── slides/
+│   ├── chapter_*.Rmd                # 主课件源文件 (xaringan)
+│   ├── chapter_14.qmd               # Quarto revealjs 课件
+│   ├── chapter_*.html               # 渲染后的章节HTML（保留）
+│   ├── chapter_*.pptx               # 早期章节PPT
+│   ├── chapter_13-*.bib             # Chapter 13 参考文献
+│   ├── pure_code/chapter_*.R        # 章节纯代码脚本
+│   ├── data/                        # 课件数据
+│   ├── picture/                     # 课件图片资源
+│   └── css/                         # 样式与 theme.scss
+├── practice/                        # 练习/作业模板
+├── demo/                            # 演示材料
+├── guest/                           # 嘉宾讲座
+├── homeworks/                       # 作业目录（按年份）
+├── libs/                            # HTML共享依赖（保留）
+└── README.md
 ```
 
-## Source vs rendered artifacts (源文件 vs 渲染文件)
-- Source files (edit these): `chapter_*.Rmd`, `chapter_14.qmd`, `Demo.Rmd`, `chapter_13_papaja.Rmd`
-- Rendered artifacts (do not hand-edit): `chapter_*.html`, `*_files/`, `output/`, PDFs/PPTX, `libs/`
-- If you update a source file, re-render to regenerate the corresponding artifacts.
+### 🧩 Top-level Folders at a Glance / 顶层目录说明
 
-## 课程大纲
+- `slides/`: core teaching slides and shared assets / 主课件与共享素材
+- `practice/`: exercises and templates / 练习与模板
+- `demo/`: demonstration-only materials / 课堂演示材料
+- `guest/`: guest lecture packages / 嘉宾讲座材料
+- `homeworks/`: yearly homework folders / 各年度作业目录
+- `libs/`: JS/CSS libs required by existing HTML / 现有HTML依赖库
 
-|      | 主题  | 子主题 |
-|------|------|--------|
-| 第一讲 | 为什么要学习R | 1.1 R在心理科学及社会科学中的运用<br>1.2 R语言使用的示例展示<br>1.3 课程安排<br>1.4 如何学好这门课 |
-| 第二讲 | 开始使用R | 2.1 数据与问题<br>2.2 如何安装？<br>2.3 如何方便使用？Rstudio的安装与界面介绍<br>2.4 和鲸平台 |
-| 第三讲 | 利用好本课程资源--Git与Github | 3.1 Git与GitHub<br>3.2 项目、文件与代码的规范化 |
-| 第四讲 | 导入数据 | 4.1 路径与工作目录<br>4.2 读取数据<br>4.3 初识R语言的对象 |
-| 第五讲 | 清理数据(一)--R语言编程基础 | 5.1 R对象的操控<br>5.2 逻辑运算<br>5.3 函数 |
-| 第六讲 | 清理数据(二)--数据的预处理 | 6.1 `tidyverse`简介<br>6.2 问卷数据预处理：基本操作<br>6.3 数据预处理的进阶操作 |
-| 第七讲 | 清理数据(三)--数据的预处理 | 7.1 认知实验数据预处理<br>7.2 函数(function) |
-| 第八讲 | 探索数据 -- 描述性统计与数据可视化基础 | 7.1 描述性统计<br>7.2 探索性数据分析(`DataExplorer`)<br>7.3 `ggplot2`的基本语法 |
-| 第九讲 | R语言中回归模型(一) -- 基本回归模型与常见统计检验(*t*-test/ANOVA) | 8.1 语法实现<br>8.2 分析的流程 |
-| 第十讲 | R语言中回归模型(二) -- 层级线性模型 | 9.1 语法实现<br>9.2 分析的流程 |
-| 第十一讲 | R语言中回归模型(三) -- 广义线性模型 | 10.1 语法实现<br>10.2 分析的流程 |
-| 第十二讲 | 获得可发表的图像 -- 数据可视化进阶 |  |
-| 第十三讲 | 专题1: 从代码到论文 -- papaja包介绍 |  |
-| 第十四讲 | 特邀报告(待定) |  |
-| 第十五讲 | 特邀报告(待定) |  |
-| 第十六讲 | 大作业 |  |
+## 🗂️ What to Edit / 编辑哪些文件
+
+### ✅ Recommended to edit / 建议编辑
+
+- `slides/chapter_*.Rmd`
+- `slides/chapter_14.qmd`
+- `slides/pure_code/chapter_*.R`
+- `practice/*.Rmd`
+- `demo/*.Rmd`
+- `guest/**/code/*.Rmd`
+
+### ⚠️ Usually do not hand-edit / 通常不要手改
+
+- `slides/chapter_*.html` (rendered outputs)
+- `libs/` (shared dependency bundles)
+
+## 🚦 Source vs Rendered Policy / 区分源文件与渲染文件
+
+- Keep source files as the single source of truth.
+  - 以源文件为准，渲染文件由源文件生成。
+- Keep chapter HTML outputs in `slides/`.
+  - `slides/` 章节HTML暂时保留。
+- Remove generated intermediates (`*_files/`, `output/`).
+  - 中间产物目录不用上传。
+- Keep `libs/` to support existing HTML without immediate re-render.
+  - 为保证现有HTML可用，暂时保留 `libs/`。
+
+## 🧑‍🏫 Teaching Workflow / 学习协作建议
+
+### 👩‍🎓 Students / 学生
+
+- Follow the setup guide below.
+- Use fork + pull request workflow.
+- Submit homework in designated yearly folders.
+
+### 🧑‍💻 TAs / 助教
+
+- Maintain `practice/` and assignment templates.
+- Keep instructions consistent with folder layout.
+- Avoid moving shared data/image paths casually.
+
+### 👨‍🏫 Instructor / 教师
+
+- Maintain slide sources in `slides/`.
+- Maintain historical semester packages via GitHub Releases.
+- Keep README as the single onboarding入口文档。
+
+## 🛠️ Beginner Setup Guide / 新手环境配置图文
+
+> Source: originally from `env/env_init.md`, now integrated here for easier onboarding.
+> 原始来源为 `env/env_init.md`，现整合到 README 中，方便新手一步到位。
+
+### 1) Git
+
+#### 1.1 下载（Windows）
+
+https://git-scm.com/downloads/win
+
+选择 64-bit Git for Windows Setup
+
+![image-20250307190757209](./env/assets/image-20250307190757209.png)
+
+#### 1.2 安装
+
+![image-20250307192748213](./env/assets/image-20250307192748213.png)
+
+👇安装位置默认即可，路径中不要含有中文
+
+![image-20250307192816626](./env/assets/image-20250307192816626.png)
+
+一路按下 Next，不需要修改配置。
+
+![image-20250307193527231](./env/assets/image-20250307193527231.png)
+
+#### 1.3 验证
+
+出现 git version 即安装成功。
+
+![image-20250307193818104](./env/assets/image-20250307193818104.png)
+
+#### 1.4 配置
+
+- 打开 Git Bash
+
+![image-20250307194156303](./env/assets/image-20250307194156303.png)
+
+- 配置用户名与邮箱
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "email@example.com"
+git config --global --list
+```
+
+![image-20250307194420511](./env/assets/image-20250307194420511.png)
+![image-20250307194745078](./env/assets/image-20250307194745078.png)
+
+- 生成 SSH key
+
+```bash
+ssh-keygen -t rsa -C "你的邮箱"
+```
+
+![image-20250307195053105](./env/assets/image-20250307195053105.png)
+![image-20250307195105952](./env/assets/image-20250307195105952.png)
+
+- 查看公钥
+
+```bash
+cd ~/.ssh
+cat id_rsa.pub
+```
+
+![image-20250307195348204](./env/assets/image-20250307195348204.png)
+
+- 在 GitHub 添加 SSH key
+
+![](./env/assets/image-20250307195510975.png)
+![image-20250307195606871](./env/assets/image-20250307195606871.png)
+![image-20250307195724695](./env/assets/image-20250307195724695.png)
+![image-20250307195917406](./env/assets/image-20250307195917406.png)
+
+- SSH 连通性验证
+
+```bash
+ssh -T git@github.com
+```
+
+![image-20250307195949093](./env/assets/image-20250307195949093.png)
+![image-20250307200855073](./env/assets/image-20250307200855073.png)
+
+### 2) R
+
+CRAN 镜像： https://mirrors.tuna.tsinghua.edu.cn/CRAN/
+
+![image-20250307202508101](./env/assets/image-20250307202508101.png)
+![image-20250307202620224](./env/assets/image-20250307202620224.png)
+
+### 3) RStudio
+
+![image-20250307203407124](./env/assets/image-20250307203407124.png)
+![image-20250307203547558](./env/assets/image-20250307203547558.png)
+![image-20250307203659882](./env/assets/image-20250307203659882.png)
+![image-20250307203745989](./env/assets/image-20250307203745989.png)
+
+### 4) Fork + Clone + PR Workflow
+
+- Fork 老师仓库：<https://github.com/hcp4715/R4Psy>
+
+![image-20250307204126256](./env/assets/image-20250307204126256.png)
+![image-20250307204214450](./env/assets/image-20250307204214450.png)
+
+- 在 RStudio 中新建 Version Control Project
+
+![image-20250308103154502](./env/assets/image-20250308103154502.png)
+![image-20250308103214321](./env/assets/image-20250308103214321.png)
+![image-20250308110119700](./env/assets/image-20250308110119700.png)
+![image-20250308103239969](./env/assets/image-20250308103239969.png)
+![image-20250308104245304](./env/assets/image-20250308104245304.png)
+
+- 提交并 push
+
+![image-20250308104544472](./env/assets/image-20250308104544472.png)
+![image-20250308104655642](./env/assets/image-20250308104655642.png)
+![image-20250308104619551](./env/assets/image-20250308104619551.png)
+![image-20250308104726895](./env/assets/image-20250308104726895.png)
+
+- 创建 pull request
+
+![image-20250308105505033](./env/assets/image-20250308105505033.png)
+![image-20250308105526108](./env/assets/image-20250308105526108.png)
+
+## ❓ FAQ / 常见问题
+
+### Q1. 电脑中文用户名，SSH 密钥创建失败怎么办？
+
+- 在 `C:/Users/` 下创建 `.ssh` 文件夹
+- 以管理员权限打开 Git Bash
+- 使用 `-f` 参数指定路径
+
+```bash
+ssh-keygen -t rsa -C "邮箱" -f "C:/Users/.ssh/id_rsa"
+```
+
+![image-20250310221357043](./env/assets/image-20250310221357043.png)
+![image-20250310221500039](./env/assets/image-20250310221500039.png)
+![image-20250310221652036](./env/assets/image-20250310221652036.png)
+
+### Q2. Why keep `libs/` now? / 为什么暂时保留 `libs/`？
+
+Because existing HTML files depend on it (`lib_dir`).
+Current policy prioritizes stability before full re-render.
+
+因为现有HTML课件依赖 `libs/`（`lib_dir` 指向）。
+当前策略是先保证可用，再按教学节奏逐步重渲染。
+
+## 📦 Release Policy / 发布策略
+
+Historical semester materials are preserved via GitHub Releases.
+
+历年学期版本通过 GitHub Releases 管理，主分支保留当前活跃教学材料。
+
+## 📜 License / 许可协议
+
+本仓库中的代码与文字采用 **CC-BY-4.0** 许可。
+
+This work is licensed under the **Creative Commons Attribution 4.0 International License**.
+
+[![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
