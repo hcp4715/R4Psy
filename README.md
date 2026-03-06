@@ -3,7 +3,7 @@
 > Graduate course materials for the School of Psychology, Nanjing Normal University.
 > 南京师范大学心理学院研究生课程材料仓库。
 
-**Last updated / 最后更新**: 2026-02-26
+**Last updated / 最后更新**: 2026-03-06
 
 ## 🧭 Quick Access / 快速导航
 
@@ -22,9 +22,13 @@ This repository contains slides, practice materials, demo materials, and guest l
 
 本仓库包含研究生课程《R语言在心理学研究中的应用》的课件、练习、演示与嘉宾讲座材料。
 
-课程文字稿请见: [R4PsyBook](https://github.com/hcp4715/R4PsyBook)
+课程文字稿请见: [GitHub](https://github.com/hcp4715/R4PsyBook); [Bookdown电子书](https://bookdown.org/hcp4715/R4PsyBook/)
+
+2025春季录屏：[Bilibili 列表](https://space.bilibili.com/252509184/lists/4897459)
 
 2024春季录屏: [Bilibili 列表](https://space.bilibili.com/252509184/lists/2314135)
+
+**2026年更新：2026年将整合vibe coding，探索在“心理学数据分析中使用R语言”这一场景下如何通过AI工具高效地从新手成长为专家**
 
 ## 👩‍🏫 Teaching Team / 授课团队
 
