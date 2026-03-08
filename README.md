@@ -34,7 +34,7 @@ This repository contains slides, practice materials, demo materials, and guest l
 
 - **Instructor / 教师**: Prof. Hu Chuan-Peng (胡传鹏)
 - **Contact / 联系方式**: `hcp4715 AT hotmail DOT com`
-- **TA (2026 Spring)**: 孙心茹
+- **TA (2026 Spring)**: 孙心茹,陈思羽
 - **TA (2025 Spring)**: 周方茹
 - **TA (2024 Spring)**: 陈逸群, 温佳慧, 武婷婷
 - **TA (2023 Spring)**: Yuki, 孙禾嘉, 蔡镇, 柏松石, 田彩玉
