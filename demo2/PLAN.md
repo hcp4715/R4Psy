@@ -1,7 +1,16 @@
 # Demo2 Reproduction Plan (Hu et al., 2020)
 
 ## Goal
-Reproduce the **confirmatory study** analyses from Hu et al. (2020) using R, then write Methods/Results in a papaja R Markdown document and render to PDF.
+Reproduce the **confirmatory study** analyses from Hu et al. (2020) using R (ignore results that used HDDM), then reprocude the Methods/Results section using a `papaja` R Markdown document and render to PDF.
+
+### Sections of the PDF
+- Introduction: briefly introduce the original study and explain importance of reproducibility.
+- Methods: 
+  - Data preprocessing: based on the code used in data preprocessing
+  - Analysis: based on the code used in there analysis
+  - Visualization: replotting all the figures in the original paper
+- Results: Report the results as in the original paper, with tables/figures. Importantly, include a table that comparing the results of the original study and the reproduced results.
+- Discussion: summarize the key findings and discuss potential limitations of the reproduction.
 
 ## Data + Code Sources (downloaded)
 - OSF node: https://osf.io/4zvkm/
@@ -39,6 +48,10 @@ demo2/
    - Store key tables/figures in `demo2/data/processed/` or `demo2/papaja/figures/`.
 
 4) **Papaja manuscript**
+   - Create rmd file using `papaja`
+   - Start from loading R package using `pacman::p_load()`
+   - Using `here::here()` for all paths.
+   - Using `pkg::funname()` for all non-base R functions.
    - Create `demo2/papaja/hu2020_demo2.Rmd` with Methods + Results.
    - Render to PDF and store in `demo2/papaja/`.
 
