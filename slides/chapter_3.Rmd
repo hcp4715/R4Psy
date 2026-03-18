@@ -3,11 +3,11 @@ title: "Lecture 3: Git & R Studio workflow"
 subtitle: "Version Control"
 author: "Chuan-Peng"
 institute: "NNUPsy"
-date: "2025/03/05"
+date: "`r format(Sys.Date(), '%Y/%m/%d')`"
 output:
   xaringan::moon_reader:
     css: [default, css/Font_Style.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
@@ -46,6 +46,14 @@ Vuorre, M., & Curley, J. P. (2018). Curating research assets: A tutorial on the 
 ## <h1 lang="en">Goal of Chp 3</h1> 
 <br><img src="./picture/chp3/goal.png" width="50%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
+
+---
+## <h1 lang="en">A reproducible project at a glance</h1>
+<br>
+- 一个项目一个根目录（project root），避免同一项目出现多个拷贝。<br>
+- 跟踪 source files：`.R`、`.Rmd`、`README.md`、分析脚本与文档。<br>
+- 忽略 machine-specific / temporary / derived files（通过`.gitignore`管理）。<br>
+- commit要小且可解释：一次提交只做一类修改，便于review与回滚。<br>
 
 ---
 <br>
@@ -244,6 +252,14 @@ Reference: <br>
 - 提交更改时不要忘记填写commit message，否则会报错。 <br>
 
 ---
+## <h1 lang="en">3.3.3 Commit message quality</h1>
+<br>
+- 建议：一次commit只解决一个清晰问题（atomic commit）。<br>
+- 建议格式：`动词 + 为什么`，例如 `fix: correct typo in README title`。<br>
+- 避免：`update`、`misc`、`final version` 这类无法理解意图的信息。<br>
+- 如果改动很多，拆成多个小commit再提交，更方便自己和他人排查问题。<br>
+
+---
 ## <h1 lang="en">3.3.3 Adding files to Git</h1> 
 <br><img src="./picture/chp3/add files4.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
@@ -266,6 +282,14 @@ Reference: <br>
  <br>
 - 点击Git面板中的History按钮，会弹出一个列出了所有的提交历史的窗口。 <br>
 - 点击任何一个提交，查看该提交的详细信息，包括具体的更改内容。 <br>
+
+---
+## <h1 lang="en">3.3.6 What to track vs ignore</h1>
+<br>
+- Track（建议纳入版本控制）: 代码、文档、配置、README。<br>
+- Ignore（建议忽略）: 系统缓存、临时文件、自动生成中间结果、密钥信息。<br>
+- 先写`.gitignore`再开始批量添加文件，能减少后续清理成本。<br>
+- `.gitignore`是“边界规则”，不是“事后补救”。<br>
 
 ---
 ## <h1 lang="en">3.3.6 Telling Git to ignore files</h1> 
@@ -367,6 +391,15 @@ Reference: <br>
 - 创建后连接成功建立，需要复制旧文件夹的内容并将其粘贴到新的本地仓库中。注意，请先复制.gitignore文件。<br>
 
 ---
+## <h1 lang="en">3.4 Default beginner branch workflow</h1>
+<br>
+- Step 1: 先同步`main`分支（pull/sync），确保本地基线是最新。<br>
+- Step 2: 为单个任务创建短生命周期分支（例如`homework-456ZS`）。<br>
+- Step 3: 在该分支上小步commit并push。<br>
+- Step 4: 发起pull request，由中央仓库review后合并。<br>
+- 这样做能减少冲突，也让每次修改的意图更清晰。<br>
+
+---
 ## <h1 lang="en">3.4.3 Fork GitHub repository</h1> 
 <br><img src="./picture/chp3/fork.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
  <br>
@@ -428,12 +461,29 @@ Reference: <br>
 
 ---
 
+## Common anti-patterns (and safer choices)
+
+- 一次提交改太多（"update all"） -> 拆成小commit，便于回滚与review。<br>
+- 不加区分地添加全部文件 -> 先检查变更，只提交本次任务相关文件。<br>
+- 本地和GitHub网页同时改同一文件且不先同步 -> 先pull/sync再编辑。<br>
+- 用zip包传项目 -> 使用fork + branch + PR保留完整历史。<br>
+
+---
+
 ## Summary
 
 - 项目管理：文件夹管理系统
 - Git & Github: 代码管理与版本控制
 - 使用R Studio与Git进行本地版本控制
 - 使用R Studio, Git与GitHub进行协作版本控制
+
+**最小可复现检查清单**:
+
+- 项目结构清晰（单一project root，命名一致）
+- commit历史可读（小步提交，message清晰）
+- `.gitignore`边界明确（source tracked, temporary ignored）
+- 能完成fork/branch/PR协作流程
+- README包含本次作业的关键说明
 
 **相关资源**:
 

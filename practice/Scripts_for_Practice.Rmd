@@ -2,9 +2,10 @@
 title: "Example code for practices"
 author: "Zhou, Fangru; Hu Chuan-Peng"
 date: "2025-04-16"
-output:xaringan::moon_reader:
+output:
+  xaringan::moon_reader:
     css: [default, ../slides/css/Custumed_Style.css,../slides/css/zh-CN.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightLines: true
       highlightStyle: github
@@ -178,7 +179,7 @@ pic_box_1
 ---
 ## 设定x轴顺序
 
-```{r 8.2 pic_box}
+```{r 8.3 pic_box_order}
 df8_new <- bruceR::import(here::here("slides", "data", "match", "match_raw.csv")) %>%
   dplyr::select(Sub, Age, Sex, Hand,      
                 Block, Bin, Trial,        
@@ -210,6 +211,3 @@ pic_box_2 <- df8_new %>%
       )
 pic_box_2
 ```
-
-
-

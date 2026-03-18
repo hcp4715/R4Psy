@@ -7,7 +7,7 @@ date: "2025-03-12"
 output:
   xaringan::moon_reader:
     css: [default, css/zh-CN.css, css/Custumed_Style.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
@@ -922,5 +922,4 @@ address(y)
 y = 2
 address(y)
 ```
-
 

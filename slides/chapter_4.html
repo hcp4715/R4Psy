@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
     <meta name="date" content="2025-03-12" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -39,7 +39,7 @@ class: center, middle
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏(博士) &lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt; 2024-03-20 &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; 2025-03-19 &lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Created with Rmarkdown &lt;/span&gt; &lt;br&gt;
 
 ---
@@ -73,6 +73,8 @@ Sys.setenv(LANG = "en")
 ## loading packages
 
 ``` r
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 if (!requireNamespace('pacman', quietly = TRUE)) {
     install.packages('pacman')
 }
@@ -207,7 +209,7 @@ getwd()
 ```
 
 ```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
+## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy/slides"
 ```
 
 
@@ -268,7 +270,7 @@ cat(normalized_path)
 pacman::p_load(here)
 
 # here::here()
-here::here("data","penguin","penguin_rawdata.csv")
+here::here("slides", "data","penguin","penguin_rawdata.csv")
 ```
 
 &lt;br&gt;
@@ -334,7 +336,7 @@ bruceR::set_wd(ask = T)
 
 ``` r
 # 读取数据,命名为penguin_data
-penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
+penguin_data &lt;- bruceR::import(here::here('slides', 'data', 'penguin', 'penguin_rawdata.csv'))
 ```
 --
 
@@ -362,7 +364,7 @@ penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata
 ### 拆解第一个代码块
 
 ``` r
-penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
+penguin_data &lt;- bruceR::import(here::here('slides', 'data', 'penguin', 'penguin_rawdata.csv'))
 ```
 
 `penguin_data`: 导入后的数据叫什么，可以理解为一个容器，里面装着数据；
@@ -1293,7 +1295,7 @@ address(x)
 ```
 
 ```
-## [1] "0x14d831680"
+## [1] "0x10ffb3900"
 ```
 
 ``` r
@@ -1301,7 +1303,7 @@ address(y)
 ```
 
 ```
-## [1] "0x14d831680"
+## [1] "0x10ffb3900"
 ```
 
 ``` r
@@ -1310,17 +1312,16 @@ address(y)
 ```
 
 ```
-## [1] "0x14d84be78"
+## [1] "0x10ffc40e0"
 ```
-
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

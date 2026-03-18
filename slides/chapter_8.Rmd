@@ -5,7 +5,7 @@ date: ""
 output:
   xaringan::moon_reader:
     css: [default, css/Custumed_Style.css,css/zh-CN.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightLines: true
       highlightStyle: github

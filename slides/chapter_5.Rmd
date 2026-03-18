@@ -7,7 +7,7 @@ date: "2024-03-27"
 output:
   xaringan::moon_reader:
     css: [default, css/zh-CN.css, css/Custumed_Style.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
@@ -642,5 +642,4 @@ myabc <- function(a = 3, b = 2, c = 1){
   else{print('c should not be 0')}
 }
 ```
-
 
