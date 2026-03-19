@@ -5,7 +5,7 @@ date: ""
 output:
   xaringan::moon_reader:
     css: [default, css/zh-CN.css, css/Custumed_Style.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightLines: true
       highlightStyle: github
@@ -928,4 +928,3 @@ class: center, middle
 ]
 <br>
 <span style="font-size: 50px;">当因变量不服从正态分布(如ACC)时如何处理？</span> <br>
-
