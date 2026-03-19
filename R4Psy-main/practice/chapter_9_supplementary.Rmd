@@ -1,0 +1,94 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## install.packages
+```{r cars}
+install.packages("easystats")
+#加载easystats运行会需要到的辅助文件，确保运行不会出问题
+easystats::install_suggested()
+library(easystats)
+```
+
+##datawizard
+```{r}
+###Data manipulation
+##选择、过滤、筛选等操作
+mtcars
+data_match(mtcars, data.frame(vs = 0, am = 1))
+data_filter(mtcars, vs == 0 & am == 1)
+data_extract(mtcars, "gear")
+
+###Statistical transformations数据转换
+##标准化数据
+summary(swiss)
+summary(standardize(swiss))
+##数据旋转或转置
+data_rotate(swiss)
+
+##各个值与均值的差，离均差
+center(anscombe)
+##描述性摘要
+data(iris)
+describe_distribution(iris)
+
+```
+
+
+##correlation
+```{r pressure, echo=FALSE}
+results <- correlation(iris)
+results
+summary(results)
+#可通过see包来进行可视化
+library(tidyverse)
+results %>%
+  summary(redundant = TRUE) %>%
+  plot()
+
+#计算其它的相关
+iris %>%
+  correlation(partial = TRUE) %>%
+  summary()
+
+```
+
+##parameters
+```{r}
+#Classical Regression Models
+model <- lm(Sepal.Width ~ Petal.Length * Species + Petal.Width, data = iris)
+model_parameters(model)
+
+```
+
+##performance
+```{r}
+#Linear model
+m1 <- lm(mpg ~ wt + cyl, data = mtcars)
+model_performance(m1)
+#Logistic regression
+m2 <- glm(vs ~ wt + mpg, data = mtcars, family = "binomial")
+model_performance(m2)
+#Linear mixed model
+library(lme4)
+m3 <- lmer(Reaction ~ Days + (1 + Days | Subject), data = sleepstudy)
+model_performance(m3)
+#Models comparison
+compare_performance(m1, m2, m3, rank = TRUE, verbose = FALSE)
+```
+
+## report
+
+```{r pressure, echo=FALSE}
+model <- glm(vs ~ mpg * drat, data = mtcars, family = "binomial")
+report(model)
+```
+
+##Citation
+```{r}
+citation("easystats")
+citation("datawizard")
+```
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

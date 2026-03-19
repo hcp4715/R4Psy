@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="chapter_14_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chapter_14_files/libs/quarto-html/tabby.min.js"></script>
+<script src="chapter_14_files/libs/quarto-html/popper.min.js"></script>
+<script src="chapter_14_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="chapter_14_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chapter_14_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="chapter_14_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.42">
+
+  <title>chapter_14</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="chapter_14_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="chapter_14_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="chapter_14_files/libs/revealjs/dist/theme/quarto-1489908f8970c7fee6c25b375c07c07c.css">
+  <link href="chapter_14_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="chapter_14_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="chapter_14_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="chapter_14_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+
+<section class="slide level2">
+
+<p><br></p>
+<h1 style="text-align: center">
+<p>Chapter 14</p>
+<p>置换检验、自助抽样与模拟</p>
+</h1>
+<h2 style="text-align: center">
+<p>Permutation Test, Bootstrap &amp; Simulation</p>
+</h2>
+<p><br></p>
+<h3 style="text-align: center">
+<p>Hu Chuan-Peng</p>
+</h3>
+<h3 style="text-align: center">
+<p>2025-05-21</p>
+</h3>
+<p><br><br></p>
+</section>
+<section id="本次课内容" class="title-slide slide level1 center">
+<h1>本次课内容</h1>
+<ul>
+<li><p><strong>Permutation Test</strong></p></li>
+<li><p><strong>Bootstrap</strong></p></li>
+<li><p><strong>Simulation</strong></p></li>
+</ul>
+</section>
+
+<section>
+<section id="置换检验permutation-test" class="title-slide slide level1 center">
+<h1>置换检验(Permutation Test)</h1>
+<ul>
+<li>Permutation Test: 通过对当前进行随机化来检验观测的效应是否由随机性导致，是一种非参数检验方法。</li>
+</ul>
+</section>
+<section id="置换检验的一般步骤" class="slide level2">
+<h2>置换检验的一般步骤</h2>
+<ul>
+<li><p>采用不放回的方式随机抽取样本，打乱数据原有的结构；</p></li>
+<li><p>计算打乱后数据的统计量；</p></li>
+<li><p>重复上述过程n次，形成<strong>零假设分布</strong>；</p></li>
+<li><p>根据原数据统计量在零假设分布中的位置判断显著性。</p></li>
+</ul>
+
+<img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
+<section id="如何检查这两个条件下的rt是否有显著差异呢" class="slide level2">
+<h2>如何检查这两个条件下的RT是否有显著差异呢？</h2>
+<p>配对样本<em>t</em>检验?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/1st%20permutation%20test-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 17  6 10  4 12  9  3  2  5 19 20 15  8 16 13 14 18  7 11  1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/write%20a%20func%20for%20permutation%20test-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0982</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="bootstrap" class="title-slide slide level1 center">
+<h1>Bootstrap</h1>
+
+</section>
+<section id="bootstrap-1" class="slide level2">
+<h2>Bootstrap</h2>
+<ul>
+<li><p>Bootstrap(自抽法、自举法)是非参数统计中一种参数估计的方法。<br></p></li>
+<li><p>无需假设一个特定的理论分布，通过对当前数据集进行<strong>有放回的重抽样</strong>以创建多个模拟数据集，生成一系列待检验统计量的经验分布，可以计算标准误差、构建置信区间。</p></li>
+</ul>
+</section>
+<section id="bootstrap-2" class="slide level2">
+<h2>Bootstrap</h2>
+<div style="text-align:center">
+<p>https://hranalyticslive.netlify.app/9-confidence-intervals.html</p>
+</div>
+</section>
+<section id="bootstrap-3" class="slide level2">
+<h2>Bootstrap</h2>
+
+<img data-src="picture/chp14/14_3.jpg" class="quarto-figure quarto-figure-center r-stretch"><div style="text-align:center">
+<p>https://arifromadhan19.medium.com/resampling-methods-a-simple-introduction-to-the-bootstrap-method-3a36d076852f</p>
+</div>
+</section>
+<section id="general-flow-of-bootstrap" class="slide level2">
+<h2>General flow of Bootstrap</h2>
+<ul>
+<li><p>采取有放回抽样从原始样本抽取一定数量的子样本</p></li>
+<li><p>根据子样本计算统计量</p></li>
+<li><p>重复前面两步k次，得到k个统计量的估计值</p></li>
+<li><p>根据k个估计值获得统计量分布，计算置信区间</p></li>
+</ul>
+</section>
+<section id="bootstrap-estimating-correlation" class="slide level2">
+<h2>Bootstrap: Estimating correlation</h2>
+<ul>
+<li>某研究者想探究焦虑与考试成绩之间的相关关系，在考试之前对103名同学进行了焦虑程度的测量。</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  Exam Anxiety Gender Anxiety_1
+1   29      91   Male      high
+2   79      76 Female      high
+3   41      75   Male      high
+4   88      52 Female       low
+5   94      56   Male       low
+6    5      95 Female      high</code></pre>
+</div>
+</div>
+</section>
+<section id="bootstrap-estimating-correlation-1" class="slide level2">
+<h2>Bootstrap: Estimating correlation</h2>
+
+<img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
+<section id="bootstrap-estimating-correlation-2" class="slide level2">
+<h2>Bootstrap: Estimating correlation</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="co"># Bootstrap抽样函数,抽取50个子样本</span></span>
+<span id="cb4-2"><a href=""></a>bootstrap_sample <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">size=</span><span class="dv">50</span>) {</span>
+<span id="cb4-3"><a href=""></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(data)</span>
+<span id="cb4-4"><a href=""></a>  indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> size)</span>
+<span id="cb4-5"><a href=""></a>  bootstrap_sample <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb4-6"><a href=""></a>  <span class="fu">return</span>(bootstrap_sample)</span>
+<span id="cb4-7"><a href=""></a>}</span>
+<span id="cb4-8"><a href=""></a></span>
+<span id="cb4-9"><a href=""></a><span class="co"># 重复抽样3次</span></span>
+<span id="cb4-10"><a href=""></a>k <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb4-11"><a href=""></a></span>
+<span id="cb4-12"><a href=""></a><span class="co"># 存储统计量和回归模型</span></span>
+<span id="cb4-13"><a href=""></a>statistics_beta <span class="ot">&lt;-</span> <span class="fu">numeric</span>(k)</span>
+<span id="cb4-14"><a href=""></a>statistics_R2 <span class="ot">&lt;-</span> <span class="fu">numeric</span>(k)</span>
+<span id="cb4-15"><a href=""></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb4-16"><a href=""></a></span>
+<span id="cb4-17"><a href=""></a><span class="co"># 进行bootstrap抽样、计算统计量、绘制散点图和拟合直线</span></span>
+<span id="cb4-18"><a href=""></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k) {</span>
+<span id="cb4-19"><a href=""></a>  <span class="co">#抽样</span></span>
+<span id="cb4-20"><a href=""></a>  bootstrap_sample_data <span class="ot">&lt;-</span> <span class="fu">bootstrap_sample</span>(data,<span class="at">size=</span><span class="dv">50</span>)</span>
+<span id="cb4-21"><a href=""></a>  </span>
+<span id="cb4-22"><a href=""></a>  <span class="co"># 计算统计量 beta 和 R^2</span></span>
+<span id="cb4-23"><a href=""></a>  x <span class="ot">&lt;-</span> bootstrap_sample_data<span class="sc">$</span>Exam</span>
+<span id="cb4-24"><a href=""></a>  y <span class="ot">&lt;-</span> bootstrap_sample_data<span class="sc">$</span>Anxiety</span>
+<span id="cb4-25"><a href=""></a>  model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
+<span id="cb4-26"><a href=""></a>  beta <span class="ot">&lt;-</span> <span class="fu">coef</span>(model)[<span class="dv">2</span>]</span>
+<span id="cb4-27"><a href=""></a>  R2 <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>r.squared</span>
+<span id="cb4-28"><a href=""></a>  </span>
+<span id="cb4-29"><a href=""></a>  <span class="co"># 存储统计量和回归模型</span></span>
+<span id="cb4-30"><a href=""></a>  statistics_beta[i] <span class="ot">&lt;-</span> beta</span>
+<span id="cb4-31"><a href=""></a>  statistics_R2[i] <span class="ot">&lt;-</span> R2</span>
+<span id="cb4-32"><a href=""></a>  models[[i]] <span class="ot">&lt;-</span> model</span>
+<span id="cb4-33"><a href=""></a>  </span>
+<span id="cb4-34"><a href=""></a>  <span class="co"># 绘制散点图和拟合直线</span></span>
+<span id="cb4-35"><a href=""></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(bootstrap_sample_data, <span class="fu">aes</span>(<span class="at">x =</span> Exam, <span class="at">y =</span> Anxiety)) <span class="sc">+</span></span>
+<span id="cb4-36"><a href=""></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb4-37"><a href=""></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb4-38"><a href=""></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Bootstrap Sample"</span>, i), <span class="at">x =</span> <span class="st">"Exam"</span>, <span class="at">y =</span> <span class="st">"Anxiety"</span>) <span class="sc">+</span></span>
+<span id="cb4-39"><a href=""></a>    <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"β ="</span>, <span class="fu">round</span>(beta, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">R^2 ="</span>, <span class="fu">round</span>(R2, <span class="dv">3</span>)),</span>
+<span id="cb4-40"><a href=""></a>             <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb4-41"><a href=""></a>    papaja<span class="sc">::</span><span class="fu">theme_apa</span>()  <span class="co"># </span></span>
+<span id="cb4-42"><a href=""></a>  </span>
+<span id="cb4-43"><a href=""></a>  <span class="fu">print</span>(p)</span>
+<span id="cb4-44"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-6-2.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-6-3.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="估计焦虑与考试成绩的相关系数" class="slide level2">
+<h2>估计焦虑与考试成绩的相关系数</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">library</span>(boot)</span>
+<span id="cb5-2"><a href=""></a></span>
+<span id="cb5-3"><a href=""></a><span class="co"># 定义相关系数的统计量函数</span></span>
+<span id="cb5-4"><a href=""></a>statistic <span class="ot">&lt;-</span> <span class="cf">function</span>(data, indices) {</span>
+<span id="cb5-5"><a href=""></a>  sampled_data <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb5-6"><a href=""></a>  model <span class="ot">&lt;-</span> <span class="fu">lm</span>(sampled_data<span class="sc">$</span>Anxiety <span class="sc">~</span> sampled_data<span class="sc">$</span>Exam)</span>
+<span id="cb5-7"><a href=""></a>  beta <span class="ot">&lt;-</span> <span class="fu">coef</span>(model)[<span class="dv">2</span>]</span>
+<span id="cb5-8"><a href=""></a>  <span class="fu">return</span>(beta)</span>
+<span id="cb5-9"><a href=""></a>}</span>
+<span id="cb5-10"><a href=""></a></span>
+<span id="cb5-11"><a href=""></a><span class="co"># 进行1500次bootstrap抽样与计算统计量</span></span>
+<span id="cb5-12"><a href=""></a>bootstrap_results <span class="ot">&lt;-</span> <span class="fu">boot</span>(<span class="at">data =</span> data, <span class="at">statistic =</span> statistic, <span class="at">R =</span> <span class="dv">2000</span>)</span>
+<span id="cb5-13"><a href=""></a></span>
+<span id="cb5-14"><a href=""></a><span class="co"># 绘制beta的直方图</span></span>
+<span id="cb5-15"><a href=""></a><span class="fu">hist</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">main =</span> <span class="st">"Bootstrap Distribution of Beta"</span>,</span>
+<span id="cb5-16"><a href=""></a>     <span class="at">xlab =</span> <span class="st">"Beta Coefficient"</span>, <span class="at">ylab =</span> <span class="st">"Density"</span>, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">breaks =</span> <span class="dv">80</span>)</span>
+<span id="cb5-17"><a href=""></a>mean_beta <span class="ot">&lt;-</span> <span class="fu">mean</span>(bootstrap_results<span class="sc">$</span>t)</span>
+<span id="cb5-18"><a href=""></a><span class="fu">abline</span>(<span class="at">v =</span> mean_beta, <span class="at">col =</span> <span class="st">"green"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="co"># 绘制beta的qq图</span></span>
+<span id="cb6-2"><a href=""></a><span class="fu">qqnorm</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">main =</span> <span class="st">"Normal Probability Plot for Beta"</span>,</span>
+<span id="cb6-3"><a href=""></a>       <span class="at">xlab =</span> <span class="st">"Theoretical Quantiles"</span>, <span class="at">ylab =</span> <span class="st">"Sample Quantiles"</span>)</span>
+<span id="cb6-4"><a href=""></a><span class="fu">qqline</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">col =</span> <span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-7-2.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="co">#计算95%CI</span></span>
+<span id="cb7-2"><a href=""></a>boot_ci <span class="ot">&lt;-</span> <span class="fu">boot.ci</span>(bootstrap_results, <span class="at">type =</span> <span class="st">"bca"</span>)</span>
+<span id="cb7-3"><a href=""></a>boot_ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 2000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootstrap_results, type = "bca")
+
+Intervals : 
+Level       BCa          
+95%   (-0.2495, -0.1247 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+</div>
+</section>
+<section id="估计焦虑与考试成绩的决定系数" class="slide level2">
+<h2>估计焦虑与考试成绩的决定系数。</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">library</span>(boot)</span>
+<span id="cb9-2"><a href=""></a></span>
+<span id="cb9-3"><a href=""></a><span class="co"># 定义决定系数的统计量函数</span></span>
+<span id="cb9-4"><a href=""></a>statistic <span class="ot">&lt;-</span> <span class="cf">function</span>(data, indices) {</span>
+<span id="cb9-5"><a href=""></a>  sampled_data <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb9-6"><a href=""></a>  model <span class="ot">&lt;-</span> <span class="fu">lm</span>(sampled_data<span class="sc">$</span>Anxiety <span class="sc">~</span> sampled_data<span class="sc">$</span>Exam)</span>
+<span id="cb9-7"><a href=""></a>  R2 <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>r.squared</span>
+<span id="cb9-8"><a href=""></a>  <span class="fu">return</span>(R2)</span>
+<span id="cb9-9"><a href=""></a>}</span>
+<span id="cb9-10"><a href=""></a></span>
+<span id="cb9-11"><a href=""></a><span class="co"># 进行1500次bootstrap抽样与计算统计量</span></span>
+<span id="cb9-12"><a href=""></a>bootstrap_results <span class="ot">&lt;-</span> <span class="fu">boot</span>(<span class="at">data =</span> data, <span class="at">statistic =</span> statistic, <span class="at">R =</span> <span class="dv">1200</span>)</span>
+<span id="cb9-13"><a href=""></a></span>
+<span id="cb9-14"><a href=""></a></span>
+<span id="cb9-15"><a href=""></a><span class="co"># 绘制beta的直方图</span></span>
+<span id="cb9-16"><a href=""></a><span class="fu">hist</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">main =</span> <span class="st">"Bootstrap Distribution of R^2"</span>,</span>
+<span id="cb9-17"><a href=""></a>     <span class="at">xlab =</span> <span class="st">"R^2"</span>, <span class="at">ylab =</span> <span class="st">"Density"</span>, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">breaks =</span> <span class="dv">80</span>)</span>
+<span id="cb9-18"><a href=""></a>mean_R2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(bootstrap_results<span class="sc">$</span>t)</span>
+<span id="cb9-19"><a href=""></a><span class="fu">abline</span>(<span class="at">v =</span> mean_R2, <span class="at">col =</span> <span class="st">"green"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="co"># 绘制beta的QQ图</span></span>
+<span id="cb10-2"><a href=""></a><span class="fu">qqnorm</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">main =</span> <span class="st">"Normal Probability Plot for Beta"</span>,</span>
+<span id="cb10-3"><a href=""></a>       <span class="at">xlab =</span> <span class="st">"Theoretical Quantiles"</span>, <span class="at">ylab =</span> <span class="st">"Sample Quantiles"</span>)</span>
+<span id="cb10-4"><a href=""></a><span class="fu">qqline</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">col =</span> <span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-8-2.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="co">#计算95%CI</span></span>
+<span id="cb11-2"><a href=""></a>boot_ci <span class="ot">&lt;-</span> <span class="fu">boot.ci</span>(bootstrap_results, <span class="at">type =</span> <span class="st">"bca"</span>)</span>
+<span id="cb11-3"><a href=""></a>boot_ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1200 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootstrap_results, type = "bca")
+
+Intervals : 
+Level       BCa          
+95%   ( 0.1049,  0.3833 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+</div>
+</section>
+<section id="bootstrap-estimating-standardized-diff" class="slide level2">
+<h2>Bootstrap: Estimating standardized diff</h2>
+<ul>
+<li><p>某研究者想探究焦虑对考试成绩的影响大小。</p></li>
+<li><p>现有高焦虑与低焦虑两组被试，共103名被试</p></li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  Exam Anxiety Gender Anxiety_1
+1   29      91   Male      high
+2   79      76 Female      high
+3   41      75   Male      high
+4   88      52 Female       low
+5   94      56   Male       low
+6    5      95 Female      high</code></pre>
+</div>
+</div>
+</section>
+<section id="bootstrap-estimating-standardized-diff-1" class="slide level2">
+<h2>Bootstrap: Estimating standardized diff</h2>
+<ul>
+<li><p><span class="math inline">\(Cohen'd = \frac{M_A - M_B}{s}\)</span></p></li>
+<li><p><span class="math inline">\(s = \sqrt{(SS_A + SS_B)/(n_A + n_B - 2)}\)</span></p></li>
+</ul>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+
+<img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"><div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Cohen′d =  -0.906381585851366"</code></pre>
+</div>
+</div>
+</section>
+<section id="估计焦虑对考试成绩影响的效应大小" class="slide level2">
+<h2>估计焦虑对考试成绩影响的效应大小</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="co"># 定义Cohen's d的统计量函数</span></span>
+<span id="cb15-2"><a href=""></a>bootstrap_cohens_d <span class="ot">&lt;-</span> <span class="cf">function</span>(data, indices) {</span>
+<span id="cb15-3"><a href=""></a>  sampled_data <span class="ot">&lt;-</span> data[indices, ]</span>
+<span id="cb15-4"><a href=""></a>  </span>
+<span id="cb15-5"><a href=""></a>  group_A <span class="ot">&lt;-</span> <span class="fu">subset</span>(sampled_data, Anxiety_1 <span class="sc">==</span> <span class="st">"high"</span>)<span class="sc">$</span>Exam</span>
+<span id="cb15-6"><a href=""></a>  group_B <span class="ot">&lt;-</span> <span class="fu">subset</span>(sampled_data, Anxiety_1 <span class="sc">==</span> <span class="st">"low"</span>)<span class="sc">$</span>Exam</span>
+<span id="cb15-7"><a href=""></a>  </span>
+<span id="cb15-8"><a href=""></a>  mean_A <span class="ot">&lt;-</span> <span class="fu">mean</span>(group_A)</span>
+<span id="cb15-9"><a href=""></a>  mean_B <span class="ot">&lt;-</span> <span class="fu">mean</span>(group_B)</span>
+<span id="cb15-10"><a href=""></a>  </span>
+<span id="cb15-11"><a href=""></a>  SS_A <span class="ot">&lt;-</span> <span class="fu">sum</span>((group_A <span class="sc">-</span> mean_A)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb15-12"><a href=""></a>  SS_B <span class="ot">&lt;-</span> <span class="fu">sum</span>((group_B <span class="sc">-</span> mean_B)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb15-13"><a href=""></a>  </span>
+<span id="cb15-14"><a href=""></a>  n_A <span class="ot">&lt;-</span> <span class="fu">length</span>(group_A)</span>
+<span id="cb15-15"><a href=""></a>  n_B <span class="ot">&lt;-</span> <span class="fu">length</span>(group_B)</span>
+<span id="cb15-16"><a href=""></a>  </span>
+<span id="cb15-17"><a href=""></a>  cohen.d <span class="ot">&lt;-</span> (mean_A <span class="sc">-</span> mean_B) <span class="sc">/</span> <span class="fu">sqrt</span>((SS_A <span class="sc">+</span> SS_B) <span class="sc">/</span> (n_A <span class="sc">+</span> n_B <span class="sc">-</span> <span class="dv">2</span>))</span>
+<span id="cb15-18"><a href=""></a>  <span class="fu">return</span>(cohen.d)</span>
+<span id="cb15-19"><a href=""></a>}</span>
+<span id="cb15-20"><a href=""></a></span>
+<span id="cb15-21"><a href=""></a><span class="co"># 进行1500次Bootstrap</span></span>
+<span id="cb15-22"><a href=""></a>bootstrap_results <span class="ot">&lt;-</span> <span class="fu">boot</span>(<span class="at">data =</span> data, <span class="at">statistic =</span> bootstrap_cohens_d, <span class="at">R =</span> <span class="dv">1500</span>)</span>
+<span id="cb15-23"><a href=""></a></span>
+<span id="cb15-24"><a href=""></a><span class="co"># 绘制Cohen's d的直方图</span></span>
+<span id="cb15-25"><a href=""></a><span class="fu">hist</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">main =</span> <span class="st">"Bootstrap Distribution of Cohen's d"</span>,</span>
+<span id="cb15-26"><a href=""></a>     <span class="at">xlab =</span> <span class="st">"Cohen's d"</span>, <span class="at">ylab =</span> <span class="st">"Density"</span>, <span class="st">", col = 'grey"</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">breaks =</span> <span class="dv">100</span>)</span>
+<span id="cb15-27"><a href=""></a>mean_d <span class="ot">&lt;-</span> <span class="fu">mean</span>(bootstrap_results<span class="sc">$</span>t)</span>
+<span id="cb15-28"><a href=""></a><span class="fu">abline</span>(<span class="at">v =</span> mean_d, <span class="at">col =</span> <span class="st">'green'</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="co"># 绘制Cohen's d的QQ图</span></span>
+<span id="cb16-2"><a href=""></a><span class="fu">qqnorm</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">main =</span> <span class="st">"Normal Probability Plot for Cohen's d"</span>,</span>
+<span id="cb16-3"><a href=""></a>       <span class="at">xlab =</span> <span class="st">"Theoretical Quantiles"</span>, <span class="at">ylab =</span> <span class="st">"Sample Quantiles"</span>)</span>
+<span id="cb16-4"><a href=""></a><span class="fu">qqline</span>(bootstrap_results<span class="sc">$</span>t, <span class="at">col =</span> <span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-12-2.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="co">#计算95%CI</span></span>
+<span id="cb17-2"><a href=""></a>boot_ci <span class="ot">&lt;-</span> <span class="fu">boot.ci</span>(bootstrap_results, <span class="at">type =</span> <span class="st">"bca"</span>)</span>
+<span id="cb17-3"><a href=""></a>boot_ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1500 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootstrap_results, type = "bca")
+
+Intervals : 
+Level       BCa          
+95%   (-1.3688, -0.4882 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+</div>
+</section>
+<section id="bootstrap优点" class="slide level2">
+<h2>Bootstrap优点</h2>
+<ul>
+<li><p>简单性，可以为分布的复杂估计量（如百分位数、比例、比值比和相关系数）导出标准误差和置信区间的估计值。</p></li>
+<li><p>可以应用于复杂的采样设计（例如，对于划分为s个层的人口，每个层有n个观测值，自举法可以应用于每个层）。</p></li>
+<li><p>控制和检查结果稳定性的适当方法。</p></li>
+<li><p>与使用样本方差和正态性假设获得的标准区间相比，bootstrap是渐近更准确的。 避免了重复实验以获得其他组的成本。</p></li>
+</ul>
+</section>
+<section id="bootstrap局限" class="slide level2">
+<h2>Bootstrap局限</h2>
+<ul>
+<li><p>不适用于数据量太小，无法代表感兴趣的总体的数据</p></li>
+<li><p>不适用于数据存在许多异常值的情况</p></li>
+<li><p>不能提供一般的有限样本保证，结果可能取决于样本的代表性</p></li>
+<li><p>使用过程要确保样本内数据的独立性或足够大的样本量</p></li>
+</ul>
+</section>
+<section id="bootstrap-vs-permutation" class="slide level2">
+<h2>Bootstrap vs Permutation</h2>
+<ul>
+<li><p>Permutation对数据样本采用不放回抽样，常用于假设检验 (效应是否由随机因素导致)。</p></li>
+<li><p>Bootstrap对数据样本采取有放回抽样，利用非参方法进行区间估计，关注效应量的稳健的估计。</p></li>
+</ul>
+</section></section>
+<section>
+<section id="simulation" class="title-slide slide level1 center">
+<h1>Simulation</h1>
+
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>例子：想要探究某种干预方法能不能有效的调节考试焦虑</p></li>
+<li><p>我们设计了一个干预实验设计，通过随机干预/控制组实验来检验该方法。</p></li>
+<li><p>我们想在搜集实验数据前先完成数据分析的过程，并了解需要多少样本量比较合理。该如何做呢？</p></li>
+</ul>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>将实验处理记为A，干预组为A1，控制组为A2。</p></li>
+<li><p>根据经验，使用特定量表测量焦虑时，总分是连续数据，均值约为70，标准差约为10。</p></li>
+<li><p>我们能否生成一批假数据，来帮助完成数据分析，并估计合理的样本量？</p></li>
+</ul>
+</section>
+<section id="生成模型" class="slide level2">
+<h2>生成模型</h2>
+<ul>
+<li><p>生成模型：以特定模式生成新数据的模型。</p></li>
+<li><p>生成”假”数据，帮助我们更好地理解实验设计。</p></li>
+<li><p>R可用来来生成简单的假数据</p></li>
+</ul>
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_4.jpg" class="r-stretch"></section>
+<section id="在r中生成服从正态分布的假数据" class="slide level2">
+<h2>在R中生成服从正态分布的假数据</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb19-2"><a href=""></a></span>
+<span id="cb19-3"><a href=""></a>norm_data <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb19-4"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Values =</span> norm_data)</span>
+<span id="cb19-5"><a href=""></a>norm_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] 3.87905 4.53965 8.11742 5.14102 5.25858 8.43013 5.92183 2.46988 3.62629
+ [10] 4.10868 7.44816 5.71963 5.80154 5.22137 3.88832 8.57383 5.99570 1.06677
+ [19] 6.40271 4.05442 2.86435 4.56405 2.94799 3.54222 3.74992 1.62661 6.67557
+ [28] 5.30675 2.72373 7.50763 5.85293 4.40986 6.79025 6.75627 6.64316 6.37728
+ [37] 6.10784 4.87618 4.38807 4.23906 3.61059 4.58417 2.46921 9.33791 7.41592
+ [46] 2.75378 4.19423 4.06669 6.55993 4.83326 5.50664 4.94291 4.91426 7.73720
+ [55] 4.54846 8.03294 1.90249 6.16923 5.24771 5.43188 5.75928 3.99535 4.33359
+ [64] 2.96285 2.85642 5.60706 5.89642 5.10601 6.84453 9.10017 4.01794 0.38166
+ [73] 7.01148 3.58160 3.62398 7.05114 4.43045 2.55856 5.36261 4.72222 5.01153
+ [82] 5.77056 4.25868 6.28875 4.55903 5.66356 7.19368 5.87036 4.34814 7.29762
+ [91] 6.98701 6.09679 5.47746 3.74419 7.72130 3.79948 9.37467 8.06522 4.52860
+[100] 2.94716</code></pre>
+</div>
+</div>
+</section>
+<section id="描述假数据" class="slide level2">
+<h2>描述假数据</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>bruceR<span class="sc">::</span><span class="fu">Describe</span>(norm_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Descriptive Statistics:
+─────────────────────────────────────────────────────
+     N Mean   SD | Median  Min  Max Skewness Kurtosis
+─────────────────────────────────────────────────────
+   100 5.18 1.83 |   5.12 0.38 9.37     0.06    -0.22
+─────────────────────────────────────────────────────</code></pre>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> Values)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"grey"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb23-3"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Normal Column"</span>,</span>
+<span id="cb23-4"><a href=""></a>       <span class="at">x =</span> <span class="st">"Normal Values"</span>,</span>
+<span id="cb23-5"><a href=""></a>       <span class="at">y =</span> <span class="st">"Rel.Freq(Normal in bin)"</span>)<span class="sc">+</span></span>
+<span id="cb23-6"><a href=""></a>  <span class="fu">theme_apa</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="计算似然" class="slide level2">
+<h2>计算似然</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="co"># 定义似然函数</span></span>
+<span id="cb24-2"><a href=""></a>likelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(params) {</span>
+<span id="cb24-3"><a href=""></a>  mu <span class="ot">&lt;-</span> params[<span class="dv">1</span>]  <span class="co"># 均值参数</span></span>
+<span id="cb24-4"><a href=""></a>  sigma <span class="ot">&lt;-</span> params[<span class="dv">2</span>]  <span class="co"># 标准差参数</span></span>
+<span id="cb24-5"><a href=""></a>  </span>
+<span id="cb24-6"><a href=""></a>  <span class="co"># 计算观测数据的似然值</span></span>
+<span id="cb24-7"><a href=""></a>  log_likelihood <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnorm</span>(norm_data, <span class="at">mean =</span> mu, <span class="at">sd =</span> sigma, <span class="at">log =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb24-8"><a href=""></a>  </span>
+<span id="cb24-9"><a href=""></a>  <span class="fu">return</span>(<span class="sc">-</span>log_likelihood)  <span class="co"># 最大化似然函数等效于最小化相反数</span></span>
+<span id="cb24-10"><a href=""></a>}</span>
+<span id="cb24-11"><a href=""></a></span>
+<span id="cb24-12"><a href=""></a><span class="co"># 使用最大似然法进行参数估计</span></span>
+<span id="cb24-13"><a href=""></a>initial_params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">mean</span>(norm_data), <span class="fu">sd</span>(norm_data))  <span class="co"># 初始参数值</span></span>
+<span id="cb24-14"><a href=""></a>estimated_params <span class="ot">&lt;-</span> <span class="fu">optim</span>(initial_params, likelihood)<span class="sc">$</span>par</span>
+<span id="cb24-15"><a href=""></a></span>
+<span id="cb24-16"><a href=""></a><span class="co"># 输出估计的参数值</span></span>
+<span id="cb24-17"><a href=""></a>estimated_mean <span class="ot">&lt;-</span> estimated_params[<span class="dv">1</span>]</span>
+<span id="cb24-18"><a href=""></a>estimated_sd <span class="ot">&lt;-</span> estimated_params[<span class="dv">2</span>]</span>
+<span id="cb24-19"><a href=""></a></span>
+<span id="cb24-20"><a href=""></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"估计的均值:"</span>, estimated_mean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "估计的均值: 5.18095323881682"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"估计的标准差:"</span>, estimated_sd))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "估计的标准差: 1.81650152159132"</code></pre>
+</div>
+</div>
+</section>
+<section id="section-4" class="slide level2">
+<h2></h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="co"># 直方图</span></span>
+<span id="cb28-2"><a href=""></a><span class="fu">hist</span>(norm_data, <span class="at">probability =</span> <span class="cn">TRUE</span>, <span class="at">main =</span> <span class="st">"Histogram and PDF Comparison"</span>,</span>
+<span id="cb28-3"><a href=""></a>     <span class="at">xlab =</span> <span class="st">"Values"</span>, <span class="at">ylab =</span> <span class="st">"Density"</span>, <span class="at">col =</span> <span class="st">"lightblue"</span>, <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb28-4"><a href=""></a><span class="co"># 理论概率密度函数曲线</span></span>
+<span id="cb28-5"><a href=""></a><span class="fu">curve</span>(<span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">2</span>),</span>
+<span id="cb28-6"><a href=""></a>      <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">yaxt =</span> <span class="st">"n"</span>)</span>
+<span id="cb28-7"><a href=""></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Histogram"</span>, <span class="st">"theoretical pdf"</span>), <span class="at">fill =</span> <span class="fu">c</span>(<span class="st">"lightblue"</span>, <span class="st">"red"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="co"># QQ图</span></span>
+<span id="cb29-2"><a href=""></a><span class="fu">qqnorm</span>(norm_data, <span class="at">main =</span> <span class="st">"QQ Plot"</span>)</span>
+<span id="cb29-3"><a href=""></a><span class="fu">qqline</span>(norm_data, <span class="at">col =</span> <span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-16-2.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="co"># Kolmogorov-Smirnov检验</span></span>
+<span id="cb30-2"><a href=""></a>ks_result <span class="ot">&lt;-</span> <span class="fu">ks.test</span>(norm_data, <span class="st">"pnorm"</span>,<span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">2</span>) <span class="co"># 检查数据是否服从mean=5，sd=2的正态分布</span></span>
+<span id="cb30-3"><a href=""></a>ks_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  norm_data
+D = 0.093, p-value = 0.35
+alternative hypothesis: two-sided</code></pre>
+</div>
+</div>
+</section>
+<section id="在r中生成服从二项分布的假数据" class="slide level2">
+<h2>在R中生成服从二项分布的假数据</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb32-2"><a href=""></a></span>
+<span id="cb32-3"><a href=""></a><span class="co"># 成功概率p = 0.5，试验总次数为10</span></span>
+<span id="cb32-4"><a href=""></a>binomial_data <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="dv">10</span>, <span class="fl">0.5</span>)</span>
+<span id="cb32-5"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Values =</span> binomial_data)</span>
+<span id="cb32-6"><a href=""></a>binomial_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] 4 6 5 7 7 2 5 7 5 5 8 5 6 5 3 7 4 2 4 8 7 6 6 9 6 6 5 5 4 3 8 7 6 6 2 5 6
+ [38] 4 4 4 3 5 5 4 3 3 4 5 4 7 2 5 6 3 5 4 3 6 7 4 6 3 5 4 6 5 6 6 6 5 6 6 6 0
+ [75] 5 4 5 5 4 3 4 6 5 6 3 5 8 7 7 4 3 6 4 6 4 4 6 3 5 5</code></pre>
+</div>
+</div>
+</section>
+<section id="描述假数据-1" class="slide level2">
+<h2>描述假数据</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a>bruceR<span class="sc">::</span><span class="fu">Describe</span>(binomial_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Descriptive Statistics:
+─────────────────────────────────────────────────────
+     N Mean   SD | Median  Min  Max Skewness Kurtosis
+─────────────────────────────────────────────────────
+   100 4.99 1.57 |   5.00 0.00 9.00    -0.17     0.14
+─────────────────────────────────────────────────────</code></pre>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> Values)) <span class="sc">+</span></span>
+<span id="cb36-2"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">bins =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"grey"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb36-3"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Binomial Column"</span>,</span>
+<span id="cb36-4"><a href=""></a>       <span class="at">x =</span> <span class="st">"Binomial Values"</span>,</span>
+<span id="cb36-5"><a href=""></a>       <span class="at">y =</span> <span class="st">"Rel.Freq(Binomial in bin)"</span>)<span class="sc">+</span></span>
+<span id="cb36-6"><a href=""></a>  <span class="fu">theme_apa</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="查看数据拟合程度" class="slide level2">
+<h2>查看数据拟合程度</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="co"># 定义似然函数</span></span>
+<span id="cb37-2"><a href=""></a>likelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(params) {</span>
+<span id="cb37-3"><a href=""></a>  p <span class="ot">&lt;-</span> params[<span class="dv">1</span>]  <span class="co"># 成功概率参数</span></span>
+<span id="cb37-4"><a href=""></a>  </span>
+<span id="cb37-5"><a href=""></a>  <span class="co"># 计算观测数据的似然值</span></span>
+<span id="cb37-6"><a href=""></a>  log_likelihood <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dbinom</span>(binomial_data, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">prob =</span> p, <span class="at">log =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb37-7"><a href=""></a>  </span>
+<span id="cb37-8"><a href=""></a>  <span class="fu">return</span>(<span class="sc">-</span>log_likelihood)  <span class="co"># 最大化似然函数等效于最小化相反数</span></span>
+<span id="cb37-9"><a href=""></a>}</span>
+<span id="cb37-10"><a href=""></a></span>
+<span id="cb37-11"><a href=""></a><span class="co"># 使用最大似然法进行参数估计</span></span>
+<span id="cb37-12"><a href=""></a>initial_params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>)  <span class="co"># 初始参数值</span></span>
+<span id="cb37-13"><a href=""></a>estimated_params <span class="ot">&lt;-</span> <span class="fu">optim</span>(initial_params, likelihood)<span class="sc">$</span>par</span>
+<span id="cb37-14"><a href=""></a></span>
+<span id="cb37-15"><a href=""></a><span class="co"># 输出估计的参数值</span></span>
+<span id="cb37-16"><a href=""></a>estimated_p <span class="ot">&lt;-</span> estimated_params[<span class="dv">1</span>]</span>
+<span id="cb37-17"><a href=""></a></span>
+<span id="cb37-18"><a href=""></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"估计的成功概率:"</span>, estimated_p))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "估计的成功概率: 0.4990234375"</code></pre>
+</div>
+</div>
+</section>
+<section id="section-5" class="slide level2">
+<h2></h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a><span class="co"># 计算理论的二项分布pdf</span></span>
+<span id="cb39-2"><a href=""></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb39-3"><a href=""></a>theory_pdf <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(x, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb39-4"><a href=""></a></span>
+<span id="cb39-5"><a href=""></a><span class="co"># 绘制直方图</span></span>
+<span id="cb39-6"><a href=""></a><span class="fu">hist</span>(binomial_data, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">10.5</span>, <span class="at">by =</span> <span class="dv">1</span>), <span class="at">col =</span> <span class="st">"lightblue"</span>, <span class="at">main =</span> <span class="st">"Comparison of Empirical and Theoretical Binomial Distribution"</span>, <span class="at">xlab =</span> <span class="st">"Number of Successes"</span>)</span>
+<span id="cb39-7"><a href=""></a></span>
+<span id="cb39-8"><a href=""></a><span class="co"># 添加理论PDF曲线</span></span>
+<span id="cb39-9"><a href=""></a><span class="fu">lines</span>(x, theory_pdf <span class="sc">*</span> <span class="fu">length</span>(binomial_data), <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href=""></a><span class="co"># QQ图</span></span>
+<span id="cb40-2"><a href=""></a><span class="fu">qqnorm</span>(binomial_data, <span class="at">main =</span> <span class="st">"QQ Plot"</span>)</span>
+<span id="cb40-3"><a href=""></a><span class="fu">qqline</span>(binomial_data, <span class="at">col =</span> <span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-20-2.png" class="quarto-figure quarto-figure-center" width="960"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>expand for full code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a><span class="co"># chisq.test</span></span>
+<span id="cb41-2"><a href=""></a>observed_table <span class="ot">&lt;-</span> binomial_data</span>
+<span id="cb41-3"><a href=""></a>expected <span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="fu">length</span>(binomial_data) <span class="sc">/</span> <span class="dv">2</span>, <span class="dv">100</span>)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">rep</span>(<span class="fu">length</span>(binomial_data) <span class="sc">/</span> <span class="dv">2</span>, <span class="dv">100</span>)) <span class="co"># 期望频数，二项分布的期望为</span></span>
+<span id="cb41-4"><a href=""></a>chisq_result <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(observed_table, <span class="at">p =</span> expected, <span class="at">correct =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb41-5"><a href=""></a>chisq_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Chi-squared test for given probabilities
+
+data:  observed_table
+X-squared = 49.1, df = 99, p-value = 1</code></pre>
+</div>
+</div>
+</section>
+<section id="section-6" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>将实验处理记为A，干预组为A1，控制组为A2。</p></li>
+<li><p>根据经验，使用特定量表测量焦虑时，总分是连续数据，均值约为70，标准差约为10。</p></li>
+<li><p>问题：我们能否生成一批假数据，来帮助完成数据分析，并估计合理的样本量？</p></li>
+<li><p>回答：可假定控制组的正态分布的均值为70，标准差为10；干预组的正态分布的均值为75，标准差为10。借此生成模拟数据。</p></li>
+</ul>
+</section>
+<section id="参数恢复" class="slide level2">
+<h2>参数恢复</h2>
+<ul>
+<li><p>参数恢复：模型从数据中”恢复”参数真实值的过程。</p></li>
+<li><p>参数恢复的好坏，可帮助我们判断某个模型的可靠性和有效性。如果一个模型具有良好的参数恢复，这意味着它能够准确地估计数据的参数，因此可以放心地使用它来做出预测或从数据中得出结论。</p></li>
+</ul>
+</section>
+<section id="section-7" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_5.jpg" class="r-stretch"></section>
+<section id="section-8" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>设置模型的参数值，利用生成模型模拟样本量为n的假数据，重复这个过程若干次</p></li>
+<li><p>对生成的假数据进行参数估计，求出参数的置信区间</p></li>
+<li><p>将假数据的参数的置信区间与模型的参数值进行比较，查看共有多少次假数据的参数的置信区间包含模型参数值。</p></li>
+</ul>
+</section>
+<section id="section-9" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>将实验处理记为A，干预组为A1，控制组为A2。</p></li>
+<li><p>为进行模拟，假定控制组的正态分布的均值为70，标准差为10；干预组的正态分布的均值为75，标准差为10。</p></li>
+<li><p>即，Cohen’s d = 0.5</p></li>
+<li><p>然后通过参数恢复来理解我们的实验设计。</p></li>
+</ul>
+</section>
+<section id="section-10" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_6.jpg" class="r-stretch"></section>
+<section id="section-11" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_8.jpg" class="r-stretch"></section>
+<section id="section-12" class="slide level2">
+<h2></h2>
+<p>我们可以看到随着样本量的变化，在效应量(Cohen’s d)为0.5和显著性水平为0.05的情况下，随着各组样本量不断增大，统计检验力不断增大。</p>
+<p>要达到80%的统计检验力，我们需要各组人数均为65人左右，即需要搜集130名被试。</p>
+<p><img data-src="picture/chp14/14_9.jpg"></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="chapter_14_files/figure-revealjs/plot%20power-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="section-13" class="slide level2">
+<h2></h2>
+<p>在NHST的框架下，在样本量为30的情况下，p值的分布情况</p>
+
+<img data-src="picture/chp14/14_10.jpg" class="r-stretch"></section>
+<section id="section-14" class="slide level2">
+<h2></h2>
+<p>在NHST的框架下，在样本量为65的情况下，p值的分布情况</p>
+
+<img data-src="picture/chp14/14_11.jpg" class="r-stretch"></section>
+<section id="section-15" class="slide level2">
+<h2></h2>
+<p>在NHST的框架下，在样本量为100的情况下，p值的分布情况</p>
+
+<img data-src="picture/chp14/14_12.jpg" class="r-stretch"></section>
+<section id="section-16" class="slide level2">
+<h2></h2>
+<ul>
+<li>通过模拟数据，我们获得如下信息
+<ul>
+<li>可以进行独立样本t检验；</li>
+<li>样本量是我们统计模型的一部分，具有关键作用；</li>
+<li>样本量：
+<ul>
+<li>各组30人时，统计检验力&lt; 0.5;</li>
+<li>各组65人左右时，统计检验力约80%</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="模型恢复model-recovery" class="slide level2">
+<h2>模型恢复(Model recovery)</h2>
+<ul>
+<li><p>上述参数恢复中，我们以t-test这个线性模型为前提进行了一系列模拟，但这个模型是否足够好？</p></li>
+<li><p>真实数据是如何产生，本身是我们未知，所以通常我们希望使用多个模型来分析数据。</p></li>
+<li><p>在使用这些模型拟合真实数据时，需要比较不同模型之间是否有区分度和有效。</p></li>
+</ul>
+</section>
+<section id="section-17" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_13.jpg" class="r-stretch"></section>
+<section id="section-18" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>首先，选择可能的模型</p></li>
+<li><p>用这些模型分别生成各自的假数据</p></li>
+<li><p>分别用所有模型对所有假数据进行拟合</p></li>
+<li><p>对每批数据的多个模型进行模型比较，得到胜出的模型</p></li>
+<li><p>重复上述过程n次，得到每个生成模型中最佳拟合模型的比例</p></li>
+</ul>
+</section>
+<section id="section-19" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>以两个有区分度的模型为例。</p></li>
+<li><p>二项分布的广义线性模型</p></li>
+<li><p>正态分布的线性模型</p></li>
+</ul>
+</section>
+<section id="section-20" class="slide level2">
+<h2></h2>
+<ul>
+<li>生成模型：二项分布的GLM</li>
+</ul>
+
+<img data-src="picture/chp14/14_14.jpg" class="r-stretch"></section>
+<section id="section-21" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_15.jpg" class="r-stretch"></section>
+<section id="section-22" class="slide level2">
+<h2></h2>
+<ul>
+<li>拟合模型</li>
+</ul>
+
+<img data-src="picture/chp14/14_16.jpg" class="r-stretch"></section>
+<section id="section-23" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>生成模型2：正态分布的LM</p>
+<ul>
+<li>线性模拟数据进行标准化，再按照正负转化为二分变量</li>
+</ul></li>
+</ul>
+
+<img data-src="picture/chp14/14_17.jpg" class="r-stretch"></section>
+<section id="section-24" class="slide level2">
+<h2></h2>
+
+<img data-src="chapter_14_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section>
+<section id="section-25" class="slide level2">
+<h2></h2>
+<ul>
+<li>拟合模型</li>
+</ul>
+
+<img data-src="picture/chp14/14_19.jpg" class="r-stretch"></section>
+<section id="section-26" class="slide level2">
+<h2></h2>
+
+<img data-src="picture/chp14/14_20.jpg" class="r-stretch"></section>
+<section id="总结" class="slide level2">
+<h2>总结</h2>
+<ul>
+<li><p>Permutation test</p></li>
+<li><p>Bootstrap</p></li>
+<li><p>Simulation</p>
+<ul>
+<li><p>参数恢复</p></li>
+<li><p>模型恢复</p></li>
+</ul></li>
+</ul>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="picture/NNU-Logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="chapter_14_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="chapter_14_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="chapter_14_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="chapter_14_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

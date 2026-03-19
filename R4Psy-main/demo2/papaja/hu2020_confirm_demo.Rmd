@@ -1,0 +1,92 @@
+---
+title: "Reproducing Hu et al. (2020) Confirmatory Study"
+shorttitle: "Good Me Bad Me (Confirmatory)"
+author:
+  - name: "Your Name"
+    affiliation: "1"
+    email: "your.email@example.com"
+affiliation:
+  - id: "1"
+    institution: "Your Institution"
+abstract: ""
+keywords: "self-prioritization, confirmatory study, reproduction"
+wordcount: ""
+date: "`r Sys.Date()`"
+output:
+  papaja::apa6_pdf:
+    latex_engine: xelatex
+    keep_tex: true
+    fig_caption: true
+    df_print: kable
+    line_numbers: false
+    toc: false
+documentclass: apa6
+classoption: "jou"
+bibliography: references.bib
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Method
+
+Describe participants, tasks, and procedure for the confirmatory study. Use the official article and supplementary material for exact details.
+
+# Results
+
+```{r load-data}
+data_dir <- file.path("..", "data", "processed")
+match_wide <- read.csv(file.path(data_dir, "MS_match_behav_wide.csv"), stringsAsFactors = FALSE)
+categ_wide <- read.csv(file.path(data_dir, "MS_categ_behav_wide.csv"), stringsAsFactors = FALSE)
+categ_notask <- read.csv(file.path(data_dir, "MS_categ_behav_noTask_wide.csv"), stringsAsFactors = FALSE)
+cross_task <- read.csv(file.path(data_dir, "MS_cross_taskeffect_wide.csv"), stringsAsFactors = FALSE)
+jasp_results <- readRDS(file.path(data_dir, "jasp_reproduction", "jasp_reproduction_results.rds"))
+```
+
+Summarize the confirmatory study analyses here, mirroring reported results.
+
+```{r jasp-summary, results='asis'}
+compare_dir <- file.path(data_dir, "jasp_reproduction")
+compare_ttests <- file.path(compare_dir, "compare_ttests.csv")
+compare_anova <- file.path(compare_dir, "compare_anova.csv")
+compare_cor <- file.path(compare_dir, "compare_cor.csv")
+
+safe_read_csv <- function(path) {
+  if (!file.exists(path) || file.info(path)$size <= 3) {
+    return(NULL)
+  }
+  out <- tryCatch(read.csv(path, stringsAsFactors = FALSE), error = function(e) NULL)
+  if (is.null(out) || nrow(out) == 0) {
+    return(NULL)
+  }
+  out
+}
+
+anova_df <- safe_read_csv(compare_anova)
+ttest_df <- safe_read_csv(compare_ttests)
+cor_df <- safe_read_csv(compare_cor)
+
+if (!is.null(anova_df)) {
+  cat("## JASP comparison (ANOVA)\n")
+  print(utils::head(anova_df))
+}
+if (!is.null(ttest_df)) {
+  cat("## JASP comparison (T-tests)\n")
+  print(utils::head(ttest_df))
+}
+if (!is.null(cor_df)) {
+  cat("## JASP comparison (Correlations)\n")
+  print(utils::head(cor_df))
+}
+
+if (!is.null(jasp_results$r$MS_rep_match_behav)) {
+  cat("## Matching task (JASP-matched outputs)\n")
+  print(jasp_results$r$MS_rep_match_behav[[1]])
+}
+```
+
+# Discussion
+
+Summarize the reproduction outcome and note any deviations from the original pipeline.

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>chapter_15.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第十五章&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;期末作业及Docker&lt;/span&gt; &lt;br&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2023/06/5&lt;/span&gt; &lt;br&gt;
+
+
+---
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;Final project&lt;/span&gt; &lt;br&gt;
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 作业内容：
+从下列期刊中选择本小组感兴趣且有公开数据的（最好是有公开原始数据）的论文，选择其中一个或者多个实验/研究的结果分析进行可重复性研究。期刊如下：
+- Psychological Science
+- Cognition
+- Nature Human Behavior
+- Science Advance
+- Nature Communications
+&lt;br&gt;
+&lt;br&gt;
+# &lt;h4 lang="zh-CN"&gt;分析完成后需进行当堂展示，并最终提交项目。&lt;/h4&gt;&lt;br&gt;
+
+
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Groups&lt;/h1&gt;&lt;br&gt;
+|序号|组长|组员1|组员2|组员3|组员4|组员5|
+|----|----|-----|-----|-----|-----|-----|
+|1|何雨桐|林也|刘逸康|李先知|蔡亚静||
+|2|闾莹|许言浩|李姗|万钰呈|崔鑫|卞一林|
+|3|刘佳辰|江伊程|杨庆仁|张一林|||
+|4|温佳慧|韩香|吴美慧|林王静|||
+|5|张志强|赵源鑫|施静|施宇|李琳||
+|6|王荣|刘洋|武婷婷||||
+|7|林昕|宋丹丹|万心茹|陈娟|樊富强||
+|8|吴雨|王笑笑|耿飘飘|熊汝玉|||
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Groups&lt;/h1&gt;&lt;br&gt;
+|序号|组长|组员1|组员2|组员3|组员4|组员5|
+|----|----|-----|-----|-----|-----|-----|
+|9|唐圆|安迪|谢梦菲||||
+|10|沈桐|张孝怡|钱雨菲|赵芊芊|刘晨昕||
+|11|陈宇沛|王一如|彭玉|夏明星|王纪来||
+|12|王健| 艾骄阳|张雨婷|孙玉璇|王妍||
+|13|邓善文|王旭|邱英姿|陈燕|侯丽雯||
+|14|徐鹏|朱玉强|周莹洁|王伊琳|舒开颜||
+|15|张新宇|杜桂琴|徐佳蓉|汪燕|洪文颉||
+|16|姚梦晗|郗悦|牟凤青||||
+&lt;br&gt;
+
+### 小组长尽快将自己选择的文章信息汇总到群公共文件，汇总的信息包括：作者、年份、期刊、doi、要重复分析是第几个研究
+
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;About the final project&lt;/h1&gt;&lt;br&gt;
+## 截止时间：
+1、展示：待定，每小组**约8分钟+2分钟提问**&lt;br&gt;
+2、代码及报告提交：2022.6.30&lt;br&gt;
+3、需要上交如下内容：&lt;br&gt;
+- 代码（RMD格式，最好使用papaja进行准备）
+- 文档（PDF或者Word，采用APA格式撰写,推荐由Papaja生成）
+- 报告（PPT或者HTML在课堂上展示）
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 代码要求：
+1、数据预处理流程&lt;br&gt;
+2、完整的数据分析流程，包括
+- 描述性统计结果 + 可视化（集中量数，离散量数，相关等）
+- 与文献相一致的统计检验或模型验证
+- 检验结果可视化
+
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 文档要求：
+- 标题《对XXX的可重复性研究》及作者
+- 引言（对选取研究的简述，包含其假设、数据、方法、结果等）
+- 研究复现思路及流程
+- 复现结果
+- 对结果的讨论及结论
+- 参考文献
+- 分工
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Requirements&lt;/h1&gt;&lt;br&gt;
+## 报告要求：
+- 标题，作者
+- 成员信息、分工
+- 所选研究简介，包含其前言、方法、结果三个部分
+- 研究复现思路及流程
+- 复现结果
+- 对结果的讨论及结论
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Marking&lt;/h1&gt;&lt;br&gt;
+|         | 代码40% | 论文30% | 报告30% |
+|---------|------|------|------|
+| 基础要求 |  作为一个整体项目可运行  |  内容的完整性  |  时间分配的合理性  |
+|         |  分析方法的一致性  |  格式的标准性  |  讲述的清晰性  |
+|         |  代码的可读性（包括辅助文字以及对代码的注释）  |  逻辑的连贯与一致性  |  团队分工的合理性  |
+| 加分项   |  代码的可读性，图表的美观性  |  英文写作，Papaja生成  |  英文报告，R生成  |
+&lt;br&gt;
+###额外加分项：以小组为单位将三部分内容pull request到Repo(https://github.com/hcp4715/R4Psy/tree/main/homeworks)
+- 对于报告的评分每组对其他组进行评分 + 胡传鹏老师和助教进行评分，对所有评分去
+掉最高最低，取平均作为最终得分。
+- 对于代码及论文的评分，将由胡传鹏老师和四位助教进行评分，并取平均作为最终得分
+。
+
+---
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;Docker——容器技术介绍&lt;/span&gt; &lt;br&gt;
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker是什么？&lt;/h1&gt;&lt;br&gt;
+Docker 是一个用于开发、传送和运行应用程序的开放平台。Docker 使您能够将应用程序与基础设施分开，以便您可以快速交付软件。使用 Docker，您可以像管理应用程序一样管理基础设施。通过利用 Docker 的快速交付、测试和部署代码的方法，您可以显着减少编写代码和在生产中运行代码之间的延迟。Docker(opens new window)是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本！使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松！无论是应用开发者、运维人员、还是其他信息技术从业人员，都有必要认识和掌握 Docker，节约有限的生命。&lt;br&gt;
+Docker主要用来解决什么问题？&lt;br&gt;
+Docker的出现主要就是为了解决：**在我的机器上运行时是正常的，但为什么到你的机器上就运行不正常了。**
+
+---
+
+# &lt;h1 lang="zh-CN"对比Docker和虚拟机&lt;/h1&gt;&lt;br&gt;
+![虚拟机](https://pic3.zhimg.com/80/v2-ba73bc7d86185645e70455377af29d9a_720w.webp)
+![Docker](https://pic3.zhimg.com/80/v2-a647de2804a8a81ca7838144b75ce6e2_720w.webp)
+---
+# &lt;h1 lang="zh-CN"&gt;对比Docker和虚拟机&lt;/h1&gt;&lt;br&gt;
+
+容器更加的轻量级且占用的资源更少，与操作系统动辄几G的内存占用相比，容器技术只需数M空间，因此我们可以在同样规格的硬件上大量部署容器，这是虚拟机所不能比拟的，而且不同于操作系统数分钟的启动时间容器几乎瞬时启动，容器技术为打包服务栈提供了一种更加高效的方式，So cool。&lt;br&gt;
+**注意，容器是一种通用技术，docker只是其中的一种实现。**
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker中的重要概念&lt;/h1&gt;&lt;br&gt;
+## Dockerfile（自动化脚本）
+主要是用来创建我们之间讲到的镜像，这个过程就好比我们在虚拟机中安装操作系统和软件一样，只不过是通过Dockerfile这个自动化脚本完成的。
+**简单的讲，通过这个脚本我们将需要运行的环境配置好，比如R的版本，R包的版本等**
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker中的重要概念&lt;/h1&gt;&lt;br&gt;
+## image(镜像)
+操作系统分为内核和用户空间。对于Linux而言，内核启动后，会挂载root文件系统为其提供用户空间支持。而Docker镜像（Image），就相当于是一个root文件系统。Docker镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。 镜像不包含任何动态数据，其内容在构建之后也不会被改变。&lt;br&gt;
+
+**你可以简单的把image理解为可执行程序**
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker中的重要概念&lt;/h1&gt;&lt;br&gt;
+## Container(容器)
+这里的容器就像是一台台运行起来的虚拟机，里面运行了你的应用程序，每个容器是独立运行的他们相互之间不影响。通过一个镜像，我们可以创建许多个不同的Container容器。&lt;br&gt;
+　　镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和类的实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等 。容器的实质是进程，但与直接在宿主执行的进程不同，容器进程运行于属于自己的独立的命名空间。前面讲过镜像使用的是分层存储，容器也是如此。容器存储层的生存周期和容器一样，容器消亡时，容器存储层也随之消亡。因此，任何保存于容器存储层的信息都会随容器删除而丢失。&lt;br&gt;
+
+**你可以简单的把container就是运行起来的进程**
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker中的重要概念&lt;/h1&gt;&lt;br&gt;
+## Repository(仓储)
+镜像构建完成后，可以很容易的在当前宿主上运行，但是， 如果需要在其它服务器上使用这个镜像，我们就需要一个集中的存储、分发镜像的服务（**就像Git仓库一样**），Docker Registry就是这样的服务。&lt;br&gt;
+　　一个Docker Registry中可以包含多个仓库（Repository），每个仓库可以包含多个标签（Tag），每个标签对应一个镜像。所以说：镜像仓库是Docker用来集中存放镜像文件的地方类似于我们之前常用的代码仓库。通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本 。我们可以通过&lt;仓库名&gt;:&lt;标签&gt;的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以latest作为默认标签。
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker管理工具&lt;/h1&gt;&lt;br&gt;
+## Docker desktop
+docker官方推出的管理工具，能够构建和共享容器化应用程序和微服务。
+类似Github，我们在docker hub上注册账号并下载Docker desktop，方便我们获取需要的镜像并上传自己的镜像。
+![](./picture/chp15/DockerHub.png)
+https://hub.docker.com/
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker管理工具&lt;/h1&gt;&lt;br&gt;
+## Docker desktop安装
+**不建议当堂尝试**
+如今的docker基于wsl2而不是hyper-V，因此只需要在你的Windows系统中进行wsl2的配置以及虚拟机配置即可安装Docker。
+具体安装过程请参考Microsoft官方教程：https://learn.microsoft.com/zh-cn/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package
+虚拟机的安装建议选择最新的Ubuntu LTS版本，iso大小为4.6GB。
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 通过Powershell(管理员模式)安装image
+![](./picture/chp15/0.png)
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 安装完成后生成容器
+可以在Docker desktop中运行，但由此运行后只能在cmd中编译，因此选择更好的方法
+![](./picture/chp15/1.png)
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 使用jupyter notebook插件
+安装Jupyter，并在cmd中输入如下代码，可以在浏览器中编译
+![](./picture/chp15/2.png)
+https://jupyter-notebook.readthedocs.io/en/stable/notebook.html
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 使用jupyter notebook插件
+调用成功，并复制该序列号
+![](./picture/chp15/6.png)
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 成功运行Container
+此时Docker中该Image处于运行状态，生成Container
+![](./picture/chp15/4.png)
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 在浏览器中编译
+此时可以在浏览器中使用脚本
+![](./picture/chp15/5.png)
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 在浏览器中编译
+将之前复制的token粘贴
+![](./picture/chp15/7.png)
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 在浏览器中编译
+使用Python3环境编译
+![](./picture/chp15/9.png)
+---
+
+# &lt;h1 lang="zh-CN"&gt;Docker实例&lt;/h1&gt;&lt;br&gt;
+## 在浏览器中编译
+输入如下代码，运行该插件
+![](./picture/chp15/11.png)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
