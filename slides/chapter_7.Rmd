@@ -7,7 +7,7 @@ date: "2025/04/02"
 output:
   xaringan::moon_reader:
     css: [default, css/Font_Style.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
