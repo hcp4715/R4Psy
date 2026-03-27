@@ -1,0 +1,5 @@
+# ignore diff between LF and CR
+* text=auto
+
+# 对于特定的文件类型，如可执行脚本，可以设置执行权限
+*.sh exec

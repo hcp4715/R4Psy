@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>chapter_13.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs-2.21/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/Font_Style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第十三章&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;效应量和元分析 &lt;br&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2023/05/29&lt;/span&gt; &lt;br&gt;
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;什么是效应量&lt;/h1&gt;
+**效应量**: 研究者感兴趣的任何效应的量(Cumming, 2012, *Psych Sci*)。&lt;br&gt;
+&lt;br&gt;
+
+标准化的效应量可以分为三大家族：&lt;br&gt;
+
+- *d*-family（difference family）：如Cohen's *d*, Hedges' *g*
+- *r*-family（correlation family）：如Pearson r, `\(R^2\)`, `\(\eta^2\)`, `\(\omega^2\)`, &amp; *f*
+- *OR*-family（categorical family）：如odds ratio (OR), risk ratio (RR)
+
+---
+# &lt;h1 lang="zh-CN"&gt;什么是效应量&lt;/h1&gt;
+
+.center[&lt;img src="./picture/chp13/power1.png" width="40%"&gt;]
+
+- Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. *Frontiers in Psychology, 4*, 863.
+---
+# &lt;h1 lang="zh-CN"&gt;什么是效应量&lt;/h1&gt;
+
+.center[&lt;img src="./picture/chp13/power.png" width="90%"&gt;]
+
+- Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. *Frontiers in Psychology, 4*, 863.
+
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+
+SPSS: 偏eta squared ( `\(\eta^{2}_{p}\)` ) 
+&lt;br&gt;
+
+JASP: Cohen's *d*, `\(\eta^{2}_{p}\)`, `\(\eta^{2}_{G}\)`
+&lt;br&gt;
+
+Lakens (2013): 基于 excel 的计算程序 &lt;br&gt;
+
+G\*power (Faul, et al., 2009) 可用于计算效应量, 但与SPSS输出的偏eta squared不相同, 使用时需要转换 (Lakens, 2013)
+&lt;br&gt;
+
+- Faul, F., Erdfelder, E., Buchner, A., &amp; Lang, A.-G. (2009). Statistical power analyses using G\*Power 3.1: Tests for correlation and regression analyses. *Behavior Research Methods, 41*(4), 1149–1160.
+- Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science: A practical primer for t-tests and ANOVAs. *Frontiers in Psychology, 4*, 863.
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+&lt;br&gt;
+## 点估计与区间估计
+&lt;br&gt;
+**基于估计的统计**被认为是一种对虚无假设的补充, 但实际上反映了推断统计的不同取向, 最重要的是从二分的思维方式转向量化的思维方式 (Cumming, 2012) &lt;br&gt;
+
+在效应量的解读中, 没有固定的标准来判断一个效应量是大还是小。&lt;br&gt;
+
+Richard, Bond, &amp; Stokes-Zoota (2003) 对100多年来社会心理学研究中的元分析进行分析, 发现社会心理学研究中的平均效应量大约为*r* = 0.21, Cohen's *d* = 0.45。&lt;br&gt;
+
+总的来说, 对效应量以及其置信区间的解读需要根据自己研究的实际情况来进行, 没有像NHST 中那样简单的二分标准(Cumming, 2012)。&lt;br&gt;
+
+- Cumming, G. (2012). Understanding the new statistics: Effect sizes, confidence intervals, and meta-analysis. New York: Routledge.
+- Richard, F. D., Bond, C. F., Jr., &amp; Stokes-Zoota, J. J. (2003). One hundred years of social psychology quantitatively described. *Review of General Psychology, 7*(4), 331–363.
+
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+&lt;br&gt;
+## 如何解读效应量
+&lt;br&gt;
+.center[&lt;img src="./picture/chp13/Avoid_Cohen.png" width="100%"&gt;]
+
+https://www.cell.com/trends/cognitive-sciences/fulltext/S1364-6613(19)30297-9
+
+---
+# &lt;h1 lang="zh-CN"&gt;效应量与置信区间&lt;/h1&gt;
+.center[&lt;img src="./picture/chp13/CI_dance.jpg" width="100%"&gt;]
+
+&lt;br&gt;
+https://rpsychologist.com/d3/ci/
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;*t*检验中的*d*&lt;/h1&gt;
+&lt;br&gt;
+## 基本公式: 独立样本*t*-test [Cohen's *d* for *sample*]
+&lt;br&gt;
+
+`$$Cohen's \  d_s = \frac{X_1 - X_2}{\sqrt{SD_{pool}}} = \frac{X_1 - X_2}{\sqrt{\frac{(n_1 -1)SD_1^2 + (n_2-1)SD_2^2)}{n_1+n2-2}}}$$`
+## Hedges's *g*:
+
+$$Hedges's \  g_s = Cohen's \ d_s \times (1 - \frac{3}{4(n_1 + n_2) - 9}) $$
+
+---
+# &lt;h1 lang="zh-CN"&gt;*t*检验中的*d*&lt;/h1&gt;
+&lt;br&gt;
+
+## 配对样本*t*-test: Cohen's `\(d_{rm}\)`
+
+&lt;br&gt;
+
+$$Cohen's \  d_{rm} = \frac{M_{diff}}{\sqrt{SD_1^2 + SD_2^2 -2 \times r \times SD_1 \times SD_2}} \times \sqrt{2(1-r)} $$
+
+## 配对样本*t*-test: Cohen's `\(d_{av}\)`
+
+$$Cohen's \  d_{av} = \sqrt{ \frac {M_{diff}} {(SD_1 + SD_2)/2}} $$
+---
+# &lt;h1 lang="zh-CN"&gt;计算Cohen's *d* &lt;/h1&gt;
+&lt;br&gt;
+载入数据
+
+```r
+rm(list = ls())
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  install.packages("pacman") }   # # 检查是否已安装 pacman, 如果未安装，则安装包
+
+pacman::p_load("tidyverse", "easystats") # 使用p_load来载入需要的包
+
+df.mt.raw &lt;-  read.csv('./data/match/match_raw.csv', # load data:
+                       header = T, sep=",", stringsAsFactors = FALSE)
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;计算Cohen's *d* &lt;/h1&gt;
+&lt;br&gt;
+清理数据
+
+```r
+# from chapter 11, Chunk 3
+df.mt.rt.subj &lt;- df.mt.raw %&gt;%
+  dplyr::filter(ACC == 1 &amp; RT &gt; 0.2) %&gt;%
+  tidyr::extract(Shape, into = c("Valence", "Identity"),
+                        regex = "(moral|immoral)(Self|Other)", remove = FALSE) %&gt;%
+  dplyr::mutate(Valence = case_when(Valence == "moral" ~ "Good",
+                                    Valence == "immoral" ~ "Bad"),
+                RT_ms = RT * 1000) %&gt;%
+  dplyr::mutate(Valence = factor(Valence, levels = c("Good", "Bad")),
+                Identity = factor(Identity, levels = c("Self", "Other"))) %&gt;%
+  dplyr::group_by(Sub, Match, Identity, Valence) %&gt;%
+  dplyr::summarise(RT_mean = mean(RT_ms)) %&gt;%
+  dplyr::ungroup()
+```
+
+```
+## `summarise()` has grouped output by 'Sub', 'Match', 'Identity'. You can
+## override using the `.groups` argument.
+```
+
+```r
+head(df.mt.rt.subj, 5)
+```
+
+```
+## # A tibble: 5 × 5
+##     Sub Match    Identity Valence RT_mean
+##   &lt;int&gt; &lt;chr&gt;    &lt;fct&gt;    &lt;fct&gt;     &lt;dbl&gt;
+## 1  7302 match    Self     Good       694.
+## 2  7302 match    Self     Bad        702.
+## 3  7302 match    Other    Good       598.
+## 4  7302 match    Other    Bad        666.
+## 5  7302 mismatch Self     Good       755.
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;计算Cohen's *d* &lt;/h1&gt;
+&lt;br&gt;
+## 感兴趣的效应量: `Match`条件下`好我`与`好人`的平均反应时间差异
+&lt;br&gt;
+
+## 计算所需要的统计量：
+- 每种条件下的组水平平均反应时间
+- 每种条件下的组水平反应时间的SD
+- 两种条件下个体水平平均反应时间的相关系数
+
+---
+# &lt;h1 lang="zh-CN"&gt;计算Cohen's *d* &lt;/h1&gt;
+
+$$Cohen's \  d_{rm} = \frac{M_{diff}}{\sqrt{SD_1^2 + SD_2^2 -2 \times r \times SD_1 \times SD_2}} \times \sqrt{2(1-r)} $$
+
+
+```r
+# from chapter 11, Chunk 3
+df.mt.rt.subj.effect &lt;- df.mt.rt.subj %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "Good") %&gt;%
+  dplyr::group_by(Identity) %&gt;%
+  dplyr::summarise(mean = mean(RT_mean),
+                   sd = sd(RT_mean))
+
+df.mt.rt.subj.effect.wide &lt;- df.mt.rt.subj %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "Good") %&gt;%
+  tidyr::pivot_wider(names_from = "Identity", values_from = "RT_mean")
+
+corr_est &lt;- cor(df.mt.rt.subj.effect.wide$Self, df.mt.rt.subj.effect.wide$Other)
+```
+
+
+```r
+Cohens_d_manu &lt;- ((df.mt.rt.subj.effect$mean[1] - df.mt.rt.subj.effect$mean[2])/sqrt(df.mt.rt.subj.effect$sd[1]**2 + df.mt.rt.subj.effect$sd[2]**2 - 2*corr_est*df.mt.rt.subj.effect$sd[1]*df.mt.rt.subj.effect$sd[2]))*sqrt(2*(1-corr_est))
+```
+
+Cohen's *d* = -0.568
+
+---
+# &lt;h1 lang="zh-CN"&gt;计算Cohen's *d* &lt;/h1&gt;
+&lt;br&gt;
+
+## Calculate using an existing package:
+
+
+```r
+SelfOther_diff &lt;- t.test(df.mt.rt.subj.effect.wide$Self, df.mt.rt.subj.effect.wide$Other, paired = TRUE)
+
+effectsize::effectsize(SelfOther_diff, paired = TRUE)
+```
+
+```
+## Cohen's d |         95% CI
+## --------------------------
+## -0.48     | [-0.79, -0.16]
+```
+
+## Be cautious about the underlying formula!!!
+---
+# &lt;h1 lang="zh-CN"&gt;元分析(meta-analysis)&lt;/h1&gt;
+&lt;br&gt;
+## 一个研究的效应是一次采样而做出的估计
+ &lt;br&gt;
+## 理论上，对多次采样的估计量进行综合，可以得到更加准确地估计
+ &lt;br&gt;
+## 元分析是对效应量进行综合的统计方法 &lt;br&gt;
+
+## 元分析需要： &lt;br&gt;
+ - 效应量，例如相关系数*r*
+ - 效应量的估计误差，其计算需要样本量*n*。
+ - 样本量越大，取样误差越小，得到的效应量置信区间（95% CI）也就越精确。
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析&lt;/h1&gt;
+传统的元分析模型通过效应值大小的变异的倒数对效应值进行加权(例如，标准误平方)来估计平均效应值。&lt;br&gt; 
+
+固定效应模型： 不考虑研究间变异，其结果在理论上不能推广到包括在模型中的研究。
+随机效应模型： 考虑研究间变异，其结果在理论上可以推广到包括在模型中的研究。
+
+&lt;img src="./picture/chp13/weightingForm.png" width="100%"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析&lt;/h1&gt;
+元分析作为一种文章类型 &lt;br&gt;
+&lt;img src="./picture/chp13/trend.png" width="60%"&gt; &lt;br&gt;
+- Quintana, D. S. (2015). From pre-registration to publication: a non-technical primer for conducting a meta-analysis to synthesize correlational data. *Frontiers in psychology*, 1549.
+---
+# &lt;h1 lang="zh-CN"&gt;元分析是层级模型的特例&lt;/h1&gt;
+
+H(L)M: Hierarchical (Linear) Modeling (Linear mixed model, multi-level model) &lt;br&gt;
+
+元分析是只有level2的HLM &lt;br&gt;
+
+&lt;img src="./picture/chp13/fe.png" width="100%"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析是层级模型的特例&lt;/h1&gt;
+
+HLM: Hierarchical Linear Modeling &lt;br&gt;
+
+Level 1: 效应量及其误差代替 &lt;br&gt;
+
+&lt;img src="./picture/chp13/re.png" width="100%"&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析作为一种研究类型&lt;/h1&gt;
+
+- 问题驱动（即元分析用于回答什么问题）；
+- 流程相对清楚，有“套路”可循；
+- 可以回答重要的问题；
+- 细节繁琐，耗时耗力，可重复性和规范性值得注意(刘宇等, 2021, doi: 10.1360/SSV-2021-0009)；
+- 口碑可能不佳 (Ioannidis, 2016, doi: 10.1111/1468-0009.12210)；
+- 国内一些领域的重要评选中不纳入考虑；
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析与R&lt;/h1&gt;
+
+- 生态丰富
+- 工具完善: http://cran.nexr.com/web/views/MetaAnalysis.html
+- 见 Polanin, Hennessy, &amp; Tanner-Smith. (2017)的综述 (doi: 10.3102/1076998616674)
+- 心理学研究中最常用包: metafor, meta
+- SEM与元分析结合：[metaSEM](https://cran.r-project.org/web/packages/metaSEM/index.html)
+- 公开的电子书：https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/
+---
+# &lt;h1 lang="zh-CN"&gt;元分析：核心过程演示&lt;/h1&gt;
+&lt;br&gt;
+
+*注意：本演示代码可以进一步优化*
+
+## 将44人数据分成两部分
+
+```r
+subjs &lt;- unique(df.mt.rt.subj$Sub)
+
+set.seed(1234)
+
+subj_ls1 &lt;- sample(subjs, 21)
+
+df.mt.rt.subj.ls1 &lt;- df.mt.rt.subj %&gt;%
+  dplyr::filter(Sub %in% subj_ls1) 
+
+df.mt.rt.subj.ls2 &lt;- df.mt.rt.subj %&gt;%
+  dplyr::filter(!(Sub %in% subj_ls1))
+```
+---
+
+# &lt;h1 lang="zh-CN"&gt;元分析：核心过程演示&lt;/h1&gt;
+&lt;br&gt;
+
+*注意：本演示代码可以进一步优化*
+
+## 整理第一组的数据
+
+```r
+## effect size of group 1
+df.mt.rt.subj.effect.ls1 &lt;- df.mt.rt.subj.ls1 %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "Good") %&gt;%
+  dplyr::group_by(Identity) %&gt;%
+  dplyr::summarise(mean = mean(RT_mean),
+                   sd = sd(RT_mean)) %&gt;%
+  dplyr::ungroup() %&gt;%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = c(mean, sd))
+
+
+colnames(df.mt.rt.subj.effect.ls1) &lt;- c("Self_RT_M_mean","Other_RT_M_mean",
+                                        "Self_RT_M_sd", "Other_RT_M_sd")
+
+df.mt.rt.subj.effect.ls1.wide &lt;- df.mt.rt.subj.ls1  %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "Good") %&gt;%
+  tidyr::pivot_wider(names_from = "Identity", values_from = "RT_mean")
+
+corr_est.ls1 &lt;- cor(df.mt.rt.subj.effect.ls1.wide$Self, df.mt.rt.subj.effect.ls1.wide$Other)
+
+df.mt.rt.subj.effect.ls1$Sample_size &lt;- length(unique(df.mt.rt.subj.ls1$Sub))
+df.mt.rt.subj.effect.ls1$ri &lt;- corr_est.ls1
+```
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;元分析：核心过程演示&lt;/h1&gt;
+&lt;br&gt;
+
+*注意：本演示代码可以进一步优化*
+
+## 整理第二组的数据
+
+```r
+## effect size of group 2
+df.mt.rt.subj.effect.ls2 &lt;- df.mt.rt.subj.ls2 %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "Good") %&gt;%
+  dplyr::group_by(Identity) %&gt;%
+  dplyr::summarise(mean = mean(RT_mean),
+                   sd = sd(RT_mean)) %&gt;%
+  dplyr::ungroup() %&gt;%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = c(mean, sd))
+
+colnames(df.mt.rt.subj.effect.ls2) &lt;- c("Self_RT_M_mean","Other_RT_M_mean",
+                                        "Self_RT_M_sd", "Other_RT_M_sd")
+
+df.mt.rt.subj.effect.ls2.wide &lt;- df.mt.rt.subj.ls2  %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "Good") %&gt;%
+  tidyr::pivot_wider(names_from = "Identity", values_from = "RT_mean")
+
+corr_est.ls2 &lt;- cor(df.mt.rt.subj.effect.ls2.wide$Self, df.mt.rt.subj.effect.ls2.wide$Other)
+df.mt.rt.subj.effect.ls2$Sample_size &lt;- length(unique(df.mt.rt.subj.ls2$Sub))
+df.mt.rt.subj.effect.ls2$ri &lt;- corr_est.ls2
+```
+
+---
+
+# &lt;h1 lang="zh-CN"&gt;元分析：核心过程演示&lt;/h1&gt;
+&lt;br&gt;
+
+## 合并数据，计算效应量和效应量的误差
+
+```r
+# and nrow with 1
+df.mt.meta &lt;- rbind(df.mt.rt.subj.effect.ls1, df.mt.rt.subj.effect.ls2)
+
+df.es &lt;- metafor::escalc(
+  measure = "SMCRH",
+  #standardized mean change using raw score standardization with heteroscedastic population variances at the two measurement occasions (Bonett, 2008)
+  m1i = Self_RT_M_mean,
+  m2i = Other_RT_M_mean,
+  sd1i = Self_RT_M_sd,
+  sd2i = Other_RT_M_sd,
+  ni = Sample_size,
+  ri = ri,
+  data = df.mt.meta
+  )  %&gt;%
+  dplyr::mutate(unique_ID = c("study1a", "study1b"))
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;使用随机效应模型进行效应量综合&lt;/h1&gt;
+
+
+
+```r
+# 随机效果模型
+rma1 &lt;- metafor::rma(yi, vi, data = df.es)
+```
+
+---
+# &lt;h1 lang="zh-CN"&gt;森林图表格&lt;/h1&gt;
+
+
+```r
+metafor::forest(rma1)
+```
+
+![](chapter_13_files/figure-html/plot forest-1.png)&lt;!-- --&gt;
+
+---
+# &lt;h1 lang="zh-CN"&gt;元分析小结&lt;/h1&gt;
+
+- 本质上是一种效应量综述的**统计方法**
+- 不同领域的看法/地位不一定，心理学相对规范性不足（与医学相比）
+- 用途广泛，不仅是进行大规模的元分析进行发表论文
+- mini-meta-analysis or single-paper meta-analysis在实证研究中非常有用
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
