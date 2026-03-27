@@ -1,0 +1,1 @@
+# This folder is for submitting assignments for the 2026 R course.
