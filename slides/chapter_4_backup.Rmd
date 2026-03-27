@@ -25,53 +25,73 @@ class: center, middle
 
 ---
 
-# 我们遇到的问题
+# 本节课要解决的关键问题
 
-## 拿到数据文件，不知道从何开始?
+## 1. 如何读取数据？
 
-小明同学刚刚完成了一个实验，收集了一批数据文件（如 `penguin_rawdata.csv`）。他听说可以用R进行数据分析，但打开RStudio后，却不知道第一步该做什么...
+在R语言中做任何数据分析之前，第一步永远是：把数据读进来。但R不像人眼睛一样"看"到文件，它需要我们告诉它数据文件在哪里？这就需要用到「路径」的概念。
 
-- 数据文件在哪里？如何让R找到它？
-- 数据文件是什么格式？R能读取吗？
-- 读取后数据会变成什么样？
-- 数据文件里都有哪些变量？
+## 2. 如何理解数据？
 
-![../slides/picture/chp4/howtostart.png]
-
+数据读进来后，它是什么类型？每一列是什么意思？有多少条记录？这就需要了解「数据类型」。
 
 ---
 
-# 2. 知识点：路径、数据类型、变量名
+# 为什么要学这些？（它们之间的关系）
 
-## 本节课要学习的知识点
+让我们来捋一捋这个逻辑：
 
-为了解决上面的问题，我们需要学习以下知识点：
+1. 想用R做分析 → 必须先把数据读进R里
+2. 想读数据 → R需要知道文件在哪里（需要学「路径」）
+3. 数据读进来了 → 需要知道数据是什么类型才能分析（需要学「数据类型」）
 
-### 问题1：如何读取数据？
-- 需要学习：**路径**的概念
-  - 什么是路径？
-  - 图形界面 vs 代码操作的区别
-  - 绝对路径 vs 相对路径
-  - 工作目录的概念
+所以，路径和数据类型就是数据分析的**第一步**。
 
-### 问题2：如何理解数据？
-- 需要学习：**数据类型**、**变量名**、**对象**
-  - 数据类型：数值型、字符串、逻辑值
-  - 变量名：给数据贴标签
-  - 对象：R语言中的数据结构
+---
+
+```{r load bruceR, message=FALSE, warning=FALSE}
+# 可以将清华的镜像设置为下载的镜像
+# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+pacman::p_load(bruceR, here)
+```
 
 ---
 
 class: center, middle
-<span style="font-size: 50px;">知识点板块</span> <br>
+<span style="font-size: 50px;">基础知识</span> <br>
 
 ---
 
-# 2.1 路径的概念
+# 1.1 数据的"住址"——什么是路径？
+
+## 从打开文件说起
+
+当你用电脑打开一个文件时，电脑需要知道这个文件在哪里：
+
+.pull-left[
+.font-size-14[在 Mac 上：Finder 打开文件夹的方式]
+1. 点击 Finder
+2. 进入"桌面"文件夹
+3. 进入"课程资料"文件夹
+4. 找到"数据.csv"文件
+]
+
+.pull-right[
+.font-size-14[在 Windows 上：资源管理器打开文件夹的方式]
+1. 点击"此电脑"或桌面图标
+2. 进入"C盘"
+3. 进入"用户"文件夹
+4. 找到"数据.csv"文件
+]
+
+---
 
 ## 什么是路径？
 
-.path-def[**路径**就是：文件在电脑中的"地址"，告诉你怎么从电脑的"门口"走到这个文件的位置。]
+.path-def[路径就是：文件在电脑中的"地址"，告诉你怎么从电脑的"门口"走到这个文件的位置。]
 
 .path-example[
 例子：就像你知道"江苏省南京市鼓楼区南京师范大学"是一个地址一样，电脑也需要知道文件的完整地址。
@@ -79,51 +99,7 @@ class: center, middle
 
 ---
 
-## 2.1.1 图形界面 vs 代码操作的区别
-
-### 图形界面操作（我们习惯的方式）
-
-.font-size-14[
-当你用Finder（Mac）或资源管理器（Windows）打开文件时：
-
-1. 点击Finder/资源管理器
-2. 逐层进入文件夹（桌面 → 课程资料 → 数据文件夹）
-3. 找到文件并双击打开
-
-**特点**：路径被"隐藏"在图形界面中，你不需要知道完整的路径
-]
-
-### 代码操作（R的方式）
-
-.font-size-14[
-当你用R代码打开文件时：
-
-```r
-penguin_data <- bruceR::import("/Users/zhangsan/Desktop/课程资料/penguin_rawdata.csv")
-```
-
-**特点**：路径是"显式"的，你需要明确告诉R文件的完整地址
-]
-
----
-
-## 2.1.2 为什么R需要路径？
-
-.path-warning[
-⚠️ **重要区别**：
-- **图形界面**：你用眼睛"看"到文件，点击打开
-- **R代码**：R不能"看"，需要你告诉它文件的完整地址
-]
-
-.font-size-14[
-就像你告诉快递员地址一样：
-- 图形界面：你带快递员去那个地方（不需要说地址）
-- R代码：你需要告诉快递员完整的地址（省市区街道门牌号）
-]
-
----
-
-## 2.1.3 路径的表示方式 (_Mac 系统_)
+## 1.2 路径的表示方式 (_Mac 系统_)
 
 ### Mac 上的路径看起来是这样的：
 
@@ -139,13 +115,13 @@ penguin_data <- bruceR::import("/Users/zhangsan/Desktop/课程资料/penguin_raw
 
 ### 让我们在 Finder 中看看：
 
-![../slides/picture/chp4/path1.jpg]
+![path_mac](picture/chp4/path1.jpg)
 
 .path-highlight[从左到右看：桌面 → 课程资料 → 数据.csv]
 
 ---
 
-## 2.1.4 路径的表示方式 (_Mac 系统_)
+## 1.3 路径的表示方式 (_Mac 系统_)
 
 ### 完整路径 vs 简化路径
 
@@ -167,7 +143,7 @@ penguin_data <- bruceR::import("/Users/zhangsan/Desktop/课程资料/penguin_raw
 
 ---
 
-## 2.1.5 路径的表示方式 (_Windows 系统_)
+## 1.4 路径的表示方式 (_Windows 系统_)
 
 ### Windows 上的路径看起来是这样的：
 
@@ -183,13 +159,13 @@ C:\Users\zhangsan\Desktop\课程资料\数据.csv
 
 ### 让我们在文件资源管理器中看看：
 
-![../slides/picture/chp4/abspath.jpg]
+![path_win](picture/chp4/abspath.jpg)
 
 .path-highlight[从左到右看：此电脑 → C盘 → 用户 → ... → 数据.csv]
 
 ---
 
-## 2.1.6 Mac vs Windows 路径对比
+## 1.5 Mac vs Windows 路径对比
 
 | 特征 | Mac | Windows |
 |------|-----|---------|
@@ -203,7 +179,7 @@ C:\Users\zhangsan\Desktop\课程资料\数据.csv
 
 ---
 
-## 2.1.7 Windows 用户特别注意！
+## 1.6 Windows 用户特别注意！
 
 ### ❌ 不要直接复制 Windows 地址栏的路径
 
@@ -227,7 +203,7 @@ C:/Users/zhangsan/Desktop/课程资料/数据.csv
 
 ---
 
-# 2.1.8 绝对路径 vs 相对路径
+# 2.1 绝对路径 vs 相对路径
 
 ## 两种路径：绝对路径
 
@@ -314,7 +290,7 @@ setwd("路径") # 设置工作目录
 设置默认工作目录后，每次打开 RStudio 都会从这里开始
 ]
 
-![../slides/picture/chp4/wd1.png]
+![set_wd_auto](picture/chp4/wd1.png)
 
 ---
 
@@ -386,7 +362,7 @@ here::here("data", "penguin", "penguin_rawdata.csv")
 
 ---
 
-# 2.2 数据类型
+# 2.2 R语言中的数据类型
 
 ## 数据类型：数据的"身份证"
 
@@ -603,7 +579,7 @@ as.logical(100)    # TRUE（非零即为TRUE）
 
 ---
 
-# 2.3 变量名和对象
+# 2.3 变量名规范
 
 ## 变量名：给数据贴标签
 
@@ -626,28 +602,6 @@ y              # 输出：20
 # 可以用变量做运算
 x + y          # 输出：30
 ```
-]
-
----
-
-## 什么是对象？
-
-.obj-def[
-**对象**是R语言中的数据结构，用来存储数据。变量名是对象的名称。
-]
-
-.font-size-14[
-常见的对象类型：
-- **向量**（vector）：一维数据，如 `c(1, 2, 3, 4, 5)`
-- **数据框**（data.frame）：二维表格，如 `penguin_data`
-- **列表**（list）：可以包含不同类型的数据
-- **矩阵**（matrix）：二维数组
-]
-
-.obj-example[
-例子：`penguin_data <- bruceR::import(...)`
-- `penguin_data` 是变量名（名称）
-- 数据框是对象（数据结构）
 ]
 
 ---
@@ -867,36 +821,15 @@ is.na(NULL)                # FALSE
 ---
 
 class: center, middle
-<span style="font-size: 50px;">🔧 传统手写代码（简略）</span> <br>
+<span style="font-size: 50px;">🔧 实操演练</span> <br>
 
 ---
 
-# 3. 传统手写代码（简）
+# 3.1 查看当前路径
 
-## 本部分目标
-
-.font-size-14[
-展示如何使用传统R代码完成以下操作：
-- 查看当前路径
-- 读取数据
-- 查看数据类型
-]
+## getwd() 函数
 
 .font-size-14[
-💡 **注意**：这部分只展示核心代码和简要说明，不深入讲解细节
-]
-
-.font-size-14[
-📺 **详细操作视频**：[第四讲 导入数据](https://www.bilibili.com/video/BV1vKQaYSEyt?vd_source=7b2584179c6dc9c18721c42b39ce63b9)
-]
-
----
-
-## 传统手写代码操作
-
-.font-size-14[
-### 1. 查看当前路径
-
 ```r
 # 查看当前工作目录
 getwd()
@@ -905,41 +838,62 @@ getwd()
 # Mac: "/Users/zhangsan/Documents/R4Psy"
 # Windows: "C:/Users/zhangsan/Documents/R4Psy"
 ```
+]
 
 ---
 
-### 2. 设置工作目录（可选）
+# 3.2 设置工作目录（可选）
 
+## setwd() 函数
+
+.font-size-14[
 ```r
 # 手动设置工作目录
 setwd("/Users/zhangsan/Documents/R4Psy")    # Mac
 setwd("C:/Users/zhangsan/Documents/R4Psy")  # Windows
 ```
+]
 
+.font-size-14[
 💡 建议：使用 .Rproj 或 .Rmd 文件，自动设置工作目录
+]
 
 ---
 
-### 3. 读取数据
+# 3.3 读取数据
 
+## 使用 bruceR::import() 读取CSV文件
+
+.font-size-14[
 ```r
 # 读取CSV数据
 penguin_data <- bruceR::import(
   here::here("slides", "data", "penguin", "penguin_rawdata.csv")
 )
 ```
+]
 
+.font-size-14[
 💡 这里的 `penguin_data` 是变量名，可以改成你喜欢的名字
-
-**读取成功后的提示**：
-- 数据会出现在 **Environment** 窗口中
-- 点击数据可以查看内容
-- 也可以用 `View(penguin_data)` 在控制台查看
+]
 
 ---
 
-### 4. 查看数据类型
+## 读取成功后的提示
 
+.font-size-14[
+- 数据会出现在 **Environment** 窗口中
+- 点击数据可以查看内容
+- 也可以用 `View(penguin_data)` 在控制台查看
+]
+
+---
+
+# 3.4 查看数据类型
+
+## 查看数据的基本信息
+
+.font-size-14[
 ```r
 # 查看数据结构（重要！）
 str(penguin_data)
@@ -953,11 +907,13 @@ dim(penguin_data)
 # 查看列名
 colnames(penguin_data)
 ```
+]
 
 ---
 
-### 5. 查看某一列的数据类型
+## 查看某一列的数据类型
 
+.font-size-14[
 ```r
 # 查看特定列的数据类型
 class(penguin_data$age)         # 年龄列
@@ -968,11 +924,15 @@ class(penguin_data$Site)        # 站点列
 unique(penguin_data$sex)
 unique(penguin_data$Site)
 ```
+]
 
 ---
 
-### 6. 综合操作示例
+# 3.5 综合操作示例
 
+## 完整流程：从读取到查看
+
+.font-size-14[
 ```r
 # Step 1: 查看当前路径
 getwd()
@@ -994,398 +954,8 @@ class(df$Site)
 ```
 ]
 
+⚠️ **人工检查**：数据是否正确读取？变量名是否正确？数据类型是否符合预期？
 
----
-
-class: center, middle
-<span style="font-size: 50px;">🤖 OpenCode操作</span> <br>
-
----
-
-# 4. OpenCode操作
-
-## 如何用OpenCode？
-
-.font-size-14[
-OpenCode可以帮助我们完成以下任务：
-- 查找文件路径
-- 读取数据
-- 诊断错误
-]
-
-.opencode-tip[
-💡 **核心优势**：用自然语言描述需求，OpenCode帮你生成代码并执行
-]
-
----
-
-## 本节课使用的模型
-
-.font-size-14[
-**本节课统一采用**：OpenCode Zen 免费提供的 **MiMo V2 Pro Free** 模型
-
-**其他选择**：
-- 你也可以尝试其他大语言模型，如 DeepSeek、ChatGPT、Claude等
-]
-
-.model-note[
-⚠️ **注意**：无论使用哪个模型，提问的技巧和模板都是通用的
-]
-
----
-
-## 4.1 场景1：查找文件路径
-
-### 操作步骤
-
-.font-size-14[
-1. 用户描述文件名
-2. OpenCode搜索并返回路径
-3. OpenCode生成正确的路径代码
-]
-
----
-
-## 场景1：查找文件路径 - Prompt示例
-
-### 示例1：用户描述文件名，OpenCode搜索路径
-
-.font-size-14[
-**Prompt**：
-```
-我有一个名为penguin_rawdata.csv的数据文件，请帮我找到它的完整路径。
-```
-
-![../slides/picture/chp4/findfullpath1.png]
-
-**OpenCode会**：
-- 搜索项目中的文件
-- 返回文件的完整路径
-- 生成使用here()函数的代码
-]
-
----
-
-## 场景1：查找文件路径 - Prompt示例（续）
-
-### 示例2：用户询问文件位置，OpenCode帮助查找
-
-.font-size-14[
-**Prompt**：
-```
-我想读取penguin数据集，但不知道文件在哪里，请帮我找到它。
-```
-
-![../slides/picture/chp4/findpathdata2.png]
-
-**OpenCode会**：
-- 搜索项目中的相关文件
-- 列出所有匹配的文件
-- 提供文件路径和读取建议
-]
-
----
-
-## 4.2 场景2：读取数据
-
-### 操作步骤
-
-.font-size-14[
-1. 用户描述数据文件
-2. OpenCode生成读取代码
-3. OpenCode提供多种读取方案
-]
-
----
-
-## 场景2：读取数据 - Prompt示例
-
-### 示例1：用户描述文件，OpenCode生成import代码
-
-.font-size-14[
-**Prompt**：
-```
-请帮我读取penguin_rawdata.csv文件，文件路径是data/penguin/penguin_rawdata.csv。
-```
-
-![../slides/picture/chp4/readdata.png] 
-
-**OpenCode会**：
-- 生成bruceR::import()代码
-- 自动执行代码
-- 显示读取结果
-]
-
----
-
-## 场景2：读取数据 - Prompt示例（续）
-
-### 示例2：用户描述需求，OpenCode提供多种方案
-
-.font-size-14[
-**Prompt**：
-```
-我想读取一个CSV文件，请告诉我有哪些方法可以读取，并推荐最适合的方法。
-```
-
-**OpenCode会**：
-- 列出多种读取方法（read.csv, bruceR::import, readr::read_csv等）
-- 说明每种方法的优缺点
-- 推荐最适合的方法
-]
-
----
-
-## 场景2：读取数据 - Prompt示例（续）
-
-### 示例3：用户遇到错误，OpenCode帮助诊断
-
-.font-size-14[
-**Prompt**：
-```
-我在读取数据时遇到了错误：Error: file not found。请帮我诊断问题并提供解决方案。
-```
-
-**OpenCode会**：
-- 分析错误原因
-- 检查文件路径是否正确
-- 提供解决方案
-]
-
----
-
-class: center, middle
-<span style="font-size: 50px;">💬 如何给AI提示词进行知识点讲解</span> <br>
-
----
-
-# 5. 如何给AI提示词进行知识点讲解
-
-## 为什么要学会提问？
-
-.font-size-14[
-**AI工具的局限性**：
-- AI需要明确的指令才能提供准确的帮助
-- 好的提问能获得更好的答案
-
-**学习目标**：
-- 学会如何向AI提问来理解代码和概念
-- 掌握提问的技巧和模板
-]
-
-.prompt-tip[
-💡 **提问的艺术**：明确具体、提供上下文、逐步深入
-]
-
----
-
-## 可以使用的AI工具
-
-.font-size-14[
-**本节课主要使用**：OpenCode（MiMo V2 Pro Free 模型）
-
-**其他选择**：
-- DeepSeek、ChatGPT、Claude 等其他大语言模型
-
-**关键点**：
-- 无论使用哪个AI工具，提问的技巧和模板都是通用的
-- 本节课学习的Prompt示例和模板可以应用到任何AI工具
-]
-
-.ai-tools-note[
-💡 **建议**：尝试不同的AI工具，找到最适合你的那一个
-]
-
----
-
-## 5.1 场景1：询问函数的作用和参数
-
-### 提问场景
-
-.font-size-14[
-遇到不熟悉的函数，想了解其作用和参数
-]
-
-### Prompt示例
-
-.font-size-14[
-**示例1**：
-```
-请解释一下read.csv()函数的作用和主要参数。
-```
-
-**示例2**：
-```
-bruceR::import()函数和read.csv()函数有什么区别？
-```
-
-**示例3**：
-```
-here::here()函数是如何工作的？它有什么优点？
-```
-]
-
----
-
-## 5.2 场景2：询问概念的含义和示例
-
-### 提问场景
-
-.font-size-14[
-遇到不熟悉的概念，想了解其含义和示例
-]
-
-### Prompt示例
-
-.font-size-14[
-**具体示例**：
-```
-请解释一下什么是'工作目录'，并举例说明。
-```
-
-```
-什么是'数据类型'？R语言中有哪些常见的数据类型？
-```
-
-```
-什么是'相对路径'？它和'绝对路径'有什么区别？
-```
-]
-
----
-
-## 场景2：询问概念的含义和示例（续）
-
-### Prompt模板
-
-.font-size-14[
-**模板1**：
-```
-请解释一下[概念名]是什么，并举例说明。
-```
-
-**模板2**：
-```
-[概念A]和[概念B]有什么区别？请举例说明。
-```
-]
-
-.prompt-template[
-💡 **使用模板**：将[概念名]替换为你想了解的概念，如"路径"、"数据类型"等
-]
-
----
-
-## 5.3 场景3：询问代码片段的逐行解释
-
-### 提问场景
-
-.font-size-14[
-遇到一段代码，想逐行了解其作用
-]
-
-### Prompt示例
-
-.font-size-14[
-**示例1**：
-```
-请逐行解释这段代码的作用：
-penguin_data <- bruceR::import(
-  here::here('slides', 'data', 'penguin', 'penguin_rawdata.csv')
-)
-```
-
-**示例2**：
-```
-这段代码是做什么的？每一行的作用是什么？
-getwd()
-setwd('/Users/zhangsan/Documents/R4Psy')
-```
-]
-
----
-
-## 5.4 场景4：询问错误信息的含义和解决方法
-
-### 提问场景
-
-.font-size-14[
-遇到错误信息，想了解其含义和解决方法
-]
-
-### Prompt示例
-
-.font-size-14[
-**示例1**：
-```
-我遇到了这个错误：Error: object 'penguin_data' not found。请问这是什么意思？如何解决？
-```
-
-**示例2**：
-```
-运行这段代码时报错了：Error: file not found。请帮我诊断问题并提供解决方案。
-penguin_data <- bruceR::import('data/penguin/penguin_rawdata.csv')
-```
-
-**示例3**：
-```
-这个警告是什么意思？Warning: NAs introduced by coercion。需要处理吗？
-```
-]
-
----
-
-## 5.5 提问技巧总结
-
-### 好的提问应该包含
-
-.font-size-14[
-1. **明确具体**：描述清楚问题，避免模糊不清
-2. **提供上下文**：说明你在做什么，遇到了什么问题
-3. **提供代码**：复制完整的代码片段
-4. **提供错误信息**：复制完整的错误信息
-5. **逐步深入**：从简单问题开始，逐步深入
-]
-
----
-
-## 提问技巧总结（续）
-
-### 常见提问模板
-
-.font-size-14[
-**询问概念**：
-```
-请解释一下[概念名]是什么，并举例说明。
-```
-
-**询问函数**：
-```
-请解释一下[函数名]函数的作用和主要参数。
-```
-
-**询问代码**：
-```
-请逐行解释这段代码的作用：[代码片段]
-```
-
-**询问错误**：
-```
-我遇到了这个错误：[错误信息]。请问这是什么意思？如何解决？
-```
-]
-
----
-
-## AI学习资源推荐
-
-.font-size-14[
-**：AI互动版费曼学习法😋**：[真正的高手用这三个AI技巧，10倍速学习任何领域](https://mp.weixin.qq.com/s/Z28GqqPKPlAcSsjE3O_CBA)
-
-.ai-resource[
-💡 **建议**：阅读这篇文章，掌握AI学习方法，避免"问AI→读答案→就忘"陷阱
-]
-]
 
 ---
 
