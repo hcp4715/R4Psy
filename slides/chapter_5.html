@@ -49,7 +49,9 @@ class: center, middle
 .font-size-14[
 ```r
 # 如果提示包不存在，运行以下代码安装
-install.packages(c("pacman", "bruceR", "here", "data.table", "psych"))
+install.packages(c("pacman", "bruceR", "here", 
+                  "data.table", "psych")，
+ repos = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/")
 ```
 ]
 
@@ -78,7 +80,8 @@ pacman::p_load(bruceR, here, data.table, psych)
 
 
 ``` r
-df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+df &lt;- bruceR::import(here::here("slides", "data", 
+                  "penguin", "penguin_rawdata.csv"))
 ```
 
 ---
@@ -449,8 +452,7 @@ data.table是R中用于快速处理大型数据集的扩展包，语法更加简
 .font-size-14[
 ```r
 # 安装和加载
-install.packages("data.table")
-library(data.table)
+pacman::p_load("data.table")
 ```
 ]
 
@@ -931,7 +933,8 @@ df &lt;- data.frame(
 .font-size-14[
 ```r
 # 加载数据
-df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+df &lt;- bruceR::import(here::here("slides", "data", 
+                "penguin", "penguin_rawdata.csv"))
 
 # 查看结构
 str(df)
@@ -1006,7 +1009,8 @@ class: center, middle
 pacman::p_load(bruceR, here, data.table, psych)
 
 # 加载数据
-df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+df &lt;- bruceR::import(here::here("slides", "data",
+                   "penguin", "penguin_rawdata.csv"))
 ```
 
 **💡 如何与AI有效互动？**
