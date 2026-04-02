@@ -48,14 +48,14 @@ class: center, middle
 
 ## 拿到数据文件，不知道从何开始?
 
-小明同学刚刚完成了一个实验，收集了一批数据文件（如 `penguin_rawdata.csv`）。他听说可以用R进行数据分析，但打开RStudio后，却不知道第一步该做什么...
+假如我们刚刚完成了一个研究，收集了一批数据文件（如 `penguin_rawdata.csv`）。那打开RStudio后，第一步该做什么...
 
 - 数据文件在哪里？如何让R找到它？
 - 数据文件是什么格式？R能读取吗？
 - 读取后数据会变成什么样？
 - 数据文件里都有哪些变量？
 
-![../slides/picture/chp4/howtostart.png]
+![./picture/chp4/howtostart.png]
 
 
 ---
@@ -158,7 +158,7 @@ penguin_data &lt;- bruceR::import("/Users/zhangsan/Desktop/课程资料/penguin_
 
 ### 让我们在 Finder 中看看：
 
-![../slides/picture/chp4/path1.jpg]
+![picture/chp4/path1.jpg]
 
 .path-highlight[从左到右看：桌面 → 课程资料 → 数据.csv]
 
@@ -202,7 +202,7 @@ C:\Users\zhangsan\Desktop\课程资料\数据.csv
 
 ### 让我们在文件资源管理器中看看：
 
-![../slides/picture/chp4/abspath.jpg]
+![picture/chp4/abspath.jpg]
 
 .path-highlight[从左到右看：此电脑 → C盘 → 用户 → ... → 数据.csv]
 
@@ -276,14 +276,14 @@ C:/Users/zhangsan/Documents/R4Psy/data/penguin/penguin_rawdata.csv
 .font-size-14[
 **相对路径**：从"当前位置"出发，描述文件在哪里
 
-假设你的 R 文件（.Rmd）保存在 `R4Psy` 文件夹里：
+假设你的 R 文件（.Rmd）保存在 `R4Psy/slides` 文件夹里：
 ```
 R4Psy/
-├── slides/          ← 你的 .Rmd 文件在这里
-│   └── chapter_4.Rmd
-└── data/
-    └── penguin/
-        └── penguin_rawdata.csv  ← 要读取的数据
+└── slides/
+    ├── chapter_4.Rmd  ← 你的 .Rmd 文件在这里
+    └── data/
+        └── penguin/
+            └── penguin_rawdata.csv  ← 要读取的数据
 ```
 
 读取数据时，只需要：
@@ -333,7 +333,7 @@ setwd("路径") # 设置工作目录
 设置默认工作目录后，每次打开 RStudio 都会从这里开始
 ]
 
-![../slides/picture/chp4/wd1.png]
+![picture/chp4/wd1.png]
 
 ---
 
@@ -374,14 +374,14 @@ setwd("C:/Users/zhangsan/Documents/R4Psy")
 pacman::p_load(here)
 
 # 读取数据 - 自动适配 Mac/Windows
-here::here("data", "penguin", "penguin_rawdata.csv")
+here::here("slides", "data", "penguin", "penguin_rawdata.csv")
 ```
 ]
 
 .path-example[
-这里 `here("data", "penguin", "penguin_rawdata.csv")` 会自动生成：
-- Mac: `data/penguin/penguin_rawdata.csv`
-- Windows: `data\penguin\penguin_rawdata.csv`
+这里 `here("slides", "data", "penguin", "penguin_rawdata.csv")` 会自动生成：
+- Mac: `slides/data/penguin/penguin_rawdata.csv`
+- Windows: `slides\data\penguin\penguin_rawdata.csv`
 ]
 
 .path-tip[
@@ -1075,7 +1075,7 @@ OpenCode可以帮助我们完成以下任务：
 我有一个名为penguin_rawdata.csv的数据文件，请帮我找到它的完整路径。
 ```
 
-![../slides/picture/chp4/findfullpath1.png]
+![picture/chp4/findfullpath1.png]
 
 **OpenCode会**：
 - 搜索项目中的文件
@@ -1095,7 +1095,7 @@ OpenCode可以帮助我们完成以下任务：
 我想读取penguin数据集，但不知道文件在哪里，请帮我找到它。
 ```
 
-![../slides/picture/chp4/findpathdata2.png]
+![picture/chp4/findpathdata2.png]
 
 **OpenCode会**：
 - 搜索项目中的相关文件
@@ -1127,7 +1127,7 @@ OpenCode可以帮助我们完成以下任务：
 请帮我读取penguin_rawdata.csv文件，文件路径是data/penguin/penguin_rawdata.csv。
 ```
 
-![../slides/picture/chp4/readdata.png] 
+![picture/chp4/readdata.png] 
 
 **OpenCode会**：
 - 生成bruceR::import()代码
