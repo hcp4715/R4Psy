@@ -10,7 +10,7 @@ output:
       - default
       - 'css/zh-CN.css'
       - 'css/Custumed_Style.css'
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true

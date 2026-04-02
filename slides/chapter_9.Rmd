@@ -5,7 +5,7 @@ date: ""
 output:
   xaringan::moon_reader:
     css: [default, css/Custumed_Style.css,css/zh-CN.css]
-    lib_dir: ../libs
+    lib_dir: libs
     nature:
       highlightLines: true
       highlightStyle: github
@@ -1114,5 +1114,4 @@ class: center, middle
 <br>
 <br>
 <h2 lang="zh-CN">2. 在Penguin数据中，不同气候带(DEQ)与恋爱状态(romantic)对被试社交复杂度(socialdiversity)的影响.</h2>
-
 
