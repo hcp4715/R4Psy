@@ -4,8 +4,8 @@
     <title>Lecture 5</title>
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
-    <meta name="date" content="2024-03-27" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <meta name="date" content="2026-03-26" />
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -18,7 +18,7 @@ class: center, middle, inverse, title-slide
 # Lecture 5
 ]
 .subtitle[
-## Objects &amp; Function
+## Data Manipulation &amp; Functions
 ]
 .author[
 ### Hu Chuan-Peng (PhD)
@@ -27,917 +27,1015 @@ class: center, middle, inverse, title-slide
 ### Nanjing Normal University
 ]
 .date[
-### 2024-03-27
+### 2026-03-26
+]
+
+---
+
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;第五章: 数据操作与函数&lt;/span&gt; &lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;胡传鹏(博士) &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt; 2026-03-26 &lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 20px;"&gt; Created with Rmarkdown &lt;/span&gt; &lt;br&gt;
+
+---
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;📚 Part 1: 基础知识讲解&lt;/span&gt; &lt;br&gt;
+
+---
+
+# 1.0 R语言中的对象 (Objects)
+
+## 什么是对象？
+
+.object-def[
+**对象 (Object)**：在R中，一切数据都是对象。每个对象都有：
+- **类型 (Type)**：对象存储的数据类型
+- **属性 (Attributes)**：对象的额外信息（如名称、维度）
+- **值 (Value)**：对象存储的具体数据
+]
+
+.font-size-14[
+```r
+# 创建对象：变量名就是对象的"标签"
+x &lt;- 10                      # 数值对象
+name &lt;- "张三"               # 字符串对象
+is_male &lt;- TRUE             # 逻辑对象
+```
+]
+
+---
+
+## 常见的对象类型（数据结构）
+
+.object-types[
+R中的数据存储在不同的"容器"中，形成不同的数据结构：
+]
+
+.pull-left[
+### 存放单一类型数据
+- **向量 (Vector)**：一维
+- **矩阵 (Matrix)**：二维
+- **数组 (Array)**：多维
+]
+
+.pull-right[
+### 存放混合类型数据
+- **数据框 (Data Frame)**：类似表格
+- **列表 (List)**：任意类型
+]
+
+---
+
+## 向量 (Vector)
+
+### 最基本的数据结构
+
+.font-size-14[
+```r
+# 创建向量
+v1 &lt;- c(1, 2, 3, 4, 5)           # 数值向量
+v2 &lt;- c("apple", "banana")        # 字符串向量
+v3 &lt;- c(TRUE, FALSE, TRUE)        # 逻辑向量
+v4 &lt;- 1:10                        # 1到10的序列
+
+# 查看向量
+v1
+length(v1)                        # 长度
+class(v1)                         # 类型
+```
+]
+
+---
+
+## 矩阵 (Matrix)
+
+### 二维数据结构
+
+.font-size-14[
+```r
+# 创建矩阵
+m1 &lt;- matrix(1:9, nrow = 3, ncol = 3)
+m1
+
+# 按行填充
+m2 &lt;- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
+m2
+
+# 矩阵属性
+dim(m1)                           # 维度
+nrow(m1)                          # 行数
+ncol(m1)                          # 列数
+```
+]
+
+---
+
+## 数据框 (Data Frame)
+
+### 心理学研究中最常用的数据结构
+
+.font-size-14[
+```r
+# 创建数据框
+df &lt;- data.frame(
+  id = 1:3,
+  name = c("张三", "李四", "王五"),
+  score = c(85, 92, 78)
+)
+df
+
+# 查看属性
+class(df)                         # "data.frame"
+nrow(df)                          # 行数
+ncol(df)                          # 列数
+str(df)                           # 结构
+```
+]
+
+---
+
+## 列表 (List)
+
+### 灵活的"大杂烩"
+
+.font-size-14[
+```r
+# 创建列表：可以装任何东西
+my_list &lt;- list(
+  name = "张三",
+  age = 25,
+  scores = c(85, 92, 78),
+  df = df
+)
+
+# 查看列表
+my_list
+my_list$name                      # 按名称访问
+my_list[[1]]                      # 按位置访问
+```
+]
+
+---
+
+## 如何查看对象的"身份"？
+
+### 三个最重要的函数
+
+.font-size-14[
+```r
+# class() - 查看对象的类型（数据类型）
+class(10)               # "numeric"
+class("hello")          # "character"
+class(df)               # "data.frame"
+
+# str() - 查看对象的结构（详细）
+str(df)
+str(v1)
+
+# attributes() - 查看对象的属性
+attributes(df)           # names, class, row.names
+```
+]
+
+---
+
+## 对象的属性
+
+### 常见属性
+
+.font-size-14[
+```r
+# names - 元素的名称
+v &lt;- c(a = 1, b = 2, c = 3)
+names(v)                # "a" "b" "c"
+
+# dim - 维度（矩阵/数组）
+dim(m1)                 # 3 3
+
+# class - 对象的类
+class(v1)               # "integer"
+class(df)               # "data.frame"
+
+# 查看所有属性
+attributes(df)
+```
+]
+
+---
+
+## 对象与变量名的关系
+
+### 变量名只是"标签"
+
+.font-size-14[
+```r
+# 变量名相当于贴在对象上的"标签"
+x &lt;- 100
+y &lt;- x                  # y也指向同一个对象
+
+# 修改y不会影响x（因为R使用浅拷贝）
+y &lt;- 200
+x                       # 还是100
+
+# 但修改对象内容会相互影响
+df1 &lt;- df
+df1$age &lt;- 30
+df$age                  # df也被修改了！
+```
+]
+
+---
+
+## 特殊对象：NULL 和 NA
+
+.font-size-14[
+```r
+# NULL - 空对象，不占空间
+x &lt;- NULL
+length(x)               # 0
+is.null(x)              # TRUE
+
+# NA - 缺失值
+y &lt;- NA
+length(y)               # 1
+is.na(y)                # TRUE
+
+# 两者的区别
+is.null(NA)             # FALSE
+is.na(NULL)             # FALSE
+```
+]
+
+---
+
+## 对象小结
+
+| 对象类型 | 说明 | 示例 |
+|----------|------|------|
+| 向量 | 一维，同类型数据 | `c(1, 2, 3)` |
+| 矩阵 | 二维，同类型数据 | `matrix(1:9, 3, 3)` |
+| 数组 | 多维，同类型数据 | `array(1:24, c(3,4,2))` |
+| 数据框 | 二维，混合类型（最常用） | `data.frame(a=1, b=2)` |
+| 列表 | 一维，任意类型 | `list(a=1, b="hello")` |
+
+---
+
+# 1.1 回顾：数据框的进阶操作
+
+## 上一章我们学到了...
+
+.font-size-14[
+```r
+# 读取数据
+df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+
+# 查看结构
+str(df)
+
+# 选取变量
+df$age                      # 美元符
+df[, c("age", "gender")]   # 中括号 + 列名
+```
+]
+
+---
+
+## 上一章我们学到了...
+
+### 选取数据的三种方法
+
+.font-size-14[
+**方法1：美元符 `$`**
+```r
+df$age
+```
+
+**方法2：中括号 `[行, 列]`**
+```r
+df[, 1]                    # 第1列
+df[1:5, ]                  # 第1-5行，所有列
+df[1:5, c("age", "gender")] # 第1-5行，指定列
+```
+
+**方法3：双中括号 `[[]]`**
+```r
+df[["age"]]
+```
+]
+
+---
+
+# 1.2 数据框的行筛选
+
+## 如何筛选特定的行？
+
+.question[
+**问题**：如何从penguin数据中，只选择"清华站点"的数据？
+]
+
+---
+
+## 行的筛选：使用逻辑条件
+
+.font-size-14[
+```r
+# 查看有哪些站点
+unique(df$Site)
+
+# 筛选清华站点的数据
+df_thu &lt;- df[df$Site == "Tsinghua", ]
+dim(df)          # 原始数据行数
+dim(df_thu)      # 筛选后行数
+```
+]
+
+⚠️ **注意**：`==` 表示"等于"，一个等号是赋值！
+
+---
+
+## 组合多个条件
+
+.font-size-14[
+```r
+# AND（且）：同时满足两个条件
+df_filtered &lt;- df[df$Site == "Tsinghua" &amp; df$sex == 1, ]
+
+# OR（或）：满足任一条件
+df_filtered2 &lt;- df[df$Site == "Tsinghua" | df$Site == "Peking", ]
+
+# NOT（非）：排除某些条件
+df_not_thu &lt;- df[df$Site != "Tsinghua", ]
+```
+]
+
+---
+
+## 使用 subset() 函数筛选
+
+.font-size-14[
+```r
+# 更直观的筛选方式
+df_thu &lt;- subset(df, Site == "Tsinghua")
+
+# 多条件筛选
+df_filtered &lt;- subset(df, Site == "Tsinghua" &amp; sex == 1)
+
+# 筛选特定列
+df_subset &lt;- subset(df, age &gt; 30, select = c("age", "sex", "Site"))
+```
+]
+
+---
+
+# 1.3 列的筛选进阶
+
+## 如何选取特定的列？
+
+.font-size-14[
+```r
+# 方法1：列名向量
+cols &lt;- c("Site", "age", "sex")
+df_subset &lt;- df[, cols]
+
+# 方法2：列的序号
+df_subset &lt;- df[, 1:5]          # 前5列
+df_subset &lt;- df[, -c(1, 2)]    # 排除前2列
+```
+]
+
+---
+
+## 选取名字符合模式的列
+
+.font-size-14[
+**问题**：如何选取所有以"stress"开头的列？
+]
+
+.font-size-14[
+```r
+# 使用 startsWith()
+stress_cols &lt;- colnames(df)[startsWith(colnames(df), "stress")]
+stress_cols
+
+# 使用 grep() - 返回匹配的索引
+stress_idx &lt;- grep("^stress", colnames(df))
+colnames(df)[stress_idx]
+
+# 使用 endsWith() - 匹配结尾
+site_cols &lt;- colnames(df)[endsWith(colnames(df), "site")]
+```
+]
+
+---
+
+## 综合：选取列 + 筛选行
+
+.font-size-14[
+```r
+# 1. 确定要选取的列
+selected_cols &lt;- c("Site", colnames(df)[startsWith(colnames(df), "stress")])
+
+# 2. 选取这些列
+df_stress &lt;- df[, selected_cols]
+
+# 3. 筛选特定站点
+df_stress_thu &lt;- df_stress[df_stress$Site == "Tsinghua", ]
+```
+]
+
+---
+
+# 1.4 因子型数据
+
+## 什么是因子？
+
+.factor-def[
+**因子 (Factor)**：专门用来表示分类变量的数据类型
+]
+
+.font-size-14[
+在心理学研究中，数据分为：
+- **定量数据**：数值型（如年龄、分数）
+- **定性数据**：分类型
+  - 名义型：无顺序之分（如性别、国家）
+  - 有序型：有顺序之分（如学历、疗效）
+]
+
+---
+
+## 字符型 vs 因子型
+
+.font-size-14[
+```r
+# 字符型：按字母顺序排列
+x &lt;- c("high", "medium", "low")
+sort(x)               # low, medium, high（按字母顺序）
+
+# 因子型：按设定的水平排列
+x_factor &lt;- factor(x, levels = c("low", "medium", "high"))
+sort(x_factor)        # low, medium, high（按设定顺序）
+```
+]
+
+---
+
+## 创建因子
+
+.font-size-14[
+```r
+# 基本用法
+gender &lt;- c("M", "F", "M", "F")
+gender_factor &lt;- factor(gender, levels = c("F", "M"), 
+                       labels = c("Female", "Male"))
+gender_factor
+
+# 查看因子信息
+levels(gender_factor)       # 水平
+nlevels(gender_factor)     # 水平数量
+table(gender_factor)       # 频数统计
+```
+]
+
+---
+
+## 心理学研究中的因子
+
+.font-size-14[
+```r
+# 学历：有顺序的有序型变量
+education &lt;- c("high", "middle", "low", "middle", "high")
+edu_factor &lt;- factor(education, 
+                    levels = c("low", "middle", "high"),
+                    ordered = TRUE)
+edu_factor
+
+# 国家：名义型变量
+country &lt;- c("China", "USA", "China", "Japan")
+country_factor &lt;- factor(country)
+levels(country_factor)     # 按字母顺序排列
+```
+]
+
+---
+
+# 1.5 字符串的匹配与操作
+
+## 字符串匹配函数
+
+.font-size-14[
+```r
+# 完全匹配
+"hello" == "hello"                    # TRUE
+"hello" %in% c("hello", "world")      # TRUE
+
+# 部分匹配 - 使用 grepl()
+grepl("ell", c("hello", "world"))      # TRUE FALSE
+
+# 开头匹配
+startsWith(c("stress1", "stress2", "age"), "stress")  # TRUE TRUE FALSE
+
+# 结尾匹配
+endsWith(c("file1.csv", "file2.csv", "data.csv"), ".csv")  # TRUE TRUE FALSE
+```
+]
+
+---
+
+## grep 家族函数
+
+.font-size-14[
+```r
+# grep() - 返回匹配的索引
+idx &lt;- grep("stress", colnames(df))
+idx
+
+# grep() - 返回匹配的值
+vals &lt;- grep("stress", colnames(df), value = TRUE)
+vals
+
+# 使用正则表达式
+idx &lt;- grep("^stress[0-9]$", colnames(df))  # stress后面跟一个数字
+```
+]
+
+---
+
+## 字符串操作函数
+
+.font-size-14[
+```r
+# 转换大小写
+tolower("HELLO")      # "hello"
+toupper("hello")      # "HELLO"
+
+# 去除空格
+trimws("  hello  ")   # "hello"
+
+# 粘贴字符串
+paste("Hello", "World")                    # "Hello World"
+paste0("Hello", "World")                   # "HelloWorld"
+paste("ID", 1:3, sep = "_")               # "ID_1" "ID_2" "ID_3"
+
+# 分割字符串
+strsplit("a-b-c", split = "-")            # "a" "b" "c"
+```
+]
+
+---
+
+# 1.6 函数基础
+
+## 什么是函数？
+
+.func-def[
+**函数**：封装好的代码块，接受输入（参数），执行操作，返回结果
+]
+
+.font-size-14[
+我们已经用过的函数：
+```r
+mean(x)              # 计算平均值
+sd(x)                # 计算标准差
+sum(x)               # 求和
+class(x)             # 查看数据类型
+str(x)               # 查看结构
+```
+]
+
+---
+
+## 函数的调用方式
+
+.font-size-14[
+**方式1：直接调用**
+```r
+mean(c(1, 2, 3, 4, 5))
+```
+
+**方式2：使用包名::函数名**
+```r
+bruceR::import("data.csv")
+dplyr::filter(df, age &gt; 30)
+```
+
+**方式3：先加载包，再直接调用**
+```r
+library(dplyr)
+filter(df, age &gt; 30)
+```
+]
+
+---
+
+## 如何获取函数帮助？
+
+.font-size-14[
+**方法1：在Console中输入 ?**
+```r
+?mean
+?str
+```
+
+**方法2：使用 help()**
+```r
+help("mean")
+```
+
+**方法3：在线搜索**
+R documentation: https://www.rdocumentation.org
+```
+
+帮助文档通常包含：
+- Description：函数功能描述
+- Usage：函数用法
+- Arguments：参数说明
+- Examples：使用示例
+```
+
+---
+
+## 函数的参数
+
+.font-size-14[
+```r
+# 函数有参数（Arguments）
+mean(x, na.rm = FALSE, trim = 0, ...)
+
+# x: 要计算的数据（必需参数）
+# na.rm: 是否移除缺失值（可选参数，有默认值）
+# trim: 截断均值（可选参数）
+```
+
+**形式参数 vs 实际参数**
+```r
+# 形式参数：函数定义时的参数名
+# 实际参数：调用函数时传入的具体值
+mean(c(1, 2, 3))     # c(1,2,3) 是实际参数，x 是形式参数
+```
+]
+
+---
+
+# 1.7 自定义函数
+
+## 为什么要自定义函数？
+
+.custom-reason[
+当需要重复执行某项操作时，可以将其封装为函数：
+- 避免重复写相同的代码
+- 使代码更清晰、更易维护
+- 方便共享和复用
+]
+
+---
+
+## 自定义函数的基本结构
+
+.font-size-14[
+```r
+# 定义函数
+function_name &lt;- function(参数1, 参数2, ...) {
+  # 函数体：执行的操作
+  result &lt;- ...
+  return(result)  # 返回结果
+}
+
+# 示例：计算两数的加权平均
+weighted_mean &lt;- function(x, y, w) {
+  result &lt;- (x * w1 + y * w2) / (w1 + w2)
+  return(result)
+}
+```
+]
+
+---
+
+## 自定义函数示例
+
+.font-size-14[
+```r
+# 定义函数：计算 BMI
+calc_bmi &lt;- function(weight_kg, height_m) {
+  bmi &lt;- weight_kg / (height_m ^ 2)
+  return(bmi)
+}
+
+# 调用函数
+calc_bmi(60, 1.70)        # weight=60kg, height=1.70m
+calc_bmi(65, 1.75)        # weight=65kg, height=1.75m
+```
+]
+
+---
+
+## 设置默认参数
+
+.font-size-14[
+```r
+# 设置默认参数
+calc_bmi &lt;- function(weight_kg = 60, height_m = 1.70) {
+  bmi &lt;- weight_kg / (height_m ^ 2)
+  return(bmi)
+}
+
+# 调用时不传参，使用默认值
+calc_bmi()                 # 使用默认值
+
+# 调用时传参，使用传入的值
+calc_bmi(weight_kg = 70)  # 只传weight
+calc_bmi(1.80, 75)        # 按顺序传参
+```
+]
+
+---
+
+## 添加错误检查
+
+.font-size-14[
+```r
+calc_bmi_safe &lt;- function(weight_kg, height_m) {
+  # 检查输入是否为数值
+  if (!is.numeric(weight_kg) | !is.numeric(height_m)) {
+    stop("Error: weight and height must be numeric!")
+  }
+  
+  # 检查数值是否合理
+  if (weight_kg &lt;= 0 | height_m &lt;= 0) {
+    stop("Error: weight and height must be positive!")
+  }
+  
+  bmi &lt;- weight_kg / (height_m ^ 2)
+  return(bmi)
+}
+
+calc_bmi_safe("60", 1.70)  # 报错！
+calc_bmi_safe(60, 1.70)    # 正常计算
+```
+]
+
+---
+
+## 函数小结
+
+| 函数类型 | 说明 | 示例 |
+|----------|------|------|
+| 数学函数 | mean, sum, sd, sqrt | `mean(x)` |
+| 统计函数 | t.test, cor, lm | `t.test(x, y)` |
+| 字符串函数 | paste, grep, substr | `paste(a, b)` |
+| 类型转换 | as.numeric, as.character, factor | `as.numeric(x)` |
+| 自定义函数 | 自己编写 | `my_func &lt;- function(x) {...}` |
+
+---
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;🔧 Part 2: 实操演练&lt;/span&gt; &lt;br&gt;
+
+---
+
+# 2.1 Workflow 1: 数据筛选
+
+## 工作流程：确定条件 → 编写筛选 → 查看结果
+
+.font-size-14[
+```r
+# Step 1: 加载数据
+df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+
+# Step 2: 查看有哪些站点
+table(df$Site)
+```
+]
+
+⚠️ **人工检查**：确认站点名称的拼写
+
+.font-size-14[
+```r
+# Step 3: 筛选清华站点
+df_thu &lt;- df[df$Site == "Tsinghua", ]
+
+# Step 4: 筛选清华站点的男性
+df_thu_male &lt;- df[df$Site == "Tsinghua" &amp; df$sex == 1, ]
+```
+]
+
+---
+
+# 2.2 Workflow 2: 选取特定列
+
+## 工作流程：查看列名 → 确定模式 → 选取列
+
+.font-size-14[
+```r
+# Step 1: 查看所有列名
+colnames(df)
+```
+]
+
+.font-size-14[
+```r
+# Step 2: 选取以"stress"开头的列
+stress_cols &lt;- colnames(df)[startsWith(colnames(df), "stress")]
+stress_cols
+
+# Step 3: 同时选取Site列和stress列
+selected &lt;- c("Site", stress_cols)
+df_stress &lt;- df[, selected]
+
+# Step 4: 选取特定站点的这些数据
+df_stress_thu &lt;- df_stress[df_stress$Site == "Tsinghua", ]
+```
+]
+
+⚠️ **人工检查**：列名是否正确？有无拼写不一致？
+
+---
+
+# 2.3 Workflow 3: 数据计算
+
+## 工作流程：理解任务 → 逐行计算 → 汇总统计
+
+.font-size-14[
+**任务**：计算清华站点被试的压力总分和均值
+]
+
+.font-size-14[
+```r
+# Step 1: 选取清华站点 + stress列
+stress_cols &lt;- colnames(df)[startsWith(colnames(df), "stress")]
+df_stress_thu &lt;- df[df$Site == "Tsinghua", c("Site", stress_cols)]
+
+# Step 2: 计算每行的stress总分
+df_stress_thu$stress_sum &lt;- rowSums(df_stress_thu[, stress_cols], na.rm = TRUE)
+
+# Step 3: 计算均值和标准差
+mean(df_stress_thu$stress_sum, na.rm = TRUE)
+sd(df_stress_thu$stress_sum, na.rm = TRUE)
+```
+]
+
+⚠️ **人工检查**：计算逻辑是否正确？NA处理是否合理？
+
+---
+
+# 2.4 Workflow 4: 创建自定义函数
+
+## 工作流程：明确需求 → 定义函数 → 测试函数
+
+.font-size-14[
+**任务**：创建一个计算描述统计的函数
+]
+
+.font-size-14[
+```r
+# Step 1: 定义函数
+desc_stats &lt;- function(x) {
+  n &lt;- length(x)
+  mean_val &lt;- mean(x, na.rm = TRUE)
+  sd_val &lt;- sd(x, na.rm = TRUE)
+  min_val &lt;- min(x, na.rm = TRUE)
+  max_val &lt;- max(x, na.rm = TRUE)
+  
+  result &lt;- data.frame(
+    n = n,
+    mean = mean_val,
+    sd = sd_val,
+    min = min_val,
+    max = max_val
+  )
+  return(result)
+}
+
+# Step 2: 测试函数
+desc_stats(df$age)
+```
+]
+
+.font-size-14[
+```r
+# Step 3: 应用到多列
+desc_stats(df$stress_sum)
+```
+]
+
+---
+
+# 2.5 综合案例
+
+## 完整工作流程：计算清华站点压力得分
+
+.font-size-14[
+```r
+# Step 1: 读取数据
+df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+```
+]
+
+⚠️ **人工检查1**：数据是否正确读取？
+
+.font-size-14[
+```r
+# Step 2: 确定stress相关列
+stress_cols &lt;- colnames(df)[startsWith(colnames(df), "stress")]
+selected &lt;- c("Site", stress_cols)
+df_sub &lt;- df[, selected]
+```
+]
+
+⚠️ **人工检查2**：选取的列是否正确？
+
+.font-size-14[
+```r
+# Step 3: 筛选清华站点
+df_thu &lt;- df_sub[df_sub$Site == "Tsinghua", ]
+```
+]
+
+.font-size-14[
+```r
+# Step 4: 计算压力总分
+df_thu$stress_sum &lt;- rowSums(df_thu[, stress_cols], na.rm = TRUE)
+```
+]
+
+.font-size-14[
+```r
+# Step 5: 计算描述统计
+psych::describe(df_thu$stress_sum)
+```
+]
+
+⚠️ **人工检查3**：结果是否符合预期？均值和标准差是否合理？
+
+---
+
+# 2.6 常见错误与调试
+
+## 常见错误
+
+.font-size-14[
+**错误1：大小写不匹配**
+```r
+df[df$Site == "tsinghua", ]    # ❌ 小写
+df[df$Site == "Tsinghua", ]    # ✅ 大写T
+```
+
+**错误2：多加了逗号**
+```r
+df$age[, 1]                    # ❌ 错误
+df$age[1]                      # ✅ 正确
+```
+
+**错误3：== 和 = 混淆**
+```r
+df$age = 30                    # ❌ 赋值
+df$age == 30                   # ✅ 比较
+```
+]
+
+---
+
+## 调试方法
+
+.font-size-14[
+**方法1：分步运行**
+```r
+# 不要写成一行，先分解
+cols &lt;- grep("stress", colnames(df))
+df_sub &lt;- df[, cols]
+```
+
+**方法2：查看中间结果**
+```r
+cols &lt;- grep("stress", colnames(df))
+print(cols)                    # 查看索引
+print(colnames(df)[cols])      # 查看列名
+```
+
+**方法3：检查数据类型**
+```r
+class(df$Site)                 # 确保是character
+unique(df$Site)                # 查看有哪些值
+```
 ]
 
 ---
 
 class: center, middle
-&lt;span style="font-size: 60px;"&gt;第五讲&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 60px;"&gt;了解R语言中的对象(二)&lt;/span&gt; &lt;br&gt;
-&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2025-03-19&lt;/span&gt; &lt;br&gt;
-
----
-&lt;br&gt;
-&lt;br&gt;
-# &lt;h1 lang="zh-CN"&gt;回顾&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.1 数据导入&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.2 赋值&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.3 数据类型及其操做&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;4.4 数据结构&lt;/h2&gt;
-&lt;br&gt;
-&lt;br&gt;
-# &lt;h1 lang="zh-CN"&gt;本节课内容&lt;/h1&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.1 通过操纵R中的对象来了解数据&lt;/h2&gt;
-# &lt;h2 lang="zh-CN"&gt;&amp;emsp;5.2 了解用来操纵R对象的对：函数&lt;/h2&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;回顾：数据导入&lt;/h1&gt;
-# &lt;font size = 5.5&gt; 问卷数据：Human Penguin Project &lt;/font&gt; 
-- # &lt;font size = 5.5&gt; 绝对路径:对文件或目录位置的完整描述，从根目录开始 &lt;/font&gt;
-
-
-``` r
-paste(getwd(),"/data/penguin/penguin_rawdata.csv",sep = "")
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy/data/penguin/penguin_rawdata.csv"
-```
-- # &lt;font size = 5.5&gt; 相对路径:对文件或目录位置的部分描述，从当前工作目录开始。 &lt;/font&gt;
-"data/penguin/penguin_rawdata.csv"
-- # &lt;font size = 5.5&gt; 工作目录 &lt;/font&gt;
-
-
-``` r
-getwd() # 获取工作目录
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
-```
---
-- # &lt;font size = 5.5&gt;绝对路径=工作目录+相对路径&lt;/font&gt;
-- # &lt;font size = 5.5&gt;推荐使用相对路径&lt;/font&gt;
----
-
-``` r
-# 可以将清华的镜像设置为下载的镜像
-# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
-#下载、导入所需R包
-if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
-}
-pacman::p_load(bruceR,tidyverse)
-```
-
-
-``` r
-# 读取数据
-# 当前工作目录为R4Psy,依次打开'data''penguin'文件夹获取'penguin_rawdata.csv'数据
-penguin_data &lt;- bruceR::import(here::here('data', 'penguin', 'penguin_rawdata.csv'))
-
-# 仅用基础包的做法：
-# penguin_data &lt;- read.csv('./data/penguin/penguin_rawdata.csv')
-```
---
-&lt;br&gt;&lt;img src="./picture/chp5/env.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
----
-# &lt;h1 lang="zh-CN"&gt;回顾：数据结构&lt;/h1&gt;
-数据结构是为了便于存储相同或不同类型的数据而设计的数据容器。&lt;br&gt;
-常用数据结构&lt;br&gt;
-&amp;emsp;存放同类型数据：向量(Vector),矩阵(Matrix),多维数组(Array)&lt;br&gt;
-&amp;emsp;存放不同类型数据：列表(List)、数据框(Data Frame)&lt;br&gt;
-&amp;emsp;因子(Factor)&lt;br&gt;
-![data structure](https://devopedia.org/images/article/46/9213.1526125966.png)
----
-# &lt;h1 lang="zh-CN"&gt;回顾: 数据结构&lt;/h1&gt;
-
-心理学研究中将数据分为：定量数据（数值型）、定性数据（分类型）；定性数据又可分为名义型（无好坏顺序之分，如性别）、有序型（有好坏顺序之分，如疗效）。&lt;br&gt;
-&lt;br&gt;
-R 提供了因子(factor)这一数据类型，专门用来存放名义型和有序型的分类变量。&lt;br&gt;
-&lt;br&gt;
-
-直接用字符向量也可以表示分类变量，但它只有字母顺序，不能规定想要的顺序，也不能表达有序分类变量。&lt;br&gt;
---
-
-
-``` r
-x &lt;- c('good','better','best','bad','worse','worst')
-sort(x) # 排序
-```
-
-```
-## [1] "bad"    "best"   "better" "good"   "worse"  "worst"
-```
-只会按照字母顺序排序
-
---
-
-
-``` r
-x1 &lt;- factor(x, levels = c('best','better','good','bad','worse','worst'))
-sort(x1) # 排序
-```
-
-```
-## [1] best   better good   bad    worse  worst 
-## Levels: best better good bad worse worst
-```
-
-转化为因子之后可按照设置的方式排序
----
-# &lt;h1 lang="zh-CN"&gt;回顾: 数据的索引 &lt;/h1&gt;
-## 索引&lt;br&gt;
---
-&lt;font size = 5&gt;
--   数字索引&lt;/font&gt;  
-
-
-``` r
-# 选取前 2 行以及前 3 列数据
-penguin_data[1:2,1:3]
-```
-
-```
-##       Site  age sex
-## 1 Tsinghua 1922   2
-## 2   Oxford 1940   1
-```
-
-``` r
-# 也可以使用减号
-penguin_data[1:2,-c(4:ncol(penguin_data))]
-```
-
-```
-##       Site  age sex
-## 1 Tsinghua 1922   2
-## 2   Oxford 1940   1
-```
-
-``` r
-# 取最后三列
-penguin_data[1:2, (ncol(penguin_data)-2):ncol(penguin_data)]
-```
-
-```
-##   STRAQ_56 STRAQ_57 socialdiversity
-## 1        4        2               8
-## 2        5        1               6
-```
-
-&lt;font size = 5&gt;
--   名称索引&lt;/font&gt;  
-
-
-``` r
-# 同样选取前 2 行以及前 4 列数据
-penguin_data[1:2, c('age','ALEX1','ALEX2')]
-```
-
-```
-##    age ALEX1 ALEX2
-## 1 1922     2     2
-## 2 1940     1     1
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;回顾: 数据结构&lt;/h1&gt;
-## 小练习
-&lt;font size = 5&gt;
-尝试把以下表格中的内容创建为数据框，并把第一列改为因子
-![dataframe](picture/chp5/dataframe.png)
-
-
-``` r
-# gender &lt;- c(***)
-# gender1 &lt;- ***
-# score &lt;- c(***)
-# letter &lt;- c(***)
-# logic &lt;- c(***)
-# data &lt;- ***(***)
-
-#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
-```
-
-
----
-&lt;br&gt;
-
-&lt;font size = 5&gt; 疑问: 为什么我们要了解这些关于数据操纵的细节？&lt;/font&gt;
-&lt;br&gt;
-
---
-&lt;font size = 5&gt; 回答：因为数据分析就是不断地重复这些基本的操作！&lt;/font&gt;
-
-&lt;br&gt;
---
-
-## 假设的问题： 
-
-- #  &lt;font size = 5.5&gt; 了解Human Penguin Project数据中，**清华站点**数据的**主观压力(Perceived Stress Scale)**情况 &lt;/font&gt;
-
-![task](picture/chp5/task.png)
----
-- # &lt;font size = 5.5&gt; 第一步: 导入 “penguin_rawdata.csv” &lt;/font&gt; 
-
-- # &lt;font size = 5.5&gt; 第二步: 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
-
-![process2](picture/chp5/process2.png)
-
----
-# &lt;h1 lang="zh-CN"&gt;5.1 了解数据&lt;/h1&gt;
-
-- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
-
---
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (2): 选择"Tsinghua”这个站点的行;&lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (3): 计算每个被试"stress"的总分;&lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (4): 计算所有被试的"stress"总分的均值与标准差.&lt;/font&gt;
-      &lt;br&gt;
-      
----
-# &lt;h1 lang="zh-CN"&gt;5.1 了解数据&lt;/h1&gt;
-
-- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 数据框中**列**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (2): 选择"Tsinghua”这个站点的行;&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 数据框中**行**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (3): 计算每个被试"stress"的总分;&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 以**行**为单位的运算，得到新的列 &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (4): 计算所有被试的"stress"总分的均值与标准差.&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 以新的总分**列**为单位的运算 &lt;/font&gt;
-      &lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
-
-- #  &lt;font size = 5&gt; 了解**主观压力(Perceived Stress Scale)**测量及其位置/列名 &lt;/font&gt;
-![pss](picture/chp5/scales.png)
-
---
--   &lt;font size = 5&gt; 用colnames()函数查看数据集的列名的特点 &lt;/font&gt;
-
-
-``` r
-# colnames(penguin_data)
-
-# 删去行首的“#”，运行改行代码
-```
-
----
-# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
-&lt;br&gt;
--   &lt;font size = 5&gt; 用数字索引或名称索引选取“Site”、 “stress1” 到 “stress14”等列的变量，赋值给新变量“stress_data” &lt;/font&gt;
-
-
-``` r
-# stress_data &lt;- penguin_data[***,***]
-# stress_data &lt;- penguin_data[ ,c(‘***’)]
-
-#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
-&lt;br&gt;
--   &lt;font size = 5&gt; 压力的列名有规律: “stress1”, “stress2”, ...。能否使用规律？ &lt;/font&gt;
-
---
-# &lt;font size = 5&gt; 逻辑值索引，将符合特定条件的列选择出来 &lt;/font&gt;
-
---
-# &lt;font size = 5&gt; 这就需要对比较运算和逻辑运算进行简单复习 &lt;/font&gt;
--   &lt;font size = 4.5&gt; 比较运算：&gt;、&lt;、&gt;=、&lt;=、==、!= &lt;/font&gt;
--   &lt;font size = 4.5&gt; 逻辑运算： 且(&amp;)、或(|)、非(!)、%in%(属于) &lt;/font&gt;
-
-## 比较运算:&gt;、&lt;、&gt;=、&lt;=、==、!=
-
-![bijiao](./picture/chp5/bijiao.png)
-
----
-# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
-
-&lt;font size = 5&gt; 当对字符进行比较运算时，是否匹配的问题还可以分为完全匹配、部分匹配&lt;/font&gt;
-
-
-``` r
-#完全匹配
-'c' %in% c('abc','cd','c')
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-#部分匹配
-base::grepl('c',c('abc','cd','c'))
-```
-
-```
-## [1] TRUE TRUE TRUE
-```
-
-``` r
-#部分匹配之开头匹配
-base::startsWith(c('abc','cd','c'),'c')
-```
-
-```
-## [1] FALSE  TRUE  TRUE
-```
-
-``` r
-#部分匹配之结尾匹配
-base::endsWith(c('abc','cd','c'),'c')
-```
-
-```
-## [1]  TRUE FALSE  TRUE
-```
-
----
-# &lt;h1 lang="zh-CN"&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/h1&gt;
-&lt;br&gt;
--   &lt;font size = 5&gt; 压力的列名有规律: “stress1”, “stress2”, ...。能否使用规律？ &lt;/font&gt;
-
---
-# &lt;font size = 5&gt; 使用字符的部分匹配将以"stress"开头的列选择出来 &lt;/font&gt;
-
-
-``` r
-# stress_data &lt;- penguin_data[***,***]
-selected_cols &lt;- c('Site', colnames(penguin_data)[base::startsWith(colnames(penguin_data),'stress')])
-
-stress_data &lt;- penguin_data[ , selected_cols]
-
-# alternative, 注意，grep返回的是列的序号
-stress_data &lt;- penguin_data[ , c(1, grep("^stress", names(penguin_data)))]
-
-#将“***”部分替换为适合的代码，并删去行首的“#”,即可运行
-```
-
-# &lt;font size = 5.5&gt; 数据的选择中有多种方式达到同一目标 &lt;/font&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt; (2): 选择"Tsinghua”这个站点的行&lt;/h1&gt;
-
-# &lt;font size = 5&gt; 使用字符的匹配将"Site"列中取值为"Tsinghua"的列选择出来 &lt;/font&gt;
-
-
-``` r
-stress_data_thu &lt;- stress_data[stress_data$Site == 'Tsinghua', ]
-```
-
----
-# &lt;h1 lang="zh-CN"&gt; (3): 计算每个被试"stress"的总分&lt;/h1&gt;
-
-# &lt;font size = 5&gt; 对数据的操纵 &lt;/font&gt;
-## 数学运算:+ - * / ^(加、减、乘、除、求幂)等
-
-
-``` r
-c(1:5) ^ 2
-```
-
-```
-## [1]  1  4  9 16 25
-```
-
-``` r
-c(1:5) * c(6:10)
-```
-
-```
-## [1]  6 14 24 36 50
-```
-
----
-# &lt;h1 lang="zh-CN"&gt; (3): 计算每个被试"stress"的总分&lt;/h1&gt;
-
-
-
-``` r
-stress_data_thu$stress_sum &lt;- rowSums(stress_data_thu[,grep("^stress", names(stress_data_thu))])
-```
-
-
----
-# &lt;h1 lang="zh-CN"&gt; (4): 计算所有被试的"stress"总分的均值与标准差&lt;/h1&gt;
-
-
-
-``` r
-mean(stress_data_thu$stress_sum, na.rm = TRUE)
-```
-
-```
-## [1] 39.97024
-```
-
-``` r
-sd(stress_data_thu$stress_sum, na.rm = TRUE)
-```
-
-```
-## [1] 6.627312
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;了解R的对象是达成数据分析目的的基础&lt;/h1&gt;
-
-- # &lt;font size = 5.5&gt; 从中选取 “Tsinghua” 站点选择数据计算主观压力得分  &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (1): 选择主观压力(Perceived Stress Scale)条目的列；&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 数据框中**列**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (2): 选择"Tsinghua”这个站点的行;&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 数据框中**行**的索引: 位置、列名、列名字符匹配 &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (3): 计算每个被试"stress"的总分;&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 以**行**为单位的运算，得到新的列 &lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (4): 计算所有被试的"stress"总分的均值与标准差.&lt;/font&gt;
-      - ### &lt;font size = 4.0&gt; 以新的总分**列**为单位的运算 &lt;/font&gt;
-      &lt;br&gt;
-
-![table](picture/chp5/table.png)
-
----
-# &lt;h1 lang="zh-CN"&gt;5.2数据类型的判断与转换&lt;/h1&gt;
-## 数据类型的判断:is族函数
-
-
-``` r
-is.numeric(1.0)#判断是否为数值型
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-is.numeric('a')
-```
-
-```
-## [1] FALSE
-```
-
-``` r
-is.character(c('a','b'))#判断是否为字符型
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-is.complex(1+1i)#判断是否为复数型
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-is.null(NULL)#判断是否为null值
-```
-
-```
-## [1] TRUE
-```
-
-``` r
-is.na(c(1,NA))#判断是否为NA值
-```
-
-```
-## [1] FALSE  TRUE
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.2 数据类型的判断与转换&lt;/h1&gt;
-## 数据类型的转化:as族函数
-&lt;font size = 5&gt; 转化为数值：as.numeric
-
-
-``` r
-as.numeric(c('1','2','3'))
-```
-
-```
-## [1] 1 2 3
-```
-
-``` r
-as.numeric(c('1','2','a'))
-```
-
-```
-## Warning: NAs introduced by coercion
-```
-
-```
-## [1]  1  2 NA
-```
-
-``` r
-as.numeric(c(T,F))
-```
-
-```
-## [1] 1 0
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.2 数据类型的判断与转换&lt;/h1&gt;
-## 数据类型的转化
-&lt;font size = 5&gt; 转化为字符串：as.character
-
-
-``` r
-as.character(c(1,2,3))
-```
-
-```
-## [1] "1" "2" "3"
-```
-
-``` r
-as.character(c(T,F))
-```
-
-```
-## [1] "TRUE"  "FALSE"
-```
-
-``` r
-as.character(as.numeric(c('1','2','3')))
-```
-
-```
-## [1] "1" "2" "3"
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.2 数据类型的判断与转换&lt;/h1&gt;
-## 数据类型的转化
-&lt;font size = 5&gt; 转化为因子(factor)：factor&lt;br&gt;
-R中用因子代表数据中分类变量, 如性别、省份、职业。
-
-
-``` r
-class(penguin_data$sex)
-```
-
-```
-## [1] "integer"
-```
-
-``` r
-unique(penguin_data$sex)
-```
-
-```
-## [1]  2  1 NA  3
-```
-
-``` r
-sex1 &lt;- factor(penguin_data$sex,levels = c(1,2),labels = c('male','female'))
-unique(sex1)
-```
-
-```
-## [1] female male   &lt;NA&gt;  
-## Levels: male female
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
-## 什么是函数
-&lt;font size=5&gt;
-&amp;emsp;&amp;emsp;sqrt()、getwd()、here()、mean()等都是R中的函数。
-&lt;br&gt;
-&amp;emsp;&amp;emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
-&lt;/font&gt;
-&lt;br&gt;
---
-## 函数求助
-&lt;font size=5&gt;
-&amp;emsp;&amp;emsp;如果我们不知道一个函数是什么，有什么用处。在R中，我们可以在Console中使用“?函数名”来打开帮助文档。
---
-&lt;/font&gt;&lt;br&gt;
-![help](./picture/chp5/help.png)
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数示例
-![help](./picture/chp5/help2.png)
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数示例
-![help](./picture/chp5/help3.png)
-&lt;font size = 5&gt;
-参数可以分为形式参数和实际参数。这里给出的是形式参数，实际运行中输入的值为实际参数。（举例：求函数y(x)在x=2时的值，x为形式参数，2为实际参数。）
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数示例
-![help](./picture/chp5/help4.png)
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数调用
-&lt;font size=5&gt;
--首先需要下载函数所在的R包（部分R包在下载R时已经自动下载）&lt;br&gt;
-&amp;emsp;&amp;emsp;install.pcakages("R包名称")&lt;br&gt;
--然后需要加载R包&lt;br&gt;
-&amp;emsp;&amp;emsp;library(R包名称)&lt;br&gt;
--已下载的R包，也可以直接 R包::函数名称 来调用函数&lt;br&gt;
-
--不同的R包中可能会有相同的函数名，为了避免调用错误，推荐使用：R包::函数名称&lt;br&gt;
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数调用
-![error4](./picture/chp5/error4.png)
-&lt;font size = 5&gt;
-未加载时不能直接调用函数
---
-
-
-``` r
-here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
-```
-
-``` r
-library(here)
-```
-
-```
-## here() starts at /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy
-```
-
-``` r
-here()
-```
-
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数调用
-
-
-``` r
-df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
-                       header = T, 
-                       sep=",",
-                       stringsAsFactors = FALSE) 
-```
-
-&amp;emsp;&amp;emsp;df.pg.raw 变量名 &lt;br&gt;
-&amp;emsp;&amp;emsp;utils 函数所在的R包 &lt;br&gt;
-&amp;emsp;&amp;emsp;read.csv 函数名 &lt;br&gt;
-&amp;emsp;&amp;emsp;file 参数：文件路径 &lt;br&gt;
-&amp;emsp;&amp;emsp;header 参数：是否将第一行作为列名 &lt;br&gt;
-&amp;emsp;&amp;emsp;sep 参数：指定分隔符 &lt;br&gt;
-&amp;emsp;&amp;emsp;stringsAsFactors 参数：是否将字符型数据转化为因子 &lt;br&gt;
---
-&lt;br&gt;
-&lt;br&gt;
-&lt;font size = 5&gt;
-参数可分为形式参数（简称形参）和实际参数（简称实参）&lt;br&gt;
-file = './data/penguin/penguin_rawdata.csv':&lt;br&gt;
-&amp;emsp;&amp;emsp;file为形参&lt;br&gt;
-&amp;emsp;&amp;emsp;'./data/penguin/penguin_rawdata.csv'为实参&lt;br&gt;
-
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 函数分类
-&lt;font size=5&gt;
-已有函数&lt;br&gt;
-&amp;emsp;&amp;emsp;R base; &lt;br&gt;
-&amp;emsp;&amp;emsp;R packages; &lt;br&gt;
-&amp;emsp;&amp;emsp;functions from other sources&lt;br&gt;
---
-&lt;font size=5&gt;
-自定义函数&lt;br&gt;
-&amp;emsp;&amp;emsp;自己命名和创建函数
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 自定义函数
-&lt;font size = 5&gt;
-函数定义通常由以下几个部分组成：&lt;br&gt;
-&amp;emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。&lt;br&gt;
-&amp;emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。&lt;br&gt;
-&amp;emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。&lt;br&gt;
-&amp;emsp;-返回值: 指定函数的输出结果，使用关键字return。&lt;br&gt;
---
-
-
-``` r
-#定义一个函数：输入x和y，返回3倍x和5倍y的和
-mysum &lt;- function(x,y){
-  result = 3*x+5*y
-  return(result)
-}
-#mysum:自定义的函数名
-#x,y:形式参数
-#result = 3*x+5*y:函数体
-#return(result):返回值
-
-#调用函数,x=1,y=2
-mysum(1,2)
-```
-
-```
-## [1] 13
-```
-
-``` r
-mysum(y=1,x=2)
-```
-
-```
-## [1] 11
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 自定义函数（小练习）
-&lt;font size = 5&gt;
-小练习：定义一个函数,输入值a,b,c,返回(a+b)/c;并计算abc分别为123时得到的值&lt;br&gt;
-
-
-``` r
-#myabc &lt;- function(***){
-#  result = ***
-#  return(***)
-#}
-
-#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 自定义函数
-&lt;font size = 5&gt;
-&lt;br&gt;我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
---
-![error7](./picture/chp5/error7.png)
---
-&lt;font size = 5&gt;
-&lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
-
-
-``` r
-mysum2 &lt;- function(x = 6,y = 7){
-  result = 3*x+5*y
-  return(result)
-}
-mysum2()
-```
-
-```
-## [1] 53
-```
-
-``` r
-mysum2(5)
-```
-
-```
-## [1] 50
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 自定义函数(小练习)
-&lt;font size = 5&gt;
-小练习：&lt;br&gt;
-&amp;emsp;定义一个函数,输入值a,b,c,返回(a+b)/c;&lt;br&gt;
-**&amp;emsp;设置a、b、c的默认值为3、2、1&lt;br&gt;**
-
-
-
-``` r
-#myabc &lt;- function(a = ***, b = ***, c = ***){
-#  result = ***
-#  return(***)
-#}
-#myabc(***)
-
-#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.7 函数&lt;/h1&gt;
-## 自定义函数
-&lt;font size = 5&gt;
-在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算&lt;br&gt;
---
-![error8](./picture/chp5/error8.png)
---
-&lt;font size = 5&gt;
-自定义函数时可以手动添加报错信息。&lt;br&gt;
-只有在输入的内容符合要求时才可以正常运行，否则报错。&lt;br&gt;
-此处判断是否符合要求本质上是一种逻辑判断。&lt;br&gt;
---
-![if-else](./picture/chp5/if-else.png)
----
-# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
-## 自定义函数
-
-
-``` r
-mysum3 &lt;- function(x = 6,y = 7){
-  if(is.numeric(x) == T &amp; is.numeric(y) == T){
-    result = 3*x+5*y
-    return(result)}
-  else{print("x and y must be number")}
-}
-#print：输出指定的内容
-#is.numeric:判断是否为数值型。是则返回T，否则返回F
-# &amp; : 表示“且”
-mysum3(5,6)
-```
-
-```
-## [1] 45
-```
-
-``` r
-mysum3('a','b')
-```
-
-```
-## [1] "x and y must be number"
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
-## 自定义函数(小练习)
-&lt;font size = 5&gt;
-小练习：&lt;br&gt;
-&amp;emsp;定义一个函数,输入值a,b,c,返回(a+b)/c;&lt;br&gt;
-&amp;emsp;设置a、b、c的默认值为3、2、1;&lt;br&gt;
-**&amp;emsp;当c为0时报错“c should not be 0”**
-
-
-``` r
-#myabc &lt;- function(***){
-#  if(***){
-#    result = ***
-#    return(***)
-#  }
-#  else{print(***)}
-#}
-
-#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;5.3 函数&lt;/h1&gt;
-## 自定义函数(小练习)
-
-``` r
-#示例
-myabc &lt;- function(a = 3, b = 2, c = 1){
-  if(c!=0){
-    result = (a+b)/c
-    return(result)
-  }
-  else{print('c should not be 0')}
-}
-```
-
+&lt;span style="font-size: 60px;"&gt;Any questions?&lt;/span&gt; &lt;br&gt;
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
