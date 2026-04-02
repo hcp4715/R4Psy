@@ -25,158 +25,328 @@ class: center, middle
 
 ---
 
-```{r load packages, message=FALSE, warning=FALSE}
-# 加载必要的R包
-if (!requireNamespace('pacman', quietly = TRUE)) {
-    install.packages('pacman')
-}
-pacman::p_load(bruceR, here)
-```
+# 我们遇到的问题
+
+## 拿到数据文件，不知道从何开始?
+
+假如我们刚刚完成了一个研究，收集了一批数据文件（如 `penguin_rawdata.csv`）。那打开RStudio后，第一步该做什么...
+
+- 数据文件在哪里？如何让R找到它？
+- 数据文件是什么格式？R能读取吗？
+- 读取后数据会变成什么样？
+- 数据文件里都有哪些变量？
+
+![./picture/chp4/howtostart.png]
+
+
+---
+
+# 2. 知识点：路径、数据类型、变量名
+
+## 本节课要学习的知识点
+
+为了解决上面的问题，我们需要学习以下知识点：
+
+### 问题1：如何读取数据？
+- 需要学习：**路径**的概念
+  - 什么是路径？
+  - 图形界面 vs 代码操作的区别
+  - 绝对路径 vs 相对路径
+  - 工作目录的概念
+
+### 问题2：如何理解数据？
+- 需要学习：**数据类型**、**变量名**、**对象**
+  - 数据类型：数值型、字符串、逻辑值
+  - 变量名：给数据贴标签
+  - 对象：R语言中的数据结构
 
 ---
 
 class: center, middle
-<span style="font-size: 50px;">关键问题</span> <br>
+<span style="font-size: 50px;">知识点板块</span> <br>
 
 ---
 
-# 本节课要解决的关键问题
+# 2.1 路径的概念
 
-## 想做分析？先告诉我数据在哪！
+## 什么是路径？
 
-.font-size-14[
-在R语言中做任何数据分析之前，第一步永远是：**把数据读进来**。
+.path-def[**路径**就是：文件在电脑中的"地址"，告诉你怎么从电脑的"门口"走到这个文件的位置。]
 
-但R不像人眼睛一样「看」到文件，它需要我们告诉它：
-- 📍 数据文件在哪里？（路径）
-- 📊 数据长什么样子？（数据类型）
-]
-
----
-
-## 问题1：如何读取数据？
-
-.question[
-我们有一份数据文件（CSV格式），如何在R中把它读进来？
-]
-
-.font-size-14[
-💡 **为什么重要？**
-- 就像你要打开一份Word文档，需要先找到文件
-- R不会自己找数据，必须告诉它文件在哪
-- 这就需要用到「路径」的概念
+.path-example[
+例子：就像你知道"江苏省南京市鼓楼区南京师范大学"是一个地址一样，电脑也需要知道文件的完整地址。
 ]
 
 ---
 
-## 问题2：如何理解数据？
+## 2.1.1 图形界面 vs 代码操作的区别
 
-.question[
-数据读进来后，它是什么类型？每一列是什么意思？有多少条记录？
-]
+### 图形界面操作（我们习惯的方式）
 
 .font-size-14[
-💡 **为什么重要？**
-- 就像拿到一份问卷，需要先看看有多少题
-- R需要知道数据是数字还是文字，才能决定怎么分析
-- 这就需要了解「数据类型」
+当你用Finder（Mac）或资源管理器（Windows）打开文件时：
+
+1. 点击Finder/资源管理器
+2. 逐层进入文件夹（桌面 → 课程资料 → 数据文件夹）
+3. 找到文件并双击打开
+
+**特点**：路径被"隐藏"在图形界面中，你不需要知道完整的路径
+]
+
+### 代码操作（R的方式）
+
+.font-size-14[
+当你用R代码打开文件时：
+
+```r
+penguin_data <- bruceR::import("/Users/zhangsan/Desktop/课程资料/penguin_rawdata.csv")
+```
+
+**特点**：路径是"显式"的，你需要明确告诉R文件的完整地址
 ]
 
 ---
 
-class: center, middle
-<span style="font-size: 50px;">基础知识</span> <br>
+## 2.1.2 为什么R需要路径？
 
----
-
-# 为什么要学这些？
-
-## 让我们来捋一捋这个逻辑...
-
-.font-size-14[
-1️⃣ **想用R做分析** → 必须先把数据读进R里
-2️⃣ **想读数据** → R需要知道文件在哪里 → 需要学「路径」
-3️⃣ **数据读进来了** → 需要知道数据是什么类型 → 需要学「数据类型」
-]
-
-.flow-diagram[
-数据文件 → [路径] → R读取 → [数据类型] → 可以开始分析
+.path-warning[
+⚠️ **重要区别**：
+- **图形界面**：你用眼睛"看"到文件，点击打开
+- **R代码**：R不能"看"，需要你告诉它文件的完整地址
 ]
 
 .font-size-14[
-所以，路径和数据类型就是数据分析的**第一步**。
-]
-
-## 从打开文件说起
-
-.path-def[
-**路径**就是文件在电脑中的"地址"，告诉电脑文件在哪里。
-]
-
-.pull-left[
-.font-size-14[
-在 Mac 上：
-```
-/Users/zhangsan/Desktop/数据.csv
-```
-]
-]
-
-.pull-right[
-.font-size-14[
-在 Windows 上：
-```
-C:\Users\zhangsan\Desktop\数据.csv
-```
-]
+就像你告诉快递员地址一样：
+- 图形界面：你带快递员去那个地方（不需要说地址）
+- R代码：你需要告诉快递员完整的地址（省市区街道门牌号）
 ]
 
 ---
 
-## 绝对路径 vs 相对路径
+## 2.1.3 路径的表示方式 (_Mac 系统_)
+
+### Mac 上的路径看起来是这样的：
 
 .font-size-14[
-**绝对路径**：从电脑"门口"开始的完整地址
-
 ```
-/Users/zhangsan/Documents/R4Psy/data/penguin/penguin_rawdata.csv
+/Users/zhangsan/Desktop/课程资料/数据.csv
 ```
 ]
 
-.font-size-14[
-**相对路径**：从"当前位置"出发的地址
+其中：
+- `/` : 相当于中文的"里面的"，表示进入某个文件夹
+- `~` : 代表你的用户文件夹（如 `/Users/zhangsan/`）
 
+### 让我们在 Finder 中看看：
+
+![picture/chp4/path1.jpg]
+
+.path-highlight[从左到右看：桌面 → 课程资料 → 数据.csv]
+
+---
+
+## 2.1.4 路径的表示方式 (_Mac 系统_)
+
+### 完整路径 vs 简化路径
+
+.font-size-14[
+完整路径（从电脑"门口"出发）：
 ```
-data/penguin/penguin_rawdata.csv
+/Users/zhangsan/Desktop/课程资料/数据.csv
+```
+
+简化路径（从当前位置出发）：
+```
+课程资料/数据.csv
 ```
 ]
 
 .path-tip[
-💡 **相对路径**更推荐使用！换电脑也不用改路径。
+💡 **简化路径**就是我们常说的"相对路径"，只要告诉电脑"从这里往里走"，不用从"门口"说起。
 ]
 
 ---
 
-## 工作目录
+## 2.1.5 路径的表示方式 (_Windows 系统_)
 
-.path-def[
-**工作目录 (Working Directory)**：相对路径的"起点"文件夹
-]
+### Windows 上的路径看起来是这样的：
 
 .font-size-14[
-```r
-getwd()      # 查看当前工作目录
+```
+C:\Users\zhangsan\Desktop\课程资料\数据.csv
 ```
 ]
 
-打开 .Rmd 或 .Rproj 文件时，会自动把该文件所在的文件夹设为工作目录。
+其中：
+- `C:\` : 代表C盘
+- `\` : 反斜杠，表示文件夹层级
+
+### 让我们在文件资源管理器中看看：
+
+![picture/chp4/abspath.jpg]
+
+.path-highlight[从左到右看：此电脑 → C盘 → 用户 → ... → 数据.csv]
+
+---
+
+## 2.1.6 Mac vs Windows 路径对比
+
+| 特征 | Mac | Windows |
+|------|-----|---------|
+| 路径起始 | `/` 或 `~` | `C:\`、`D:\` 等 |
+| 分隔符 | `/` (斜杠) | `\` (反斜杠) |
+| 示例 | `/Users/.../file.csv` | `C:\Users\...\file.csv` |
+
+.path-warning[
+⚠️ **重要**：R语言中统一使用 `/` (斜杠) 作为路径分隔符！
+]
+
+---
+
+## 2.1.7 Windows 用户特别注意！
+
+### ❌ 不要直接复制 Windows 地址栏的路径
+
+.font-size-14[
+Windows 地址栏显示：
+```
+C:\Users\zhangsan\Desktop\课程资料\数据.csv
+```
+
+如果直接复制到 R 中，需要手动把 `\` 改成 `/`：
+```
+C:/Users/zhangsan/Desktop/课程资料/数据.csv
+```
+]
+
+### ✅ 正确做法
+
+1. 复制地址栏的路径
+2. 把所有 `\` 替换成 `/`
+3. 或者使用我们后面要讲的 `here()` 函数（推荐！）
+
+---
+
+# 2.1.8 绝对路径 vs 相对路径
+
+## 两种路径：绝对路径
+
+.font-size-14[
+**绝对路径**：从电脑的"最门口"出发，描述文件的完整位置
+
+Mac 示例：
+```
+/Users/zhangsan/Documents/R4Psy/data/penguin/penguin_rawdata.csv
+```
+
+Windows 示例：
+```
+C:/Users/zhangsan/Documents/R4Psy/data/penguin/penguin_rawdata.csv
+```
+]
+
+.abs-path[
+✅ 绝对路径的优点：无论你现在在哪里，都能找到文件
+❌ 绝对路径的缺点：路径很长，不同电脑不一样，换电脑就要改
+]
+
+---
+
+## 两种路径：相对路径
+
+.font-size-14[
+**相对路径**：从"当前位置"出发，描述文件在哪里
+
+假设你的 R 文件（.Rmd）保存在 `R4Psy/slides` 文件夹里：
+```
+R4Psy/
+└── slides/
+    ├── chapter_4.Rmd  ← 你的 .Rmd 文件在这里
+    └── data/
+        └── penguin/
+            └── penguin_rawdata.csv  ← 要读取的数据
+```
+
+读取数据时，只需要：
+```r
+"data/penguin/penguin_rawdata.csv"
+```
+]
+
+.rel-path[
+✅ 相对路径的优点：短！换电脑不用改！共享代码更方便
+❌ 相对路径的缺点：需要知道"当前位置"在哪里
+]
+
+---
+
+## 工作目录：相对路径的"起点"
+
+.path-def[
+**工作目录 (Working Directory)**：就是相对路径的"起点"文件夹
+]
+
+### R 如何知道工作目录在哪里？
+
+.font-size-14[
+1. **打开 .Rproj 文件时**：自动把该文件所在的文件夹作为工作目录
+
+2. **打开 .Rmd 文件时**：自动把该文件所在的文件夹作为工作目录
+
+3. **手动设置**：
+```r
+getwd()      # 查看当前工作目录
+setwd("路径") # 设置工作目录
+```
+]
+
+.path-tip[
+💡 **强烈建议**：使用 .Rproj 或 .Rmd 文件，这样工作目录会自动设置好！
+]
+
+---
+
+## 在 RStudio 中设置工作目录
+
+### 方法一：Tools → Global Options（自动挡 🌟推荐🌟）
+
+.font-size-14[
+设置默认工作目录后，每次打开 RStudio 都会从这里开始
+]
+
+![picture/chp4/wd1.png]
+
+---
+
+### 方法二：使用 bruceR 包（半自动挡）
+
+.font-size-14[
+点击运行后，会弹出一个窗口让你选择文件夹
+```r
+# 两种写法都可以
+bruceR::set.wd(ask = TRUE)
+bruceR::set_wd(ask = TRUE)    # 下划线版本
+```
+]
+
+### 方法三：使用 setwd()（手动挡）
+
+.font-size-14[
+```r
+# Mac 用户
+setwd("/Users/zhangsan/Documents/R4Psy")
+
+# Windows 用户
+setwd("C:/Users/zhangsan/Documents/R4Psy")
+```
+]
 
 ---
 
 ## 跨系统神器：here() 函数
 
 .path-def[
-`here()` 函数：自动处理不同系统的路径问题
+`here()` 函数：自动帮你处理不同系统、不同项目的路径问题！
 ]
 
 .font-size-14[
@@ -184,52 +354,84 @@ getwd()      # 查看当前工作目录
 # 安装并加载
 pacman::p_load(here)
 
-# 使用 here() 读取数据
-here::here("data", "penguin", "penguin_rawdata.csv")
+# 读取数据 - 自动适配 Mac/Windows
+here::here("slides", "data", "penguin", "penguin_rawdata.csv")
 ```
 ]
 
+.path-example[
+这里 `here("slides", "data", "penguin", "penguin_rawdata.csv")` 会自动生成：
+- Mac: `slides/data/penguin/penguin_rawdata.csv`
+- Windows: `slides\data\penguin\penguin_rawdata.csv`
+]
+
 .path-tip[
-💡 **强烈建议**：在读取数据时使用 `here::here()` 函数！
+💡 **强烈建议**：在读取数据时，都使用 `here::here()` 函数！
 ]
 
 ---
 
-# 2. 数据类型有哪些？
+## 路径小结
+
+| 概念 | 说明 | 示例 |
+|------|------|------|
+| 绝对路径 | 从电脑根目录开始的完整地址 | `/Users/.../data.csv` |
+| 相对路径 | 从当前文件夹出发的地址 | `data/data.csv` |
+| 工作目录 | 相对路径的"起点" | Rmd文件所在的文件夹 |
+| `here()` | 自动生成正确路径的函数 | `here("data","file.csv")` |
+
+.path-tip[
+💡 **黄金法则**：使用 .Rproj/.Rmd + `here()` = 永不走丢！
+]
+
+---
+
+# 2.2 数据类型
 
 ## 数据类型：数据的"身份证"
 
 .data-type[
-R语言中主要有三种数据类型：
+每一种数据都有自己的"类型"，就像人有不同的"身份"一样。R语言认识三种主要的数据类型：
 ]
 
 .pull-left[
 ### 🔢 数值型 (numeric)
-- 整数：1, 2, 3
-- 小数：3.14, 2.5
+- 整数：1, 2, 3, 100
+- 小数：3.14, 2.718, 0.5
 
 ### 🔣 逻辑值 (logical)
-- TRUE（真/1）
-- FALSE（假/0）
+- TRUE（真/对/1）
+- FALSE（假/错/0）
 ]
 
 .pull-right[
 ### 🔤 字符串 (character)
 - 必须用引号包起来
-- "男"、"hello"
+- "男"、"汉族"、"hello"
 ]
 
 ---
 
 ## 数据类型详解：数值型
 
+### 数值型数据：R语言的"计算器"功能
+
 .font-size-14[
 ```r
 # 基本运算
-2 * 2              # 乘法
-3 ^ 3              # 幂运算
-10 %% 3            # 求余数
-round(3.14)        # 四舍五入
+2 * 2           # 乘法
+3 ^ 3           # 幂运算（3的3次方）
+log2(4)         # 对数
+
+# 整数除法
+10 %/% 3        # 结果：3（商）
+
+# 求余数
+10 %% 3         # 结果：1（余数）
+
+# 四舍五入
+round(3.14159)  # 结果：3
+round(3.14159, 2)  # 结果：3.14（保留2位小数）
 ```
 ]
 
@@ -241,38 +443,92 @@ round(3.14)        # 四舍五入
 
 ## 数据类型详解：字符串
 
+### 字符串数据：用引号"包"起来的文字
+
 .font-size-14[
 ```r
-# 用引号包起来
+# 单引号或双引号都可以
 "男"
-'hello'
+'汉族'
+"hello world"
 
-# 注意：数字加引号就变成字符串
-"666"              # 字符串，不是数字！
+# 注意：数字加引号就变成字符串了！
+"666"            # 这是字符串，不是数字！
+class("666")    # 查看类型：character
 ```
 ]
 
 .string-warning[
-⚠️ **字符串不能直接做数学运算**
+⚠️ **字符串不能直接做数学运算！**
+```r
+"1" + "2"       # ❌ 报错：non-numeric argument to binary operator
+```
+]
+
+---
+
+## 数据类型详解：字符串
+
+### 引号必须是英文！
+
+.warning[
+⚠️ **使用中文引号会报错！**
+
+❌ `"你好"` 或 `'你好'` （这是中文引号）
+
+✅ `"你好"` 或 `'你好'` （这是英文引号）
+]
+
+.common-error[
+💡 新手常犯错误：使用中文输入法时输入了中文引号，导致代码报错
 ]
 
 ---
 
 ## 数据类型详解：逻辑值
 
+### 逻辑型数据：真或假
+
 .font-size-14[
 ```r
 # 比较运算的结果
-1 < 2              # TRUE
-3 > 5              # FALSE
-1 == 1             # TRUE
+1 < 2           # TRUE（1小于2，对的）
+3 > 5           # FALSE（3大于5，错的）
+1 == 1          # TRUE（等于要双等号！）
 
 # 查看类型
-class(TRUE)        # "logical"
+class(TRUE)     # "logical"
+class(1 == 1)   # "logical"
+```
+]
 
-# 逻辑值可以当数字用
-TRUE * 3           # 结果：3
-FALSE + 10         # 结果：10
+.logical-tip[
+💡 逻辑值在进行数学运算时会自动变成 1 (TRUE) 和 0 (FALSE)：
+```r
+TRUE * 3        # 结果：3
+FALSE + 10      # 结果：10
+```
+]
+
+---
+
+## 数据类型之间的关系
+
+### 有趣的"等价"关系
+
+.font-size-14[
+```r
+# 逻辑值可以变成数值
+1 == TRUE       # TRUE（因为 1 等于 TRUE）
+0 == FALSE      # TRUE（因为 0 等于 FALSE）
+
+# 数值可以变成字符串
+class(666)                    # numeric
+class(as.character(666))     # character
+
+# 字符串不一定能变成数值
+as.numeric("hello")           # NA（不是数字的字符串）
+as.numeric("666")            # 666（可以转换）
 ```
 ]
 
@@ -280,50 +536,367 @@ FALSE + 10         # 结果：10
 
 ## 如何查看数据类型？
 
+### class() 函数：数据的"身份证"
+
 .font-size-14[
 ```r
-# class() 查看数据类型
-class(10)                  # "numeric"
-class("hello")             # "character"
-class(TRUE)                # "logical"
-class(penguin_data$age)    # 查看某列的类型
+# 查看单个值
+class(3.14)              # "numeric"
+class("hello")           # "character"
+class(TRUE)              # "logical"
 
-# str() 查看数据结构
-str(penguin_data)
+# 查看变量
+x <- 10
+class(x)                 # "numeric"
+
+# 查看数据框
+class(penguin_data)      # "data.frame"
+class(penguin_data$age)  # 查看某列的类型
+```
+]
+
+.str-tip[
+💡 **is.** 和 **as.** 系列函数也可以判断和转换类型！
+]
+
+---
+
+## is. 系列函数：判断类型
+
+.font-size-14[
+```r
+x <- 10
+is.numeric(x)      # TRUE
+is.character(x)    # FALSE
+is.logical(x)      # FALSE
+
+y <- "hello"
+is.character(y)    # TRUE
+is.numeric(y)      # FALSE
 ```
 ]
 
 ---
 
-## is. 和 as. 函数
+## as. 系列函数：转换类型
 
 .font-size-14[
-**is. 函数：判断类型**
 ```r
-is.numeric(10)      # TRUE
-is.character("a")   # TRUE
-```
+# 数值 → 字符串
+x <- 3.14
+as.character(x)    # "3.14"
 
-**as. 函数：转换类型**
-```r
-as.numeric("666")   # 666
-as.character(100)   # "100"
-as.numeric(TRUE)    # 1
+# 字符串 → 数值
+y <- "100"
+as.numeric(y)      # 100
+
+# 逻辑值 → 数值
+as.numeric(TRUE)   # 1
+as.numeric(FALSE)  # 0
+
+# 数值 → 逻辑值
+as.logical(1)      # TRUE
+as.logical(0)      # FALSE
+as.logical(100)    # TRUE（非零即为TRUE）
 ```
+]
+
+---
+
+# 2.3 变量名和对象
+
+## 变量名：给数据贴标签
+
+.var-def[
+**变量名**就是给数据起的名字，比如 `age <- 18`，意思是"创建一个叫 age 的标签，贴在 18 这个数字上"。
+]
+
+### 赋值符号：`<-` 或 `=`
+
+.font-size-14[
+```r
+# 两种写法都可以
+x <- 10
+y = 20
+
+# 查看变量
+x              # 输出：10
+y              # 输出：20
+
+# 可以用变量做运算
+x + y          # 输出：30
+```
+]
+
+---
+
+## 什么是对象？
+
+.obj-def[
+**对象**是R语言中的数据结构，用来存储数据。变量名是对象的名称。
+]
+
+.font-size-14[
+常见的对象类型：
+- **向量**（vector）：一维数据，如 `c(1, 2, 3, 4, 5)`
+- **数据框**（data.frame）：二维表格，如 `penguin_data`
+- **列表**（list）：可以包含不同类型的数据
+- **矩阵**（matrix）：二维数组
+]
+
+.obj-example[
+例子：`penguin_data <- bruceR::import(...)`
+- `penguin_data` 是变量名（名称）
+- 数据框是对象（数据结构）
+]
+
+---
+
+## 变量名规则：必须遵守
+
+### ✅ 合法的变量名
+
+.font-size-14[
+- 字母：`a`, `b`, `age`, `name`
+- 字母+数字：`age1`, `data2`, `score3`
+- 下划线：`age_score`, `my_data`
+- 点号：`my.data`（允许，但不推荐）
+]
+
+### ❌ 非法的变量名
+
+.font-size-14[
+- 数字开头：`2a`, `3data`
+- 包含空格：`my age`
+- 使用特殊符号：`my-data`, `data!`, `a+b`
+- 使用保留字：`if`, `else`, `for`, `TRUE`, `FALSE`
+]
+
+---
+
+## 变量名规则：区分大小写
+
+### 重要！
+
+.font-size-14[
+```r
+# 创建一个变量
+age <- 25
+
+# 查看它
+age       # ✅ 输出：25
+Age       # ❌ 报错：object 'Age' not found
+AGE       # ❌ 报错：object 'AGE' not found
+```
+]
+
+.case-warning[
+⚠️ R语言**区分大小写**！`age`、`Age`、`AGE` 是三个不同的变量！
+]
+
+---
+
+## 变量名规则：常见错误
+
+### 错误1：变量名写错
+
+.font-size-14[
+```r
+# 正确
+penguin_data$age
+
+# 错误：把 age 拼成 aga
+penguin_data$aga
+# ❌ 报错：object 'penguin_data$aga' not found
+```
+]
+
+### 错误2：数字开头
+
+.font-size-14[
+```r
+# ❌ 非法
+2nd_data <- 10
+
+# ✅ 正确
+data2 <- 10
+second_data <- 10
+```
+]
+
+---
+
+## 变量名建议：最佳实践
+
+.good-practice[
+### ✅ 推荐做法
+
+.font-size-14[
+- 使用有意义的英文单词：`age`, `gender`, `score`
+- 使用下划线连接：`age_score`, `pre_test`
+- 保持一致的大小写风格
+]
+]
+
+.bad-practice[
+### ❌ 避免做法
+
+.font-size-14[
+- 使用单个字母（除非是临时变量）：`x`, `y`, `z`
+- 使用中文：`年龄`, `分数`
+- 混用风格：`AgeScore` 和 `age_score` 混用
+]
+]
+]
+
+.warning-chinese[
+⚠️ **中文变量名可能引发乱码问题！**
+虽然R支持中文变量名，但不建议使用，可能在不同系统上出现编码问题。
+]
+
+---
+
+## 特殊情况的变量名
+
+### 如果真的需要"非法"变量名
+
+.font-size-14[
+```r
+# 用反引号 ` ` 包围特殊变量名
+`2nd_data` <- 100
+`my age` <- 25
+
+# 查看
+`2nd_data`    # 输出：100
+`my age`      # 输出：25
+```
+]
+
+.special-case[
+💡 **不推荐这样做**，尽量使用合法的变量名！
+]
+
+---
+
+## 变量命名小结
+
+| 规则 | 说明 | 示例 |
+|------|------|------|
+| 可用字符 | 字母、数字、下划线、点号 | `age`, `age_1`, `my.data` |
+| 开头限制 | 不能是数字或特殊符号 | ✅ `data1` / ❌ `1data` |
+| 大小写 | 区分大小写 | `age` ≠ `Age` |
+| 保留字 | 不能用 `TRUE`, `FALSE`, `if` 等 | `TRUE` = 1, `FALSE` = 0 |
+| 中文 | 可用但不推荐 | 可能乱码 |
+
+---
+
+# 2.4 特殊值：NA 与 NULL
+
+## 缺失值：NA
+
+.na-def[
+**NA (Not Available)**：代表"缺失值"或"未知值"，就像Excel中的空白单元格。
+]
+
+.font-size-14[
+```r
+# 创建包含缺失值的向量
+scores <- c(90, 85, NA, 78, 92)
+scores
+
+# 直接计算会得到 NA
+mean(scores)              # NA
+
+# 需要移除缺失值
+mean(scores, na.rm = TRUE)  # 84.375
+```
+]
+
+.na-tip[
+💡 `na.rm = TRUE` 的意思是 "remove NA"
+]
+
+---
+
+## 缺失值：NA
+
+### 识别和计数
+
+.font-size-14[
+```r
+# 查看哪些是缺失值
+is.na(scores)             # FALSE FALSE TRUE FALSE FALSE
+
+# 统计缺失值个数
+sum(is.na(scores))         # 1
+
+# 查看唯一值（会排除NA）
+unique(scores)             # 90 85 78 92（NA被排除）
+```
+]
+
+---
+
+## 空值：NULL
+
+.null-def[
+**NULL**：代表"空"，即什么都没有，连缺失都不算。
+]
+
+.font-size-14[
+```r
+# NULL 的特点
+x <- NULL
+length(x)                  # 0
+is.null(x)                 # TRUE
+
+# NULL vs NA
+is.null(NA)                # FALSE（NA是缺失，不是空）
+is.na(NULL)                # FALSE
+```
+]
+
+.null-warning[
+⚠️ **重要区别**：
+- `NA`：有值，但是缺失
+- `NULL`：根本没有值
+
+赋值 `NULL` 会直接删除变量或变量中的内容（不可逆！）
 ]
 
 ---
 
 class: center, middle
-<span style="font-size: 50px;">💻 让我们动手操作吧</span> <br>
+<span style="font-size: 50px;">🔧 传统手写代码（简略）</span> <br>
 
 ---
 
-# 3.1 查看当前路径
+# 3. 传统手写代码（简）
 
-## getwd() 函数
+## 本部分目标
 
 .font-size-14[
+展示如何使用传统R代码完成以下操作：
+- 查看当前路径
+- 读取数据
+- 查看数据类型
+]
+
+.font-size-14[
+💡 **注意**：这部分只展示核心代码和简要说明，不深入讲解细节
+]
+
+.font-size-14[
+📺 **详细操作视频**：[第四讲 导入数据](https://www.bilibili.com/video/BV1vKQaYSEyt?vd_source=7b2584179c6dc9c18721c42b39ce63b9)
+]
+
+---
+
+## 传统手写代码操作
+
+.font-size-14[
+### 1. 查看当前路径
+
 ```r
 # 查看当前工作目录
 getwd()
@@ -332,64 +905,41 @@ getwd()
 # Mac: "/Users/zhangsan/Documents/R4Psy"
 # Windows: "C:/Users/zhangsan/Documents/R4Psy"
 ```
-]
 
 ---
 
-# 3.2 设置工作目录
+### 2. 设置工作目录（可选）
 
-## setwd() 函数
-
-.font-size-14[
 ```r
-# 手动设置工作目录（不推荐）
+# 手动设置工作目录
 setwd("/Users/zhangsan/Documents/R4Psy")    # Mac
 setwd("C:/Users/zhangsan/Documents/R4Psy")  # Windows
 ```
-]
 
-.font-size-14[
-推荐做法：使用 .Rproj 或 .Rmd 文件，自动设置工作目录
-]
+💡 建议：使用 .Rproj 或 .Rmd 文件，自动设置工作目录
 
 ---
 
-# 3.3 读取数据
+### 3. 读取数据
 
-## 使用 bruceR::import() 读取CSV文件
-
-.font-size-14[
 ```r
 # 读取CSV数据
 penguin_data <- bruceR::import(
   here::here("slides", "data", "penguin", "penguin_rawdata.csv")
 )
-
-# 读取成功后，数据会出现在Environment窗口中
 ```
-]
 
-.step-tip[
 💡 这里的 `penguin_data` 是变量名，可以改成你喜欢的名字
-]
 
----
-
-## 读取成功后的提示
-
-.font-size-14[
+**读取成功后的提示**：
 - 数据会出现在 **Environment** 窗口中
 - 点击数据可以查看内容
 - 也可以用 `View(penguin_data)` 在控制台查看
-]
 
 ---
 
-# 3.4 查看数据类型
+### 4. 查看数据类型
 
-## 查看数据的基本信息
-
-.font-size-14[
 ```r
 # 查看数据结构（重要！）
 str(penguin_data)
@@ -398,18 +948,16 @@ str(penguin_data)
 head(penguin_data)
 
 # 查看行数和列数
-dim(penguin_data)        # 返回 c(行数, 列数)
+dim(penguin_data)
 
 # 查看列名
 colnames(penguin_data)
 ```
-]
 
 ---
 
-## 查看某一列的数据类型
+### 5. 查看某一列的数据类型
 
-.font-size-14[
 ```r
 # 查看特定列的数据类型
 class(penguin_data$age)         # 年龄列
@@ -417,18 +965,14 @@ class(penguin_data$sex)         # 性别列
 class(penguin_data$Site)        # 站点列
 
 # 查看唯一值
-unique(penguin_data$sex)        # 有哪些值
+unique(penguin_data$sex)
 unique(penguin_data$Site)
 ```
-]
 
 ---
 
-# 3.5 综合操作示例
+### 6. 综合操作示例
 
-## 完整流程：从读取到查看
-
-.font-size-14[
 ```r
 # Step 1: 查看当前路径
 getwd()
@@ -450,7 +994,398 @@ class(df$Site)
 ```
 ]
 
-⚠️ **人工检查**：数据是否正确读取？变量名是否正确？数据类型是否符合预期？
+
+---
+
+class: center, middle
+<span style="font-size: 50px;">🤖 OpenCode操作</span> <br>
+
+---
+
+# 4. OpenCode操作
+
+## 如何用OpenCode？
+
+.font-size-14[
+OpenCode可以帮助我们完成以下任务：
+- 查找文件路径
+- 读取数据
+- 诊断错误
+]
+
+.opencode-tip[
+💡 **核心优势**：用自然语言描述需求，OpenCode帮你生成代码并执行
+]
+
+---
+
+## 本节课使用的模型
+
+.font-size-14[
+**本节课统一采用**：OpenCode Zen 免费提供的 **MiMo V2 Pro Free** 模型
+
+**其他选择**：
+- 你也可以尝试其他大语言模型，如 DeepSeek、ChatGPT、Claude等
+]
+
+.model-note[
+⚠️ **注意**：无论使用哪个模型，提问的技巧和模板都是通用的
+]
+
+---
+
+## 4.1 场景1：查找文件路径
+
+### 操作步骤
+
+.font-size-14[
+1. 用户描述文件名
+2. OpenCode搜索并返回路径
+3. OpenCode生成正确的路径代码
+]
+
+---
+
+## 场景1：查找文件路径 - Prompt示例
+
+### 示例1：用户描述文件名，OpenCode搜索路径
+
+.font-size-14[
+**Prompt**：
+```
+我有一个名为penguin_rawdata.csv的数据文件，请帮我找到它的完整路径。
+```
+
+![picture/chp4/findfullpath1.png]
+
+**OpenCode会**：
+- 搜索项目中的文件
+- 返回文件的完整路径
+- 生成使用here()函数的代码
+]
+
+---
+
+## 场景1：查找文件路径 - Prompt示例（续）
+
+### 示例2：用户询问文件位置，OpenCode帮助查找
+
+.font-size-14[
+**Prompt**：
+```
+我想读取penguin数据集，但不知道文件在哪里，请帮我找到它。
+```
+
+![picture/chp4/findpathdata2.png]
+
+**OpenCode会**：
+- 搜索项目中的相关文件
+- 列出所有匹配的文件
+- 提供文件路径和读取建议
+]
+
+---
+
+## 4.2 场景2：读取数据
+
+### 操作步骤
+
+.font-size-14[
+1. 用户描述数据文件
+2. OpenCode生成读取代码
+3. OpenCode提供多种读取方案
+]
+
+---
+
+## 场景2：读取数据 - Prompt示例
+
+### 示例1：用户描述文件，OpenCode生成import代码
+
+.font-size-14[
+**Prompt**：
+```
+请帮我读取penguin_rawdata.csv文件，文件路径是data/penguin/penguin_rawdata.csv。
+```
+
+![picture/chp4/readdata.png] 
+
+**OpenCode会**：
+- 生成bruceR::import()代码
+- 自动执行代码
+- 显示读取结果
+]
+
+---
+
+## 场景2：读取数据 - Prompt示例（续）
+
+### 示例2：用户描述需求，OpenCode提供多种方案
+
+.font-size-14[
+**Prompt**：
+```
+我想读取一个CSV文件，请告诉我有哪些方法可以读取，并推荐最适合的方法。
+```
+
+**OpenCode会**：
+- 列出多种读取方法（read.csv, bruceR::import, readr::read_csv等）
+- 说明每种方法的优缺点
+- 推荐最适合的方法
+]
+
+---
+
+## 场景2：读取数据 - Prompt示例（续）
+
+### 示例3：用户遇到错误，OpenCode帮助诊断
+
+.font-size-14[
+**Prompt**：
+```
+我在读取数据时遇到了错误：Error: file not found。请帮我诊断问题并提供解决方案。
+```
+
+**OpenCode会**：
+- 分析错误原因
+- 检查文件路径是否正确
+- 提供解决方案
+]
+
+---
+
+class: center, middle
+<span style="font-size: 50px;">💬 如何给AI提示词进行知识点讲解</span> <br>
+
+---
+
+# 5. 如何给AI提示词进行知识点讲解
+
+## 为什么要学会提问？
+
+.font-size-14[
+**AI工具的局限性**：
+- AI需要明确的指令才能提供准确的帮助
+- 好的提问能获得更好的答案
+
+**学习目标**：
+- 学会如何向AI提问来理解代码和概念
+- 掌握提问的技巧和模板
+]
+
+.prompt-tip[
+💡 **提问的艺术**：明确具体、提供上下文、逐步深入
+]
+
+---
+
+## 可以使用的AI工具
+
+.font-size-14[
+**本节课主要使用**：OpenCode（MiMo V2 Pro Free 模型）
+
+**其他选择**：
+- DeepSeek、ChatGPT、Claude 等其他大语言模型
+
+**关键点**：
+- 无论使用哪个AI工具，提问的技巧和模板都是通用的
+- 本节课学习的Prompt示例和模板可以应用到任何AI工具
+]
+
+.ai-tools-note[
+💡 **建议**：尝试不同的AI工具，找到最适合你的那一个
+]
+
+---
+
+## 5.1 场景1：询问函数的作用和参数
+
+### 提问场景
+
+.font-size-14[
+遇到不熟悉的函数，想了解其作用和参数
+]
+
+### Prompt示例
+
+.font-size-14[
+**示例1**：
+```
+请解释一下read.csv()函数的作用和主要参数。
+```
+
+**示例2**：
+```
+bruceR::import()函数和read.csv()函数有什么区别？
+```
+
+**示例3**：
+```
+here::here()函数是如何工作的？它有什么优点？
+```
+]
+
+---
+
+## 5.2 场景2：询问概念的含义和示例
+
+### 提问场景
+
+.font-size-14[
+遇到不熟悉的概念，想了解其含义和示例
+]
+
+### Prompt示例
+
+.font-size-14[
+**具体示例**：
+```
+请解释一下什么是'工作目录'，并举例说明。
+```
+
+```
+什么是'数据类型'？R语言中有哪些常见的数据类型？
+```
+
+```
+什么是'相对路径'？它和'绝对路径'有什么区别？
+```
+]
+
+---
+
+## 场景2：询问概念的含义和示例（续）
+
+### Prompt模板
+
+.font-size-14[
+**模板1**：
+```
+请解释一下[概念名]是什么，并举例说明。
+```
+
+**模板2**：
+```
+[概念A]和[概念B]有什么区别？请举例说明。
+```
+]
+
+.prompt-template[
+💡 **使用模板**：将[概念名]替换为你想了解的概念，如"路径"、"数据类型"等
+]
+
+---
+
+## 5.3 场景3：询问代码片段的逐行解释
+
+### 提问场景
+
+.font-size-14[
+遇到一段代码，想逐行了解其作用
+]
+
+### Prompt示例
+
+.font-size-14[
+**示例1**：
+```
+请逐行解释这段代码的作用：
+penguin_data <- bruceR::import(
+  here::here('slides', 'data', 'penguin', 'penguin_rawdata.csv')
+)
+```
+
+**示例2**：
+```
+这段代码是做什么的？每一行的作用是什么？
+getwd()
+setwd('/Users/zhangsan/Documents/R4Psy')
+```
+]
+
+---
+
+## 5.4 场景4：询问错误信息的含义和解决方法
+
+### 提问场景
+
+.font-size-14[
+遇到错误信息，想了解其含义和解决方法
+]
+
+### Prompt示例
+
+.font-size-14[
+**示例1**：
+```
+我遇到了这个错误：Error: object 'penguin_data' not found。请问这是什么意思？如何解决？
+```
+
+**示例2**：
+```
+运行这段代码时报错了：Error: file not found。请帮我诊断问题并提供解决方案。
+penguin_data <- bruceR::import('data/penguin/penguin_rawdata.csv')
+```
+
+**示例3**：
+```
+这个警告是什么意思？Warning: NAs introduced by coercion。需要处理吗？
+```
+]
+
+---
+
+## 5.5 提问技巧总结
+
+### 好的提问应该包含
+
+.font-size-14[
+1. **明确具体**：描述清楚问题，避免模糊不清
+2. **提供上下文**：说明你在做什么，遇到了什么问题
+3. **提供代码**：复制完整的代码片段
+4. **提供错误信息**：复制完整的错误信息
+5. **逐步深入**：从简单问题开始，逐步深入
+]
+
+---
+
+## 提问技巧总结（续）
+
+### 常见提问模板
+
+.font-size-14[
+**询问概念**：
+```
+请解释一下[概念名]是什么，并举例说明。
+```
+
+**询问函数**：
+```
+请解释一下[函数名]函数的作用和主要参数。
+```
+
+**询问代码**：
+```
+请逐行解释这段代码的作用：[代码片段]
+```
+
+**询问错误**：
+```
+我遇到了这个错误：[错误信息]。请问这是什么意思？如何解决？
+```
+]
+
+---
+
+## AI学习资源推荐
+
+.font-size-14[
+**：AI互动版费曼学习法😋**：[真正的高手用这三个AI技巧，10倍速学习任何领域](https://mp.weixin.qq.com/s/Z28GqqPKPlAcSsjE3O_CBA)
+
+.ai-resource[
+💡 **建议**：阅读这篇文章，掌握AI学习方法，避免"问AI→读答案→就忘"陷阱
+]
+]
 
 ---
 
