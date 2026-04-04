@@ -1,0 +1,8 @@
+A write-up of the results, in the form of a preprint/postprint, or the published paper is
+included here. In our example project, the data and analysis folder contains an R Markdown
+document that includes the text of the paper interleaved with the R code to process the raw
+data and perform all reported analyses. When rendered, it generates the research report (in
+APA manuscript style) using a dedicated package, papaja (https://github.com/crsh/papaja;
+Aust & Barth, 2017). The advantage of this approach is that all values presented in the
+research report can be directly traced back to their origin, creating a fully reproducible
+analysis pipeline, and helping to avoid copy and paste errors.

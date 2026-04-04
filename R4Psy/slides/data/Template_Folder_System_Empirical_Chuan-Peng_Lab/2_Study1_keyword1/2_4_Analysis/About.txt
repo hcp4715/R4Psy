@@ -1,0 +1,10 @@
+This folder includes detailed descriptions of analysis procedures or scripts used for
+transforming the raw data into processed data, for running the analyses, and for creating
+figures and tables. Instructions for reproducing all analyses in the report can be included in
+the README or in a separate instruction document in the this folder. If parts of the analyses
+are computationally expensive, this folder can also contain intermediate (“cached”) results if
+this facilitates fast (partial) reproduction of the original results. In the example project
+(https://osf.io/xf6ug/), we provide the R Markdown file used to create the research report,
+and cached results in the native R Data format. For convenience we also provide an R-script
+version of the R Markdown file, which can be viewed in any text editor and directly executed
+in R without rendering the manuscript.

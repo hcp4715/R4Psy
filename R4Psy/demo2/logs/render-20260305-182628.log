@@ -1,0 +1,29 @@
+R version 4.5.2 (2025-10-31)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.7.3
+
+Matrix products: default
+BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Asia/Shanghai
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+[1] compiler_4.5.2
+
+Rendering report...
+1/7               
+2/7 [setup]       
+3/7               
+4/7 [load-data]   
+5/7               
+6/7 [jasp-summary]
+7/7               
+/opt/homebrew/bin/pandoc +RTS -K512m -RTS hu2020_confirm_demo.knit.md --to latex --from markdown+autolink_bare_uris+tex_math_single_backslash+raw_attribute --output /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy/demo2/papaja/hu2020_confirm_demo.tex --lua-filter /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/bookdown/rmarkdown/lua/custom-environment.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --highlight-style tango --pdf-engine xelatex --include-in-header /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/papaja/rmarkdown/templates/apa6/resources/apa6_header_includes.tex --variable graphics --wrap preserve --csl /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/papaja/rmd/apa6.csl --citeproc --lua-filter /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rmdfiltr/replace_ampersands.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rmdfiltr/wordcount.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/papaja/lua/parse_metadata.lua --variable 'classoption:jou' --variable 'lang:en-EN' --variable 'subparagraph:yes' --variable 'block-headings:no' --include-in-header /var/folders/1_/hd9cg0112c9g8jqzmm8pjrqh0000gn/T//RtmpHbJObJ/includes_ec4677a5524b.tex 

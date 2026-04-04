@@ -1,0 +1,28 @@
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:anovaTable}A really beautiful ANOVA table.}
+
+\begin{tabular}{lllllll}
+\toprule
+Effect & \multicolumn{1}{c}{$\hat{\eta}^2_G$} & \multicolumn{1}{c}{90\% CI} & \multicolumn{1}{c}{$F$} & \multicolumn{1}{c}{$\mathit{df}^{\mathrm{GG}}$} & \multicolumn{1}{c}{$\mathit{df}_{\mathrm{res}}^{\mathrm{GG}}$} & \multicolumn{1}{c}{$p$}\\
+\midrule
+Identity & .002 & {}[.000, .065] & 0.31 & 1 & 41 & .579\\
+Morality & .016 & {}[.000, .127] & 4.86 & 1 & 41 & .033\\
+Identity $\times$ Morality & .055 & {}[.000, .201] & 12.08 & 1 & 41 & .001\\
+\bottomrule
+\addlinespace
+\end{tabular}
+
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Note that the column names contain beautiful mathematical copy: This is because the table has variable labels.}
+\end{tablenotes}
+
+\end{threeparttable}
+\end{center}
+
+\end{table*}
