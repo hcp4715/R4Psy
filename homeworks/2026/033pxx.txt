@@ -1,0 +1,7 @@
+任务2:完成一次fork、更新并pullrequest
+。Fork一个hcp4715/R4Psy的仓库
+在本地克隆该仓库
+。在本地的文件夹的homeworks子文件夹中创建特定命名的txt文件
+。企名规则:学号后三位+姓名首字母(例如，张三123456的txt文件应为456ZS.txt)
+。将该文件推送到远程仓库
+向hcp4715/R4Psy提交pull request
