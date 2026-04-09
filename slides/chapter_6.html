@@ -302,15 +302,26 @@ df$pass &lt;- df$score &gt;= 85
 # 修改数据
 df$age[df$age &lt; 30] &lt;- 29
 
+# 选择多列
+df[, c("name", "score")]
+```
+]
+
+---
+
+# 3.4 数据框的基本操作（续）
+
+.font-size-14[
+```r
 # 筛选行（条件）
 df[df$age &gt; 25, ]
 df[df$name == "张三", ]
 
-# 选择多列
-df[, c("name", "score")]
-
 # 添加行
-new_row &lt;- data.frame(id = 4, name = "赵六", age = 27, score = 80, pass = TRUE)
+new_row &lt;- data.frame(
+  id = 4, name = "赵六", age = 27,
+  score = 80, pass = TRUE
+)
 df &lt;- rbind(df, new_row)
 ```
 ]
@@ -336,7 +347,15 @@ ncol(df)         # 列数（变量数）
 # 查看变量名
 names(df)        # 所有列名
 colnames(df)     # 同上
+```
+]
 
+---
+
+# 4.1 查看数据的基本信息（续）
+
+.font-size-14[
+```r
 # 查看数据类型
 str(df)          # 每个变量的类型
 glimpse(df)      # tidyverse风格
@@ -467,17 +486,28 @@ library(tidyverse)
 
 ---
 
-# 5.3 管道操作符 %&gt;%
+# 5.3 管道操作符 %&gt;%：嵌套写法
 
 管道操作符将前一个函数的输出作为下一个函数的输入，使代码更易读。
 
 .font-size-14[
 ```r
 # 原始写法：逐层嵌套，阅读顺序与执行顺序相反
-result &lt;- ungroup(summarise(group_by(mutate(df, new_col = old_col * 2), 
-                       group_var), 
-                 mean_col = mean(new_col)))
+result &lt;- ungroup(
+  summarise(
+    group_by(mutate(df, new_col = old_col * 2), group_var),
+    mean_col = mean(new_col)
+  )
+)
+```
+]
 
+---
+
+# 5.3 管道操作符 %&gt;%：管道写法
+
+.font-size-14[
+```r
 # 管道写法：按执行顺序书写，从左到右阅读
 result &lt;- df %&gt;%
   mutate(new_col = old_col * 2) %&gt;%
@@ -487,7 +517,6 @@ result &lt;- df %&gt;%
 ```
 
 **快捷键：** Mac: `Cmd + Shift + M`，Windows: `Ctrl + Shift + M`
-]
 ]
 
 ---
@@ -510,6 +539,16 @@ df %&gt;% filter(age &gt; 28)
 # 多条件筛选（AND）
 df %&gt;% filter(age &gt; 28 &amp; score &gt; 80)
 df %&gt;% filter(age &gt; 28, score &gt; 80)  # 逗号等价于 &amp;
+```
+]
+
+---
+
+# 5.4 filter()：更多条件示例
+
+.font-size-14[
+```r
+# 延续上一页的 df
 
 # OR条件
 df %&gt;% filter(age &gt; 30 | score &gt; 85)
@@ -540,16 +579,26 @@ df %&gt;% select(name, age)
 # 排除某些列
 df %&gt;% select(-id)
 
-# 选择列名包含某模式的列
-df %&gt;% select(starts_with("a"))    # 以a开头
-df %&gt;% select(ends_with("e"))      # 以e结尾
-df %&gt;% select(contains("sc"))      # 包含sc
-
 # 选择某范围内的列
 df %&gt;% select(name:score)
 
 # 重命名并选择
 df %&gt;% select(姓名 = name, 年龄 = age)
+```
+]
+
+---
+
+# 5.5 select()：按模式选择列
+
+.font-size-14[
+```r
+# 延续上一页的 df
+
+# 选择列名包含某模式的列
+df %&gt;% select(starts_with("a"))    # 以a开头
+df %&gt;% select(ends_with("e"))      # 以e结尾
+df %&gt;% select(contains("sc"))      # 包含sc
 ```
 ]
 
@@ -575,6 +624,16 @@ df %&gt;% mutate(
   height_m = height / 100,
   bmi = weight / height_m^2
 )
+```
+]
+
+---
+
+# 5.6 mutate()：条件创建与删除
+
+.font-size-14[
+```r
+# 延续上一页的 df
 
 # 基于条件创建列
 df %&gt;% mutate(
@@ -601,6 +660,16 @@ df &lt;- data.frame(
 
 # 不分组汇总
 df %&gt;% summarise(mean_score = mean(score), n = n())
+```
+]
+
+---
+
+# 5.7 summarise() 和 group_by()：分组汇总（续）
+
+.font-size-14[
+```r
+# 延续上一页的 df
 
 # 分组汇总
 df %&gt;%
@@ -769,21 +838,14 @@ nrow(df); nrow(df2)
 
 df2 &lt;- df2 %&gt;%
   dplyr::mutate(
-    ALEX4_rev = 6 - ALEX4,
-    ALEX12_rev = 6 - ALEX12,
-    ALEX14_rev = 6 - ALEX14,
-    ALEX16_rev = 6 - ALEX16
-  )
-
-# 或者使用 case_when
-df2 &lt;- df2 %&gt;%
-  dplyr::mutate(
-    ALEX4 = dplyr::case_when(TRUE ~ 6 - ALEX4),
-    ALEX12 = dplyr::case_when(TRUE ~ 6 - ALEX12),
-    ALEX14 = dplyr::case_when(TRUE ~ 6 - ALEX14),
-    ALEX16 = dplyr::case_when(TRUE ~ 6 - ALEX16)
+    ALEX4 = 6 - ALEX4,
+    ALEX12 = 6 - ALEX12,
+    ALEX14 = 6 - ALEX14,
+    ALEX16 = 6 - ALEX16
   )
 ```
+
+**提示：** 也可以使用 `case_when()`，但本质上仍是 `6 - 原始分`。
 ]
 
 ---
@@ -803,8 +865,16 @@ df2 &lt;- df2 %&gt;%
   dplyr::mutate(
     ALEX_mean = rowMeans(dplyr::select(., starts_with("ALEX")))
   )
+```
+]
 
-# 使用across进行批量操作
+---
+
+# 5.15 计算量表总分和均分（续）
+
+.font-size-14[
+```r
+# 使用 across 进行批量操作
 df2 &lt;- df2 %&gt;%
   dplyr::mutate(
     ALEX_total = rowSums(dplyr::across(starts_with("ALEX")))
@@ -840,21 +910,43 @@ df_summary
 
 ---
 
-# 5.17 完整的问卷数据处理流程
+# 5.17 完整的问卷数据处理流程（1/3）
 
 .font-size-14[
 ```r
-# 完整代码示例
+# 第一步：选择变量并删除缺失值
 df_result &lt;- df %&gt;%
   dplyr::select(Site, Sex, age, DEQ, ALEX1:ALEX16) %&gt;%
-  tidyr::drop_na() %&gt;%
+  tidyr::drop_na()
+```
+]
+
+---
+
+# 5.17 完整的问卷数据处理流程（2/3）
+
+.font-size-14[
+```r
+# 第二步：反向计分并计算总分
+df_result &lt;- df_result %&gt;%
   dplyr::mutate(
     ALEX4 = 6 - ALEX4,
     ALEX12 = 6 - ALEX12,
     ALEX14 = 6 - ALEX14,
     ALEX16 = 6 - ALEX16,
     ALEX_total = rowSums(dplyr::across(starts_with("ALEX")))
-  ) %&gt;%
+  )
+```
+]
+
+---
+
+# 5.17 完整的问卷数据处理流程（3/3）
+
+.font-size-14[
+```r
+# 第三步：按 Site 分组汇总
+df_result &lt;- df_result %&gt;%
   dplyr::group_by(Site) %&gt;%
   dplyr::summarise(
     n = dplyr::n(),
@@ -964,22 +1056,17 @@ for (item in my_vector) {
 
 .font-size-14[
 ```r
-# 创建空数据框存储结果
+# 创建空数据框
 df_all &lt;- data.frame()
 
-# 使用 for loop 逐个读取并合并
+# 逐个读取并合并
 for (i in seq_along(files)) {
-  # 读取第i个文件
   df_temp &lt;- read.table(files[i], header = TRUE)
-  
-  # 过滤掉无效行（如表头重复）
   df_temp &lt;- dplyr::filter(df_temp, Date != "Date")
-  
-  # 合并到总数据框
   df_all &lt;- dplyr::bind_rows(df_all, df_temp)
 }
 
-# 查看合并后的数据
+# 查看结果
 dim(df_all)
 head(df_all)
 ```
@@ -991,8 +1078,7 @@ head(df_all)
 
 .font-size-14[
 ```r
-# lapply 是更简洁的批量处理方式
-# 语法：lapply(列表/向量, 函数)
+# lapply(列表/向量, 函数)
 
 df_all &lt;- lapply(files, function(file) {
   df &lt;- read.table(file, header = TRUE)
@@ -1016,15 +1102,22 @@ head(df_all)
 # 查看原始数据量
 nrow(df_all)
 
-# 排除无效试次
+# 第一步：按 Hand 和 ACC 过滤
 df_clean &lt;- df_all %&gt;%
-  # 排除右利手被试
   dplyr::filter(Hand == "R") %&gt;%
-  # 只保留正确率0或1的试次（排除未按键或按错键）
-  dplyr::filter(ACC == 0 | ACC == 1) %&gt;%
-  # 只保留有效反应时范围[200ms, 1500ms]内的试次
+  dplyr::filter(ACC == 0 | ACC == 1)
+```
+]
+
+---
+
+# 6.7 处理实验数据：排除无效试次（续）
+
+.font-size-14[
+```r
+# 第二步：限制 RT 范围并删除缺失值
+df_clean &lt;- df_clean %&gt;%
   dplyr::filter(RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
-  # 删除缺失值
   tidyr::drop_na()
 
 # 查看处理后的数据量
@@ -1055,7 +1148,7 @@ head(df_means)
 
 # 6.9 拆分变量：extract
 
-有时需要从一个变量中提取信息。
+有时需要从一个变量中拆出两个新的信息字段。
 
 .font-size-14[
 ```r
@@ -1081,8 +1174,6 @@ head(df_means)
 .font-size-14[
 ```r
 # pivot_wider: 长数据 -&gt; 宽数据
-# names_from: 用哪列的值作为新列名
-# values_from: 用哪列的值填充新列
 
 df_wide &lt;- df_means %&gt;%
   dplyr::filter(Match == "match" &amp; Valence == "moral") %&gt;%
@@ -1112,32 +1203,56 @@ df_spe &lt;- df_wide %&gt;%
   ) %&gt;%
   dplyr::select(Sub, moral_SPE)
 
-head(df_spe)
 summary(df_spe$moral_SPE)
 ```
 ]
 
 ---
 
-# 6.12 完整的实验数据处理流程
+# 6.12 完整的实验数据处理流程（1/3）
 
 .font-size-14[
 ```r
-# 完整代码示例
+# 第一步：读取并清洗原始数据
 df_spe &lt;- files %&gt;%
   lapply(function(file) {
     df &lt;- read.table(file, header = TRUE)
-    df &lt;- dplyr::filter(df, Date != "Date")
-    return(df)
+    dplyr::filter(df, Date != "Date")
   }) %&gt;%
   bind_rows() %&gt;%
   dplyr::filter(Hand == "R", ACC == 0 | ACC == 1,
                 RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
+  tidyr::drop_na()
+```
+]
+
+---
+
+# 6.12 完整的实验数据处理流程（2/3）
+
+.font-size-14[
+```r
+# 第二步：分组计算均值，并拆分 Shape
+df_spe &lt;- df_spe %&gt;%
   dplyr::group_by(Sub, Shape, Label, Match) %&gt;%
   dplyr::summarise(mean_RT = mean(RT)) %&gt;%
   dplyr::ungroup() %&gt;%
-  tidyr::extract(Shape, into = c("Valence", "Identity"),
-                 regex = "(moral|immoral)(Self|Other)") %&gt;%
+  tidyr::extract(
+    Shape,
+    into = c("Valence", "Identity"),
+    regex = "(moral|immoral)(Self|Other)"
+  )
+```
+]
+
+---
+
+# 6.12 完整的实验数据处理流程（3/3）
+
+.font-size-14[
+```r
+# 第三步：长转宽并计算 SPE
+df_spe &lt;- df_spe %&gt;%
   dplyr::filter(Match == "match" &amp; Valence == "moral") %&gt;%
   dplyr::select(Sub, Identity, mean_RT) %&gt;%
   tidyr::pivot_wider(names_from = "Identity", values_from = "mean_RT") %&gt;%
@@ -1202,7 +1317,7 @@ class: center, middle
 
 **目标状态（Goal State）**
 - 我最后要得到什么结果？
-- 是清洗数据、派生指标，还是汇总表？
+- 是清洗后的数据，还是汇总表？
 ]
 ]
 
@@ -1232,12 +1347,12 @@ class: center, middle
 ]
 
 .font-size-14[
-💡 与LLM互动时，不要只说“帮我处理一下数据”，而要把**现状、目标、约束**讲清楚。
+💡 提问时，先说清**现状、目标、约束**。
 ]
 
 ---
 
-# 6.16 Prompt 1：先澄清问题，再开始规划
+# 6.16 Prompt 1：先澄清问题，再开始规划（1/2）
 
 .font-size-14[
 **核心原则：先在Planning模式下消灭假设，再开始写代码。**
@@ -1251,6 +1366,15 @@ class: center, middle
 1. 我当前的数据是什么，包含哪些关键变量；
 2. 我的目标结果是什么；
 3. 中间需要哪些步骤；
+```
+]
+
+---
+
+# 6.16 Prompt 1：先澄清问题，再开始规划（2/2）
+
+.font-size-14[
+```
 4. 哪些约束会影响实现（如包、路径、缺失值、输出格式）；
 5. 我还没有说明但必须确认的信息。
 
@@ -1260,11 +1384,13 @@ class: center, middle
 **坏提问：** “帮我把这个数据处理一下。”
 
 **更好的提问：** 先要求模型追问你的目标、数据和限制条件，再进入方案设计。
+
+💡 复制时，请把本 prompt 的多页代码块合并后再使用。
 ]
 
 ---
 
-# 6.17 Prompt 2：先帮我理顺问题解决思路
+# 6.17 Prompt 2：先帮我理顺问题解决思路（1/3）
 
 .font-size-14[
 **当你还没想清楚“该怎么做”时，不要急着要代码，可以先让LLM帮你把思路理顺。**
@@ -1277,12 +1403,30 @@ class: center, middle
 从初始状态到目标状态的过程。
 
 请按下面顺序引导我：
+```
+]
+
+---
+
+# 6.17 Prompt 2：先帮我理顺问题解决思路（2/3）
+
+.font-size-14[
+```
 1. 帮我界定当前的初始状态：
    我现在已有的信息、数据、条件分别是什么？
 2. 帮我界定目标状态：
    我最终想得到的结果是什么？怎样算完成？
 3. 帮我识别中间路径：
    从现在到目标之间，通常需要拆成哪几个步骤？
+```
+]
+
+---
+
+# 6.17 Prompt 2：先帮我理顺问题解决思路（3/3）
+
+.font-size-14[
+```
 4. 帮我找出缺失信息：
    哪些关键前提还不清楚，不能直接假设？
 5. 请用简洁结构总结：
@@ -1295,11 +1439,13 @@ class: center, middle
 
 **适用场景：** 知道自己“卡住了”，
 但还说不清是卡在数据、方法、步骤还是约束时。
+
+💡 复制时，请把本 prompt 的多页代码块合并后再使用。
 ]
 
 ---
 
-# 6.18 Prompt 3：把小而具体的目标讲清楚
+# 6.18 Prompt 3：把小而具体的目标讲清楚（1/3）
 
 .font-size-14[
 **当任务已经明确时，把一个小目标单独说清楚，LLM更容易理解你的意图。**
@@ -1309,12 +1455,28 @@ class: center, middle
 背景：我正在学习第6章的数据预处理。
 
 数据：我已经加载了 penguin 数据集，数据框叫 df，包含 Site、age、weight_kg、height_cm、sex。
+```
+]
 
+---
+
+# 6.18 Prompt 3：把小而具体的目标讲清楚（2/3）
+
+.font-size-14[
+```
 需求：
 1. 筛选出 Site 为 "Tsinghua" 且 age &gt; 25 的被试；
 2. 计算这些被试的 BMI；
 3. 按 sex 输出 BMI 的均值和标准差。
+```
+]
 
+---
+
+# 6.18 Prompt 3：把小而具体的目标讲清楚（3/3）
+
+.font-size-14[
+```
 约束：
 - 请使用 dplyr；
 - 正确处理缺失值；
@@ -1323,11 +1485,13 @@ class: center, middle
 ```
 
 **要点：** 说清楚输入是什么、输出是什么、用什么方法、有哪些限制，而不是一次把很多目标混在一起。
+
+💡 复制时，请把本 prompt 的多页代码块合并后再使用。
 ]
 
 ---
 
-# 6.19 用OpenCode把方案设计变成coding
+# 6.19 用OpenCode把方案设计变成coding（1/3）
 
 .font-size-14[
 **最小工作流：先 plan，再 /start-work。**
@@ -1338,6 +1502,13 @@ class: center, middle
    - 让 OpenCode 先问问题、澄清需求、生成方案；
 2. **查看生成的计划**
    - 通常会保存在 `.sisyphus/plans/`；
+]
+
+---
+
+# 6.19 用OpenCode把方案设计变成coding（2/3）
+
+.font-size-14[
 3. **确认方案足够清楚之后，再执行**
    - 使用 `/start-work` 把已经确认的计划交给系统实施。
 
@@ -1347,7 +1518,13 @@ class: center, middle
 先问我问题，直到关键前提都被澄清。
 然后给出一个清晰的实现计划，说明每一步要做什么、预期输出是什么。
 ```
+]
 
+---
+
+# 6.19 用OpenCode把方案设计变成coding（3/3）
+
+.font-size-14[
 **什么时候不要直接 `/start-work`？**
 - 当你的目标还很模糊；
 - 当任务包含多个步骤或多个文件；
@@ -1357,7 +1534,7 @@ class: center, middle
 
 ---
 
-# 6.20 从模糊需求到清晰执行
+# 6.20 从模糊需求到清晰执行（1/3）
 
 .font-size-14[
 **完整示例：从模糊需求到清晰执行**
@@ -1366,7 +1543,13 @@ class: center, middle
 ```
 帮我处理一下 penguin 数据。
 ```
+]
 
+---
+
+# 6.20 从模糊需求到清晰执行（2/3）
+
+.font-size-14[
 **更清晰的说法：**
 ```
 我正在学习第6章的数据预处理。请先不要写代码。
@@ -1377,7 +1560,15 @@ class: center, middle
 1. 筛选 Site == "Tsinghua" 且 age &gt; 25 的被试；
 2. 计算 BMI；
 3. 按 sex 汇总 BMI 的均值和标准差。
+```
+]
 
+---
+
+# 6.20 从模糊需求到清晰执行（3/3）
+
+.font-size-14[
+```
 请先给出实现思路和步骤说明；确认后，我再让你开始写代码。
 ```
 
@@ -1396,14 +1587,19 @@ class: center, middle
 任务：处理penguin数据，按Site分组计算age和ALEX的均值
 
 .font-size-14[
-```r
-# 提示：
-# 1. 导入数据
-# 2. 选择需要的变量
-# 3. 反向计分（第4, 12, 14, 16题）
-# 4. 计算ALEX总分
-# 5. 按Site分组计算均值
+1. 导入数据
+2. 选择需要的变量
+3. 反向计分（第4, 12, 14, 16题）
+4. 计算ALEX总分
+5. 按Site分组计算均值
+]
 
+---
+
+# 练习1：问卷数据处理（代码骨架）
+
+.font-size-14[
+```r
 # df_result &lt;- df %&gt;%
 #   dplyr::select(Site, age, ALEX1:ALEX16) %&gt;%
 #   tidyr::drop_na() %&gt;%
@@ -1428,22 +1624,28 @@ class: center, middle
 任务：计算match-moral条件下的自我优势效应SPE
 
 .font-size-14[
-```r
-# 提示：
-# 1. 批量读取所有被试数据
-# 2. 筛选有效试次（ACC, RT范围）
-# 3. 按被试和条件计算均值
-# 4. 拆分Shape变量
-# 5. 筛选match-moral条件
-# 6. 长转宽，计算SPE
+1. 批量读取所有被试数据
+2. 筛选有效试次（ACC, RT范围）
+3. 按被试和条件计算均值
+4. 拆分Shape变量
+5. 筛选match-moral条件
+6. 长转宽，计算SPE
+]
 
+---
+
+# 练习2：实验数据处理（代码骨架）
+
+.font-size-14[
+```r
 # df_spe &lt;- files %&gt;%
 #   lapply(function(f) {
 #     read.table(f, header = TRUE) %&gt;% filter(Date != "Date")
 #   }) %&gt;%
 #   bind_rows() %&gt;%
 #   filter(***, ACC == 0 | ACC == 1, RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
-#   group_by(Sub, Shape, Match) %&gt;%
+#   drop_na() %&gt;%
+#   group_by(Sub, Shape, Label, Match) %&gt;%
 #   summarise(mean_RT = ***) %&gt;%
 #   ungroup() %&gt;%
 #   extract(Shape, into = c("Valence", "Identity"),
