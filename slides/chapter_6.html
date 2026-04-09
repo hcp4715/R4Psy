@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
     <meta name="date" content="2026-04-09" />
-    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
@@ -494,11 +494,10 @@ library(tidyverse)
 .font-size-14[
 ```r
 # 原始写法：逐层嵌套，阅读顺序与执行顺序相反
-result &lt;- ungroup(
-  summarise(
-    group_by(mutate(df, new_col = old_col * 2), group_var),
-    mean_col = mean(new_col)
-  )
+result &lt;- summarise(
+  group_by(mutate(df, new_col = old_col * 2), group_var),
+  mean_col = mean(new_col),
+  .groups = "drop"
 )
 ```
 ]
@@ -513,8 +512,8 @@ result &lt;- ungroup(
 result &lt;- df %&gt;%
   mutate(new_col = old_col * 2) %&gt;%
   group_by(group_var) %&gt;%
-  summarise(mean_col = mean(new_col)) %&gt;%
-  ungroup()
+  summarise(mean_col = mean(new_col),
+           .groups = "drop")
 ```
 
 **快捷键：** Mac: `Cmd + Shift + M`，Windows: `Ctrl + Shift + M`
@@ -678,12 +677,15 @@ df %&gt;%
   summarise(
     mean_score = mean(score),
     sd_score = sd(score),
-    n = n()
-  ) %&gt;%
-  ungroup()
+    n = n(),
+    .groups = "drop"
+  )
 ```
 
-**注意：group_by() 后一定要用 ungroup() 取消分组！**
+**提示：** 在 dplyr 1.0+ 版本中，`summarise()` 支持 `.groups` 参数：
+- `.groups = "drop"`：自动取消分组（推荐）
+- `.groups = "keep"`：保留分组
+- `.groups = "drop_last"`：取消最后一个分组
 ]
 ]
 
@@ -750,7 +752,9 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
 pacman::p_load(bruceR, tidyverse)
 
 # 导入数据
-df &lt;- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+df &lt;- bruceR::import(
+  here::here("slides", "data", "penguin", "penguin_rawdata.csv")
+)
 
 # 初步探索
 dim(df)           # 数据维度
@@ -768,7 +772,8 @@ str(df)           # 数据结构
 ```r
 # 选择指定列
 df2 &lt;- df %&gt;%
-  dplyr::select(Site, Sex, age, DEQ, ALEX1:ALEX16)
+  dplyr::select(Site, Sex, age, DEQ,
+                ALEX1:ALEX16)
 
 # 选择包含特定模式的列
 df2 &lt;- df %&gt;%
@@ -858,13 +863,17 @@ df2 &lt;- df2 %&gt;%
 # 计算总分（所有题目求和）
 df2 &lt;- df2 %&gt;%
   dplyr::mutate(
-    ALEX_total = rowSums(dplyr::select(., starts_with("ALEX")))
+    ALEX_total = rowSums(
+      dplyr::select(., starts_with("ALEX"))
+    )
   )
 
 # 计算均分
 df2 &lt;- df2 %&gt;%
   dplyr::mutate(
-    ALEX_mean = rowMeans(dplyr::select(., starts_with("ALEX")))
+    ALEX_mean = rowMeans(
+      dplyr::select(., starts_with("ALEX"))
+    )
   )
 ```
 ]
@@ -900,9 +909,9 @@ df_summary &lt;- df2 %&gt;%
     mean_age = mean(age, na.rm = TRUE),
     sd_age = sd(age, na.rm = TRUE),
     mean_ALEX = mean(ALEX_total, na.rm = TRUE),
-    sd_ALEX = sd(ALEX_total, na.rm = TRUE)
-  ) %&gt;%
-  dplyr::ungroup()
+    sd_ALEX = sd(ALEX_total, na.rm = TRUE),
+    .groups = "drop"
+  )
 
 # 查看结果
 df_summary
@@ -917,7 +926,8 @@ df_summary
 ```r
 # 第一步：选择变量并删除缺失值
 df_result &lt;- df %&gt;%
-  dplyr::select(Site, Sex, age, DEQ, ALEX1:ALEX16) %&gt;%
+  dplyr::select(Site, Sex, age, DEQ,
+                ALEX1:ALEX16) %&gt;%
   tidyr::drop_na()
 ```
 ]
@@ -935,7 +945,9 @@ df_result &lt;- df_result %&gt;%
     ALEX12 = 6 - ALEX12,
     ALEX14 = 6 - ALEX14,
     ALEX16 = 6 - ALEX16,
-    ALEX_total = rowSums(dplyr::across(starts_with("ALEX")))
+    ALEX_total = rowSums(
+      dplyr::across(starts_with("ALEX"))
+    )
   )
 ```
 ]
@@ -952,9 +964,9 @@ df_result &lt;- df_result %&gt;%
   dplyr::summarise(
     n = dplyr::n(),
     mean_age = mean(age),
-    mean_ALEX = mean(ALEX_total)
-  ) %&gt;%
-  dplyr::ungroup()
+    mean_ALEX = mean(ALEX_total),
+    .groups = "drop"
+  )
 
 df_result
 ```
@@ -1137,9 +1149,9 @@ df_means &lt;- df_clean %&gt;%
   dplyr::group_by(Sub, Shape, Label, Match) %&gt;%
   dplyr::summarise(
     mean_RT = mean(RT),
-    mean_ACC = mean(ACC)
-  ) %&gt;%
-  dplyr::ungroup()
+    mean_ACC = mean(ACC),
+    .groups = "drop"
+  )
 
 head(df_means)
 ```
@@ -1221,8 +1233,11 @@ df_spe &lt;- files %&gt;%
     dplyr::filter(df, Date != "Date")
   }) %&gt;%
   bind_rows() %&gt;%
-  dplyr::filter(Hand == "R", ACC == 0 | ACC == 1,
-                RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
+  dplyr::filter(
+    Hand == "R",
+    ACC == 0 | ACC == 1,
+    RT &gt;= 0.2 &amp; RT &lt;= 1.5
+  ) %&gt;%
   tidyr::drop_na()
 ```
 ]
@@ -1236,8 +1251,10 @@ df_spe &lt;- files %&gt;%
 # 第二步：分组计算均值，并拆分 Shape
 df_spe &lt;- df_spe %&gt;%
   dplyr::group_by(Sub, Shape, Label, Match) %&gt;%
-  dplyr::summarise(mean_RT = mean(RT)) %&gt;%
-  dplyr::ungroup() %&gt;%
+  dplyr::summarise(
+    mean_RT = mean(RT),
+    .groups = "drop"
+  ) %&gt;%
   tidyr::extract(
     Shape,
     into = c("Valence", "Identity"),
@@ -1254,9 +1271,13 @@ df_spe &lt;- df_spe %&gt;%
 ```r
 # 第三步：长转宽并计算 SPE
 df_spe &lt;- df_spe %&gt;%
-  dplyr::filter(Match == "match" &amp; Valence == "moral") %&gt;%
+  dplyr::filter(Match == "match",
+                Valence == "moral") %&gt;%
   dplyr::select(Sub, Identity, mean_RT) %&gt;%
-  tidyr::pivot_wider(names_from = "Identity", values_from = "mean_RT") %&gt;%
+  tidyr::pivot_wider(
+    names_from = "Identity",
+    values_from = "mean_RT"
+  ) %&gt;%
   dplyr::mutate(moral_SPE = Self - Other)
 
 head(df_spe)
@@ -1289,10 +1310,12 @@ head(df_spe)
 | `filter()` | 筛选行 | `filter(df, condition)` |
 | `mutate()` | 创建/修改列 | `mutate(df, new = old + 1)` |
 | `group_by()` | 分组 | `group_by(df, group_var)` |
-| `summarise()` | 汇总 | `summarise(df, mean(x))` |
+| `summarise()` | 汇总 | `summarise(df, mean(x), .groups = "drop")` |
 | `arrange()` | 排序 | `arrange(df, desc(x))` |
 | `bind_rows()` | 合并行 | `bind_rows(df1, df2)` |
-| `ungroup()` | 取消分组 | `ungroup(df)` |
+]
+
+**提示：** dplyr 1.0+ 中，`summarise(.groups = "drop")` 可自动取消分组，无需额外 `ungroup()`。
 ]
 
 ---
@@ -1609,12 +1632,16 @@ class: center, middle
 #     *** = 6 - ALEX12,
 #     ALEX14 = ***,
 #     ALEX16 = ***,
-#     ALEX_total = rowSums(dplyr::across(starts_with("ALEX")))
+#     ALEX_total = rowSums(
+#       dplyr::across(starts_with("ALEX"))
+#     )
 #   ) %&gt;%
 #   dplyr::group_by(***) %&gt;%
-#   dplyr::summarise(mean_age = mean(age),
-#                    mean_ALEX = mean(***)) %&gt;%
-#   dplyr::ungroup()
+#   dplyr::summarise(
+#     mean_age = mean(age),
+#     mean_ALEX = mean(***),
+#     .groups = "drop"
+#   )
 ```
 ]
 
@@ -1641,19 +1668,24 @@ class: center, middle
 ```r
 # df_spe &lt;- files %&gt;%
 #   lapply(function(f) {
-#     read.table(f, header = TRUE) %&gt;% filter(Date != "Date")
+#     read.table(f, header = TRUE) %&gt;%
+#       filter(Date != "Date")
 #   }) %&gt;%
 #   bind_rows() %&gt;%
-#   filter(***, ACC == 0 | ACC == 1, RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
+#   filter(***, 
+#          ACC == 0 | ACC == 1,
+#          RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
 #   drop_na() %&gt;%
 #   group_by(Sub, Shape, Label, Match) %&gt;%
-#   summarise(mean_RT = ***) %&gt;%
-#   ungroup() %&gt;%
-#   extract(Shape, into = c("Valence", "Identity"),
+#   summarise(mean_RT = ***, .groups = "drop") %&gt;%
+#   extract(Shape,
+#           into = c("Valence", "Identity"),
 #           regex = "(moral|immoral)(Self|Other)") %&gt;%
-#   filter(Match == "match" &amp; Valence == "moral") %&gt;%
+#   filter(Match == "match",
+#          Valence == "moral") %&gt;%
 #   select(Sub, Identity, ***) %&gt;%
-#   pivot_wider(names_from = "Identity", values_from = "***") %&gt;%
+#   pivot_wider(names_from = "Identity",
+#                values_from = "***") %&gt;%
 #   mutate(moral_SPE = *** - ***)
 ```
 ]
