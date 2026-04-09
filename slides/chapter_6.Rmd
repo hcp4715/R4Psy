@@ -149,7 +149,8 @@ class: center, middle
 ```r
 # 推荐：使用bruceR包一键导入
 library(bruceR)
-df <- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
+df <- bruceR::import(here::here("slides", "data", 
+                 "penguin", "penguin_rawdata.csv"))
 ```
 ]
 
