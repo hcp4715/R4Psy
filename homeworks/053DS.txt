@@ -1,1 +1,1 @@
-git@github.com:shuangshuang6a-cmd/R4Psy.git
+https://github.com/shuangshuang6a-cmd/shuangshuang.git
