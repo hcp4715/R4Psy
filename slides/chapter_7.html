@@ -4,7 +4,7 @@
     <title>Lecture 7</title>
     <meta charset="utf-8" />
     <meta name="author" content="Hu Chuan-Peng (PhD)" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
@@ -35,69 +35,82 @@ class: center, middle, inverse, title-slide
 ### Nanjing Normal University
 ]
 .date[
-### 2025/04/02
+### 2025/04/16
 ]
 
 ---
 
 class: center, middle
 &lt;span style="font-size: 60px;"&gt;第七讲&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 50px;"&gt;Tidyverse数据预处理与函数&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 50px;"&gt;Tidyverse数据预处理&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2025/04/02&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2025/04/16&lt;/span&gt; &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
 ---
 &lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;回顾：问卷数据的处理和实验数据的导入&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;span style="font-size: 35px;"&gt;回顾：问卷数据的处理&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
 &lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;问卷数据的处理&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step1：选择变量[select]&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step2：检查数据类型[glimpse, as族函数]&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step3：处理缺失值[filter, is.na]&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step4：反向计分[mutate, case_when]&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step5：计算所需变量[mutate]&lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp; Step6：分组求统计量 [group_by, summarise]
-&lt;br&gt;
----
-&lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;回顾：问卷数据的处理和实验数据的导入&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;实验数据的导入&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (1) 找到所有要读取的文件名；&lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (2) 以文件名形成的向量为基础，使用for loop逐个文件进行操作;&lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (3) 将每次循环中读取的数据与之前已经读取的数据进行合并;&lt;/font&gt;
-&lt;br&gt;
-- ## &lt;font size = 5.0&gt; (4) 循环每个文件，直到全部读取完成，删除中间变量.&lt;/font&gt;
-&lt;br&gt;
----
-- 那么要如何利用for loop批量导入数据呢？&lt;br&gt;
-      - (1) 找到所有要读取的文件名 --&gt; &lt;br&gt;
-      - (2) 以文件名形成的向量为基础，使用for loop逐个文件进行操作 --&gt; &lt;br&gt;
-      - (3) 将每次循环中读取的数据与之前已经读取的数据进行合并 --&gt; &lt;br&gt;
-      - (4) 循环每个文件，直到全部读取完成，删除中间变量。
+.font-size-14[
+- Step1：选择变量[select]
+- Step2：检查数据类型[glimpse, as族函数]
+- Step3：处理缺失值[filter, is.na]
+- Step4：反向计分[mutate, case_when]
+- Step5：计算所需变量[mutate]
+- Step6：分组求统计量 [group_by, summarise]
+]
 
+---
+
+&lt;br&gt;
+&lt;span style="font-size: 35px;"&gt;上节课我们讲到了：实验数据导入——for loop&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
+.font-size-14[
+- (1) 找到所有要读取的文件名
+- (2) 使用for loop逐个文件进行操作
+- (3) 合并每次循环中读取的数据
+- (4) 循环直到全部读取完成
+]
+
+---
+
+# &lt;h1 lang="en" style="font-size: 50px;"&gt;本节课我们继续：&lt;/h1&gt;
+&lt;br&gt;
+.font-size-14[
+- 7.1 基于Tidyverse的数据预处理
+  - 7.1.1 研究问题 &amp; 数据情况回顾
+  - 7.1.2 操作步骤 (tidyr)
+  - 7.1.3 小结
+- 7.2 基于LLM和OpenCode的实操演练
+  - 7.2.1 如何利用LLM和OpenCode解决问题
+  - 7.2.2 用OpenCode把方案设计变成coding
+  - 7.2.3 实操演练
+]
+
+---
+
+# 加载所需R包
 
 ``` r
 # 可以将清华的镜像设置为下载的镜像
-# options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
+# options(repos =c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 # 导入所需R包
 library(tidyverse)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 4.4.3
 ```
 
 ```
 ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ ggplot2   4.0.1     ✔ tibble    3.2.1
 ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ## ✔ purrr     1.0.2     
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -106,52 +119,58 @@ library(tidyverse)
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
 ```
 
+---
+
+# 找到要读取的文件
 
 ``` r
 # 找到所有要读取的文件名
 # 使用 full.names 参数获取完整路径的文件列表
-files &lt;- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
+files &lt;- list.files(here::here("slides", "data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
 ```
 *P.S.尽管函数叫list.files，但它得到的变量的属性是value，而不是list*
 
 ---
-- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
-- 定义函数用于数据类转换
+
+# 实验数据的导入 - 定义数据类型转换函数
+
 
 ``` r
-# 定义函数用于数据类型转换，可以暂时不管
+# 定义函数用于数据类型转换
 convert_data_types = function(df) {
   df &lt;- df %&gt;%
-    dplyr::mutate(Date = as.character(Date),
-                  Prac = as.character(Prac),
-                  Sub = as.numeric(Sub),
-                  Age = as.numeric(Age),
-                  Sex = as.character(Sex),
-                  Hand = as.character(Hand),
-                  Block = as.numeric(Block),
-                  Bin = as.numeric(Bin),
-                  Trial = as.numeric(Trial),
-                  Shape = as.character(Shape),
-                  Label = as.character(Label),
-                  Match = as.character(Match),
-                  CorrResp = as.character(CorrResp),
-                  Resp = as.character(Resp),
-                  ACC = as.numeric(ACC),
-                  RT = as.numeric(RT))
+    dplyr::mutate(
+      Date = as.character(Date),
+      Prac = as.character(Prac),
+      Sub = as.numeric(Sub),
+      Age = as.numeric(Age),
+      Sex = as.character(Sex),
+      Hand = as.character(Hand),
+      Block = as.numeric(Block),
+      Bin = as.numeric(Bin),
+      Trial = as.numeric(Trial),
+      Shape = as.character(Shape),
+      Label = as.character(Label),
+      Match = as.character(Match),
+      CorrResp = as.character(CorrResp),
+      Resp = as.character(Resp),
+      ACC = as.numeric(ACC),
+      RT = as.numeric(RT)
+    )
   return(df)
 }
 ```
 
 ---
-- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
-- 建立并将数据存入数据框
+
+# 实验数据的导入 - 使用 for loop 批量导入
 
 ``` r
 # 创建一个空的数据框来存储读取的数据
 df3 &lt;- data.frame()
 
 # 循环读取每个文件，处理数据并添加到数据框中
-for (i in seq_along(files)) { # 重复"读取到的.out个数"的次数
+for (i in seq_along(files)) {
   # 读取数据文件
   df &lt;- read.table(files[i], header = TRUE) 
   # 使用 filter 函数过滤掉 Date 列值为 "Date" 的行
@@ -167,52 +186,565 @@ rm(df, files, i)
 ```
 
 ---
-- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
-- 使用lapply也能完成批量导入与合并。lapply思维难度更高，但代码更简洁。&lt;br&gt;
+
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step0: 实验数据处理概述&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+实验数据（如反应时数据）的处理与问卷数据有所不同：
+]
+
+| 步骤 | 说明 | 常用函数 |
+|------|------|----------|
+| 1. 批量读取数据 | 多个被试文件合并 | `for loop`, `lapply`, `bind_rows` |
+| 2. 数据清洗 | 排除无效试次 | `filter()` |
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step0: 实验数据处理概述（续）&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+| 步骤 | 说明 | 常用函数 |
+|------|------|----------|
+| 3. 计算变量 | 按条件计算均值 | `group_by()`, `summarise()` |
+| 4. 数据重塑 | 长宽数据转换 | `pivot_wider()`, `pivot_longer()` |
+| 5. 计算指标 | 如自我优势效应SPE | `mutate()` |
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step1: 读取单个文件&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+- 读取单个被试的反应时数据
+- .out文件通常是以空格或制表符分隔的文本文件
+]
 
 
 ``` r
-# 获取所有的.out文件名
-files &lt;- list.files(here::here("data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
+# 查看数据目录
+list.files(here::here("slides", "data", "match"))
+```
 
-# 读取每个.out文件，并进行数据清洗
-df3 &lt;- lapply(files, function(file) {
+```
+##  [1] "data_exp7_rep_categ_7302.out"      "data_exp7_rep_match_7302.out"     
+##  [3] "data_exp7_rep_match_7303.out"      "data_exp7_rep_match_7304.out"     
+##  [5] "data_exp7_rep_match_7305.out"      "data_exp7_rep_match_7306.out"     
+##  [7] "data_exp7_rep_match_7307.out"      "data_exp7_rep_match_7308.out"     
+##  [9] "data_exp7_rep_match_7309.out"      "data_exp7_rep_match_7310.out"     
+## [11] "data_exp7_rep_match_7311.out"      "data_exp7_rep_match_7312.out"     
+## [13] "data_exp7_rep_match_7313.out"      "data_exp7_rep_match_7314.out"     
+## [15] "data_exp7_rep_match_7315.out"      "data_exp7_rep_match_7316.out"     
+## [17] "data_exp7_rep_match_7317.out"      "data_exp7_rep_match_7318.out"     
+## [19] "data_exp7_rep_match_7319.out"      "data_exp7_rep_match_7320.out"     
+## [21] "data_exp7_rep_match_7321.out"      "data_exp7_rep_match_7322.out"     
+## [23] "data_exp7_rep_match_7323.out"      "data_exp7_rep_match_7324.out"     
+## [25] "data_exp7_rep_match_7325.out"      "data_exp7_rep_match_7326.out"     
+## [27] "data_exp7_rep_match_7327.out"      "data_exp7_rep_match_7328.out"     
+## [29] "data_exp7_rep_match_7329.out"      "data_exp7_rep_match_7331.out"     
+## [31] "data_exp7_rep_match_7332.out"      "data_exp7_rep_match_7333.out"     
+## [33] "data_exp7_rep_match_7334.out"      "data_exp7_rep_match_7335.out"     
+## [35] "data_exp7_rep_match_7336.out"      "data_exp7_rep_match_7337.out"     
+## [37] "data_exp7_rep_match_73370.out"     "data_exp7_rep_match_7338.out"     
+## [39] "data_exp7_rep_match_7339.out"      "data_exp7_rep_match_7340.out"     
+## [41] "data_exp7_rep_match_7341.out"      "data_exp7_rep_match_7342.out"     
+## [43] "data_exp7_rep_match_7343.out"      "data_exp7_rep_match_7344.out"     
+## [45] "data_exp7_rep_match_7345.out"      "data_exp7_rep_prac_7302.out"      
+## [47] "data_exp7_rep_subBalance_7302.out" "df_matching_raw.csv"              
+## [49] "match_raw_pilot.csv"               "match_raw.csv"
+```
+
+``` r
+# 读取单个文件
+p1 &lt;- read.table(
+  here::here("slides", "data", "match", "data_exp7_rep_match_7302.out"),
+  header = TRUE
+)
+
+# 查看数据结构
+str(p1)
+```
+
+```
+## 'data.frame':	360 obs. of  16 variables:
+##  $ Date    : chr  "02-May-2018_14:23:06" "02-May-2018_14:23:08" "02-May-2018_14:23:10" "02-May-2018_14:23:13" ...
+##  $ Prac    : chr  "Exp" "Exp" "Exp" "Exp" ...
+##  $ Sub     : int  7302 7302 7302 7302 7302 7302 7302 7302 7302 7302 ...
+##  $ Age     : int  22 22 22 22 22 22 22 22 22 22 ...
+##  $ Sex     : chr  "female" "female" "female" "female" ...
+##  $ Hand    : chr  "R" "R" "R" "R" ...
+##  $ Block   : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Bin     : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Trial   : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Shape   : chr  "immoralSelf" "moralOther" "immoralOther" "moralSelf" ...
+##  $ Label   : chr  "immoralOther" "moralSelf" "moralOther" "immoralSelf" ...
+##  $ Match   : chr  "mismatch" "mismatch" "mismatch" "mismatch" ...
+##  $ CorrResp: chr  "n" "n" "n" "n" ...
+##  $ Resp    : chr  "m" "n" "n" NA ...
+##  $ ACC     : int  0 1 1 -1 1 1 1 1 1 1 ...
+##  $ RT      : num  0.756 0.704 0.99 1.042 0.821 ...
+```
+
+``` r
+head(p1)
+```
+
+```
+##                   Date Prac  Sub Age    Sex Hand Block Bin Trial        Shape
+## 1 02-May-2018_14:23:06  Exp 7302  22 female    R     1   1     1  immoralSelf
+## 2 02-May-2018_14:23:08  Exp 7302  22 female    R     1   1     2   moralOther
+## 3 02-May-2018_14:23:10  Exp 7302  22 female    R     1   1     3 immoralOther
+## 4 02-May-2018_14:23:13  Exp 7302  22 female    R     1   1     4    moralSelf
+## 5 02-May-2018_14:23:15  Exp 7302  22 female    R     1   1     5  immoralSelf
+## 6 02-May-2018_14:23:17  Exp 7302  22 female    R     1   1     6  immoralSelf
+##          Label    Match CorrResp Resp ACC     RT
+## 1 immoralOther mismatch        n    m   0 0.7561
+## 2    moralSelf mismatch        n    n   1 0.7043
+## 3   moralOther mismatch        n    n   1 0.9903
+## 4  immoralSelf mismatch        n &lt;NA&gt;  -1 1.0420
+## 5  immoralSelf    match        m    m   1 0.8207
+## 6  immoralSelf    match        m    m   1 0.7547
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step1: 批量读取数据 - for loop&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+当有多个被试的数据文件时，需要批量读取并合并。
+第一步：找到所有要读取的文件
+]
+
+
+``` r
+files &lt;- list.files(
+  here::here("slides", "data", "match"),
+  pattern = "data_exp7_rep_match_.*\\.out$",
+  full.names = TRUE
+)
+
+# 查看找到的文件
+head(files, 5)
+```
+
+```
+## [1] "/Users/sunxinru/Desktop/R4Psy/slides/data/match/data_exp7_rep_match_7302.out"
+## [2] "/Users/sunxinru/Desktop/R4Psy/slides/data/match/data_exp7_rep_match_7303.out"
+## [3] "/Users/sunxinru/Desktop/R4Psy/slides/data/match/data_exp7_rep_match_7304.out"
+## [4] "/Users/sunxinru/Desktop/R4Psy/slides/data/match/data_exp7_rep_match_7305.out"
+## [5] "/Users/sunxinru/Desktop/R4Psy/slides/data/match/data_exp7_rep_match_7306.out"
+```
+
+``` r
+length(files)  # 文件数量
+```
+
+```
+## [1] 44
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | for loop 的基本语法&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+**for loop 语法：**
+```
+for (变量 in 序列) {
+  执行代码
+}
+```
+
+**示例：打印1到10**
+]
+
+
+``` r
+for (i in 1:10) {
+  print(i)
+}
+```
+
+```
+## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step1: 使用 for loop 批量读取文件&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 创建空数据框
+df_all &lt;- data.frame()
+
+# 逐个读取并合并
+for (i in seq_along(files)) {
+  df_temp &lt;- read.table(files[i], header = TRUE)
+  df_temp &lt;- dplyr::filter(df_temp, Date != "Date")
+  df_temp &lt;- convert_data_types(df_temp)  # 统一数据类型
+  df_all &lt;- dplyr::bind_rows(df_all, df_temp)
+}
+
+# 查看结果
+dim(df_all)
+```
+
+```
+## [1] 25920    16
+```
+
+``` r
+head(df_all)
+```
+
+```
+##                   Date Prac  Sub Age    Sex Hand Block Bin Trial        Shape
+## 1 02-May-2018_14:23:06  Exp 7302  22 female    R     1   1     1  immoralSelf
+## 2 02-May-2018_14:23:08  Exp 7302  22 female    R     1   1     2   moralOther
+## 3 02-May-2018_14:23:10  Exp 7302  22 female    R     1   1     3 immoralOther
+## 4 02-May-2018_14:23:13  Exp 7302  22 female    R     1   1     4    moralSelf
+## 5 02-May-2018_14:23:15  Exp 7302  22 female    R     1   1     5  immoralSelf
+## 6 02-May-2018_14:23:17  Exp 7302  22 female    R     1   1     6  immoralSelf
+##          Label    Match CorrResp Resp ACC     RT
+## 1 immoralOther mismatch        n    m   0 0.7561
+## 2    moralSelf mismatch        n    n   1 0.7043
+## 3   moralOther mismatch        n    n   1 0.9903
+## 4  immoralSelf mismatch        n &lt;NA&gt;  -1 1.0420
+## 5  immoralSelf    match        m    m   1 0.8207
+## 6  immoralSelf    match        m    m   1 0.7547
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step1: 使用 lapply 批量读取&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+**lapply(列表/向量, 函数)** - 更简洁的写法
+]
+
+
+``` r
+df_all &lt;- lapply(files, function(file) {
   df &lt;- read.table(file, header = TRUE)
-  df &lt;- dplyr::filter(df, Date != "Date") # 过滤掉 Date 列值为 "Date" 的行
-  df &lt;- mutate(df, 
-               convert_data_types(df)
-              ) # 进行数据类型转换和数据清洗
+  df &lt;- dplyr::filter(df, Date != "Date")
+  df &lt;- convert_data_types(df)  # 统一数据类型
   return(df)
-})
+}) %&gt;%
+  dplyr::bind_rows()
 
-# 合并所有数据框
-df3 &lt;- dplyr::bind_rows(df3)
-
-# 清除中间变量
-rm(files)
+# 查看结果
+dim(df_all)
 ```
+
+```
+## [1] 25920    16
+```
+
+``` r
+head(df_all)
+```
+
+```
+##                   Date Prac  Sub Age    Sex Hand Block Bin Trial        Shape
+## 1 02-May-2018_14:23:06  Exp 7302  22 female    R     1   1     1  immoralSelf
+## 2 02-May-2018_14:23:08  Exp 7302  22 female    R     1   1     2   moralOther
+## 3 02-May-2018_14:23:10  Exp 7302  22 female    R     1   1     3 immoralOther
+## 4 02-May-2018_14:23:13  Exp 7302  22 female    R     1   1     4    moralSelf
+## 5 02-May-2018_14:23:15  Exp 7302  22 female    R     1   1     5  immoralSelf
+## 6 02-May-2018_14:23:17  Exp 7302  22 female    R     1   1     6  immoralSelf
+##          Label    Match CorrResp Resp ACC     RT
+## 1 immoralOther mismatch        n    m   0 0.7561
+## 2    moralSelf mismatch        n    n   1 0.7043
+## 3   moralOther mismatch        n    n   1 0.9903
+## 4  immoralSelf mismatch        n &lt;NA&gt;  -1 1.0420
+## 5  immoralSelf    match        m    m   1 0.8207
+## 6  immoralSelf    match        m    m   1 0.7547
+```
+
 ---
-- # &lt;font size = 5.5&gt; 实验数据的导入  &lt;/font&gt;
-- 保存合并的数据文件。&lt;br&gt;
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step2: 排除无效试次&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+实验数据清洗：排除无效试次
+]
 
 
 ``` r
-write.csv(df3, 
-          file = here::here("data", "match","match_raw.csv"),
-          row.names = FALSE)
+# 查看原始数据量
+nrow(df_all)
 ```
+
+```
+## [1] 25920
+```
+
+``` r
+# 第一步：按 Hand 和 ACC 过滤
+df_clean &lt;- df_all %&gt;%
+  dplyr::filter(Hand == "R") %&gt;%
+  dplyr::filter(ACC == 0 | ACC == 1)
+```
+
 ---
-&lt;h1 lang="en" style="font-size: 60px;"&gt;Contents&lt;/h1&gt;
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step2: 排除无效试次 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 第二步：限制 RT 范围并删除缺失值
+df_clean &lt;- df_clean %&gt;%
+  dplyr::filter(RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
+  tidyr::drop_na()
+
+# 查看处理后的数据量
+nrow(df_clean)
+```
+
+```
+## [1] 24618
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step3: 按条件计算均值&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+按被试和实验条件计算平均反应时和正确率
+]
+
+
+``` r
+df_means &lt;- df_clean %&gt;%
+  dplyr::group_by(Sub, Shape, Label, Match) %&gt;%
+  dplyr::summarise(
+    mean_RT = mean(RT),
+    mean_ACC = mean(ACC),
+    .groups = "drop"
+  )
+
+head(df_means)
+```
+
+```
+## # A tibble: 6 × 6
+##     Sub Shape        Label        Match    mean_RT mean_ACC
+##   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+## 1  7302 immoralOther immoralOther match      0.672    0.889
+## 2  7302 immoralOther immoralSelf  mismatch   0.736    0.786
+## 3  7302 immoralOther moralOther   mismatch   0.748    0.933
+## 4  7302 immoralOther moralSelf    mismatch   0.730    1    
+## 5  7302 immoralSelf  immoralOther mismatch   0.726    0.706
+## 6  7302 immoralSelf  immoralSelf  match      0.712    0.864
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step4: 拆分变量 - extract&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+有时需要从一个变量中拆出两个新的信息字段。
+Shape变量包含多个信息，如 "moralSelf", "immoralOther"
+需要拆分为 Valence 和 Identity 两个变量
+]
+
+
+``` r
+df_means &lt;- df_means %&gt;%
+  tidyr::extract(
+    col = Shape,
+    into = c("Valence", "Identity"),
+    regex = "(moral|immoral)(Self|Other)",
+    remove = FALSE
+  )
+
+head(df_means)
+```
+
+```
+## # A tibble: 6 × 8
+##     Sub Shape        Valence Identity Label        Match    mean_RT mean_ACC
+##   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+## 1  7302 immoralOther immoral Other    immoralOther match      0.672    0.889
+## 2  7302 immoralOther immoral Other    immoralSelf  mismatch   0.736    0.786
+## 3  7302 immoralOther immoral Other    moralOther   mismatch   0.748    0.933
+## 4  7302 immoralOther immoral Other    moralSelf    mismatch   0.730    1    
+## 5  7302 immoralSelf  immoral Self     immoralOther mismatch   0.726    0.706
+## 6  7302 immoralSelf  immoral Self     immoralSelf  match      0.712    0.864
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step5: 长宽数据转换 - pivot_wider&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+pivot_wider: 长数据 -&gt; 宽数据
+]
+
+
+``` r
+df_wide &lt;- df_means %&gt;%
+  dplyr::filter(Match == "match" &amp; Valence == "moral") %&gt;%
+  dplyr::select(Sub, Identity, mean_RT) %&gt;%
+  tidyr::pivot_wider(
+    names_from = "Identity",
+    values_from = "mean_RT"
+  )
+
+head(df_wide)
+```
+
+```
+## # A tibble: 6 × 3
+##     Sub Other  Self
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  7302 0.603 0.698
+## 2  7303 0.717 0.656
+## 3  7304 0.749 0.552
+## 4  7305 0.599 0.588
+## 5  7306 0.581 0.777
+## 6  7307 0.704 0.662
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step5: pivot_wider 函数说明&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+- pivot_wider(names_from = var1, values_from = var2)
+- names_from：其值将用作列名称的列
+- values_from：其值将用作单元格值的列
+]
+![dplyr_pic4](picture/chp6/dplyr_pic4.png)
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 28px;"&gt;7.1.2 操作步骤 | Step6: 计算派生指标 - SPE&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+.font-size-14[
+计算自我优势效应 (Self-Positivity Effect)
+SPE = 自我条件RT - 他人条件RT
+负值表示自我优势（反应更快）
+]
+
+
+``` r
+df_spe &lt;- df_wide %&gt;%
+  dplyr::mutate(
+    moral_SPE = Self - Other
+  ) %&gt;%
+  dplyr::select(Sub, moral_SPE)
+
+summary(df_spe$moral_SPE)
+```
+
+```
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## -0.197111 -0.091535 -0.048251 -0.040563 -0.009106  0.196745
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整流程1 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+**读取并清洗原始数据（1/2）**
+
+
+``` r
+df_spe &lt;- files %&gt;%
+  lapply(function(file) {
+    df &lt;- read.table(file, header = TRUE)
+    df &lt;- dplyr::filter(df, Date != "Date")
+    df &lt;- convert_data_types(df)  # 统一数据类型
+    return(df)
+  }) %&gt;%
+  bind_rows()
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整流程2 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+**读取并清洗原始数据（2/2）**
+
+
+``` r
+# 筛选有效试次
+df_spe &lt;- df_spe %&gt;%
+  dplyr::filter(
+    Hand == "R",
+    ACC == 0 | ACC == 1,
+    RT &gt;= 0.2 &amp; RT &lt;= 1.5
+  ) %&gt;%
+  tidyr::drop_na()
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整流程3 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+**分组计算均值，并拆分 Shape**
+
+
+``` r
+df_spe &lt;- df_spe %&gt;%
+  dplyr::group_by(Sub, Shape, Label, Match) %&gt;%
+  dplyr::summarise(
+    mean_RT = mean(RT),
+    .groups = "drop"
+  ) %&gt;%
+  tidyr::extract(
+    Shape,
+    into = c("Valence", "Identity"),
+    regex = "(moral|immoral)(Self|Other)"
+  )
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整流程4 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+**长转宽并计算 SPE**
+
+
+``` r
+df_spe &lt;- df_spe %&gt;%
+  dplyr::filter(Match == "match",
+                Valence == "moral") %&gt;%
+  dplyr::select(Sub, Identity, mean_RT) %&gt;%
+  tidyr::pivot_wider(
+    names_from = "Identity",
+    values_from = "mean_RT"
+  ) %&gt;%
+  dplyr::mutate(moral_SPE = Self - Other)
+
+head(df_spe)
+```
+
+```
+## # A tibble: 6 × 4
+##     Sub Other  Self moral_SPE
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+## 1  7302 0.603 0.698    0.0946
+## 2  7303 0.717 0.656   -0.0611
+## 3  7304 0.749 0.552   -0.197 
+## 4  7305 0.599 0.588   -0.0111
+## 5  7306 0.581 0.777    0.197 
+## 6  7307 0.704 0.662   -0.0419
+```
+
 &lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;7.1 基于Tidyverse的数据预处理（续）&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.1.1 研究问题 &amp; 数据情况回顾&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.1.2 操作步骤 (tidyr)&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.1.3 小结 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;br&gt;
-&lt;span style="font-size: 40px;"&gt;7.2 函数的概念与自定义函数&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.2.1 函数的概念与类别 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.2.2 调用函数 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;&amp;emsp;7.2.3 自定义函数 &lt;/span&gt;&lt;/center&gt; &lt;br&gt;
 &lt;br&gt;
 
 ---
@@ -240,15 +772,16 @@ Match: 图形与呈现的标签是否匹配&lt;br&gt;
 ACC: 被试的判断是否正确，1 = "正确", 0 = "错误", -1, 2表示未按键或按了两个键的情况，属于无效作答&lt;br&gt;
 RT: 被试做出判断的反应时，[200,1500]的反应时纳入分析&lt;br&gt;
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-54bd8acaf355768d0a6e" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-54bd8acaf355768d0a6e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10","02-May-2018_14:23:13","02-May-2018_14:23:15","02-May-2018_14:23:17"],["Exp","Exp","Exp","Exp","Exp","Exp"],[7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22],["female","female","female","female","female","female"],["R","R","R","R","R","R"],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,2,3,4,5,6],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf","immoralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","immoralSelf"],["mismatch","mismatch","mismatch","mismatch","match","match"],["n","n","n","n","m","m"],["m","n","n",null,"m","m"],[0,1,1,-1,1,1],[0.7561,0.7043,0.9903,1.042,0.8207,0.7547]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Label","targets":11},{"name":"Match","targets":12},{"name":"CorrResp","targets":13},{"name":"Resp","targets":14},{"name":"ACC","targets":15},{"name":"RT","targets":16}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-f73142e33693deed193c" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f73142e33693deed193c">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10","02-May-2018_14:23:13","02-May-2018_14:23:15","02-May-2018_14:23:17"],["Exp","Exp","Exp","Exp","Exp","Exp"],[7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22],["female","female","female","female","female","female"],["R","R","R","R","R","R"],[1,1,1,1,1,1],[1,1,1,1,1,1],[1,2,3,4,5,6],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf","immoralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","immoralSelf"],["mismatch","mismatch","mismatch","mismatch","match","match"],["n","n","n","n","m","m"],["m","n","n",null,"m","m"],[0,1,1,-1,1,1],[0.7561,0.7043,0.9903,1.042,0.8207,0.7547]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":4,"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Label","targets":11},{"name":"Match","targets":12},{"name":"CorrResp","targets":13},{"name":"Resp","targets":14},{"name":"ACC","targets":15},{"name":"RT","targets":16}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[4,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
 &lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
 - **本课数据预处理目标**：计算Match-Moral条件下时RT的自我优势效应(SPE)。&lt;br&gt;
 
-&amp;emsp;&amp;emsp; **Step1: 批量读取并合并数据[for loop] (已演示)**&lt;br&gt;
+&amp;emsp;&amp;emsp; **Step0: 实验数据处理概述**&lt;br&gt;
+&amp;emsp;&amp;emsp; **Step1: 批量读取并合并数据[for loop, lapply]**&lt;br&gt;
 &amp;emsp;&amp;emsp; Step2: 选择变量[select]&lt;br&gt;
 &amp;emsp;&amp;emsp; Step3: 处理缺失值[drop_na, filter]&lt;br&gt;
 &amp;emsp;&amp;emsp; **Step4: 分实验条件计算变量[group_by, summarise]**&lt;br&gt;
@@ -270,8 +803,8 @@ df4 &lt;- dplyr::select(df3,
                      Resp, ACC, RT)       # 反应结果
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-0ba186698393fc853c62" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-0ba186698393fc853c62">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,2,3,4,5,6,7,8,9,10],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","immoralSelf","moralOther","moralSelf","immoralSelf","moralOther"],["mismatch","mismatch","mismatch","mismatch","match","match","match","match","mismatch","mismatch"],["m","n","n",null,"m","m","m","m","n","n"],[0,1,1,-1,1,1,1,1,1,1],[0.7561,0.7043,0.9903,1.042,0.8207,0.7547,0.5429,0.9009,0.9550999999999999,0.6952]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7,12,13]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Label","targets":9},{"name":"Match","targets":10},{"name":"Resp","targets":11},{"name":"ACC","targets":12},{"name":"RT","targets":13}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-81097ebdfb6110b7a7fa" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-81097ebdfb6110b7a7fa">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,2,3,4,5,6,7,8,9,10],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","immoralSelf","moralOther","moralSelf","immoralSelf","moralOther"],["mismatch","mismatch","mismatch","mismatch","match","match","match","match","mismatch","mismatch"],["m","n","n",null,"m","m","m","m","n","n"],[0,1,1,-1,1,1,1,1,1,1],[0.7561,0.7043,0.9903,1.042,0.8207,0.7547,0.5429,0.9009,0.9550999999999999,0.6952]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7,12,13]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Label","targets":9},{"name":"Match","targets":10},{"name":"Resp","targets":11},{"name":"ACC","targets":12},{"name":"RT","targets":13}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
@@ -286,8 +819,8 @@ df4 &lt;- dplyr::filter(df4, Hand == "R",      # 选择右利手被试
                     RT &gt;= 0.2 &amp; RT &lt;= 1.5)  # 选择RT属于[200,1500]
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-b5e412fb539805225b0a" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-b5e412fb539805225b0a">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,1],["immoralSelf","moralOther","immoralOther","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf","moralOther","immoralOther","moralOther","moralSelf","immoralOther","immoralSelf","moralSelf","moralSelf","immoralSelf","moralOther","immoralOther","moralSelf","immoralOther","immoralOther","moralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","moralOther","moralSelf","immoralSelf","moralOther","moralSelf","immoralOther","moralOther","immoralSelf","immoralOther","moralSelf","immoralSelf","moralSelf","immoralSelf","moralOther","moralOther","moralSelf","immoralOther","moralOther","moralSelf"],["mismatch","mismatch","mismatch","match","match","match","match","mismatch","mismatch","mismatch","match","match","mismatch","match","mismatch","mismatch","match","match","match","mismatch","match","match","mismatch","match"],["m","n","n","m","m","m","m","n","n","n","m","m","m","m","n","n","m","n","m","n","m","m","n","m"],[0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1],[0.7561,0.7043,0.9903,0.8207,0.7547,0.5429,0.9009,0.9550999999999999,0.6952,0.7593,0.7135,0.5656,0.5357,0.8078,0.96,0.6661,0.6962,0.8803,0.5785,0.7845,0.8146,0.6548,0.8789,0.7131]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7,12,13]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Label","targets":9},{"name":"Match","targets":10},{"name":"Resp","targets":11},{"name":"ACC","targets":12},{"name":"RT","targets":13}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-434cf7128367047b84a2" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-434cf7128367047b84a2">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302],[22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],["female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female","female"],["R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R","R"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,1],["immoralSelf","moralOther","immoralOther","immoralSelf","immoralSelf","moralOther","moralSelf","moralOther","immoralSelf","moralOther","immoralOther","moralOther","moralSelf","immoralOther","immoralSelf","moralSelf","moralSelf","immoralSelf","moralOther","immoralOther","moralSelf","immoralOther","immoralOther","moralSelf"],["immoralOther","moralSelf","moralOther","immoralSelf","immoralSelf","moralOther","moralSelf","immoralSelf","moralOther","moralSelf","immoralOther","moralOther","immoralSelf","immoralOther","moralSelf","immoralSelf","moralSelf","immoralSelf","moralOther","moralOther","moralSelf","immoralOther","moralOther","moralSelf"],["mismatch","mismatch","mismatch","match","match","match","match","mismatch","mismatch","mismatch","match","match","mismatch","match","mismatch","mismatch","match","match","match","mismatch","match","match","mismatch","match"],["m","n","n","m","m","m","m","n","n","n","m","m","m","m","n","n","m","n","m","n","m","m","n","m"],[0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1],[0.7561,0.7043,0.9903,0.8207,0.7547,0.5429,0.9009,0.9550999999999999,0.6952,0.7593,0.7135,0.5656,0.5357,0.8078,0.96,0.6661,0.6962,0.8803,0.5785,0.7845,0.8146,0.6548,0.8789,0.7131]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7,12,13]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Label","targets":9},{"name":"Match","targets":10},{"name":"Resp","targets":11},{"name":"ACC","targets":12},{"name":"RT","targets":13}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
 &lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
@@ -300,8 +833,8 @@ df4 &lt;- dplyr::summarise(df4, mean_ACC = mean(ACC), mean_RT = mean(RT))
 df4 &lt;- dplyr::ungroup(df4)
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-3be0a54491ab8d4c83da" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-3be0a54491ab8d4c83da">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7303,7303,7303,7303,7303,7303,7303,7303],["immoralOther","immoralOther","immoralOther","immoralOther","immoralSelf","immoralSelf","immoralSelf","immoralSelf","moralOther","moralOther","moralOther","moralOther","moralSelf","moralSelf","moralSelf","moralSelf","immoralOther","immoralOther","immoralOther","immoralOther","immoralSelf","immoralSelf","immoralSelf","immoralSelf"],["immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf"],["match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch","mismatch","mismatch","match","match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch"],[0.8888888888888888,0.7857142857142857,0.9333333333333333,1,0.7058823529411765,0.8636363636363635,1,0.9166666666666666,0.7777777777777778,1,0.9555555555555556,1,0.9230769230769231,0.5,0.7777777777777778,0.8863636363636364,0.7777777777777778,0.875,0.8666666666666667,0.9285714285714286,0.7647058823529411,0.711111111111111,0.8666666666666667,0.6923076923076923],[0.6717288888888889,0.7355285714285714,0.7479333333333333,0.7298153846153846,0.7260058823529412,0.7123159090909091,0.697,0.822175,0.6578833333333334,0.7552615384615384,0.60298,0.7282857142857143,0.7412384615384615,0.7712333333333333,0.7380944444444445,0.697540909090909,0.7167022222222222,0.74600625,0.7791133333333333,0.7363214285714286,0.7959352941176471,0.7246755555555555,0.7592333333333333,0.7829307692307692]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>mean_ACC<\/th>\n      <th>mean_RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Shape","targets":2},{"name":"Label","targets":3},{"name":"Match","targets":4},{"name":"mean_ACC","targets":5},{"name":"mean_RT","targets":6}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-24002c681b72a701f8a5" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-24002c681b72a701f8a5">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7302,7303,7303,7303,7303,7303,7303,7303,7303],["immoralOther","immoralOther","immoralOther","immoralOther","immoralSelf","immoralSelf","immoralSelf","immoralSelf","moralOther","moralOther","moralOther","moralOther","moralSelf","moralSelf","moralSelf","moralSelf","immoralOther","immoralOther","immoralOther","immoralOther","immoralSelf","immoralSelf","immoralSelf","immoralSelf"],["immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf","immoralOther","immoralSelf","moralOther","moralSelf"],["match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch","mismatch","mismatch","match","match","mismatch","mismatch","mismatch","mismatch","match","mismatch","mismatch"],[0.8888888888888888,0.7857142857142857,0.9333333333333333,1,0.7058823529411765,0.8636363636363635,1,0.9166666666666666,0.7777777777777778,1,0.9555555555555556,1,0.9230769230769231,0.5,0.7777777777777778,0.8863636363636364,0.7777777777777778,0.875,0.8666666666666667,0.9285714285714286,0.7647058823529411,0.711111111111111,0.8666666666666667,0.6923076923076923],[0.6717288888888889,0.7355285714285714,0.7479333333333333,0.7298153846153846,0.7260058823529412,0.7123159090909091,0.697,0.822175,0.6578833333333334,0.7552615384615384,0.60298,0.7282857142857143,0.7412384615384615,0.7712333333333333,0.7380944444444445,0.697540909090909,0.7167022222222222,0.74600625,0.7791133333333333,0.7363214285714286,0.7959352941176471,0.7246755555555555,0.7592333333333333,0.7829307692307692]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>mean_ACC<\/th>\n      <th>mean_RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Shape","targets":2},{"name":"Label","targets":3},{"name":"Match","targets":4},{"name":"mean_ACC","targets":5},{"name":"mean_RT","targets":6}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
@@ -330,8 +863,8 @@ df4 &lt;- tidyr::extract(df4, Shape, into = c("Valence", "Identity"),
 df4 &lt;- dplyr::filter(df4, Match == "match" &amp; Valence == "moral") 
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-413ab80e74fe024b8278" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-413ab80e74fe024b8278">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7303,7303,7304,7304,7305,7305,7306,7306,7307,7307,7308,7308,7309,7309,7310,7310,7311,7311,7312,7312,7313,7313],["moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf"],["moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral"],["Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self"],["moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf"],["match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match"],[0.9555555555555556,0.8863636363636364,0.8863636363636364,0.9333333333333333,0.8333333333333333,0.9866666666666667,0.9333333333333333,0.9324324324324325,0.9866666666666667,0.7972972972972973,0.8266666666666667,0.8888888888888888,0.8918918918918919,0.9466666666666667,0.76,0.9459459459459459,0.96,0.96,0.92,0.8533333333333333,0.7361111111111113,0.9864864864864865,0.6338028169014085,0.4109589041095889],[0.60298,0.697540909090909,0.7167772727272728,0.6557266666666667,0.7493875,0.552276,0.5991426666666667,0.588072972972973,0.5805133333333333,0.7772581081081081,0.703596,0.6617236111111111,0.7399135135135135,0.623512,0.6938013333333334,0.6045945945945946,0.5399080000000001,0.570092,0.5290586666666667,0.5445226666666667,0.7493319444444444,0.6192027027027027,0.5500957746478873,0.5352452054794521]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>mean_ACC<\/th>\n      <th>mean_RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,7,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Shape","targets":2},{"name":"Valence","targets":3},{"name":"Identity","targets":4},{"name":"Label","targets":5},{"name":"Match","targets":6},{"name":"mean_ACC","targets":7},{"name":"mean_RT","targets":8}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e0bbbf7cc0c7098f2bcf" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e0bbbf7cc0c7098f2bcf">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7302,7303,7303,7304,7304,7305,7305,7306,7306,7307,7307,7308,7308,7309,7309,7310,7310,7311,7311,7312,7312,7313,7313],["moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf"],["moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral","moral"],["Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self","Other","Self"],["moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf","moralOther","moralSelf"],["match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match","match"],[0.9555555555555556,0.8863636363636364,0.8863636363636364,0.9333333333333333,0.8333333333333333,0.9866666666666667,0.9333333333333333,0.9324324324324325,0.9866666666666667,0.7972972972972973,0.8266666666666667,0.8888888888888888,0.8918918918918919,0.9466666666666667,0.76,0.9459459459459459,0.96,0.96,0.92,0.8533333333333333,0.7361111111111113,0.9864864864864865,0.6338028169014085,0.4109589041095889],[0.60298,0.697540909090909,0.7167772727272728,0.6557266666666667,0.7493875,0.552276,0.5991426666666667,0.588072972972973,0.5805133333333333,0.7772581081081081,0.703596,0.6617236111111111,0.7399135135135135,0.623512,0.6938013333333334,0.6045945945945946,0.5399080000000001,0.570092,0.5290586666666667,0.5445226666666667,0.7493319444444444,0.6192027027027027,0.5500957746478873,0.5352452054794521]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>mean_ACC<\/th>\n      <th>mean_RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,7,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Shape","targets":2},{"name":"Valence","targets":3},{"name":"Identity","targets":4},{"name":"Label","targets":5},{"name":"Match","targets":6},{"name":"mean_ACC","targets":7},{"name":"mean_RT","targets":8}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
@@ -350,8 +883,8 @@ df4 &lt;- dplyr::select(df4, Sub, Identity, mean_RT)
 df4 &lt;- tidyr::pivot_wider(df4, names_from = "Identity", values_from = "mean_RT")
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-112b8c3affb7457d501e" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-112b8c3affb7457d501e">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7303,7304,7305,7306,7307,7308,7309,7310,7311,7312,7313,7314,7315,7316,7317,7318,7319,7321,7322,7323,7324,7325,7326],[0.60298,0.7167772727272728,0.7493875,0.5991426666666667,0.5805133333333333,0.703596,0.7399135135135135,0.6938013333333334,0.5399080000000001,0.5290586666666667,0.7493319444444444,0.5500957746478873,0.699122972972973,0.6574680555555555,0.706812,0.8046028571428572,0.6787253333333333,0.739204,0.6298386666666667,0.6224260273972603,0.7255148648648648,0.8345594202898551,0.64298,0.5947810810810811],[0.697540909090909,0.6557266666666667,0.552276,0.588072972972973,0.7772581081081081,0.6617236111111111,0.623512,0.6045945945945946,0.570092,0.5445226666666667,0.6192027027027027,0.5352452054794521,0.7473794520547945,0.4947851351351351,0.6139613333333334,0.7520785714285714,0.6541418918918919,0.6909533333333333,0.6113506849315068,0.7169767123287671,0.6991608108108108,0.7507830985915493,0.58462,0.637777027027027]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Other<\/th>\n      <th>Self<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Other","targets":2},{"name":"Self","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-fd67eab6cd10e61dddf3" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-fd67eab6cd10e61dddf3">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7303,7304,7305,7306,7307,7308,7309,7310,7311,7312,7313,7314,7315,7316,7317,7318,7319,7321,7322,7323,7324,7325,7326],[0.60298,0.7167772727272728,0.7493875,0.5991426666666667,0.5805133333333333,0.703596,0.7399135135135135,0.6938013333333334,0.5399080000000001,0.5290586666666667,0.7493319444444444,0.5500957746478873,0.699122972972973,0.6574680555555555,0.706812,0.8046028571428572,0.6787253333333333,0.739204,0.6298386666666667,0.6224260273972603,0.7255148648648648,0.8345594202898551,0.64298,0.5947810810810811],[0.697540909090909,0.6557266666666667,0.552276,0.588072972972973,0.7772581081081081,0.6617236111111111,0.623512,0.6045945945945946,0.570092,0.5445226666666667,0.6192027027027027,0.5352452054794521,0.7473794520547945,0.4947851351351351,0.6139613333333334,0.7520785714285714,0.6541418918918919,0.6909533333333333,0.6113506849315068,0.7169767123287671,0.6991608108108108,0.7507830985915493,0.58462,0.637777027027027]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Other<\/th>\n      <th>Self<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Other","targets":2},{"name":"Self","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
@@ -372,43 +905,106 @@ df4 &lt;- dplyr::mutate(df4, moral_SPE = Self - Other)
 df4 &lt;- dplyr::select(df4, Sub, moral_SPE) 
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-e49c7308baa304ed03c3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e49c7308baa304ed03c3">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7303,7304,7305,7306,7307,7308,7309,7310,7311,7312,7313,7314,7315,7316,7317,7318,7319,7321,7322,7323,7324,7325,7326],[0.09456090909090908,-0.06105060606060608,-0.1971115,-0.01106969369369371,0.1967447747747748,-0.04187238888888889,-0.1164015135135136,-0.08920673873873874,0.03018399999999999,0.01546400000000003,-0.1301292417417417,-0.01485056916843519,0.04825647908182151,-0.1626829204204204,-0.09285066666666664,-0.0525242857142858,-0.02458344144144142,-0.04825066666666666,-0.01848798173515986,0.09455068493150687,-0.026354054054054,-0.08377632169830573,-0.05835999999999997,0.04299594594594591]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>moral_SPE<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"moral_SPE","targets":2}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b58785eee5e335dad67b" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b58785eee5e335dad67b">{"x":{"filter":"none","vertical":false,"fillContainer":true,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],[7302,7303,7304,7305,7306,7307,7308,7309,7310,7311,7312,7313,7314,7315,7316,7317,7318,7319,7321,7322,7323,7324,7325,7326],[0.09456090909090908,-0.06105060606060608,-0.1971115,-0.01106969369369371,0.1967447747747748,-0.04187238888888889,-0.1164015135135136,-0.08920673873873874,0.03018399999999999,0.01546400000000003,-0.1301292417417417,-0.01485056916843519,0.04825647908182151,-0.1626829204204204,-0.09285066666666664,-0.0525242857142858,-0.02458344144144142,-0.04825066666666666,-0.01848798173515986,0.09455068493150687,-0.026354054054054,-0.08377632169830573,-0.05835999999999997,0.04299594594594591]],"container":"<table class=\"display fill-container\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>moral_SPE<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"moral_SPE","targets":2}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
-&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整管道流程（第一部分）&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
 
 ``` r
 # 用管道操作符合并以上代码
 df4 &lt;- df3 %&gt;%
-  dplyr::select(Sub, Age, Sex, Hand, #人口统计学
-                Block, Bin, Trial,   # 试次
-                Shape, Label, Match, # 刺激
-                Resp, ACC, RT) %&gt;%  # 反应结果
-  tidyr::drop_na() %&gt;%               #删除缺失值
-  dplyr::filter(Hand == "R",         # 选择右利手被试
-                ACC == 0 | ACC == 1, # 排除无效应答（ACC = -1 OR 2)
-                RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%  # 选择RT属于[200,1500]
-  dplyr::group_by(Sub,Shape, Label, Match) %&gt;%
+  dplyr::select(Sub, Age, Sex, Hand,
+                Block, Bin, Trial,
+                Shape, Label, Match,
+                Resp, ACC, RT) %&gt;%
+  tidyr::drop_na() %&gt;%
+  dplyr::filter(Hand == "R",
+                ACC == 0 | ACC == 1,
+                RT &gt;= 0.2 &amp; RT &lt;= 1.5)
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整管道流程（第二部分）&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 继续分组汇总
+df4 &lt;- df4 %&gt;%
+  dplyr::group_by(Sub, Shape, Label, Match) %&gt;%
   dplyr::summarise(mean_ACC = mean(ACC), mean_RT = mean(RT)) %&gt;%
-  dplyr::ungroup() %&gt;%
-  tidyr::extract(Shape, into = c("Valence", "Identity"),
-              regex = "(moral|immoral)(Self|Other)", remove = FALSE) %&gt;%
+  dplyr::ungroup()
+```
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.2 操作步骤 | 完整管道流程（第三部分）&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+
+``` r
+# 拆分变量并计算SPE
+df4 &lt;- df4 %&gt;%
+  tidyr::extract(Shape, 
+                 into = c("Valence", "Identity"),
+                 regex = "(moral|immoral)(Self|Other)", 
+                 remove = FALSE) %&gt;%
   dplyr::filter(Match == "match" &amp; Valence == "moral") %&gt;%
   dplyr::select(Sub, Identity, mean_RT) %&gt;%
-  tidyr::pivot_wider(names_from="Identity", values_from="mean_RT") %&gt;%
-  dplyr::mutate(moral_SPE=Self - Other)
+  tidyr::pivot_wider(names_from = "Identity", 
+                     values_from = "mean_RT") %&gt;%
+  dplyr::mutate(moral_SPE = Self - Other)
 ```
 ---
 # &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
 &lt;span style="font-size: 30px;"&gt;7.1.3 小结&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
 &lt;br&gt;
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.3 小结 | 常用 tidyr 函数总结&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+| 函数 | 功能 | 示例 |
+|------|------|------|
+| `pivot_wider()` | 长转宽 | `pivot_wider(names_from, values_from)` |
+| `pivot_longer()` | 宽转长 | `pivot_longer(cols, names_to, values_to)` |
+| `extract()` | 提取字符 | `extract(col, into, regex)` |
+| `separate()` | 分列 | `separate(col, into, sep)` |
+| `unite()` | 合列 | `unite(col, ...)` |
+| `drop_na()` | 删除缺失值 | `drop_na()` |
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 基于Tidyverse处理反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.3 小结 | 常用 dplyr 函数总结&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+
+| 函数 | 功能 | 示例 |
+|------|------|------|
+| `select()` | 选择列 | `select(df, col1, col2)` |
+| `filter()` | 筛选行 | `filter(df, condition)` |
+| `mutate()` | 创建/修改列 | `mutate(df, new = old + 1)` |
+| `group_by()` | 分组 | `group_by(df, group_var)` |
+| `summarise()` | 汇总 | `summarise(df, mean(x), .groups = "drop")` |
+| `arrange()` | 排序 | `arrange(df, desc(x))` |
+| `bind_rows()` | 合并行 | `bind_rows(df1, df2)` |
+
+**提示：** dplyr 1.0+ 中，`summarise(.groups = "drop")` 可自动取消分组，无需额外 `ungroup()`。
+
+---
+
+# &lt;h1 lang="en"&gt;7.1 反应时数据&lt;/h1&gt;
+&lt;span style="font-size: 30px;"&gt;7.1.3 小结 &lt;/span&gt;&lt;/center&gt;&lt;br&gt;
+&lt;br&gt;
 - separate() 把一个变量的单元格内的字符串拆成两份，变成两个变量 &lt;br&gt;
-  **更适合用于按固定分隔符分割字符串，如将“2022-02-25”分成“2022”、“02”和“25”三列** &lt;br&gt;
+  **更适合用于按固定分隔符分割字符串，如将"2022-02-25"分成"2022"、"02"和"25"三列** &lt;br&gt;
   
 - extract() 类似于separate &lt;br&gt;
-  **更适合用于从字符串中提取特定的信息，如将“John Smith”分成“John”和“Smith”两列** &lt;br&gt;
+  **更适合用于从字符串中提取特定的信息，如将"John Smith"分成"John"和"Smith"两列** &lt;br&gt;
   
 - unite() 把多个列（字符串）整合为一列 &lt;br&gt;
 
@@ -418,380 +1014,347 @@ df4 &lt;- df3 %&gt;%
   
 - drop_na() 删除缺失值
 
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.1 什么是函数
-&lt;font size=5&gt;
-&amp;emsp;&amp;emsp;sqrt()、getwd()、here()、mean()等都是R中的函数。
-&lt;br&gt;
-&amp;emsp;&amp;emsp;在R中，函数是一种用于执行特定任务或计算的代码块。函数接受输入参数，执行特定的操作，并返回结果。
-&lt;/font&gt;
-&lt;br&gt;
+
 
 ---
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.1 函数分类
-&lt;font size=5&gt;
-已有函数&lt;br&gt;
-&amp;emsp;&amp;emsp;R base; &lt;br&gt;
-&amp;emsp;&amp;emsp;R packages; &lt;br&gt;
-&amp;emsp;&amp;emsp;functions from other sources&lt;br&gt;
-&lt;font size=5&gt;
-自定义函数&lt;br&gt;
-&amp;emsp;&amp;emsp;自己命名和创建函数
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.2 函数调用
-&lt;font size=5&gt;
--首先需要下载函数所在的R包（部分R包在下载R时已经自动下载）&lt;br&gt;
-&amp;emsp;&amp;emsp;install.pcakages("R包名称")&lt;br&gt;
--然后需要加载R包&lt;br&gt;
-&amp;emsp;&amp;emsp;library(R包名称)&lt;br&gt;
--已下载的R包，也可以直接 R包::函数名称 来调用函数&lt;br&gt;
-
--不同的R包中可能会有相同的函数名，为了避免调用错误，推荐使用：R包::函数名称&lt;br&gt;
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.2 函数调用
-![error4](./picture/chp5/error4.png)
-&lt;font size = 5&gt;
-未加载时不能直接调用函数
---
+# 7.2 基于LLM和OpenCode的实操演练
 
 
-``` r
-here::here()#::左边的here指名为here的R包，::右边的here指这个包中名为here的函数
-```
+.pull-left[
+.font-size-14[
+为什么要先把问题说清楚？
 
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
-```
+本章的数据预处理，本质上也是一个**问题解决（problem solving）**过程。
 
-``` r
-library(here)
-```
+**初始状态（Initial State）**
+- 我当前有什么数据？
+- 变量、类型、缺失值是否清楚？
 
-```
-## here() starts at /Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy
-```
+**路径（Path）**
+- 需要哪些步骤、函数或包？
+- 哪些前提还不能直接假设？
 
-``` r
-here()
-```
+**目标状态（Goal State）**
+- 我最后要得到什么结果？
+- 是清洗后的数据，还是汇总表？
+]
+]
 
-```
-## [1] "/Users/hcp4715/Library/CloudStorage/OneDrive-Personal/Teaching/R_course/R4Psy"
-```
+.pull-right[
+.font-size-14[
+**先把问题说清楚：**
 
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.2 函数调用
+已有数据  
+变量 / 类型 / 缺失值  
+`↓`
 
+目标结果  
+清洗数据 / 派生指标 / 汇总表  
+`↓`
 
-``` r
-df.pg.raw &lt;- utils::read.csv(file = './data/penguin/penguin_rawdata.csv',
-                       header = T, 
-                       sep=",",
-                       stringsAsFactors = FALSE) 
-```
+实现约束  
+包 / 路径 / 缺失值处理 / 输出格式  
+`↓`
 
-&amp;emsp;&amp;emsp;`df.pg.raw` 变量名 &lt;br&gt;
-&amp;emsp;&amp;emsp;`utils` 函数所在的R包 &lt;br&gt;
-&amp;emsp;&amp;emsp;`read.csv` 函数名 &lt;br&gt;
-&amp;emsp;&amp;emsp;`file` 参数：文件路径 &lt;br&gt;
-&amp;emsp;&amp;emsp;`header` 参数：是否将第一行作为列名 &lt;br&gt;
-&amp;emsp;&amp;emsp;`sep` 参数：指定分隔符 &lt;br&gt;
-&amp;emsp;&amp;emsp;`stringsAsFactors` 参数：是否将字符型数据转化为因子 &lt;br&gt;
+**再向 LLM 提问**
 
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数
-&lt;font size = 5&gt;
-函数定义通常由以下几个部分组成：&lt;br&gt;
-&amp;emsp;-函数名: 为函数指定一个唯一的名称，以便在调用时使用。&lt;br&gt;
-&amp;emsp;-参数: 定义函数接受的输入值。参数是可选的，可以有多个。&lt;br&gt;
-&amp;emsp;-函数体: 包含实际执行的代码块，用大括号 {} 括起来。&lt;br&gt;
-&amp;emsp;-返回值: 指定函数的输出结果，使用关键字`return`。&lt;br&gt;
---
-
-
-``` r
-# 定义一个函数：输入x和y，返回3倍x和5倍y的和
-mysum &lt;- function(x,y){
-  result = 3*x+5*y
-  return(result)
-}
-# mysum: 自定义的函数名
-# x,y:  形式参数
-# result = 3*x+5*y: 函数体
-# return(result): 返回值
-
-#调用函数,x=1,y=2
-mysum(1, 2)
-```
-
-```
-## [1] 13
-```
-
-``` r
-mysum(y=1, x=2)
-```
-
-```
-## [1] 11
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数（小练习）
-&lt;font size = 5&gt;
-- 小练习: 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。计算a = 1, b = 2, c = 3时返回的值&lt;br&gt;
-
-
-``` r
-# 自定义函数：计算 (a+b)/c
-# myabc &lt;- ***{
-  # result = ****
-  # return(result)}
-
-# 计算abc分别为1,2,3时的值
-#myabc(1, 2, 3)  # 结果：1
-
-#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数
-&lt;font size = 5&gt;
-&lt;br&gt;我们定义的函数mysum需要输入x和y两个值，如果只输入一个会怎么样。
---
-![error7](./picture/chp5/error7.png)
---
-&lt;font size = 5&gt;
-&lt;br&gt;在使用bruceR::import时，我们并没有输入所有参数，它依然可以运行，是因为它有默认值。
-
-
-``` r
-mysum2 &lt;- function(x = 6,y = 7){
-  result = 3*x+5*y
-  return(result)
-}
-mysum2()
-```
-
-```
-## [1] 53
-```
-
-``` r
-mysum2(5)
-```
-
-```
-## [1] 50
-```
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数(小练习)
-&lt;font size = 5&gt;
-- 小练习：&lt;br&gt;
-&amp;emsp;1 定义一个函数, 输入值a, b, c, 返回`(a+b)/c`。&lt;br&gt;
-**&amp;emsp;2 设置a、b、c的默认值为3、2、1&lt;br&gt;**
-- 通过这个练习，你将学习如何为函数添加默认值
-
-
-``` r
-# myabc &lt;- function(a = ***, b = ***, c = ***){
-#   result = ***
-#   return(***)
-# }
-# myabc(***)
-
-# 用合理的代码替换以上“***”,删除每行前的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数
-&lt;font size = 5&gt;
-在学习数据类型时，我们提到字符型不能进行加减乘除等数学运算&lt;br&gt;
---
-![error8](./picture/chp5/error8.png)
---
-&lt;font size = 5&gt;
-自定义函数时可以手动添加报错信息。&lt;br&gt;
-只有在输入的内容符合要求时才可以正常运行，否则报错。&lt;br&gt;
-此处判断是否符合要求本质上是一种逻辑判断。&lt;br&gt;
---
-![if-else](./picture/chp5/if-else.png)
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数
-
-``` r
-mysum3 &lt;- function(x = 6,y = 7){
-  if(is.numeric(x) &amp; is.numeric(y)){
-    result = 3*x+5*y
-    return(result)}
-  else{print("x and y must be number")}
-}
-# print：输出指定的内容
-# is.numeric:判断是否为数值型。是则返回T，否则返回F
-# &amp; : 表示“且”
-mysum3(5,6)
-```
-
-```
-## [1] 45
-```
-
-``` r
-mysum3('a','b')
-```
-
-```
-## [1] "x and y must be number"
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数(小练习)
-&lt;font size = 5&gt;
-- 小练习：&lt;br&gt;
-&amp;emsp;1 定义一个函数,输入值a,b,c,返回(a+b)/c;&lt;br&gt;
-&amp;emsp;2 设置a、b、c的默认值为3、2、1;&lt;br&gt;
-**&amp;emsp;当c为0时报错“c should not be 0”**
-- 通过这个练习，你将学习如何为函数添加报错信息
-
-
-``` r
-#myabc &lt;- function(***){
-#  if(***){
-#    result = ***
-#    return(***)
-#  }
-#  else{print(***)}
-#}
-
-#用合理的代码替换以上“***”,删除每行前的“#”,即可运行
-```
-
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-## 7.2.3 自定义函数(小练习)
-
-``` r
-#示例
-myabc &lt;- function(a = 3, b = 2, c = 1){
-  if(c!=0){
-    result = (a+b)/c
-    return(result)
-  }
-  else{print('c should not be 0')}
-}
-```
----
-# &lt;h1 lang="zh-CN"&gt;7.2 函数&lt;/h1&gt;
-- 函数在数据处理种的运用
-
-``` r
-convert_data_types = function(df) {
-  df &lt;- df %&gt;%
-    dplyr::mutate(Date = as.character(Date),
-                  Prac = as.character(Prac),
-                  Sub = as.numeric(Sub),
-                  Age = as.numeric(Age),
-                  Sex = as.character(Sex),
-                  Hand = as.character(Hand),
-                  Block = as.numeric(Block),
-                  Bin = as.numeric(Bin),
-                  Trial = as.numeric(Trial),
-                  Shape = as.character(Shape),
-                  Label = as.character(Label),
-                  Match = as.character(Match),
-                  CorrResp = as.character(CorrResp),
-                  Resp = as.character(Resp),
-                  ACC = as.numeric(ACC),
-                  RT = as.numeric(RT))
-  return(df)
-}
-```
-
----
-# &lt;h1 lang="en"&gt;7.2 函数&lt;/h1&gt;
-&lt;span style="font-size: 30px;"&gt;综合练习&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
-
-- 定义一个函数用于计算$d'$ 
-
-- 计算不同Shape情况下(immoralself，moralself，immoralother，moralother)&lt;br&gt; 基于信号检测论(match为信号，mismatch噪音)的$d'$
 &lt;br&gt;
 
-提示：&lt;br&gt; 
-- (1) `\(d′\)` = `\({Z_{击中率}−Z_{虚报率}}\)` = `\(\frac{M_{SN}-M_N}{\sigma_N}\)` &lt;br&gt;&lt;br&gt;
-- (2) `\(击中率\)` = `\(\frac{击中次数}{信号总次数}\)` &lt;br&gt;&lt;br&gt;
-- (3) `\(虚报率\)` = `\(\frac{虚报次数}{噪音总次数}\)` 
-&lt;br&gt;
+**一句话版本：**  
+现状 → 目标 → 约束 → 提问
+]
+]
+
+.font-size-14[
+💡 提问时，先说清**现状、目标、约束**。
+]
 
 ---
-- 1 以下是计算击中(hit)、虚报(fa)、漏报(miss)和正确否定(cr)的代码&lt;br&gt;
 
-``` r
-# 去掉下面#的部分，将***替换成合适的变量，补全代码
-dplyr::summarise(
-      # *** = length(ACC[Match == "match" &amp; ACC == 1]),
-      # *** = length(ACC[Match == "mismatch" &amp; ACC == 0]),
-      # *** = length(ACC[Match == "match" &amp; ACC == 0]),
-      # *** = length(ACC[Match == "mismatch" &amp; ACC == 1]),
+# 7.2.1 Prompt 1：先澄清问题，再开始规划（1/2）
+
+.font-size-14[
+**核心原则：先在Planning模式下消灭假设，再开始写代码。**
+
+**可直接使用的prompt：**
 ```
-- 2 可以使用正态分布的累积分布函数（qnorm）来计算 `\(d′\)` 值，以下为代码&lt;br&gt;
+我正在做数据预处理任务。在写任何代码之前，请先在 Planning 模式下持续追问并澄清我的需求。
+不要擅自做未说明的假设。请一直问到关键前提都被澄清。
 
-``` r
-        Dprime = qnorm(
-        ifelse(hit / (hit + miss) &lt; 1,
-               hit / (hit + miss),        # 击中率
-               1 - 1 / (2 * (hit + miss)) # 避免击中率为1时的极端情况
-              )
-        ) 
-             - qnorm(
-        ifelse(fa / (fa + cr) &gt; 0,
-              fa / (fa + cr),     # 虚报率
-              1 / (2 * (fa + cr)) # 避免虚报率为0时的极端情况
-              )
-                    )
-      ) 
+请你重点澄清：
+1. 我当前的数据是什么，包含哪些关键变量；
+2. 我的目标结果是什么；
+3. 中间需要哪些步骤；
 ```
----
-# &lt;h1 lang="en"&gt;7.2 函数&lt;/h1&gt;
-&lt;span style="font-size: 30px;"&gt;综合练习&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
-- **练习思路**&lt;br&gt;
-&lt;br&gt;
-Step1: 选择需要的变量 &lt;br&gt;
-&lt;br&gt;
-Step2: 基于Sub, Shape分组[extract,filter] &lt;br&gt;
-&lt;br&gt;
-Step3: 使用计算公式，计算d'值 &lt;br&gt;
-&lt;br&gt;
-Step4: 删除击中、虚报、误报、正确拒绝四个不需要的变量 &lt;br&gt;
-&lt;br&gt;
-Step5: 长转宽，得到每个Shape情况下的信号检测论d值[pivot_wide] &lt;br&gt;
+]
 
 ---
-# &lt;h1 lang="en"&gt;7.2 函数&lt;/h1&gt;
-&lt;span style="font-size: 30px;"&gt;综合练习&lt;/span&gt;&lt;/center&gt;&lt;br&gt;
-- **答案参考**&lt;br&gt;
-&lt;br&gt;
-&lt;img src="./picture/chp6/answer.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;"&gt;
+
+# 7.2.1 Prompt 1：先澄清问题，再开始规划（2/2）
+
+.font-size-14[
+```
+4. 哪些约束会影响实现（如包、路径、缺失值、输出格式）；
+5. 我还没有说明但必须确认的信息。
+
+在你确认关键前提都已澄清之前，不要开始写代码。
+```
+
+**坏提问：** “帮我把这个数据处理一下。”
+
+**更好的提问：** 先要求模型追问你的目标、数据和限制条件，再进入方案设计。
+
+💡 复制时，请把本 prompt 的多页代码块合并后再使用。
+]
+
+---
+
+# 7.2.1 Prompt 2：先帮我理顺问题解决思路（1/3）
+
+.font-size-14[
+**当你还没想清楚“该怎么做”时，不要急着要代码，可以先让LLM帮你把思路理顺。**
+
+**可直接使用的prompt：**
+```
+我现在想解决一个问题，但我还没有完全想清楚思路。
+请不要直接给我答案，
+而是先帮助我理顺
+从初始状态到目标状态的过程。
+
+请按下面顺序引导我：
+```
+]
+
+---
+
+# 7.2.1 Prompt 2：先帮我理顺问题解决思路（2/3）
+
+.font-size-14[
+```
+1. 帮我界定当前的初始状态：
+   我现在已有的信息、数据、条件分别是什么？
+2. 帮我界定目标状态：
+   我最终想得到的结果是什么？怎样算完成？
+3. 帮我识别中间路径：
+   从现在到目标之间，通常需要拆成哪几个步骤？
+```
+]
+
+---
+
+# 7.2.1 Prompt 2：先帮我理顺问题解决思路（3/3）
+
+.font-size-14[
+```
+4. 帮我找出缺失信息：
+   哪些关键前提还不清楚，不能直接假设？
+5. 请用简洁结构总结：
+   当前状态、目标状态、关键约束、可行步骤，
+   以及我下一步最应该先确认的问题。
+
+在关键前提没有澄清之前，
+不要直接进入代码或最终方案。
+```
+
+**适用场景：** 知道自己“卡住了”，
+但还说不清是卡在数据、方法、步骤还是约束时。
+
+💡 复制时，请把本 prompt 的多页代码块合并后再使用。
+]
+
+---
+
+# 7.2.1 Prompt 3：把小而具体的目标讲清楚（1/3）
+
+.font-size-14[
+**当任务已经明确时，把一个小目标单独说清楚，LLM更容易理解你的意图。**
+
+**推荐模板：背景 / 数据 / 需求 / 约束（通用模板）**
+```
+背景：我正在学习第6章的数据预处理。
+
+数据：我已经加载了 penguin 数据集，数据框叫 df，包含 Site、age、weight_kg、height_cm、sex。
+```
+]
+
+---
+
+# 7.2.1 Prompt 3：把小而具体的目标讲清楚（2/3）
+
+.font-size-14[
+```
+需求：
+1. 筛选出 Site 为 "Tsinghua" 且 age &gt; 25 的被试；
+2. 计算这些被试的 BMI；
+3. 按 sex 输出 BMI 的均值和标准差。
+```
+]
+
+---
+
+# 7.2.1 Prompt 3：把小而具体的目标讲清楚（3/3）
+
+.font-size-14[
+```
+约束：
+- 请使用 dplyr；
+- 正确处理缺失值；
+- 每一步添加注释；
+- 先解释思路，再给完整代码。
+```
+
+**要点：** 说清楚输入是什么、输出是什么、用什么方法、有哪些限制，而不是一次把很多目标混在一起。
+
+💡 复制时，请把本 prompt 的多页代码块合并后再使用。
+]
+
+---
+
+# 7.2.2 用OpenCode把方案设计变成coding（1/3）
+
+.font-size-14[
+**最小工作流：先 plan，再 /start-work。**
+
+这里的 **Planning 模式**，指的是先澄清需求并形成执行计划，而不是立刻生成代码。
+
+1. **先进入 plan / Planning 模式**
+   - 让 OpenCode 先问问题、澄清需求、生成方案；
+2. **查看生成的计划**
+   - 通常会保存在 `.sisyphus/plans/`；
+]
+
+---
+
+# 7.2.2 用OpenCode把方案设计变成coding（2/3）
+
+.font-size-14[
+3. **确认方案足够清楚之后，再执行**
+   - 使用 `/start-work` 把已经确认的计划交给系统实施。
+
+**最小示例：**
+```
+请先进入 Planning 模式，不要直接写代码。
+先问我问题，直到关键前提都被澄清。
+然后给出一个清晰的实现计划，说明每一步要做什么、预期输出是什么。
+```
+]
+
+---
+
+# 7.2.2 用OpenCode把方案设计变成coding（3/3）
+
+.font-size-14[
+**什么时候不要直接 `/start-work`？**
+- 当你的目标还很模糊；
+- 当任务包含多个步骤或多个文件；
+- 当你还不确定数据结构、变量名或输出形式；
+- 当你还没有看懂计划，无法判断它是否合理。
+]
+
+---
+
+# 7.2.2 从模糊需求到清晰执行（1/3）
+
+.font-size-14[
+**完整示例：从模糊需求到清晰执行**
+
+**模糊说法：**
+```
+帮我处理一下 penguin 数据。
+```
+]
+
+---
+
+# 7.2.2 从模糊需求到清晰执行（2/3）
+
+.font-size-14[
+**更清晰的说法：**
+```
+我正在学习第6章的数据预处理。请先不要写代码。
+先在 Planning 模式下问我问题，直到关键前提都被澄清。
+
+我的数据框叫 df，至少包含 Site、age、weight_kg、height_cm、sex。
+我的目标是：
+1. 筛选 Site == "Tsinghua" 且 age &gt; 25 的被试；
+2. 计算 BMI；
+3. 按 sex 汇总 BMI 的均值和标准差。
+```
+]
+
+---
+
+# 7.2.2 从模糊需求到清晰执行（3/3）
+
+.font-size-14[
+```
+请先给出实现思路和步骤说明；确认后，我再让你开始写代码。
+```
+
+**记住：** 好的问题解决，不是一次把全部答案“要出来”，而是先澄清，再规划，再执行，再迭代优化。
+]
+
+---
+
+class: center, middle
+&lt;span style="font-size: 50px;"&gt;实操演练&lt;/span&gt; &lt;br&gt;
+
+---
+
+# 7.2.3 实验数据处理
+
+.font-size-14[
+**任务：计算match-moral条件下的自我优势效应SPE**
+
+1. 批量读取所有被试数据
+2. 筛选有效试次（ACC, RT范围）
+3. 按被试和条件计算均值
+4. 拆分Shape变量
+5. 筛选match-moral条件
+6. 长转宽，计算SPE
+]
+
+---
+
+# 练习：实验数据处理（代码骨架）
+
+.font-size-14[
+```r
+# df_spe &lt;- files %&gt;%
+#   lapply(function(f) {
+#     read.table(f, header = TRUE) %&gt;%
+#       filter(Date != "Date")
+#   }) %&gt;%
+#   bind_rows() %&gt;%
+#   filter(***, 
+#          ACC == 0 | ACC == 1,
+#          RT &gt;= 0.2 &amp; RT &lt;= 1.5) %&gt;%
+#   drop_na() %&gt;%
+#   group_by(Sub, Shape, Label, Match) %&gt;%
+#   summarise(mean_RT = ***, .groups = "drop") %&gt;%
+#   extract(Shape,
+#           into = c("Valence", "Identity"),
+#           regex = "(moral|immoral)(Self|Other)") %&gt;%
+#   filter(Match == "match",
+#          Valence == "moral") %&gt;%
+#   select(Sub, Identity, ***) %&gt;%
+#   pivot_wider(names_from = "Identity",
+#                values_from = "***") %&gt;%
+#   mutate(moral_SPE = *** - ***)
+```
+]
+
+---
+
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;Any questions?&lt;/span&gt; &lt;br&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
