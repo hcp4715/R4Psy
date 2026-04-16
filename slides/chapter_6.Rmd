@@ -291,7 +291,7 @@ df[, c("name", "score")]
 
 ---
 
-# 3.4 数据框的基本操作（续）
+# 3.4 数据框的基本操作
 
 .font-size-14[
 ```r
@@ -334,7 +334,7 @@ colnames(df)     # 同上
 
 ---
 
-# 4.1 查看数据的基本信息（续）
+# 4.1 查看数据的基本信息
 
 .font-size-14[
 ```r
@@ -646,7 +646,7 @@ df %>% summarise(mean_score = mean(score), n = n())
 
 ---
 
-# 5.7 summarise() 和 group_by()：分组汇总（续）
+# 5.7 summarise() 和 group_by()：分组汇总
 
 .font-size-14[
 ```r
@@ -861,7 +861,7 @@ df2 <- df2 %>%
 
 ---
 
-# 5.15 计算量表总分和均分（续）
+# 5.15 计算量表总分和均分
 
 .font-size-14[
 ```r
@@ -953,321 +953,10 @@ df_result
 ```
 ]
 
----
-
-class: center, middle
-<span style="font-size: 50px;">实战二：实验数据处理(RT)</span> <br>
 
 ---
 
-# 6.1 实验数据处理概述
-
-实验数据（如反应时数据）的处理与问卷数据有所不同：
-
-.font-size-14[
-| 步骤 | 说明 | 常用函数 |
-|------|------|----------|
-| 1. 批量读取数据 | 多个被试文件合并 | `for loop`, `lapply`, `bind_rows` |
-| 2. 数据清洗 | 排除无效试次 | `filter()` |
-| 3. 计算变量 | 按条件计算均值 | `group_by()`, `summarise()` |
-| 4. 数据重塑 | 长宽数据转换 | `pivot_wider()`, `pivot_longer()` |
-| 5. 计算指标 | 如自我优势效应SPE | `mutate()` |
-]
-]
-
----
-
-# 6.2 读取单个文件
-
-.font-size-14[
-```r
-# 读取单个被试的反应时数据
-# .out文件通常是以空格或制表符分隔的文本文件
-
-# 查看数据目录
-list.files(here::here("slides", "data", "match"))
-
-# 读取单个文件
-p1 <- read.table(
-  here::here("slides", "data", "match", "data_exp7_rep_match_7302.out"),
-  header = TRUE
-)
-
-# 查看数据结构
-str(p1)
-head(p1)
-```
-]
-
----
-
-# 6.3 批量读取数据：使用 for loop
-
-当有多个被试的数据文件时，需要批量读取并合并。
-
-.font-size-14[
-```r
-# 第一步：找到所有要读取的文件
-files <- list.files(
-  here::here("slides", "data", "match"),
-  pattern = "data_exp7_rep_match_.*\\.out$",
-  full.names = TRUE
-)
-
-# 查看找到的文件
-head(files, 5)
-length(files)  # 文件数量
-```
-]
-
----
-
-# 6.4 for loop 的基本语法
-
-.font-size-14[
-```r
-# for loop 语法
-# for (变量 in 序列) {
-#   执行代码
-# }
-
-# 示例：打印1到10
-for (i in 1:10) {
-  print(i)
-}
-
-# 示例：对向量中的每个元素操作
-my_vector <- c("A", "B", "C")
-for (item in my_vector) {
-  print(item)
-}
-```
-]
-
----
-
-# 6.5 使用 for loop 批量读取文件
-
-.font-size-14[
-```r
-# 创建空数据框
-df_all <- data.frame()
-
-# 逐个读取并合并
-for (i in seq_along(files)) {
-  df_temp <- read.table(files[i], header = TRUE)
-  df_temp <- dplyr::filter(df_temp, Date != "Date")
-  df_all <- dplyr::bind_rows(df_all, df_temp)
-}
-
-# 查看结果
-dim(df_all)
-head(df_all)
-```
-]
-
----
-
-# 6.6 使用 lapply 批量读取（更简洁）
-
-.font-size-14[
-```r
-# lapply(列表/向量, 函数)
-
-df_all <- lapply(files, function(file) {
-  df <- read.table(file, header = TRUE)
-  df <- dplyr::filter(df, Date != "Date")
-  return(df)
-}) %>%
-  dplyr::bind_rows()
-
-# 查看结果
-dim(df_all)
-head(df_all)
-```
-]
-
----
-
-# 6.7 处理实验数据：排除无效试次
-
-.font-size-14[
-```r
-# 查看原始数据量
-nrow(df_all)
-
-# 第一步：按 Hand 和 ACC 过滤
-df_clean <- df_all %>%
-  dplyr::filter(Hand == "R") %>%
-  dplyr::filter(ACC == 0 | ACC == 1)
-```
-]
-
----
-
-# 6.7 处理实验数据：排除无效试次（续）
-
-.font-size-14[
-```r
-# 第二步：限制 RT 范围并删除缺失值
-df_clean <- df_clean %>%
-  dplyr::filter(RT >= 0.2 & RT <= 1.5) %>%
-  tidyr::drop_na()
-
-# 查看处理后的数据量
-nrow(df_clean)
-```
-]
-
----
-
-# 6.8 按条件计算均值
-
-.font-size-14[
-```r
-# 按被试和实验条件计算平均反应时和正确率
-df_means <- df_clean %>%
-  dplyr::group_by(Sub, Shape, Label, Match) %>%
-  dplyr::summarise(
-    mean_RT = mean(RT),
-    mean_ACC = mean(ACC),
-    .groups = "drop"
-  )
-
-head(df_means)
-```
-]
-
----
-
-# 6.9 拆分变量：extract
-
-有时需要从一个变量中拆出两个新的信息字段。
-
-.font-size-14[
-```r
-# Shape变量包含多个信息，如 "moralSelf", "immoralOther"
-# 需要拆分为 Valence 和 Identity 两个变量
-
-df_means <- df_means %>%
-  tidyr::extract(
-    col = Shape,
-    into = c("Valence", "Identity"),
-    regex = "(moral|immoral)(Self|Other)",
-    remove = FALSE
-  )
-
-head(df_means)
-```
-]
-
----
-
-# 6.10 长宽数据转换：pivot_wider
-
-.font-size-14[
-```r
-# pivot_wider: 长数据 -> 宽数据
-
-df_wide <- df_means %>%
-  dplyr::filter(Match == "match" & Valence == "moral") %>%
-  dplyr::select(Sub, Identity, mean_RT) %>%
-  tidyr::pivot_wider(
-    names_from = "Identity",
-    values_from = "mean_RT"
-  )
-
-head(df_wide)
-```
-]
-
----
-
-# 6.11 计算派生指标
-
-.font-size-14[
-```r
-# 计算自我优势效应 (Self-Positivity Effect)
-# SPE = 自我条件RT - 他人条件RT
-# 负值表示自我优势（反应更快）
-
-df_spe <- df_wide %>%
-  dplyr::mutate(
-    moral_SPE = Self - Other
-  ) %>%
-  dplyr::select(Sub, moral_SPE)
-
-summary(df_spe$moral_SPE)
-```
-]
-
----
-
-# 6.12 完整的实验数据处理流程（1/3）
-
-.font-size-14[
-```r
-# 第一步：读取并清洗原始数据
-df_spe <- files %>%
-  lapply(function(file) {
-    df <- read.table(file, header = TRUE)
-    dplyr::filter(df, Date != "Date")
-  }) %>%
-  bind_rows() %>%
-  dplyr::filter(
-    Hand == "R",
-    ACC == 0 | ACC == 1,
-    RT >= 0.2 & RT <= 1.5
-  ) %>%
-  tidyr::drop_na()
-```
-]
-
----
-
-# 6.12 完整的实验数据处理流程（2/3）
-
-.font-size-14[
-```r
-# 第二步：分组计算均值，并拆分 Shape
-df_spe <- df_spe %>%
-  dplyr::group_by(Sub, Shape, Label, Match) %>%
-  dplyr::summarise(
-    mean_RT = mean(RT),
-    .groups = "drop"
-  ) %>%
-  tidyr::extract(
-    Shape,
-    into = c("Valence", "Identity"),
-    regex = "(moral|immoral)(Self|Other)"
-  )
-```
-]
-
----
-
-# 6.12 完整的实验数据处理流程（3/3）
-
-.font-size-14[
-```r
-# 第三步：长转宽并计算 SPE
-df_spe <- df_spe %>%
-  dplyr::filter(Match == "match",
-                Valence == "moral") %>%
-  dplyr::select(Sub, Identity, mean_RT) %>%
-  tidyr::pivot_wider(
-    names_from = "Identity",
-    values_from = "mean_RT"
-  ) %>%
-  dplyr::mutate(moral_SPE = Self - Other)
-
-head(df_spe)
-```
-]
-
----
-
-# 6.13 常用tidyr函数总结
+# 5.18 常用tidyr函数总结
 
 .font-size-14[
 | 函数 | 功能 | 示例 |
@@ -1282,7 +971,7 @@ head(df_spe)
 
 ---
 
-# 6.14 常用dplyr函数总结
+# 5.19 常用dplyr函数总结
 
 .font-size-14[
 | 函数 | 功能 | 示例 |
@@ -1306,7 +995,7 @@ class: center, middle
 
 ---
 
-# 6.15 为什么要先把问题说清楚？
+# 6 为什么要先把问题说清楚？
 
 .pull-left[
 .font-size-14[
@@ -1357,7 +1046,7 @@ class: center, middle
 
 ---
 
-# 6.16 Prompt 1：先澄清问题，再开始规划（1/2）
+# 6.1 Prompt 1：先澄清问题，再开始规划（1/2）
 
 .font-size-14[
 **核心原则：先在Planning模式下消灭假设，再开始写代码。**
@@ -1376,7 +1065,7 @@ class: center, middle
 
 ---
 
-# 6.16 Prompt 1：先澄清问题，再开始规划（2/2）
+# 6.1 Prompt 1：先澄清问题，再开始规划（2/2）
 
 .font-size-14[
 ```
@@ -1395,7 +1084,7 @@ class: center, middle
 
 ---
 
-# 6.17 Prompt 2：先帮我理顺问题解决思路（1/3）
+# 6.1 Prompt 2：先帮我理顺问题解决思路（1/3）
 
 .font-size-14[
 **当你还没想清楚“该怎么做”时，不要急着要代码，可以先让LLM帮你把思路理顺。**
@@ -1413,7 +1102,7 @@ class: center, middle
 
 ---
 
-# 6.17 Prompt 2：先帮我理顺问题解决思路（2/3）
+# 6.1 Prompt 2：先帮我理顺问题解决思路（2/3）
 
 .font-size-14[
 ```
@@ -1428,7 +1117,7 @@ class: center, middle
 
 ---
 
-# 6.17 Prompt 2：先帮我理顺问题解决思路（3/3）
+# 6.1 Prompt 2：先帮我理顺问题解决思路（3/3）
 
 .font-size-14[
 ```
@@ -1450,7 +1139,7 @@ class: center, middle
 
 ---
 
-# 6.18 Prompt 3：把小而具体的目标讲清楚（1/3）
+# 6.1 Prompt 3：把小而具体的目标讲清楚（1/3）
 
 .font-size-14[
 **当任务已经明确时，把一个小目标单独说清楚，LLM更容易理解你的意图。**
@@ -1465,7 +1154,7 @@ class: center, middle
 
 ---
 
-# 6.18 Prompt 3：把小而具体的目标讲清楚（2/3）
+# 6.1 Prompt 3：把小而具体的目标讲清楚（2/3）
 
 .font-size-14[
 ```
@@ -1478,7 +1167,7 @@ class: center, middle
 
 ---
 
-# 6.18 Prompt 3：把小而具体的目标讲清楚（3/3）
+# 6.1 Prompt 3：把小而具体的目标讲清楚（3/3）
 
 .font-size-14[
 ```
@@ -1496,7 +1185,7 @@ class: center, middle
 
 ---
 
-# 6.19 用OpenCode把方案设计变成coding（1/3）
+# 6.2 用OpenCode把方案设计变成coding（1/3）
 
 .font-size-14[
 **最小工作流：先 plan，再 /start-work。**
@@ -1511,7 +1200,7 @@ class: center, middle
 
 ---
 
-# 6.19 用OpenCode把方案设计变成coding（2/3）
+# 6.2 用OpenCode把方案设计变成coding（2/3）
 
 .font-size-14[
 3. **确认方案足够清楚之后，再执行**
@@ -1527,7 +1216,7 @@ class: center, middle
 
 ---
 
-# 6.19 用OpenCode把方案设计变成coding（3/3）
+# 6.2 用OpenCode把方案设计变成coding（3/3）
 
 .font-size-14[
 **什么时候不要直接 `/start-work`？**
@@ -1539,7 +1228,7 @@ class: center, middle
 
 ---
 
-# 6.20 从模糊需求到清晰执行（1/3）
+# 6.3 从模糊需求到清晰执行（1/3）
 
 .font-size-14[
 **完整示例：从模糊需求到清晰执行**
@@ -1552,7 +1241,7 @@ class: center, middle
 
 ---
 
-# 6.20 从模糊需求到清晰执行（2/3）
+# 6.3 从模糊需求到清晰执行（2/3）
 
 .font-size-14[
 **更清晰的说法：**
@@ -1570,7 +1259,7 @@ class: center, middle
 
 ---
 
-# 6.20 从模糊需求到清晰执行（3/3）
+# 6.3 从模糊需求到清晰执行（3/3）
 
 .font-size-14[
 ```
@@ -1587,7 +1276,7 @@ class: center, middle
 
 ---
 
-# 练习1：问卷数据处理
+# 练习：问卷数据处理
 
 任务：处理penguin数据，按Site分组计算age和ALEX的均值
 
@@ -1601,7 +1290,7 @@ class: center, middle
 
 ---
 
-# 练习1：问卷数据处理（代码骨架）
+# 练习：问卷数据处理（代码骨架）
 
 .font-size-14[
 ```r
@@ -1626,50 +1315,6 @@ class: center, middle
 ```
 ]
 
----
-
-# 练习2：实验数据处理
-
-任务：计算match-moral条件下的自我优势效应SPE
-
-.font-size-14[
-1. 批量读取所有被试数据
-2. 筛选有效试次（ACC, RT范围）
-3. 按被试和条件计算均值
-4. 拆分Shape变量
-5. 筛选match-moral条件
-6. 长转宽，计算SPE
-]
-
----
-
-# 练习2：实验数据处理（代码骨架）
-
-.font-size-14[
-```r
-# df_spe <- files %>%
-#   lapply(function(f) {
-#     read.table(f, header = TRUE) %>%
-#       filter(Date != "Date")
-#   }) %>%
-#   bind_rows() %>%
-#   filter(***, 
-#          ACC == 0 | ACC == 1,
-#          RT >= 0.2 & RT <= 1.5) %>%
-#   drop_na() %>%
-#   group_by(Sub, Shape, Label, Match) %>%
-#   summarise(mean_RT = ***, .groups = "drop") %>%
-#   extract(Shape,
-#           into = c("Valence", "Identity"),
-#           regex = "(moral|immoral)(Self|Other)") %>%
-#   filter(Match == "match",
-#          Valence == "moral") %>%
-#   select(Sub, Identity, ***) %>%
-#   pivot_wider(names_from = "Identity",
-#                values_from = "***") %>%
-#   mutate(moral_SPE = *** - ***)
-```
-]
 
 ---
 
