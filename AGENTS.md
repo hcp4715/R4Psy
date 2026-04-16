@@ -1,550 +1,503 @@
-# PROJECT KNOWLEDGE BASE
+# R4Psy 课程的 AI 互动指南
 
-**Generated:** 2026-02-24 20:17:43 CST
-**Commit:** 550749c
-**Branch:** main
+## 目的
+本节为学生和 AI 助手提供指南，帮助他们在学习 R4Psy 课程材料时更高效地互动，尤其适用于第 5 章及之后的内容。
 
-## OVERVIEW
-Graduate-level R course materials (R for Psychology) with chapter slides in R Markdown, a single Quarto revealjs lecture, and pre-rendered HTML/PDF outputs.
+## 基本原则
 
-## STRUCTURE
-```
-R4Psy/
-├── chapter_*.Rmd            # Primary slide sources (xaringan)
-├── chapter_*.html           # Rendered slide outputs
-├── chapter_*.pptx           # Slide decks for early chapters
-├── chapter_14.qmd           # Quarto revealjs lecture
-├── Demo.Rmd                 # papaja demo manuscript
-├── css/                     # Xaringan CSS themes
-├── data/                    # Datasets + research folder templates
-├── env/                     # Environment setup guide + screenshots
-├── homeworks/               # Yearly homework folders
-├── libs/                    # Xaringan/HTML dependencies (vendored)
-├── output/                  # Generated outputs by chapter
-├── picture/                 # Chapter images
-├── chapter_13_guest_Du_XK/  # Guest lecture: network analysis
-└── chapter_14_guest_Liu_Z/  # Guest lecture: meta-analysis
-```
+### 1. 重理解，轻死记
+- 重点放在理解 **概念**，而不是背诵语法。
+- AI 可以帮助生成代码，但你需要真正理解代码在做什么。
+- 当 AI 给出方案时，始终追问“为什么”。
 
-## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
-| Edit chapter slides | chapter_*.Rmd | Xaringan slides via `xaringan::moon_reader` |
-| Render chapter slides | chapter_*.Rmd | Produces chapter_*.html in root |
-| Quarto lecture | chapter_14.qmd | Revealjs, uses `theme.scss` |
-| papaja manuscript | Demo.Rmd, chapter_13_papaja.Rmd | Renders to PDF/TeX |
-| Data used in examples | data/match, data/penguin | Loaded via `here::here()` |
-| Xaringan styling | css/Font_Style.css, css/zh-CN.css, css/Custumed_Style.css | Applied via YAML `css:` |
-| Revealjs styling | theme.scss | Applied in `chapter_14.qmd` |
-| Env setup guide | env/env_init.md | Screenshot-heavy tutorial |
-| Guest network analysis | chapter_13_guest_Du_XK | `dag/`, `ggm/` scripts |
-| Guest meta-analysis | chapter_14_guest_Liu_Z | `code/`, `datasheets/` |
+### 2. 迭代式解决问题
+- 先从简单问题开始，再逐步增加复杂度。
+- 不要试图在一个提示词里解决所有问题。
+- 利用 AI 的回答不断修正并加深自己的理解。
 
-## CONVENTIONS
-- Slides use `output: xaringan::moon_reader` with `css: [default, css/... ]` and `lib_dir: libs`.
-- Chapter code uses `here::here()` for data paths; avoid absolute paths.
-- Chunk labels often include section numbers (e.g., `5.1`, `xaringan-panelset`).
-- Packages loaded with `pacman::p_load(...)` or `library(...)`.
-
-## ANTI-PATTERNS (THIS PROJECT)
-- Do not hand-edit rendered artifacts (`chapter_*.html`, `*_files/`, `output/`); re-render from source instead.
-- Do not edit `libs/` (vendored dependencies) unless intentionally updating generated outputs.
-- Avoid absolute file paths in R code; use `here::here()` consistently.
-
-## UNIQUE STYLES
-- Xaringan CSS uses custom Chinese/English typography in `css/`.
-- Quarto revealjs theme in `theme.scss` sets fonts/colors for Chapter 14.
-
-## COMMANDS
-```bash
-Rscript -e "rmarkdown::render('chapter_3.Rmd')"
-Rscript -e "rmarkdown::render('Demo.Rmd')"
-quarto render chapter_14.qmd
-```
-
-## NOTES
-- No CI/build automation; rendering is manual via RStudio or CLI.
-- Repo includes many generated assets and large binaries.
-- Shared helper functions are defined inline in chapters (e.g., `chapter_7.Rmd` for `convert_data_types`, `chapter_9_supplementary.Rmd` for datawizard-style helpers); there is no central utils file.
+### 3. 验证与测试
+- 一定要用你自己的数据测试 AI 生成的代码。
+- 检查结果是否符合预期。
+- 如果代码逻辑不清楚，就让 AI 解释。
 
 ---
 
-# AI INTERACTION GUIDE FOR R4PSY COURSE
+## 提示词模板结构
 
-## PURPOSE
-This section provides guidelines for students and AI assistants to interact effectively when working through the R4Psy course materials, particularly for Chapter 5 and beyond.
+在向 AI 寻求 R 编程帮助时，请使用下面这个结构：
 
-## GENERAL PRINCIPLES
-
-### 1. Understanding Over Memorization
-- Focus on understanding **concepts** rather than memorizing syntax
-- AI can help generate code, but you need to understand what the code does
-- Always ask "why" when AI provides a solution
-
-### 2. Iterative Problem Solving
-- Start with simple questions, then build complexity
-- Don't try to solve everything in one prompt
-- Use AI's responses to refine your understanding
-
-### 3. Verification and Testing
-- Always test AI-generated code with your own data
-- Check results against expected outcomes
-- Ask AI to explain code logic when unclear
-
----
-
-## PROMPT TEMPLATE STRUCTURE
-
-When asking AI for help with R programming, use this structure:
-
-### Template Format
+### 模板格式
 ```
-**Background:**
-[Describe your current task or problem context]
+**背景：**
+[描述你当前的任务或问题背景]
 
-**Data:**
-[Describe your data structure: variables, types, size]
+**数据：**
+[描述你的数据结构：变量、类型、规模]
 
-**Requirements:**
-[Specific operations or analyses you need]
+**需求：**
+[你需要进行的具体操作或分析]
 
-**Constraints:**
-[Any limitations or special requirements]
+**约束：**
+[任何限制条件或特殊要求]
 ```
 
-### Example Prompt
+### 示例提示词
 ```
-**Background:**
-I'm working on Chapter 5 exercises about data types and structures.
+**背景：**
+我正在完成第 5 章里关于数据类型和数据结构的练习。
 
-**Data:**
-I have a data frame loaded from:
+**数据：**
+我有一个数据框，加载自：
 `here::here("slides", "data", "penguin", "penguin_rawdata.csv")`
-It contains columns: age (numeric), Site (character), weight_kg (numeric), height_cm (numeric)
+它包含以下列：age（数值型）、Site（字符型）、weight_kg（数值型）、height_cm（数值型）
 
-**Requirements:**
-1. Filter data where Site is "Tsinghua" and age > 25
-2. Calculate BMI for these participants
-3. Create a summary table by sex
+**需求：**
+1. 筛选出 Site 为 "Tsinghua" 且 age > 25 的数据
+2. 为这些参与者计算 BMI
+3. 按 sex 创建汇总表
 
-**Constraints:**
-- Use data.table for efficiency
-- Handle missing values appropriately
-- Round numeric results to 2 decimal places
+**约束：**
+- 使用 data.table 以提高效率
+- 正确处理缺失值
+- 数值结果保留两位小数
+```
+
+### 补充模板：当你还没有想清楚思路时
+```
+我现在想解决一个问题，但我还没有完全想清楚思路。
+请不要直接给我答案，而是先帮助我理顺从初始状态到目标状态的过程。
+
+请按下面顺序引导我：
+1. 帮我界定当前的初始状态：我现在已有的信息、数据、条件分别是什么？
+2. 帮我界定目标状态：我最终想得到的结果是什么？怎样算完成？
+3. 帮我识别中间路径：从现在到目标之间，通常需要拆成哪几个步骤？
+4. 帮我找出缺失信息：哪些关键前提还不清楚，不能直接假设？
+5. 请用简洁的结构总结成：当前状态、目标状态、关键约束、可行步骤，以及我下一步最应该先确认的问题。
+
+在关键前提没有澄清之前，不要直接进入代码或最终方案。
+```
+
+这个补充模板可以和原来的 **背景 / 数据 / 需求 / 约束** 结构配合使用：
+- `背景 + 数据` 帮助 AI 理解你的**初始状态**
+- `需求` 帮助 AI 理解你的**目标状态**
+- `约束` 帮助 AI 判断实现时的**限制条件**
+- 如果你还没有想清楚步骤，可以先让 AI 帮你补齐**中间路径**
+
+---
+
+## 分章节提示词
+
+### 第 5 章：数据类型与数据结构
+
+#### 适用于数据类型问题
+```
+**背景：**
+我正在学习第 5 章中的 R 数据类型。
+
+**问题：**
+[你关于 numeric、character、logical 或 factor 类型的具体问题]
+
+**示例：**
+"我怎样检查数据框中的某一列是 numeric 还是 character？
+在类型之间转换应该使用什么函数？"
+```
+
+#### 适用于数据结构问题
+```
+**背景：**
+我正在处理不同的数据结构（向量、矩阵、数据框、data.table）。
+
+**当前代码：**
+[如果有，请粘贴你当前的代码]
+
+**问题：**
+[描述哪里没有按预期工作，或者你想实现什么]
+
+**期望输出：**
+[描述你希望结果呈现成什么样子]
+```
+
+#### 适用于函数问题
+```
+**背景：**
+我需要为 [具体任务] 创建 / 修改一个函数。
+
+**函数需求：**
+- 输入：[描述参数]
+- 输出：[描述返回值]
+- 特殊处理：[缺失值、错误检查等]
+
+**调用示例：**
+[展示你希望如何调用这个函数]
 ```
 
 ---
 
-## CHAPTER-SPECIFIC PROMPTS
+## 迭代优化策略
 
-### Chapter 5: Data Types & Data Structures
-
-#### For Data Type Questions
+### 策略 1：逐步增加复杂度
+**第 1 轮 - 基础问题：**
 ```
-**Background:**
-I'm learning about R data types in Chapter 5.
-
-**Question:**
-[Your specific question about numeric, character, logical, or factor types]
-
-**Example:**
-"How do I check if a column in my data frame is numeric or character? 
-What function should I use to convert between types?"
+"我怎样创建一个包含 3 列（id、name、score）的数据框？"
 ```
 
-#### For Data Structure Questions
+**第 2 轮 - 增加复杂度：**
 ```
-**Background:**
-I'm working with different data structures (vectors, matrices, data frames, data.table).
-
-**Current Code:**
-[Paste your current code if any]
-
-**Problem:**
-[Describe what's not working or what you're trying to achieve]
-
-**Expected Output:**
-[Describe what you want the result to look like]
+"很好！那我该怎样根据 score 的数值再添加一列 'grade'？"
 ```
 
-#### For Function Questions
+**第 3 轮 - 进一步优化：**
 ```
-**Background:**
-I need to create/modify a function for [specific task].
-
-**Function Requirements:**
-- Input: [describe parameters]
-- Output: [describe return value]
-- Special handling: [missing values, error checking, etc.]
-
-**Example Usage:**
-[Show how you want to call the function]
+"你能展示一下怎样用 data.table 更高效地实现吗？"
 ```
 
----
-
-## ITERATIVE OPTIMIZATION STRATEGIES
-
-### Strategy 1: Incremental Complexity
-**Round 1 - Basic Question:**
+### 策略 2：解决报错
+**初始提示词：**
 ```
-"How do I create a data frame with 3 columns: id, name, and score?"
-```
+"我运行这段代码时出现了错误：
+[粘贴代码和报错信息]
 
-**Round 2 - Add Complexity:**
-```
-"Good! Now how do I add a new column 'grade' based on the score values?"
+哪里有问题？我该怎么修复？"
 ```
 
-**Round 3 - Refine:**
+**追问：**
 ```
-"Can you show me how to do this more efficiently using data.table?"
-```
-
-### Strategy 2: Error Resolution
-**Initial Prompt:**
-```
-"I'm getting an error when running this code:
-[Paste code and error message]
-
-What's wrong and how do I fix it?"
+"修复后可以运行了，但你能解释一下为什么会出现这个错误，
+以及将来怎样避免类似问题吗？"
 ```
 
-**Follow-up:**
+### 策略 3：比较不同做法
+**初始请求：**
 ```
-"The fix worked, but can you explain why the error occurred 
-and how to prevent similar errors in the future?"
-```
-
-### Strategy 3: Alternative Approaches
-**Initial Request:**
-```
-"How do I calculate the mean of a column with missing values?"
+"如果一列里有缺失值，我该怎样计算它的平均数？"
 ```
 
-**Follow-up:**
+**追问：**
 ```
-"What are the different ways to handle missing values in R? 
-Show me 2-3 approaches with pros and cons."
+"在 R 里处理缺失值有哪些不同方法？
+请展示 2-3 种做法，并说明各自的优缺点。"
 ```
 
 ---
 
-## BEST PRACTICES FOR AI INTERACTION
+## 与 AI 互动的最佳实践
 
-### DO:
-✅ **Be specific about data paths**
-- Use: `here::here("slides", "data", "penguin", "penguin_rawdata.csv")`
-- Don't use: `"data/penguin_rawdata.csv"` (relative paths may fail)
+### 要做：
+✅ **明确说明数据路径**
+- 使用：`here::here("slides", "data", "penguin", "penguin_rawdata.csv")`
+- 不要使用：`"data/penguin_rawdata.csv"`（相对路径可能失效）
 
-✅ **Provide context**
-- Mention which chapter/exercise you're working on
-- Describe what you've already tried
+✅ **提供上下文**
+- 说明你正在做哪一章 / 哪道练习
+- 描述你已经尝试过什么
 
-✅ **Ask for explanations**
-- "Can you explain what this line does?"
-- "Why do we need to use na.rm = TRUE?"
+✅ **要求解释**
+- “你能解释一下这行代码在做什么吗？”
+- “为什么这里需要使用 `na.rm = TRUE`？”
 
-✅ **Request code comments**
-- "Please add comments explaining each step"
-- "Can you show me the code with detailed annotations?"
+✅ **请求添加代码注释**
+- “请为每一步添加注释进行说明。”
+- “你能给我一份带详细注释的代码吗？”
 
-✅ **Verify understanding**
-- "Is my understanding correct: [your interpretation]?"
-- "Can you confirm if this approach is appropriate for my use case?"
+✅ **核对自己的理解**
+- “我的理解对吗：[你的理解]？”
+- “你能确认这个做法是否适合我的使用场景吗？”
 
-### DON'T:
-❌ **Don't ask vague questions**
-- Bad: "My code doesn't work"
-- Good: "I'm getting error 'object not found' when running [code snippet]"
+✅ **先让 AI 帮你理顺思路，再请求代码**
+- “请先帮我理顺从当前状态到目标状态的过程，再决定是否需要写代码。”
+- “如果我的思路有跳步，请先指出缺失的前提和中间步骤。”
 
-❌ **Don't skip prerequisites**
-- Make sure you've loaded required packages
-- Ensure data is properly loaded before asking for operations
+### 不要做：
+❌ **不要提含糊的问题**
+- 不好：“我的代码不工作。”
+- 更好：“我运行 [代码片段] 时出现了 'object not found' 错误。”
 
-❌ **Don't ignore warnings**
-- Ask AI to explain warning messages
-- Understand potential issues before proceeding
+❌ **不要跳过前置条件**
+- 先确认已经加载了所需的包
+- 在执行操作前先确认数据已正确读入
 
-❌ **Don't copy-paste without understanding**
-- Always read and understand AI-generated code
-- Test with small examples first
+❌ **不要忽略警告信息**
+- 让 AI 解释 warning 的含义
+- 在继续之前先理解潜在问题
+
+❌ **不要不加理解地复制粘贴**
+- 一定要先读懂 AI 生成的代码
+- 先用小例子测试，再用到正式数据上
 
 ---
 
-## COMMON PATTERNS FOR CHAPTER 5
+## 第 5 章常见模式
 
-### Pattern 1: Data Import and Inspection
+### 模式 1：导入与检查数据
 ```r
-# Standard import pattern
+# 标准导入模式
 df <- bruceR::import(here::here("slides", "data", "penguin", "penguin_rawdata.csv"))
 
-# Inspection commands to request
-str(df)           # Structure
-head(df)          # First few rows
-summary(df)       # Summary statistics
-names(df)         # Column names
+# 可以向 AI 请求的检查命令
+str(df)           # 结构
+head(df)          # 前几行
+summary(df)       # 汇总统计
+names(df)         # 列名
 ```
 
-### Pattern 2: Data Type Conversion
+### 模式 2：数据类型转换
 ```r
-# Ask AI: "How do I convert between these types?"
-as.numeric()      # To numeric
-as.character()    # To character
-as.logical()      # To logical
-as.factor()       # To factor
+# 可以问 AI：“这些类型之间怎样转换？”
+as.numeric()      # 转为数值型
+as.character()    # 转为字符型
+as.logical()      # 转为逻辑型
+as.factor()       # 转为因子型
 ```
 
-### Pattern 3: Data Structure Operations
+### 模式 3：数据结构操作
 ```r
-# Vector operations
+# 向量操作
 v <- c(1, 2, 3, 4, 5)
-v[v > 3]          # Filtering
+v[v > 3]          # 筛选
 
-# Data frame operations
-df$new_col <- df$col1 + df$col2    # Add column
-subset(df, condition)              # Filter rows
+# 数据框操作
+df$new_col <- df$col1 + df$col2    # 添加列
+subset(df, condition)              # 筛选行
 
-# data.table operations
+# data.table 操作
 dt[condition, .(columns), by = group]
 ```
 
-### Pattern 4: Function Creation
+### 模式 4：函数创建
 ```r
-# Template for function questions
+# 函数提问模板
 my_function <- function(x, param = default) {
-  # Input validation
+  # 输入校验
   if (!is.numeric(x)) stop("x must be numeric")
   
-  # Core logic
+  # 核心逻辑
   result <- [operations]
   
-  # Return
+  # 返回结果
   return(result)
 }
 ```
 
 ---
 
-## TROUBLESHOOTING GUIDE
+## 故障排查指南
 
-### When AI Code Doesn't Work
+### 当 AI 提供的代码无法运行时
 
-**Step 1: Check Prerequisites**
+**第 1 步：检查前置条件**
 ```
-Ask AI: "What packages do I need to run this code? 
-How do I check if they're installed?"
-```
-
-**Step 2: Verify Data**
-```
-Ask AI: "How do I check if my data frame has the right structure 
-for this operation?"
+向 AI 提问："运行这段代码需要哪些包？
+我怎样检查它们是否已经安装？"
 ```
 
-**Step 3: Debug Step-by-Step**
+**第 2 步：核对数据**
 ```
-Ask AI: "Can you break down this code into smaller steps 
-so I can see where the problem occurs?"
-```
-
-### When Results Look Wrong
-
-**Step 1: Validate Logic**
-```
-Ask AI: "Can you explain the logic behind this calculation? 
-I expected [X] but got [Y]."
+向 AI 提问："我怎样检查自己的数据框结构是否适合执行这个操作？"
 ```
 
-**Step 2: Check Data Issues**
+**第 3 步：逐步调试**
 ```
-Ask AI: "Could missing values or data types be affecting my results? 
-How do I check?"
+向 AI 提问："你能把这段代码拆成更小的步骤吗？
+这样我可以定位问题到底出在哪一步。"
 ```
 
-**Step 3: Request Alternatives**
+### 当结果看起来不对时
+
+**第 1 步：验证逻辑**
 ```
-Ask AI: "Is there another way to achieve the same result? 
-I want to verify if this approach is correct."
+向 AI 提问："你能解释一下这个计算背后的逻辑吗？
+我本来预期是 [X]，结果却得到了 [Y]。"
+```
+
+**第 2 步：检查数据问题**
+```
+向 AI 提问："缺失值或数据类型会不会影响我的结果？
+我该怎样检查？"
+```
+
+**第 3 步：请求替代方案**
+```
+向 AI 提问："有没有别的方法也能得到同样的结果？
+我想验证目前这个做法是否正确。"
 ```
 
 ---
 
-## EXAMPLE CONVERSATIONS
+## 示例对话
 
-### Example 1: Creating a Function
-**Student:** "I need to create a function that calculates BMI from weight and height."
+### 示例 1：创建函数
+**学生：** “我需要创建一个根据体重和身高计算 BMI 的函数。”
 
-**Optimal Prompt:**
+**推荐提示词：**
 ```
-I need to create a BMI calculation function with these requirements:
-- Function name: calc_bmi
-- Parameters: weight (in kg), height (in cm)
-- Output: BMI value (weight / height_m^2)
-- Should handle:
-  * Input validation (numeric, positive values)
-  * Missing values
-  * Rounding to 2 decimal places
+我需要创建一个 BMI 计算函数，要求如下：
+- 函数名：calc_bmi
+- 参数：weight（单位 kg）、height（单位 cm）
+- 输出：BMI 值（weight / height_m^2）
+- 需要处理：
+  * 输入校验（必须是数值且为正数）
+  * 缺失值
+  * 结果保留两位小数
 
-Please show me:
-1. The function code with comments
-2. Example usage with test data
-3. How to handle error cases
+请展示：
+1. 带注释的函数代码
+2. 使用测试数据的示例
+3. 如何处理报错场景
 ```
 
-### Example 2: Data Manipulation
-**Student:** "How do I filter and summarize data?"
+### 示例 2：数据处理
+**学生：** “我怎样筛选并汇总数据？”
 
-**Optimal Prompt:**
+**推荐提示词：**
 ```
-I'm working with the penguin dataset from:
+我正在使用 penguin 数据集，路径是：
 `here::here("slides", "data", "penguin", "penguin_rawdata.csv")`
 
-I need to:
-1. Filter participants from "Tsinghua" site
-2. Group by sex
-3. Calculate mean and SD of age for each group
-4. Create a clean summary table
+我需要：
+1. 筛选出来自 "Tsinghua" 站点的参与者
+2. 按 sex 分组
+3. 计算每组 age 的平均值和标准差
+4. 创建一个整洁的汇总表
 
-Please provide:
-- Code using base R
-- Code using data.table
-- Explanation of differences
+请提供：
+- 使用 base R 的代码
+- 使用 data.table 的代码
+- 两种方式差异的解释
 ```
 
 ---
 
-## CHAPTER 5 EXERCISE PROMPTS
+## 第 5 章练习提示词
 
-### Exercise 1: Data Structure Creation
+### 练习 1：创建数据结构
 ```
-**Task:** Create different data structures
-**Prompt Template:**
-"I need to create a [vector/matrix/data frame] with [specific characteristics].
-Please show me:
-1. How to create it
-2. How to verify its structure
-3. How to access/modify elements"
-```
-
-### Exercise 2: Data Frame Operations
-```
-**Task:** Manipulate data frames
-**Prompt Template:**
-"I have a data frame loaded from [path].
-I need to [filter/add columns/transform] based on [conditions].
-Please provide code that:
-1. Shows each step clearly
-2. Handles potential errors
-3. Verifies the results"
+**任务：** 创建不同的数据结构
+**提示词模板：**
+"我需要创建一个 [向量 / 矩阵 / 数据框]，它具有 [具体特征]。
+请展示：
+1. 如何创建
+2. 如何验证它的结构
+3. 如何访问 / 修改元素"
 ```
 
-### Exercise 3: Using Functions
+### 练习 2：数据框操作
 ```
-**Task:** Apply functions to data
-**Prompt Template:**
-"I need to apply [function name] to my data.
-The function should [specific behavior].
-Please show me:
-1. How to use existing functions
-2. How to create a custom version
-3. How to compare results"
-```
-
-### Exercise 4: Custom Functions
-```
-**Task:** Create custom functions
-**Prompt Template:**
-"I need to create a function that [specific purpose].
-Requirements:
-- Input: [parameters]
-- Output: [return type]
-- Special handling: [edge cases]
-
-Please provide:
-1. Function definition with comments
-2. Example usage
-3. Test cases"
+**任务：** 处理数据框
+**提示词模板：**
+"我有一个从 [路径] 加载的数据框。
+我需要根据 [条件] 对它进行 [筛选 / 添加列 / 转换]。
+请提供一段代码，并满足：
+1. 清楚展示每一步
+2. 处理潜在错误
+3. 验证结果"
 ```
 
-### Exercise 5: Mixed Type Data
+### 练习 3：使用函数
 ```
-**Task:** Handle mixed data types
-**Prompt Template:**
-"I have a data frame with multiple data types:
-- Numeric columns: [list]
-- Character columns: [list]
-- Need to create: [new columns]
+**任务：** 将函数应用到数据上
+**提示词模板：**
+"我需要把 [函数名] 应用到我的数据上。
+这个函数应该 [具体行为]。
+请展示：
+1. 如何使用现有函数
+2. 如何创建自定义版本
+3. 如何比较结果"
+```
 
-Please show me how to:
-1. Identify column types programmatically
-2. Apply type-specific operations
-3. Create derived columns based on conditions"
+### 练习 4：自定义函数
+```
+**任务：** 创建自定义函数
+**提示词模板：**
+"我需要创建一个函数，用来 [具体用途]。
+要求：
+- 输入：[参数]
+- 输出：[返回类型]
+- 特殊处理：[边界情况]
+
+请提供：
+1. 带注释的函数定义
+2. 示例用法
+3. 测试用例"
+```
+
+### 练习 5：混合类型数据
+```
+**任务：** 处理混合数据类型
+**提示词模板：**
+"我有一个包含多种数据类型的数据框：
+- 数值列：[列表]
+- 字符列：[列表]
+- 需要创建：[新列]
+
+请展示我该如何：
+1. 以程序方式识别列类型
+2. 对不同类型执行对应操作
+3. 根据条件创建派生列"
 ```
 
 ---
 
-## EVALUATION CRITERIA
+## 评估标准
 
-When reviewing AI-generated code, check:
+在检查 AI 生成的代码时，请核对：
 
-### Functionality
-- [ ] Does the code run without errors?
-- [ ] Does it produce expected results?
-- [ ] Does it handle edge cases?
+### 功能性
+- [ ] 代码是否能无报错运行？
+- [ ] 是否产生了预期结果？
+- [ ] 是否处理了边界情况？
 
-### Readability
-- [ ] Are variable names clear?
-- [ ] Is the logic easy to follow?
-- [ ] Are there helpful comments?
+### 可读性
+- [ ] 变量名是否清晰？
+- [ ] 逻辑是否容易理解？
+- [ ] 是否有帮助的注释？
 
-### Efficiency
-- [ ] Is the approach appropriate for data size?
-- [ ] Are there unnecessary steps?
-- [ ] Could it be simplified?
+### 效率
+- [ ] 这种做法是否适合当前数据规模？
+- [ ] 是否存在不必要的步骤？
+- [ ] 是否还能进一步简化？
 
-### Best Practices
-- [ ] Uses `here::here()` for paths?
-- [ ] Handles missing values?
-- [ ] Includes input validation?
-- [ ] Follows R conventions?
-
----
-
-## GETTING HELP
-
-### When You're Stuck
-1. **Describe the problem clearly**
-   - What you're trying to do
-   - What you've already tried
-   - What error or unexpected result you're getting
-
-2. **Provide minimal reproducible example**
-   - Small dataset or use built-in data
-   - Minimal code that reproduces the issue
-
-3. **Ask specific questions**
-   - "Why does this error occur?"
-   - "How do I fix this specific issue?"
-   - "What's the best approach for this scenario?"
-
-### Resources to Mention
-- Chapter number and section
-- Exercise number if applicable
-- Error messages (copy-paste exactly)
-- Your R version and package versions if relevant
+### 最佳实践
+- [ ] 路径是否使用了 `here::here()`？
+- [ ] 是否处理了缺失值？
+- [ ] 是否包含输入校验？
+- [ ] 是否遵循 R 的常见约定？
 
 ---
 
-## UPDATING THIS GUIDE
+## 获取帮助
 
-This guide should be updated when:
-- New chapters are added with AI interaction components
-- Common student questions reveal gaps in the guide
-- New best practices emerge for AI-assisted coding
-- Course materials are significantly revised
+### 当你卡住时
+1. **清楚描述问题**
+   - 你想做什么
+   - 你已经尝试过什么
+   - 你遇到的报错或异常结果是什么
 
-To suggest updates, note:
-- Which section needs updating
-- What new content should be added
-- Why it would be helpful for students
+2. **提供最小可复现示例**
+   - 使用小型数据集，或使用内置数据
+   - 提供能够复现问题的最小代码片段
+
+3. **提出具体问题**
+   - “为什么会出现这个错误？”
+   - “我该怎样修复这个具体问题？”
+   - “对于这个场景，哪种做法最好？”
+
+### 建议一并说明的信息
+- 章节编号与小节
+- 如果适用，说明练习编号
+- 报错信息（请原样复制粘贴）
+- 如果相关，说明你的 R 版本和包版本
+
+---
+
+## 何时更新本指南
+
+以下情况应更新本指南：
+- 新章节加入了与 AI 互动相关的内容
+- 学生常见问题暴露出本指南的空缺
+- 出现了新的 AI 辅助编程最佳实践
+- 课程材料有了较大修订
+
+如果要提出更新建议，请说明：
+- 哪一部分需要更新
+- 需要新增什么内容
+- 为什么这些内容会对学生有帮助
