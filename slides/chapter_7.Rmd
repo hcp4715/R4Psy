@@ -188,32 +188,73 @@ rm(df, files, i)
 ---
 
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step0: 实验数据处理概述</span></center><br>
+# 7.1 基于Tidyverse的数据预处理
+
+## 7.1.1 研究问题 & 数据情况回顾
+
+---
+# <h1 lang="en">.font-size-14[
+数据来自 Hu et al., 2020 的实验
+]<br>
+<br>
+- **研究问题**：探究人们对自我相关刺激的优先加工是否仅在某些条件下发生<br>
+- **研究假设**：无论参与何种任务，与积极概念（好我）建立联结的自我形状会在反应时间和准确性上表现更快更准确<br>
+<img src="./picture/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
+
+---
+# <h1 lang="en">7.1.1 研究问题 & 数据情况回顾 </h1>
+<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
+- **研究结果**：<br>
+<br>
+<img src="./picture/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
+
+---
+# <h1 lang="en">7.1.1 研究问题 & 数据情况回顾 </h1>
+<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
+- 主要变量：<br>
+Shape/Label: 屏幕呈现的图形代表的概念<br>
+Match: 图形与呈现的标签是否匹配<br>
+ACC: 被试的判断是否正确，1 = "正确", 0 = "错误", -1, 2表示未按键或按了两个键的情况，属于无效作答<br>
+RT: 被试做出判断的反应时，[200,1500]的反应时纳入分析<br>
+
+---
+
+<span style="font-size: 30px;">本课数据预处理目标 </span></center><br>
+- 计算Match-Moral条件下时RT的自我优势效应(SPE)。<br>
+
+---
+
+完整数据处理流程：
+
+
+&emsp;&emsp; **Step1: 批量读取并合并数据[for loop, lapply]**<br>
+&emsp;&emsp; Step2: 选择变量[select]<br>
+&emsp;&emsp; Step3: 处理缺失值[drop_na, filter]<br>
+&emsp;&emsp; **Step4: 分实验条件计算变量[group_by, summarise]**<br>
+&emsp;&emsp; **Step5: 拆分变量[extract, filter]**<br>
+&emsp;&emsp; **Step6: 将长数据转为宽数据[pivot_wide]**<br>
+&emsp;&emsp; Step7: 计算实验条件为Match-Moral时RT的自我优势效应[mutate, select]<br>
+
+---
+
+## 7.1.2 操作步骤 (tidyr)
+
 .font-size-14[
-实验数据（如反应时数据）的处理与问卷数据有所不同：
-]
+实验数据（如反应时数据）的处理步骤：
 
 | 步骤 | 说明 | 常用函数 |
 |------|------|----------|
 | 1. 批量读取数据 | 多个被试文件合并 | `for loop`, `lapply`, `bind_rows` |
 | 2. 数据清洗 | 排除无效试次 | `filter()` |
-
----
-
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step0: 实验数据处理概述 </span></center><br>
-
-| 步骤 | 说明 | 常用函数 |
-|------|------|----------|
 | 3. 计算变量 | 按条件计算均值 | `group_by()`, `summarise()` |
 | 4. 数据重塑 | 长宽数据转换 | `pivot_wider()`, `pivot_longer()` |
 | 5. 计算指标 | 如自我优势效应SPE | `mutate()` |
+]
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 读取单个文件</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step1: 读取单个文件</span></center><br>
 .font-size-14[
 - 读取单个被试的反应时数据
 - .out文件通常是以空格或制表符分隔的文本文件
@@ -236,8 +277,8 @@ head(p1)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 批量读取数据 - for loop</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;">Step1: 批量读取数据 - for loop</span></center><br>
 .font-size-14[
 当有多个被试的数据文件时，需要批量读取并合并。
 第一步：找到所有要读取的文件
@@ -257,8 +298,8 @@ length(files)  # 文件数量
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | for loop 的基本语法</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step1: for loop 的基本语法</span></center><br>
 .font-size-14[
 **for loop 语法：**
 ```
@@ -278,8 +319,8 @@ for (i in 1:10) {
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 使用 for loop 批量读取文件</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step1: 使用 for loop 批量读取文件</span></center><br>
 
 ```{r for_loop_read}
 # 初始化为 NULL
@@ -300,8 +341,8 @@ head(df_all)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 使用 lapply 批量读取</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step1: 使用 lapply 批量读取</span></center><br>
 .font-size-14[
 **lapply(列表/向量, 函数)** - 更简洁的写法
 ]
@@ -322,8 +363,10 @@ head(df_all)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step2: 排除无效试次</span></center><br>
+
+
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step2: 选择变量并排除无效试次</span></center><br>
 .font-size-14[
 实验数据清洗：排除无效试次
 ]
@@ -340,8 +383,8 @@ df_clean <- df_all %>%
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step2: 排除无效试次 </span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step3: 处理缺失值 </span></center><br>
 
 ```{r clean_invalid_trials2}
 # 第二步：限制 RT 范围并删除缺失值
@@ -355,8 +398,8 @@ nrow(df_clean)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step3: 按条件计算均值</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step4: 分实验条件计算变量</span></center><br>
 .font-size-14[
 按被试和实验条件计算平均反应时和正确率
 ]
@@ -375,8 +418,8 @@ head(df_means)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step4: 拆分变量 - extract</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step5: 拆分变量 - extract</span></center><br>
 .font-size-14[
 有时需要从一个变量中拆出两个新的信息字段。
 Shape变量包含多个信息，如 "moralSelf", "immoralOther"
@@ -397,8 +440,8 @@ head(df_means)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step5: 长宽数据转换 - pivot_wider</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step6: 长宽数据转换 - pivot_wider</span></center><br>
 .font-size-14[
 pivot_wider: 长数据 -> 宽数据
 ]
@@ -417,8 +460,8 @@ head(df_wide)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step5: pivot_wider 函数说明</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step6: pivot_wider 函数说明</span></center><br>
 .font-size-14[
 - pivot_wider(names_from = var1, values_from = var2)
 - names_from：其值将用作列名称的列
@@ -428,8 +471,8 @@ head(df_wide)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.1 操作步骤 | Step6: 计算派生指标 - SPE</span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 28px;"> Step7: 计算派生指标 - SPE</span></center><br>
 .font-size-14[
 计算自我优势效应 (Self-Positivity Effect)
 SPE = 自我条件RT - 他人条件RT
@@ -448,8 +491,8 @@ summary(df_spe$moral_SPE)
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程1 </span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 30px;">  完整流程1 </span></center><br>
 **读取并清洗原始数据（1/2）**
 
 ```{r full_pipeline_1}
@@ -465,8 +508,8 @@ df_spe <- files %>%
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程2 </span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 30px;"> 完整流程2 </span></center><br>
 **读取并清洗原始数据（2/2）**
 
 ```{r full_pipeline_1_2}
@@ -482,8 +525,8 @@ df_spe <- df_spe %>%
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程3 </span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 30px;"> 完整流程3 </span></center><br>
 **分组计算均值，并拆分 Shape**
 
 ```{r full_pipeline_2}
@@ -502,8 +545,8 @@ df_spe <- df_spe %>%
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程4 </span></center><br>
+# <h1 lang="en">7.1.2 操作步骤</h1>
+<span style="font-size: 30px;"> 完整流程4 </span></center><br>
 **长转宽并计算 SPE**
 
 ```{r full_pipeline_3}
@@ -523,226 +566,7 @@ head(df_spe)
 <br>
 <br>
 
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
-- 以[Hu et al.,2020](https://doi.org/10.1525/collabra.301)中的反应时数据作为示例<br>
-<br>
-- **研究问题**：探究人们对自我相关刺激的优先加工是否仅在某些条件下发生<br>
-- **研究假设**：无论参与何种任务，与积极概念（好我）建立联结的自我形状会在反应时间和准确性上表现更快更准确<br>
-<img src="./picture/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
 
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
-- **研究结果**：<br>
-<br>
-<img src="./picture/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
-- 主要变量：<br>
-Shape/Label: 屏幕呈现的图形代表的概念<br>
-Match: 图形与呈现的标签是否匹配<br>
-ACC: 被试的判断是否正确，1 = "正确", 0 = "错误", -1, 2表示未按键或按了两个键的情况，属于无效作答<br>
-RT: 被试做出判断的反应时，[200,1500]的反应时纳入分析<br>
-
-```{r example of singal rawdata_matchtask DT, echo=FALSE}
-a1 <- utils::read.table("data/match/data_exp7_rep_match_7302.out", header = TRUE)
-DT::datatable(head(a1),
-              fillContainer = TRUE, options = list(pageLength = 4))
-```
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例</h1>
-<span style="font-size: 30px;">7.1.2 操作步骤</span></center><br>
-- **本课数据预处理目标**：计算Match-Moral条件下时RT的自我优势效应(SPE)。<br>
-
-&emsp;&emsp; **Step0: 实验数据处理概述**<br>
-&emsp;&emsp; **Step1: 批量读取并合并数据[for loop, lapply]**<br>
-&emsp;&emsp; Step2: 选择变量[select]<br>
-&emsp;&emsp; Step3: 处理缺失值[drop_na, filter]<br>
-&emsp;&emsp; **Step4: 分实验条件计算变量[group_by, summarise]**<br>
-&emsp;&emsp; **Step5: 拆分变量[extract, filter]**<br>
-&emsp;&emsp; **Step6: 将长数据转为宽数据[pivot_wide]**<br>
-&emsp;&emsp; Step7: 计算实验条件为Match-Moral时RT的自我优势效应[mutate, select]<br>
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step2: 选择变量[select]</span></center><br>
-
-```{r example of total part1 rawdata_matchtask,message=FALSE}
-# 选择我们需要的变量
-df4 <- dplyr::select(df3,
-                     Sub, Age, Sex, Hand, #人口统计学
-                     Block, Bin, Trial,   # 试次
-                     Shape, Label, Match, # 刺激
-                     Resp, ACC, RT)       # 反应结果
-```
-
-```{r example of total part1 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 10),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step3: 处理缺失值[drop_na, filter]</span></center><br>
-
-```{r example of total part2 rawdata_matchtask,message=FALSE}
-# 删除缺失值，选择符合标准的被试
-df4 <- tidyr::drop_na(df4) # 删除含有缺失值的行
-df4 <- dplyr::filter(df4, Hand == "R",      # 选择右利手被试
-                    ACC == 0 | ACC == 1 ,   # 排除无效应答（ACC = -1 OR 2)
-                    RT >= 0.2 & RT <= 1.5)  # 选择RT属于[200,1500]
-```
-
-```{r example of total part2 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
-
-```{r example of total part3 rawdata_matchtask,message=FALSE}
-# 分实验条件计算
-df4 <- dplyr::group_by(df4, Sub, Shape, Label, Match)
-df4 <- dplyr::summarise(df4, mean_ACC = mean(ACC), mean_RT = mean(RT))
-df4 <- dplyr::ungroup(df4)
-```
-
-```{r example of total part3 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
-- group_by和summarise函数<br>
-&emsp;group_by：定义分组变量<br>
-&emsp;summarise：通过与mean、median等函数协作，对变量进行汇总<br>
-![dplyr_pic1](picture/chp6/dplyr_pic1.png)
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
-- group_by和summarise函数<br>
-&emsp;group_by+summarise：对各组变量进行汇总<br>
-![dplyr_pic2](picture/chp6/dplyr_pic2.png)
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
-
-```{r example of total part4 rawdata_matchtask}
-# 将Shape变量拆分
-df4 <- tidyr::extract(df4, Shape, into = c("Valence", "Identity"),
-                      regex = "(moral|immoral)(Self|Other)", remove = FALSE)
-df4 <- dplyr::filter(df4, Match == "match" & Valence == "moral") 
-```
-
-```{r example of total part4 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
-- extract函数<br>
-&emsp; extract(data = data, col = x1, into = c("x1a", "x1b"),regex = "([[:alnum:]]+)-([[:alnum:]]+)")
-![dplyr_pic3](picture/chp6/dplyr_pic3.png)
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
-```{r example of total part5 rawdata_matchtask}
-# 将长数据转为宽数据
-df4 <- dplyr::select(df4, Sub, Identity, mean_RT)
-df4 <- tidyr::pivot_wider(df4, 
-                          names_from = "Identity", 
-                          values_from = "mean_RT")
-```
-
-```{r example of total part5 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
-- pivot_wide函数<br>
-&emsp; pivot_wider(names_from = var1, values_from = var2)<br>
-&emsp; names_from：其值将用作列名称的列<br>
-&emsp; values_from：其值将用作单元格值的列<br>
-![dplyr_pic4](picture/chp6/dplyr_pic4.png)
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 </span></center><br>
-```{r example of total part6 rawdata_matchtask}
-# 计算SPE
-df4 <- dplyr::mutate(df4, moral_SPE = Self - Other)
-df4 <- dplyr::select(df4, Sub, moral_SPE) 
-```
-
-```{r example of total part6 rawdata_matchtask DT, echo=FALSE}
-DT::datatable(head(df4, 24),
-              fillContainer = TRUE, options = list(pageLength = 5))
-```
-
----
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整管道流程（第一部分）</span></center><br>
-
-```{r example of total rawdata_matchtask_p1, message=FALSE}
-# 用管道操作符合并以上代码
-df4 <- df3 %>%
-  dplyr::select(Sub, Age, Sex, Hand,
-                Block, Bin, Trial,
-                Shape, Label, Match,
-                Resp, ACC, RT) %>%
-  tidyr::drop_na() %>%
-  dplyr::filter(Hand == "R",
-                ACC == 0 | ACC == 1,
-                RT >= 0.2 & RT <= 1.5)
-```
-
----
-
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整管道流程（第二部分）</span></center><br>
-
-```{r example of total rawdata_matchtask_p2, message=FALSE}
-# 继续分组汇总
-df4 <- df4 %>%
-  dplyr::group_by(Sub, Shape, Label, Match) %>%
-  dplyr::summarise(mean_ACC = mean(ACC), mean_RT = mean(RT)) %>%
-  dplyr::ungroup()
-```
-
----
-
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整管道流程（第三部分）</span></center><br>
-
-```{r example of total rawdata_matchtask_p3, message=FALSE}
-# 拆分变量并计算SPE
-df4 <- df4 %>%
-  tidyr::extract(Shape, 
-                 into = c("Valence", "Identity"),
-                 regex = "(moral|immoral)(Self|Other)", 
-                 remove = FALSE) %>%
-  dplyr::filter(Match == "match" & Valence == "moral") %>%
-  dplyr::select(Sub, Identity, mean_RT) %>%
-  tidyr::pivot_wider(names_from = "Identity", 
-                     values_from = "mean_RT") %>%
-  dplyr::mutate(moral_SPE = Self - Other)
-```
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
