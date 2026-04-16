@@ -24,6 +24,48 @@ class: center, middle
 <br>
 <br>
 <br>
+
+---
+
+<span style="font-size: 35px;">回顾：数据分析的问题解决思路</span></center> <br>
+
+.pull-left[
+.font-size-14[
+**初始状态（Initial State）**
+- 我手中的数据是什么样子的？
+- 数据结构如何？有哪些变量？
+
+**路径（Path）**
+- 有哪些包/函数可以使用？
+- 需要几个步骤？
+
+**目标状态（Goal State）**
+- 派生指标有哪些？
+- 我想要什么样的结果？
+]
+]
+
+.pull-right[
+.font-size-14[
+**数据分析流程：**
+
+初始状态  
+数据结构 / 变量 / 缺失值  
+`↓`
+
+路径规划  
+步骤 / 函数 / R包  
+`↓`
+
+目标状态  
+清洗后数据 / 派生指标 / 汇总表  
+`↓`
+
+**先澄清，再规划，再执行**
+]
+]
+
+
 ---
 <br>
 <span style="font-size: 35px;">回顾：问卷数据的处理</span></center> <br>
@@ -61,7 +103,8 @@ class: center, middle
 - 7.2 基于LLM和OpenCode的实操演练
   - 7.2.1 如何利用LLM和OpenCode解决问题
   - 7.2.2 用OpenCode把方案设计变成coding
-  - 7.2.3 实操演练
+  - 7.2.3 分析笔记文件 analysis_notes.md
+  - 7.2.4 实操演练
 ]
 
 ---
@@ -80,7 +123,9 @@ library(tidyverse)
 ```{r for loop list.files, error=FALSE}
 # 找到所有要读取的文件名
 # 使用 full.names 参数获取完整路径的文件列表
-files <- list.files(here::here("slides", "data", "match"), pattern = "data_exp7_rep_match_.*\\.out$", full.names = TRUE)
+files <- list.files(here::here("slides", "data", "match"),
+                    pattern = "data_exp7_rep_match_.*\\.out$", 
+                    full.names = TRUE)
 ```
 *P.S.尽管函数叫list.files，但它得到的变量的属性是value，而不是list*
 
@@ -88,17 +133,20 @@ files <- list.files(here::here("slides", "data", "match"), pattern = "data_exp7_
 
 # 实验数据的导入 - 定义数据类型转换函数
 
+---
+
+# 定义数据类型转换函数
+
+.font-size-14[
+将 Sub 从 character 转为 numeric，避免 bind_rows 时类型不匹配
+]
+
 ```{r df.mt.out.fl}
-# 定义函数用于数据类型转换
 convert_data_types = function(df) {
   df <- df %>%
     dplyr::mutate(
-      Date = as.character(Date),
-      Prac = as.character(Prac),
       Sub = as.numeric(Sub),
       Age = as.numeric(Age),
-      Sex = as.character(Sex),
-      Hand = as.character(Hand),
       Block = as.numeric(Block),
       Bin = as.numeric(Bin),
       Trial = as.numeric(Trial),
@@ -118,8 +166,8 @@ convert_data_types = function(df) {
 
 # 实验数据的导入 - 使用 for loop 批量导入
 ```{r}
-# 创建一个空的数据框来存储读取的数据
-df3 <- data.frame()
+# 初始化为空
+df3 <- NULL
 
 # 循环读取每个文件，处理数据并添加到数据框中
 for (i in seq_along(files)) {
@@ -141,7 +189,7 @@ rm(df, files, i)
 
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step0: 实验数据处理概述</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step0: 实验数据处理概述</span></center><br>
 .font-size-14[
 实验数据（如反应时数据）的处理与问卷数据有所不同：
 ]
@@ -154,7 +202,7 @@ rm(df, files, i)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step0: 实验数据处理概述（续）</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step0: 实验数据处理概述 </span></center><br>
 
 | 步骤 | 说明 | 常用函数 |
 |------|------|----------|
@@ -165,7 +213,7 @@ rm(df, files, i)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step1: 读取单个文件</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 读取单个文件</span></center><br>
 .font-size-14[
 - 读取单个被试的反应时数据
 - .out文件通常是以空格或制表符分隔的文本文件
@@ -189,7 +237,7 @@ head(p1)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step1: 批量读取数据 - for loop</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 批量读取数据 - for loop</span></center><br>
 .font-size-14[
 当有多个被试的数据文件时，需要批量读取并合并。
 第一步：找到所有要读取的文件
@@ -210,7 +258,7 @@ length(files)  # 文件数量
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | for loop 的基本语法</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | for loop 的基本语法</span></center><br>
 .font-size-14[
 **for loop 语法：**
 ```
@@ -231,11 +279,11 @@ for (i in 1:10) {
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step1: 使用 for loop 批量读取文件</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 使用 for loop 批量读取文件</span></center><br>
 
 ```{r for_loop_read}
-# 创建空数据框
-df_all <- data.frame()
+# 初始化为 NULL
+df_all <- NULL
 
 # 逐个读取并合并
 for (i in seq_along(files)) {
@@ -253,7 +301,7 @@ head(df_all)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step1: 使用 lapply 批量读取</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step1: 使用 lapply 批量读取</span></center><br>
 .font-size-14[
 **lapply(列表/向量, 函数)** - 更简洁的写法
 ]
@@ -275,7 +323,7 @@ head(df_all)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step2: 排除无效试次</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step2: 排除无效试次</span></center><br>
 .font-size-14[
 实验数据清洗：排除无效试次
 ]
@@ -293,7 +341,7 @@ df_clean <- df_all %>%
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step2: 排除无效试次 </span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step2: 排除无效试次 </span></center><br>
 
 ```{r clean_invalid_trials2}
 # 第二步：限制 RT 范围并删除缺失值
@@ -308,7 +356,7 @@ nrow(df_clean)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step3: 按条件计算均值</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step3: 按条件计算均值</span></center><br>
 .font-size-14[
 按被试和实验条件计算平均反应时和正确率
 ]
@@ -328,7 +376,7 @@ head(df_means)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step4: 拆分变量 - extract</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step4: 拆分变量 - extract</span></center><br>
 .font-size-14[
 有时需要从一个变量中拆出两个新的信息字段。
 Shape变量包含多个信息，如 "moralSelf", "immoralOther"
@@ -350,7 +398,7 @@ head(df_means)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step5: 长宽数据转换 - pivot_wider</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step5: 长宽数据转换 - pivot_wider</span></center><br>
 .font-size-14[
 pivot_wider: 长数据 -> 宽数据
 ]
@@ -370,7 +418,7 @@ head(df_wide)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step5: pivot_wider 函数说明</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step5: pivot_wider 函数说明</span></center><br>
 .font-size-14[
 - pivot_wider(names_from = var1, values_from = var2)
 - names_from：其值将用作列名称的列
@@ -381,7 +429,7 @@ head(df_wide)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 28px;">7.1.2 操作步骤 | Step6: 计算派生指标 - SPE</span></center><br>
+<span style="font-size: 28px;">7.1.1 操作步骤 | Step6: 计算派生指标 - SPE</span></center><br>
 .font-size-14[
 计算自我优势效应 (Self-Positivity Effect)
 SPE = 自我条件RT - 他人条件RT
@@ -401,7 +449,7 @@ summary(df_spe$moral_SPE)
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整流程1 </span></center><br>
+<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程1 </span></center><br>
 **读取并清洗原始数据（1/2）**
 
 ```{r full_pipeline_1}
@@ -418,7 +466,7 @@ df_spe <- files %>%
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整流程2 </span></center><br>
+<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程2 </span></center><br>
 **读取并清洗原始数据（2/2）**
 
 ```{r full_pipeline_1_2}
@@ -435,7 +483,7 @@ df_spe <- df_spe %>%
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整流程3 </span></center><br>
+<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程3 </span></center><br>
 **分组计算均值，并拆分 Shape**
 
 ```{r full_pipeline_2}
@@ -455,7 +503,7 @@ df_spe <- df_spe %>%
 ---
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
-<span style="font-size: 30px;">7.1.2 操作步骤 | 完整流程4 </span></center><br>
+<span style="font-size: 30px;">7.1.1 操作步骤 | 完整流程4 </span></center><br>
 **长转宽并计算 SPE**
 
 ```{r full_pipeline_3}
@@ -476,7 +524,7 @@ head(df_spe)
 <br>
 
 ---
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
 - 以[Hu et al.,2020](https://doi.org/10.1525/collabra.301)中的反应时数据作为示例<br>
 <br>
@@ -485,14 +533,14 @@ head(df_spe)
 <img src="./picture/chp6/match.png" width="70%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
 - **研究结果**：<br>
 <br>
 <img src="./picture/chp6/mr.png" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
 
 ---
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.1 问题 & 数据</span></center> <br>
 - 主要变量：<br>
 Shape/Label: 屏幕呈现的图形代表的概念<br>
@@ -507,7 +555,7 @@ DT::datatable(head(a1),
 ```
 
 ---
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例</h1>
 <span style="font-size: 30px;">7.1.2 操作步骤</span></center><br>
 - **本课数据预处理目标**：计算Match-Moral条件下时RT的自我优势效应(SPE)。<br>
 
@@ -521,7 +569,7 @@ DT::datatable(head(a1),
 &emsp;&emsp; Step7: 计算实验条件为Match-Moral时RT的自我优势效应[mutate, select]<br>
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step2: 选择变量[select]</span></center><br>
 
 ```{r example of total part1 rawdata_matchtask,message=FALSE}
@@ -539,7 +587,7 @@ DT::datatable(head(df4, 10),
 ```
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step3: 处理缺失值[drop_na, filter]</span></center><br>
 
 ```{r example of total part2 rawdata_matchtask,message=FALSE}
@@ -555,7 +603,7 @@ DT::datatable(head(df4, 24),
               fillContainer = TRUE, options = list(pageLength = 5))
 ```
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
 
 ```{r example of total part3 rawdata_matchtask,message=FALSE}
@@ -571,7 +619,7 @@ DT::datatable(head(df4, 24),
 ```
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
 - group_by和summarise函数<br>
 &emsp;group_by：定义分组变量<br>
@@ -579,14 +627,14 @@ DT::datatable(head(df4, 24),
 ![dplyr_pic1](picture/chp6/dplyr_pic1.png)
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step4: 分条件描述[group_by, summarise]</span></center><br>
 - group_by和summarise函数<br>
 &emsp;group_by+summarise：对各组变量进行汇总<br>
 ![dplyr_pic2](picture/chp6/dplyr_pic2.png)
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
 
 ```{r example of total part4 rawdata_matchtask}
@@ -602,19 +650,21 @@ DT::datatable(head(df4, 24),
 ```
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step5: 拆分变量[extract, filter]</span></center><br>
 - extract函数<br>
 &emsp; extract(data = data, col = x1, into = c("x1a", "x1b"),regex = "([[:alnum:]]+)-([[:alnum:]]+)")
 ![dplyr_pic3](picture/chp6/dplyr_pic3.png)
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
 ```{r example of total part5 rawdata_matchtask}
 # 将长数据转为宽数据
 df4 <- dplyr::select(df4, Sub, Identity, mean_RT)
-df4 <- tidyr::pivot_wider(df4, names_from = "Identity", values_from = "mean_RT")
+df4 <- tidyr::pivot_wider(df4, 
+                          names_from = "Identity", 
+                          values_from = "mean_RT")
 ```
 
 ```{r example of total part5 rawdata_matchtask DT, echo=FALSE}
@@ -623,7 +673,7 @@ DT::datatable(head(df4, 24),
 ```
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | Step6: 将数据长转宽[pivot_wide]</span></center><br>
 - pivot_wide函数<br>
 &emsp; pivot_wider(names_from = var1, values_from = var2)<br>
@@ -632,7 +682,7 @@ DT::datatable(head(df4, 24),
 ![dplyr_pic4](picture/chp6/dplyr_pic4.png)
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 </span></center><br>
 ```{r example of total part6 rawdata_matchtask}
 # 计算SPE
@@ -646,7 +696,7 @@ DT::datatable(head(df4, 24),
 ```
 
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | 完整管道流程（第一部分）</span></center><br>
 
 ```{r example of total rawdata_matchtask_p1, message=FALSE}
@@ -664,7 +714,7 @@ df4 <- df3 %>%
 
 ---
 
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | 完整管道流程（第二部分）</span></center><br>
 
 ```{r example of total rawdata_matchtask_p2, message=FALSE}
@@ -677,7 +727,7 @@ df4 <- df4 %>%
 
 ---
 
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据——实例 </h1>
 <span style="font-size: 30px;">7.1.2 操作步骤 | 完整管道流程（第三部分）</span></center><br>
 
 ```{r example of total rawdata_matchtask_p3, message=FALSE}
@@ -694,11 +744,6 @@ df4 <- df4 %>%
   dplyr::mutate(moral_SPE = Self - Other)
 ```
 ---
-# <h1 lang="en">7.1 反应时数据</h1>
-<span style="font-size: 30px;">7.1.3 小结</span></center><br>
-<br>
-
----
 
 # <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
 <span style="font-size: 30px;">7.1.3 小结 | 常用 tidyr 函数总结</span></center><br>
@@ -714,7 +759,7 @@ df4 <- df4 %>%
 
 ---
 
-# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据 </h1>
 <span style="font-size: 30px;">7.1.3 小结 | 常用 dplyr 函数总结</span></center><br>
 
 | 函数 | 功能 | 示例 |
@@ -731,7 +776,7 @@ df4 <- df4 %>%
 
 ---
 
-# <h1 lang="en">7.1 反应时数据</h1>
+# <h1 lang="en">7.1 基于Tidyverse处理反应时数据</h1>
 <span style="font-size: 30px;">7.1.3 小结 </span></center><br>
 <br>
 - separate() 把一个变量的单元格内的字符串拆成两份，变成两个变量 <br>
@@ -907,7 +952,8 @@ df4 <- df4 %>%
 ```
 背景：我正在学习第6章的数据预处理。
 
-数据：我已经加载了 penguin 数据集，数据框叫 df，包含 Site、age、weight_kg、height_cm、sex。
+数据：我已经加载了 penguin 数据集，数据框叫 df，
+包含 Site、age、weight_kg、height_cm、sex。
 ```
 ]
 
@@ -941,6 +987,7 @@ df4 <- df4 %>%
 
 💡 复制时，请把本 prompt 的多页代码块合并后再使用。
 ]
+
 
 ---
 
@@ -1028,14 +1075,106 @@ df4 <- df4 %>%
 **记住：** 好的问题解决，不是一次把全部答案“要出来”，而是先澄清，再规划，再执行，再迭代优化。
 ]
 
+
 ---
+
+# 7.2.3 分析笔记文件：analysis_notes.md（1/4）
+
+.font-size-14[
+**目的：** 为了避免在对话框中插入过多内容，把分析思路整理到一个文件中。
+
+**作用：**
+- 记录你的分析思路
+- 记录指标定义
+- 记录变量结构
+- 记录计算逻辑
+
+**AI 每次只要读取这个文件，就能理解你的逻辑。**
+]
+
+---
+
+# 7.2.3 分析笔记文件：analysis_notes.md（2/4）
+
+.font-size-14[
+**推荐使用 .md 文件：**
+
+- 结构清晰
+- 可读性高
+- AI 解析好
+
+**使用示例：**
+```
+Please read analysis_notes.md first.
+This file describes my RT analysis logic.
+Based on this analysis logic, help me write R code.
+```
+]
+
+---
+
+# 7.2.3 分析笔记文件：analysis_notes.md（3/4）
+
+.font-size-14[
+**analysis_notes.md 示例内容：**
+
+```markdown
+# Analysis Notes - RT Data Processing
+
+## 研究问题
+计算 match-moral 条件下的自我优势效应(SPE)
+
+## 数据来源
+- 文件位置：slides/data/match/
+- 文件格式：.out 文件
+
+## 关键变量
+- Sub: 被试编号
+- Shape: 刺激类型（moralSelf, moralOther, immoralSelf, immoralOther）
+- Match: 匹配条件（match, mismatch）
+- RT: 反应时（ms）
+- ACC: 正确率（0, 1）
+
+## 计算逻辑
+1. 筛选有效试次：ACC == 0|1 & RT in [200, 1500]
+2. 按被试和条件计算平均 RT
+3. 筛选 match + moral 条件
+4. 长转宽：Self 和 Other 分别作为列
+5. SPE = Self RT - Other RT
+```
+
+]
+
+---
+
+# 7.2.3 分析笔记文件：analysis_notes.md（4/4）
+
+.font-size-14[
+**好处：**
+
+1. **减少重复输入**
+   - 不用每次都解释数据结构
+   - 不用每次都写计算逻辑
+
+2. **便于迭代优化**
+   - 思路可以随时查看和修改
+   - AI 可以基于现有逻辑改进
+
+3. **便于团队协作**
+   - 分析逻辑文档化
+   - 其他人也能理解你的思路
+
+**建议：** 把 analysis_notes.md 放在数据文件夹或项目根目录中。
+]
+
+---
+
 
 class: center, middle
 <span style="font-size: 50px;">实操演练</span> <br>
 
 ---
-
-# 7.2.3 实验数据处理
+# 7.2.4 实验数据处理
 
 .font-size-14[
 **任务：计算match-moral条件下的自我优势效应SPE**
@@ -1049,6 +1188,8 @@ class: center, middle
 ]
 
 ---
+
+
 
 # 练习：实验数据处理（代码骨架）
 
