@@ -308,14 +308,13 @@ files <- list.files(
 ## 8.0.4  大作业
 
 ```{r,echo=FALSE,out.width="45%",fig.align='right'}
-knitr::include_graphics("picture/chp7/opportunity_rep.jpg")
+knitr::include_graphics("picture/chp8/reliable_research.jpg")
 ```
 
 .footnote[
 -----
-参考链接：[文献列表及状态](https://osf.io/ck5eg); 
+参考链接：[文献列表及状态](https://www.nature.com/collections/idajfifcfg); 
 
-email: instituteforreplication@gmail.com.
 ]
 
 ---
