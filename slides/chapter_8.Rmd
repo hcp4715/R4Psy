@@ -24,13 +24,14 @@ class: center, middle
 <span style="font-size: 40px;">描述性统计与数据可视化基础</span><br>
 <span style="font-size: 30px;">胡传鹏</span> <br>
 <span style="font-size: 20px;"> </span> <br>
-<span style="font-size: 30px;">`r Sys.Date()`</span> <br>
+<span style="font-size: 30px;">2026年4月23日</span> <br>
 <span style="font-size: 20px;"> Made with Rmarkdown</span> <br>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   fig.width=9, fig.height=4, fig.retina=2, 
   out.width="100%",
+  fig.path="picture/chp8/",
   message = FALSE,
   warning = F
 )
@@ -63,7 +64,7 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
 
 pacman::p_load(
   # 本节课需要用到的 packages
-  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
+  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,DT,
   # 生成课件
   xaringan,xaringanthemer,xaringanExtra)
 ```
@@ -106,7 +107,7 @@ xaringanExtra::use_panelset()
 # 所有数据路径
 files <- list.files(  #<<
   ## <- & =
-  here::here("slides", "slides", "data", "match"), 
+  here::here("slides", "data", "match"), 
   pattern = "data_exp7_rep_match_.*\\.out$", 
   full.names = TRUE)
 ```
@@ -307,14 +308,13 @@ files <- list.files(
 ## 8.0.4  大作业
 
 ```{r,echo=FALSE,out.width="45%",fig.align='right'}
-knitr::include_graphics("picture/chp7/opportunity_rep.jpg")
+knitr::include_graphics("picture/chp8/reliable_research.jpg")
 ```
 
 .footnote[
 -----
-参考链接：[文献列表及状态](https://osf.io/ck5eg); 
+参考链接：[文献列表及状态](https://www.nature.com/collections/idajfifcfg); 
 
-email: instituteforreplication@gmail.com.
 ]
 
 ---
@@ -456,6 +456,24 @@ quartets::datasaurus_dozen %>%
 
 
 ---
+# <h1 lang="en" style="font-size: 50px;">本节课安排与目标</h1>
+<br>
+.font-size-14[
+1. 继续巩固上节课的练习  
+&emsp;&emsp;问卷数据处理  
+&emsp;&emsp;实验数据批量导入与整理  
+
+2. 完成本节课的三个练习  
+
+3. 学会结合 `prompt` 与 `AI/OpenCode` 辅助完成练习流程
+]
+
+<br>
+.font-size-14[
+配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+]
+
+---
 layout: true
 # 8.1  探索性数据分析
 
@@ -506,7 +524,7 @@ mt_raw <- bruceR::import(here::here(
 .panelset[
 .panel[.panel-name[`head`]
 ```{r, out.width = "10px"}
-DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
+head(mt_raw, 3)  # 使用 base R 的 head 函数
 ```
 
 .panel[.panel-name[`str`]
@@ -522,9 +540,12 @@ mt_raw %>%
 
 .panelset[
 .panel[.panel-name[`summary`]
-```{r,out.width="10%"}
+```{r, results='asis'}
 summary(mt_raw) %>% 
-  knitr::kable() # 注：kable函数只为了输出
+  knitr::kable(
+    format = 'html',
+    table.attr = 'style="font-size:65%;"'
+  )
 ```
 
 
@@ -948,13 +969,19 @@ DataExplorer::plot_histogram(mt_raw)
 ---
 
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
- DataExplorer::plot_qq(pg_raw[,2:10])
+pg_raw %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(1:min(9, ncol(.))) %>% 
+  DataExplorer::plot_qq()
 ```
 
 ---
 
 ```{r fig.height=4, fig.width=6, message=FALSE, warning=FALSE,out.width='70%'}
-DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
+pg_raw %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  tidyr::drop_na() %>% 
+  DataExplorer::plot_correlation()
 ```
 
 ---
@@ -982,9 +1009,16 @@ pg_raw %>%
 ]
 
 ---
+## 练习前说明
+.font-size-14[
+- 开始练习前，可先查看配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+- 如果不确定该选择什么图形，或在 `ggplot` / 数据探索代码中遇到报错，可以先参考手册中的对应 section，再开始练习。
+]
+
+---
 layout: false
 #练习
-.bigfont[
+.size5[
 1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
 
 2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
@@ -994,7 +1028,7 @@ layout: false
 ]
 
 #探索
-.bigfont[
+.size5[
 1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
 
 2. 学会使用大语言模型进行学习，进行精准地提问。
