@@ -4,20 +4,10 @@
     <title>chapter_8.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
-    <script src="libs/panelset-0.2.6/panelset.js"></script>
-    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
-    <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
-    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.33/datatables.js"></script>
-    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
-    <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+    <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.3.0/panelset.js"></script>
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
   </head>
@@ -33,7 +23,7 @@ class: center, middle
 &lt;span style="font-size: 40px;"&gt;描述性统计与数据可视化基础&lt;/span&gt;&lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2025-04-09&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2026年4月23日&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 
@@ -66,7 +56,7 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
 
 pacman::p_load(
   # 本节课需要用到的 packages
-  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,
+  here,skimr,quartets,GGally,showtext,bruceR,tidyverse,DataExplorer,DT,
   # 生成课件
   xaringan,xaringanthemer,xaringanExtra)
 ```
@@ -108,7 +98,7 @@ class: inverse center middle
 # 所有数据路径
 *files &lt;- list.files(
   ## &lt;- &amp; =
-  here::here("data", "match"), 
+  here::here("slides", "data", "match"), 
   pattern = "data_exp7_rep_match_.*\\.out$", 
   full.names = TRUE)
 ```
@@ -158,7 +148,7 @@ rm(df, files, i)
 ## 上节课介绍了write.csv,也可使用bruceR::export
 bruceR::export(
   df3, 
-  file = here::here("data", "match","match_raw.csv"))
+  file = here::here("slides", "slides", "data", "match","match_raw.csv"))
 
 ## 当然，export 不仅可以保存数据，也可以输出模型结果
 ```
@@ -256,7 +246,7 @@ iris %&gt;%
 ## 还是平时养成书写习惯更好
 
 files &lt;- list.files(
-  here::here("data","match"),
+  here::here("slides", "slides", "data", "match"),
   pattern = "data_exp7_rep_match_.*\\.out$",
   full.names = TRUE
 )
@@ -327,13 +317,12 @@ files &lt;- list.files(
 ---
 ## 8.0.4  大作业
 
-&lt;img src="picture/chp7/opportunity_rep.jpg" width="45%" style="display: block; margin: auto 0 auto auto;" /&gt;
+&lt;img src="picture/chp8/reliable_research.jpg" width="45%" style="display: block; margin: auto 0 auto auto;" /&gt;
 
 .footnote[
 -----
-参考链接：[文献列表及状态](https://osf.io/ck5eg); 
+参考链接：[文献列表及状态](https://www.nature.com/collections/idajfifcfg); 
 
-email: instituteforreplication@gmail.com.
 ]
 
 ---
@@ -462,6 +451,24 @@ class: middle,center
 
 
 ---
+# &lt;h1 lang="en" style="font-size: 50px;"&gt;本节课安排与目标&lt;/h1&gt;
+&lt;br&gt;
+.font-size-14[
+1. 继续巩固上节课的练习  
+&amp;emsp;&amp;emsp;问卷数据处理  
+&amp;emsp;&amp;emsp;实验数据批量导入与整理  
+
+2. 完成本节课的三个练习  
+
+3. 学会结合 `prompt` 与 `AI/OpenCode` 辅助完成练习流程
+]
+
+&lt;br&gt;
+.font-size-14[
+配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+]
+
+---
 layout: true
 # 8.1  探索性数据分析
 
@@ -499,10 +506,10 @@ layout: true
 ``` r
 # 读取数据
 pg_raw &lt;- bruceR::import(here::here(
-  "data", "penguin","penguin_rawdata.csv"))
+  "slides", "data", "penguin","penguin_rawdata.csv"))
 
 mt_raw &lt;- bruceR::import(here::here(
-  "data", "match","match_raw.csv")) 
+  "slides", "data", "match","match_raw.csv")) 
 ```
 
 ]
@@ -512,11 +519,19 @@ mt_raw &lt;- bruceR::import(here::here(
 .panel[.panel-name[`head`]
 
 ``` r
-DT::datatable(head(mt_raw, 3))  # 注：datatable 这里只为了在网页中输出
+head(mt_raw, 3)  # 使用 base R 的 head 函数
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-7f75a777283e43b69af4" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-7f75a777283e43b69af4">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["02-May-2018_14:23:06","02-May-2018_14:23:08","02-May-2018_14:23:10"],["Exp","Exp","Exp"],[7302,7302,7302],[22,22,22],["female","female","female"],["R","R","R"],[1,1,1],[1,1,1],[1,2,3],["immoralSelf","moralOther","immoralOther"],["immoralOther","moralSelf","moralOther"],["mismatch","mismatch","mismatch"],["n","n","n"],["m","n","n"],[0,1,1],[0.7561,0.7043,0.9903]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,15,16]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Label","targets":11},{"name":"Match","targets":12},{"name":"CorrResp","targets":13},{"name":"Resp","targets":14},{"name":"ACC","targets":15},{"name":"RT","targets":16}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+```
+##                   Date Prac  Sub Age    Sex Hand Block Bin Trial        Shape
+## 1 02-May-2018_14:23:06  Exp 7302  22 female    R     1   1     1  immoralSelf
+## 2 02-May-2018_14:23:08  Exp 7302  22 female    R     1   1     2   moralOther
+## 3 02-May-2018_14:23:10  Exp 7302  22 female    R     1   1     3 immoralOther
+##          Label    Match CorrResp Resp ACC     RT
+## 1 immoralOther mismatch        n    m   0 0.7561
+## 2    moralSelf mismatch        n    n   1 0.7043
+## 3   moralOther mismatch        n    n   1 0.9903
+```
 
 .panel[.panel-name[`str`]
 
@@ -555,19 +570,151 @@ mt_raw %&gt;%
 
 ``` r
 summary(mt_raw) %&gt;% 
-  knitr::kable() # 注：kable函数只为了输出
+  knitr::kable(
+    format = 'html',
+    table.attr = 'style="font-size:65%;"'
+  )
 ```
 
-
-
-|   |    Date         |    Prac         |     Sub      |     Age      |    Sex          |    Hand         |    Block     |     Bin      |    Trial     |   Shape         |   Label         |   Match         |  CorrResp       |    Resp         |     ACC        |      RT       |
-|:--|:----------------|:----------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:----------------|:----------------|:----------------|:----------------|:----------------|:---------------|:--------------|
-|   |Length:25920     |Length:25920     |Min.   : 7302 |Min.   :18.00 |Length:25920     |Length:25920     |Min.   :1.000 |Min.   :1.000 |Min.   : 1.00 |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Length:25920     |Min.   :-1.0000 |Min.   :0.1060 |
-|   |Class :character |Class :character |1st Qu.: 7313 |1st Qu.:19.00 |Class :character |Class :character |1st Qu.:1.000 |1st Qu.:1.000 |1st Qu.: 6.75 |Class :character |Class :character |Class :character |Class :character |Class :character |1st Qu.: 1.0000 |1st Qu.:0.6104 |
-|   |Mode  :character |Mode  :character |Median : 7324 |Median :20.00 |Mode  :character |Mode  :character |Median :1.000 |Median :2.000 |Median :12.50 |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Mode  :character |Median : 1.0000 |Median :0.7019 |
-|   |NA               |NA               |Mean   : 8853 |Mean   :20.83 |NA               |NA               |Mean   :1.611 |Mean   :2.417 |Mean   :12.50 |NA               |NA               |NA               |NA               |NA               |Mean   : 0.7959 |Mean   :0.7150 |
-|   |NA               |NA               |3rd Qu.: 7336 |3rd Qu.:22.00 |NA               |NA               |3rd Qu.:2.000 |3rd Qu.:3.000 |3rd Qu.:18.25 |NA               |NA               |NA               |NA               |NA               |3rd Qu.: 1.0000 |3rd Qu.:0.8053 |
-|   |NA               |NA               |Max.   :73370 |Max.   :28.00 |NA               |NA               |Max.   :3.000 |Max.   :5.000 |Max.   :24.00 |NA               |NA               |NA               |NA               |NA               |Max.   : 2.0000 |Max.   :1.1831 |
+&lt;table style="font-size:65%;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Date &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Prac &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;      Sub &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;      Age &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Sex &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Hand &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Block &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;      Bin &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Trial &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;    Shape &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;    Label &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;    Match &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;   CorrResp &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;     Resp &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;      ACC &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;       RT &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   : 7302 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   :18.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   :1.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   :1.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   : 1.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Length:25920 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   :-1.0000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Min.   :0.1060 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.: 7313 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.:19.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.:1.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.:1.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.: 6.75 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Class :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.: 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1st Qu.:0.6104 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median : 7324 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median :20.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median :1.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median :2.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median :12.50 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mode  :character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median : 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median :0.7019 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   : 8853 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   :20.83 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   :1.611 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   :2.417 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   :12.50 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   : 0.7959 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mean   :0.7150 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.: 7336 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.:22.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.:2.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.:3.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.:18.25 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.: 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3rd Qu.:0.8053 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   :73370 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   :28.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   :3.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   :5.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   :24.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   : 2.0000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Max.   :1.1831 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 
 .panel[.panel-name[`skimr::skim()--1`]
@@ -704,7 +851,7 @@ class: inverse middle center
 
 --
 .pull-right[
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-26-1.png" width="90%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-26-1.png" width="90%" /&gt;
 
 ]
 &lt;br&gt;
@@ -810,7 +957,7 @@ p1 &lt;- pg_raw %&gt;%
 p1 ## 坐标轴名称已对应，虽然图片为空
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-31-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-31-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[添加图层-散点]
@@ -819,14 +966,14 @@ p1 ## 坐标轴名称已对应，虽然图片为空
 p1 + geom_point()
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 .panel[.panel-name[添加图层-拟合曲线]
 
 ``` r
 p1 + geom_point() + geom_smooth(method = 'lm')
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-33-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-33-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[改变映射]
 
@@ -840,7 +987,7 @@ pg_raw %&gt;%
       geom_smooth()  
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-34-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-34-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -893,7 +1040,7 @@ pic_his &lt;- mt_raw %&gt;%
 ]
 
 .pull-right[
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-38-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-38-1.png" width="100%" /&gt;
 ]
 
 
@@ -916,7 +1063,7 @@ pic_dens &lt;- mt_raw %&gt;%
 
 .pull-right[
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-40-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-40-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -936,7 +1083,7 @@ mt_raw %&gt;%
 
 
 .pull-right[
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-42-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-42-1.png" width="100%" /&gt;
 似乎密度曲线没有显示…
 原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
 如果仔细观察 x 坐标轴还是能看到细微差异的。
@@ -961,7 +1108,7 @@ pic_mix &lt;- mt_raw %&gt;%
 ]
 
 .pull-right[
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-44-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-44-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -983,7 +1130,7 @@ pic_box &lt;- mt_raw %&gt;%
 
 ]
 .pull-right[
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-46-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-46-1.png" width="100%" /&gt;
 ]
 
 .footnote[
@@ -1012,7 +1159,7 @@ layout: true
 DataExplorer::plot_intro(mt_raw)
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-49-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-49-1.png" width="70%" /&gt;
 
 
 ---
@@ -1022,7 +1169,7 @@ DataExplorer::plot_intro(mt_raw)
  DataExplorer::plot_missing(mt_raw)
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-50-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-50-1.png" width="70%" /&gt;
 
 ---
 
@@ -1031,7 +1178,7 @@ DataExplorer::plot_intro(mt_raw)
  DataExplorer::plot_bar(mt_raw)
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-51-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-51-1.png" width="70%" /&gt;
 
 ---
 
@@ -1040,7 +1187,7 @@ DataExplorer::plot_intro(mt_raw)
  DataExplorer::plot_bar(mt_raw, by="Match")
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-52-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-52-1.png" width="70%" /&gt;
 
 ---
 
@@ -1049,26 +1196,32 @@ DataExplorer::plot_intro(mt_raw)
 DataExplorer::plot_histogram(mt_raw)
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-53-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-53-1.png" width="70%" /&gt;
 
 
 ---
 
 
 ``` r
- DataExplorer::plot_qq(pg_raw[,2:10])
+pg_raw %&gt;% 
+  dplyr::select(where(is.numeric)) %&gt;% 
+  dplyr::select(1:min(9, ncol(.))) %&gt;% 
+  DataExplorer::plot_qq()
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-54-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-54-1.png" width="70%" /&gt;
 
 ---
 
 
 ``` r
-DataExplorer::plot_correlation(na.omit(pg_raw[, 2:30]))
+pg_raw %&gt;% 
+  dplyr::select(where(is.numeric)) %&gt;% 
+  tidyr::drop_na() %&gt;% 
+  DataExplorer::plot_correlation()
 ```
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-55-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-55-1.png" width="70%" /&gt;
 
 ---
 ## 使用ggpairs
@@ -1100,16 +1253,23 @@ pg_raw %&gt;%
 
 .panel[.panel-name[Output]
 
-&lt;img src="chapter_8_files/figure-html/unnamed-chunk-56-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-56-1.png" width="100%" /&gt;
 
 ]
 
 ]
 
 ---
+## 练习前说明
+.font-size-14[
+- 开始练习前，可先查看配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+- 如果不确定该选择什么图形，或在 `ggplot` / 数据探索代码中遇到报错，可以先参考手册中的对应 section，再开始练习。
+]
+
+---
 layout: false
 #练习
-.bigfont[
+.size5[
 1. 读取match数据，对不同shape的击中率进行分组绘图，可使用boxplot观察差异。
 
 2. 在上一题中，如何按照特定的顺序来展现 boxplot，比如按照moralSelf - immoralSelf - moralOther - immoralOther(提示：设置因子)
@@ -1119,7 +1279,7 @@ layout: false
 ]
 
 #探索
-.bigfont[
+.size5[
 1. 在本章的例子中，我们举例了反应时的分布。但其实我们是对所有被试的所有反应时绘制了总的分布，那么我们能不能找到一个办法绘制出每一个被试的反应时分布呢？
 
 2. 学会使用大语言模型进行学习，进行精准地提问。
@@ -1138,11 +1298,11 @@ layout: false
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightLines": true,
-"highlightStyle": "github",
-"countIncrementalSlides": false,
-"seal": true,
-"ratio": "16:9"
+  "highlightLines": true,
+  "highlightStyle": "github",
+  "countIncrementalSlides": false,
+  "seal": true,
+  "ratio": "16:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
