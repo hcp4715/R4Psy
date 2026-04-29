@@ -115,11 +115,6 @@ options(scipen=999)
 <span style="font-size: 20px;">&emsp;8.2.3 线性回归的表达</span></center> <br>
 <span style="font-size: 20px;">&emsp;8.2.4 知识延申</span></center> <br>
 
-
----
-class: center, middle
-<span style="font-size: 60px;">8.1 *t*-test & linear regression</span> <br>
-
 ---
 class: left, middle
 <span style="font-size: 60px;">8.0 线性回归回顾</span> <br>
@@ -308,7 +303,14 @@ bruceR::model_summary(m1)
 m2 <- bruceR::regress(Temperature_t2 ~ Temperature_t1,  # 公式
           data = df.penguin) # 数据
 ```
+
+
 ---
+class: center, middle
+<span style="font-size: 60px;">8.1 *t*-test & linear regression</span> <br>
+
+---
+
 class: left, middle
 <span style="font-size: 60px;">8.1  *t*检验作为回归模型的特例</span> <br>
 
@@ -1114,4 +1116,107 @@ class: center, middle
 <br>
 <br>
 <h2 lang="zh-CN">2. 在Penguin数据中，不同气候带(DEQ)与恋爱状态(romantic)对被试社交复杂度(socialdiversity)的影响.</h2>
+
+---
+
+class: center, middle
+<span style="font-size: 60px;">如何使用大语言模型进行分析</span> <br>
+
+---
+
+# 分析笔记文件：
+
+.font-size-14[
+**目的：** 为了避免在对话框中插入过多内容，把分析思路整理到一个文件中。
+
+**作用：**
+- 记录你的分析思路
+- 记录指标定义
+- 记录变量结构
+- 记录计算逻辑
+
+**AI 每次只要读取这个文件，就能理解你的逻辑。**
+]
+
+---
+
+# 分析笔记文件：
+
+.font-size-14[
+**推荐使用 .md 文件：**
+
+- 结构清晰
+- 可读性高
+- AI 解析好
+
+**使用示例：**
+```
+Please read analysis_notes.md first.
+This file describes my analysis logic.
+Based on this analysis logic, help me write R code.
+```
+]
+
+
+
+
+---
+
+# 分析笔记文件：
+
+.font-size-14[
+**好处：**
+
+1. **减少重复输入**
+   - 不用每次都解释数据结构
+   - 不用每次都写计算逻辑
+
+2. **便于迭代优化**
+   - 思路可以随时查看和修改
+   - AI 可以基于现有逻辑改进
+
+3. **便于团队协作**
+   - 分析逻辑文档化
+   - 其他人也能理解你的思路
+
+**建议：** 把 analysis_notes.md 放在数据文件夹或项目根目录中。
+]
+
+---
+
+# 问卷类 Prompt 使用指南
+
+.font-size-14[
+参考 `questionnaire_prompt_guide.md`：
+- 问卷数据清洗与量表计分
+- 问卷数据分组汇总
+- 问卷类 EDA 与可视化
+- 问卷类 ggplot / 数据探索报错排查
+]
+
+---
+
+# 实验类 Prompt 使用指南
+
+.font-size-14[
+参考 `experiment_prompt_guide.md`：
+- 批量导入与清洗实验数据
+- 分条件汇总、长宽转换与效应指标
+- 实验类 EDA 与可视化
+- 实验类报错排查
+- 使用 Analysis_Notes.md 约束实验分析逻辑
+]
+
+---
+
+# 提交前自检
+
+.font-size-14[
+**检查清单：**
+1. 路径是否与仓库一致（优先 here::here("slides", "data", ...)）
+2. 包是否与课件一致（问卷优先 bruceR + tidyverse，实验优先 tidyverse）
+3. 变量名、分组变量、缺失值处理要求是否已明确写入 prompt
+4. 是否要求模型先澄清再写代码；多步骤任务是否要求先给计划
+5. 是否把解释性内容压缩到注释中，而不是散落在正文
+]
 
