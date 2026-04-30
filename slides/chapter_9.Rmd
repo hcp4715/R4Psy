@@ -181,13 +181,20 @@ $$Y_{n×1} =X_{n×2} \beta_{2×1} + \epsilon_{n×1}$$
 
 $$Y = X \beta + \epsilon$$
 
-<div style="column-count: 4;">
+<div style="margin-top: 1em;">
+<table style="width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 1.2rem 0.8rem;">
+<tr>
+<td style="width: 50%; vertical-align: top; text-align: center;">
+
 $$Y_{n×1}=\begin{bmatrix}
   y_1 \\
   y_2 \\
   ... \\
   y_n
 \end{bmatrix}$$
+
+</td>
+<td style="width: 50%; vertical-align: top; text-align: center;">
 
 $$X_{n×2}=\begin{bmatrix}
   1&x_{12} \\
@@ -196,17 +203,29 @@ $$X_{n×2}=\begin{bmatrix}
   1&x_{n2}
 \end{bmatrix}$$
 
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center;">
+
 $$\beta_{2×1}=\begin{bmatrix}
  \alpha\\
  \beta_1
 \end{bmatrix}$$
+
+</td>
+<td style="vertical-align: top; text-align: center;">
 
 $$\epsilon_{n×1}=\begin{bmatrix}
  \epsilon_1\\
   \epsilon_2\\
   ...\\
   \epsilon_n
-  \end{bmatrix}$$
+\end{bmatrix}$$
+
+</td>
+</tr>
+</table>
 </div>
 
 ---
@@ -226,7 +245,9 @@ $$\epsilon_{n×1}=\begin{bmatrix}
 ## 8.0.2 一个简单的线性回归的R代码
 
 .panelset[
-.panel[.panel-name[基础知识]
+
+.panel[
+.panel-name[基础知识]
 
 <br>
 **X是否能够“预测”Y**
@@ -246,7 +267,10 @@ $$\epsilon_{n×1}=\begin{bmatrix}
 * $H_1$: X能显著地预测Y，即 $\beta$ ≠ 0
 <br>
 
-.panel[.panel-name[数据清理]
+]
+
+.panel[
+.panel-name[数据清理]
 
 ```{r preprocessing for lm}
 df.penguin <- bruceR::import(here::here('slides', 'data', 'penguin', 'penguin_rawdata.csv')) %>%
@@ -260,7 +284,10 @@ DT::datatable(head(df.penguin),
               fillContainer = TRUE, options = list(pageLength = 4))
 ```
 
-.panel[.panel-name[初步可视化]
+]
+
+.panel[
+.panel-name[初步可视化]
 
 ```{r visualization for lm, fig.width=6, fig.height=4}
 df.penguin %>%
@@ -270,7 +297,10 @@ df.penguin %>%
       theme_classic()
 ```
 
-.panel[.panel-name[代码实操]
+]
+
+.panel[
+.panel-name[代码实操]
 
 ```{r lm in stats}
 m1 <- stats::lm(Temperature_t2 ~ Temperature_t1,  # 公式
@@ -283,7 +313,11 @@ m1_summary <- broom::tidy(m1)
 # 使用 knitr 包的 kable() 函数来创建一个格式化的表格
 knitr::kable(m1_summary, caption = "Model Summary")
 ```
-.panel[.panel-name[bruceR::model_summary]
+
+]
+
+.panel[
+.panel-name[bruceR::model_summary]
 
 
 ```{r summary using bruceR}
@@ -291,19 +325,43 @@ bruceR::model_summary(m1)
 ```
 ]
 ]
-]
-]
-]
-]
 ---
 # 8.0 线性回归回顾
-## 8.0.3 bruceR::regress
+## 8.0.3 bruceR::regress | 代码
 
-```{r lm in bruceR}
-m2 <- bruceR::regress(Temperature_t2 ~ Temperature_t1,  # 公式
-          data = df.penguin) # 数据
+```{r lm in bruceR, results='hide'}
+m2_out <- capture.output(
+  bruceR::regress(Temperature_t2 ~ Temperature_t1,  # 公式
+                  data = df.penguin) # 数据
+)
 ```
 
+
+---
+# 8.0 线性回归回顾
+## 8.0.3 bruceR::regress | 输出（1/2）
+
+```{r echo=FALSE, results='asis'}
+cat(
+  sprintf(
+    '<pre style="font-size: 20px; line-height: 1.35; white-space: pre-wrap;">%s</pre>',
+    htmltools::htmlEscape(paste(m2_out[1:min(13, length(m2_out))], collapse = "\n"))
+  )
+)
+```
+
+---
+# 8.0 线性回归回顾
+## 8.0.3 bruceR::regress | 输出（2/2）
+
+```{r echo=FALSE, results='asis'}
+cat(
+  sprintf(
+    '<pre style="font-size: 20px; line-height: 1.35; white-space: pre-wrap;">%s</pre>',
+    htmltools::htmlEscape(paste(m2_out[14:length(m2_out)], collapse = "\n"))
+  )
+)
+```
 
 ---
 class: center, middle
@@ -311,18 +369,38 @@ class: center, middle
 
 ---
 
-class: left, middle
-<span style="font-size: 60px;">8.1  *t*检验作为回归模型的特例</span> <br>
+class: left, top
+<span style="font-size: 52px;">8.1  *t*检验作为回归模型的特例</span>
 
-```{r, echo = FALSE, fig.width = 3, fig.height = 2}
-knitr::include_graphics('picture/chp8/IJzerman2018fig.png')
-```
-(引自[IJzerman et al., 2018](https://doi.org/10.1525/collabra.165))
+.pull-left[
 
-<br>
-<span style="font-size: 35px;">Q: 不同恋爱状态(romantic)下人们的核心体温(Temperature)是否有差异？</span> <br>
-<br>
-<span style="font-size: 40px;">A: 独立样本*t*检验</span> <br>
+<p align="center">
+  <img src="./picture/chp8/IJzerman2018fig.png" width="88%">
+</p>
+
+<div style="font-size: 16px; line-height: 1.4; text-align: center;">
+  引自 <a href="https://doi.org/10.1525/collabra.165">IJzerman et al., 2018</a>
+</div>
+
+<p align="center" style="margin-top: 18px;">
+  <img src="./picture/chp8/indet-lm.png" width="82%">
+</p>
+
+]
+
+.pull-right[
+
+<div style="font-size: 28px; line-height: 1.65; margin-top: 50px;">
+<strong>研究问题</strong><br>
+Q: 不同恋爱状态 (romantic) 下，人们的核心体温 (Temperature) 是否有差异？
+
+<br><br>
+
+<strong>统计回答</strong><br>
+A: 可以先用<strong>独立样本 <em>t</em> 检验</strong>比较两组均值，随后再把它写成<strong>二分自变量的线性回归模型</strong>。
+</div>
+
+]
 
 ---
 # 8.1 *t*-test
@@ -753,13 +831,17 @@ class: left, middle
 # 8.2  ANOVA 
 ## 8.2.2 代码实操|数据预处理
 .panelset[
-.panel[.panel-name[vars]
+.panel[.panel-name[DEQ 分布]
 
 ```{r}
 summary(df.penguin$DEQ)
 ```
 
-```{r}
+]
+
+.panel[.panel-name[climate 分组]
+
+```{r, results='hide'}
 # 设定分割点
 # [0-23.5 热带， 23.5-35 亚热带]， [35-40 暖温带， 40-50 中温带]， [50-66.5 寒温带]
 breaks <- c(0, 35, 50, 66.5)
@@ -771,8 +853,13 @@ labels <- c('热带', '温带', '寒温带')
 df.penguin$climate <- cut(df.penguin$DEQ, 
                           breaks = breaks, 
                           labels = labels)
+```
+
+```{r, echo=FALSE}
 summary(df.penguin$climate)
 ```
+
+]
 
 .panel[.panel-name[tidy data]
 
@@ -786,7 +873,7 @@ df <- df.penguin %>%
 DT::datatable(head(df), fillContainer = TRUE)
 ```
 
-]]]
+]]
 
 
 ---
@@ -1050,22 +1137,81 @@ res1 %>%
 
 ---
 # 8.2  ANOVA & linear regression
-## 8.2.2 代码实操: `bruceR::EMMEANS`
-```{r, results='asis'}
-sim_eff <- res1 %>% 
-  bruceR::EMMEANS("climate", by = "romantic") %>%
-  bruceR::EMMEANS("romantic", by = "climate")
+## 8.2.2 代码实操: `bruceR::EMMEANS` | 代码
+```{r, results='hide'}
+sim_eff_out1 <- capture.output(
+  res1 %>% bruceR::EMMEANS("climate", by = "romantic")
+)
+
+sim_eff_out2 <- capture.output(
+  res1 %>% bruceR::EMMEANS("romantic", by = "climate")
+)
 ```
 
 ---
 # 8.2  ANOVA & linear regression
-## 8.2.4 知识延申|单因素方差分析示例
-```{r}
+## 8.2.2 代码实操: `bruceR::EMMEANS` | 输出（climate by romantic）
+
+```{r echo=FALSE, results='asis'}
+cat(
+  sprintf(
+    '<pre style="font-size: 18px; line-height: 1.3; white-space: pre-wrap;">%s</pre>',
+    htmltools::htmlEscape(paste(sim_eff_out1, collapse = "\n"))
+  )
+)
+```
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.2 代码实操: `bruceR::EMMEANS` | 输出（romantic by climate）
+
+```{r echo=FALSE, results='asis'}
+cat(
+  sprintf(
+    '<pre style="font-size: 18px; line-height: 1.3; white-space: pre-wrap;">%s</pre>',
+    htmltools::htmlEscape(paste(sim_eff_out2, collapse = "\n"))
+  )
+)
+```
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.4 知识延申|单因素方差分析示例 | 代码
+```{r, results='hide'}
 # DEQ对Temperature的影响
-res2 <- bruceR::MANOVA(
-  data = df,
-  dv = "Temperature",
-  between = "climate") 
+res2_out <- capture.output(
+  bruceR::MANOVA(
+    data = df,
+    dv = "Temperature",
+    between = "climate")
+)
+```
+
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.4 知识延申|单因素方差分析示例 | 输出（1/2）
+
+```{r echo=FALSE, results='asis'}
+cat(
+  sprintf(
+    '<pre style="font-size: 18px; line-height: 1.3; white-space: pre-wrap;">%s</pre>',
+    htmltools::htmlEscape(paste(res2_out[1:min(18, length(res2_out))], collapse = "\n"))
+  )
+)
+```
+
+---
+# 8.2  ANOVA & linear regression
+## 8.2.4 知识延申|单因素方差分析示例 | 输出（2/2）
+
+```{r echo=FALSE, results='asis'}
+cat(
+  sprintf(
+    '<pre style="font-size: 18px; line-height: 1.3; white-space: pre-wrap;">%s</pre>',
+    htmltools::htmlEscape(paste(res2_out[19:length(res2_out)], collapse = "\n"))
+  )
+)
 ```
 
 
@@ -1187,7 +1333,7 @@ Based on this analysis logic, help me write R code.
 # 问卷类 Prompt 使用指南
 
 .font-size-14[
-参考 `questionnaire_prompt_guide.md`：
+参考 `slides/pure_agent_prompt/questionnaire_example_AGENTs.md`：
 - 问卷数据清洗与量表计分
 - 问卷数据分组汇总
 - 问卷类 EDA 与可视化
@@ -1199,12 +1345,12 @@ Based on this analysis logic, help me write R code.
 # 实验类 Prompt 使用指南
 
 .font-size-14[
-参考 `experiment_prompt_guide.md`：
+参考 `slides/pure_agent_prompt/experiment_example_AGENTs.md`：
 - 批量导入与清洗实验数据
 - 分条件汇总、长宽转换与效应指标
 - 实验类 EDA 与可视化
 - 实验类报错排查
-- 使用 Analysis_Notes.md 约束实验分析逻辑
+- 使用 analysis_notes.md 约束实验分析逻辑
 ]
 
 ---
@@ -1219,4 +1365,3 @@ Based on this analysis logic, help me write R code.
 4. 是否要求模型先澄清再写代码；多步骤任务是否要求先给计划
 5. 是否把解释性内容压缩到注释中，而不是散落在正文
 ]
-
