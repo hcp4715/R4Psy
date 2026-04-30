@@ -512,10 +512,12 @@ knitr::include_graphics("picture/chp7/Data_visualization_process_v1.png")
 ```{r eval = T}
 # 读取数据
 pg_raw <- bruceR::import(here::here(
-  "slides", "data", "penguin","penguin_rawdata.csv"))
+  "slides", "data", "penguin",
+  "penguin_rawdata.csv"))
 
 mt_raw <- bruceR::import(here::here(
-  "slides", "data", "match","match_raw.csv")) 
+  "slides", "data", "match",
+  "match_raw.csv")) 
 ```
 
 ]
