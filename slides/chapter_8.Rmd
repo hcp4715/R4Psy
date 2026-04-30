@@ -470,7 +470,7 @@ quartets::datasaurus_dozen %>%
 
 <br>
 .font-size-14[
-配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+配套提示词手册：`slides/pure_agent_prompt/llm_prompt_guide.md`
 ]
 
 ---
@@ -1013,7 +1013,7 @@ pg_raw %>%
 ---
 ## 练习前说明
 .font-size-14[
-- 开始练习前，可先查看配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+- 开始练习前，可先查看配套提示词手册：`slides/pure_agent_prompt/llm_prompt_guide.md`
 - 如果不确定该选择什么图形，或在 `ggplot` / 数据探索代码中遇到报错，可以先参考手册中的对应 section，再开始练习。
 ]
 

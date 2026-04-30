@@ -181,13 +181,20 @@ $$Y_{n×1} =X_{n×2} \beta_{2×1} + \epsilon_{n×1}$$
 
 $$Y = X \beta + \epsilon$$
 
-<div style="column-count: 4;">
+<div style="margin-top: 1em;">
+<table style="width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 1.2rem 0.8rem;">
+<tr>
+<td style="width: 50%; vertical-align: top; text-align: center;">
+
 $$Y_{n×1}=\begin{bmatrix}
   y_1 \\
   y_2 \\
   ... \\
   y_n
 \end{bmatrix}$$
+
+</td>
+<td style="width: 50%; vertical-align: top; text-align: center;">
 
 $$X_{n×2}=\begin{bmatrix}
   1&x_{12} \\
@@ -196,17 +203,29 @@ $$X_{n×2}=\begin{bmatrix}
   1&x_{n2}
 \end{bmatrix}$$
 
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: center;">
+
 $$\beta_{2×1}=\begin{bmatrix}
  \alpha\\
  \beta_1
 \end{bmatrix}$$
+
+</td>
+<td style="vertical-align: top; text-align: center;">
 
 $$\epsilon_{n×1}=\begin{bmatrix}
  \epsilon_1\\
   \epsilon_2\\
   ...\\
   \epsilon_n
-  \end{bmatrix}$$
+\end{bmatrix}$$
+
+</td>
+</tr>
+</table>
 </div>
 
 ---
@@ -226,7 +245,9 @@ $$\epsilon_{n×1}=\begin{bmatrix}
 ## 8.0.2 一个简单的线性回归的R代码
 
 .panelset[
-.panel[.panel-name[基础知识]
+
+.panel[
+.panel-name[基础知识]
 
 <br>
 **X是否能够“预测”Y**
@@ -246,7 +267,10 @@ $$\epsilon_{n×1}=\begin{bmatrix}
 * $H_1$: X能显著地预测Y，即 $\beta$ ≠ 0
 <br>
 
-.panel[.panel-name[数据清理]
+]
+
+.panel[
+.panel-name[数据清理]
 
 ```{r preprocessing for lm}
 df.penguin <- bruceR::import(here::here('slides', 'data', 'penguin', 'penguin_rawdata.csv')) %>%
@@ -260,7 +284,10 @@ DT::datatable(head(df.penguin),
               fillContainer = TRUE, options = list(pageLength = 4))
 ```
 
-.panel[.panel-name[初步可视化]
+]
+
+.panel[
+.panel-name[初步可视化]
 
 ```{r visualization for lm, fig.width=6, fig.height=4}
 df.penguin %>%
@@ -270,7 +297,10 @@ df.penguin %>%
       theme_classic()
 ```
 
-.panel[.panel-name[代码实操]
+]
+
+.panel[
+.panel-name[代码实操]
 
 ```{r lm in stats}
 m1 <- stats::lm(Temperature_t2 ~ Temperature_t1,  # 公式
@@ -283,16 +313,16 @@ m1_summary <- broom::tidy(m1)
 # 使用 knitr 包的 kable() 函数来创建一个格式化的表格
 knitr::kable(m1_summary, caption = "Model Summary")
 ```
-.panel[.panel-name[bruceR::model_summary]
+
+]
+
+.panel[
+.panel-name[bruceR::model_summary]
 
 
 ```{r summary using bruceR}
 bruceR::model_summary(m1)
 ```
-]
-]
-]
-]
 ]
 ]
 ---
@@ -1187,7 +1217,7 @@ Based on this analysis logic, help me write R code.
 # 问卷类 Prompt 使用指南
 
 .font-size-14[
-参考 `questionnaire_prompt_guide.md`：
+参考 `slides/pure_agent_prompt/questionnaire_example_AGENTs.md`：
 - 问卷数据清洗与量表计分
 - 问卷数据分组汇总
 - 问卷类 EDA 与可视化
@@ -1199,12 +1229,12 @@ Based on this analysis logic, help me write R code.
 # 实验类 Prompt 使用指南
 
 .font-size-14[
-参考 `experiment_prompt_guide.md`：
+参考 `slides/pure_agent_prompt/experiment_example_AGENTs.md`：
 - 批量导入与清洗实验数据
 - 分条件汇总、长宽转换与效应指标
 - 实验类 EDA 与可视化
 - 实验类报错排查
-- 使用 Analysis_Notes.md 约束实验分析逻辑
+- 使用 analysis_notes.md 约束实验分析逻辑
 ]
 
 ---
@@ -1219,4 +1249,3 @@ Based on this analysis logic, help me write R code.
 4. 是否要求模型先澄清再写代码；多步骤任务是否要求先给计划
 5. 是否把解释性内容压缩到注释中，而不是散落在正文
 ]
-
