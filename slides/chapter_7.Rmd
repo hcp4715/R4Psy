@@ -114,7 +114,11 @@ class: center, middle
 # 可以将清华的镜像设置为下载的镜像
 # options(repos =c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 # 导入所需R包
-library(tidyverse)
+if (!requireNamespace('pacman', quietly = TRUE)) {
+    install.packages('pacman')
+}
+
+pacman::p_load(tidyverse)
 ```
 
 ---
