@@ -317,7 +317,7 @@ files &lt;- list.files(
 ---
 ## 8.0.4  大作业
 
-&lt;img src="picture/chp8/reliable_research.jpg" width="45%" style="display: block; margin: auto 0 auto auto;" /&gt;
+&lt;img src="picture/chp8/reliable_research.jpg" alt="" width="45%" style="display: block; margin: auto 0 auto auto;" /&gt;
 
 .footnote[
 -----
@@ -441,7 +441,7 @@ class: middle,center
 ## 
 
 
-&lt;img src="picture/chp7/dino.gif" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/dino.gif" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -482,7 +482,7 @@ layout: true
 &gt; 在统计中，探索性数据分析(EDA)总结数据主要特征的数据分析取向, 通常是使用可视化的方法([Wikipedia](https://en.wikipedia.org/wiki/Exploratory_data_analysis)).  
 
 
-&lt;img src="picture/chp7/Data_visualization_process_v1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/Data_visualization_process_v1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -506,10 +506,12 @@ layout: true
 ``` r
 # 读取数据
 pg_raw &lt;- bruceR::import(here::here(
-  "slides", "data", "penguin","penguin_rawdata.csv"))
+  "slides", "data", "penguin",
+  "penguin_rawdata.csv"))
 
 mt_raw &lt;- bruceR::import(here::here(
-  "slides", "data", "match","match_raw.csv")) 
+  "slides", "data", "match",
+  "match_raw.csv")) 
 ```
 
 ]
@@ -803,22 +805,22 @@ bruceR::Describe(mt_raw) %&gt;%
 ```
 
 ```
-##  [1] "────────────────────────────────────────────────────────────────────────────────────"
-##  [2] "               N (NA)     Mean      SD |   Median     Min      Max Skewness Kurtosis"
+##  [1] ""                                                                                    
+##  [2] "Descriptive Statistics:"                                                             
 ##  [3] "────────────────────────────────────────────────────────────────────────────────────"
-##  [4] "Date*      25920      12218.64 6999.30 | 12220.50    1.00 24362.00     0.00    -1.19"
-##  [5] "Prac*      25920          1.00    0.00 |     1.00    1.00     1.00      NaN      NaN"
-##  [6] "Sub        25920       8852.59 9931.83 |  7324.00 7302.00 73370.00     6.34    38.22"
-##  [7] "Age        25920         20.83    2.48 |    20.00   18.00    28.00     1.09     0.35"
-##  [8] "Sex*       25920          3.27    0.65 |     3.00    1.00     4.00    -0.84     1.58"
-##  [9] "Hand*      25920          1.98    0.15 |     2.00    1.00     2.00    -6.34    38.22"
-## [10] "Block      25920          1.61    0.80 |     1.00    1.00     3.00     0.82    -0.97"
-## [11] "Bin        25920          2.42    1.36 |     2.00    1.00     5.00     0.67    -0.82"
-## [12] "Trial      25920         12.50    6.92 |    12.50    1.00    24.00     0.00    -1.20"
-## [13] "Shape*     25920          2.50    1.12 |     2.50    1.00     4.00     0.00    -1.36"
-## [14] "Label*     25920          2.49    1.11 |     2.00    1.00     4.00     0.02    -1.35"
-## [15] "Match*     25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
-## [16] "CorrResp*  25920          1.50    0.50 |     1.50    1.00     2.00     0.00    -2.00"
+##  [4] "               N (NA)     Mean      SD |   Median     Min      Max Skewness Kurtosis"
+##  [5] "────────────────────────────────────────────────────────────────────────────────────"
+##  [6] "Date*      25920      12218.64 6999.30 | 12220.50    1.00 24362.00     0.00    -1.19"
+##  [7] "Prac*      25920          1.00    0.00 |     1.00    1.00     1.00      NaN      NaN"
+##  [8] "Sub        25920       8852.59 9931.83 |  7324.00 7302.00 73370.00     6.34    38.22"
+##  [9] "Age        25920         20.83    2.48 |    20.00   18.00    28.00     1.09     0.35"
+## [10] "Sex*       25920          3.27    0.65 |     3.00    1.00     4.00    -0.84     1.58"
+## [11] "Hand*      25920          1.98    0.15 |     2.00    1.00     2.00    -6.34    38.22"
+## [12] "Block      25920          1.61    0.80 |     1.00    1.00     3.00     0.82    -0.97"
+## [13] "Bin        25920          2.42    1.36 |     2.00    1.00     5.00     0.67    -0.82"
+## [14] "Trial      25920         12.50    6.92 |    12.50    1.00    24.00     0.00    -1.20"
+## [15] "Shape*     25920          2.50    1.12 |     2.50    1.00     4.00     0.00    -1.36"
+## [16] "Label*     25920          2.49    1.11 |     2.00    1.00     4.00     0.02    -1.35"
 ```
 
 
@@ -851,7 +853,7 @@ class: inverse middle center
 
 --
 .pull-right[
-&lt;img src="picture/chp8/unnamed-chunk-26-1.png" width="90%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-26-1.png" alt="" width="90%" /&gt;
 
 ]
 &lt;br&gt;
@@ -886,13 +888,13 @@ class: inverse middle center
 ---
 ## 8.2.2 为何使用 ggplot?
 
-&lt;img src="picture/chp7/exmp2.png" width="63%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/exmp2.png" alt="" width="63%" style="display: block; margin: auto;" /&gt;
 
 
 ---
 ## 8.2.2 为何使用 ggplot?
 
-&lt;img src="picture/chp7/exmp1.png" width="63%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/exmp1.png" alt="" width="63%" style="display: block; margin: auto;" /&gt;
 
 
 .footnote[
@@ -911,7 +913,7 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 ]
 
 .right-column[
-&lt;img src="picture/chp7/mapping.jpg" width="75%" /&gt;
+&lt;img src="picture/chp7/mapping.jpg" alt="" width="75%" /&gt;
 ]
 
 
@@ -928,7 +930,7 @@ Falster, G., Konecky, B., Coats, S. et al. Forced changes in the Pacific Walker 
 ]
 
 .right-column[
-&lt;img src="picture/chp7/layers.png" width="70%" /&gt;
+&lt;img src="picture/chp7/layers.png" alt="" width="70%" /&gt;
 ]
 
 
@@ -957,7 +959,7 @@ p1 &lt;- pg_raw %&gt;%
 p1 ## 坐标轴名称已对应，虽然图片为空
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-31-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-31-1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[添加图层-散点]
@@ -966,14 +968,14 @@ p1 ## 坐标轴名称已对应，虽然图片为空
 p1 + geom_point()
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-32-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-32-1.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 .panel[.panel-name[添加图层-拟合曲线]
 
 ``` r
 p1 + geom_point() + geom_smooth(method = 'lm')
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-33-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-33-1.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[改变映射]
 
@@ -987,7 +989,7 @@ pg_raw %&gt;%
       geom_smooth()  
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-34-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-34-1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -1004,14 +1006,14 @@ pg_raw %&gt;%
 ---
 ## 8.2.4 单个图片的组成
 
-&lt;img src="picture/chp7/comps1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/comps1.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 
 
 ---
 ## 8.2.4 单个图片的组成
 
-&lt;img src="picture/chp7/comps2.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp7/comps2.png" alt="" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -1040,7 +1042,7 @@ pic_his &lt;- mt_raw %&gt;%
 ]
 
 .pull-right[
-&lt;img src="picture/chp8/unnamed-chunk-38-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-38-1.png" alt="" width="100%" /&gt;
 ]
 
 
@@ -1063,7 +1065,7 @@ pic_dens &lt;- mt_raw %&gt;%
 
 .pull-right[
 
-&lt;img src="picture/chp8/unnamed-chunk-40-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-40-1.png" alt="" width="100%" /&gt;
 ]
 
 ---
@@ -1083,7 +1085,7 @@ mt_raw %&gt;%
 
 
 .pull-right[
-&lt;img src="picture/chp8/unnamed-chunk-42-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-42-1.png" alt="" width="100%" /&gt;
 似乎密度曲线没有显示…
 原因在于密度图和直方图Y轴单位并不相同，其实已经映射上了，
 如果仔细观察 x 坐标轴还是能看到细微差异的。
@@ -1108,7 +1110,7 @@ pic_mix &lt;- mt_raw %&gt;%
 ]
 
 .pull-right[
-&lt;img src="picture/chp8/unnamed-chunk-44-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-44-1.png" alt="" width="100%" /&gt;
 ]
 
 ---
@@ -1130,7 +1132,7 @@ pic_box &lt;- mt_raw %&gt;%
 
 ]
 .pull-right[
-&lt;img src="picture/chp8/unnamed-chunk-46-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-46-1.png" alt="" width="100%" /&gt;
 ]
 
 .footnote[
@@ -1150,7 +1152,7 @@ layout: true
  DataExplorer::plot_str(mt_raw)
 ```
 
-&lt;img src="picture/chp7/plotstr.png" width="65%" /&gt;
+&lt;img src="picture/chp7/plotstr.png" alt="" width="65%" /&gt;
 
 ---
 
@@ -1159,7 +1161,7 @@ layout: true
 DataExplorer::plot_intro(mt_raw)
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-49-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-49-1.png" alt="" width="70%" /&gt;
 
 
 ---
@@ -1169,7 +1171,7 @@ DataExplorer::plot_intro(mt_raw)
  DataExplorer::plot_missing(mt_raw)
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-50-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-50-1.png" alt="" width="70%" /&gt;
 
 ---
 
@@ -1178,7 +1180,7 @@ DataExplorer::plot_intro(mt_raw)
  DataExplorer::plot_bar(mt_raw)
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-51-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-51-1.png" alt="" width="70%" /&gt;
 
 ---
 
@@ -1187,7 +1189,7 @@ DataExplorer::plot_intro(mt_raw)
  DataExplorer::plot_bar(mt_raw, by="Match")
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-52-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-52-1.png" alt="" width="70%" /&gt;
 
 ---
 
@@ -1196,7 +1198,7 @@ DataExplorer::plot_intro(mt_raw)
 DataExplorer::plot_histogram(mt_raw)
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-53-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-53-1.png" alt="" width="70%" /&gt;
 
 
 ---
@@ -1209,7 +1211,7 @@ pg_raw %&gt;%
   DataExplorer::plot_qq()
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-54-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-54-1.png" alt="" width="70%" /&gt;
 
 ---
 
@@ -1221,7 +1223,7 @@ pg_raw %&gt;%
   DataExplorer::plot_correlation()
 ```
 
-&lt;img src="picture/chp8/unnamed-chunk-55-1.png" width="70%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-55-1.png" alt="" width="70%" /&gt;
 
 ---
 ## 使用ggpairs
@@ -1253,7 +1255,7 @@ pg_raw %&gt;%
 
 .panel[.panel-name[Output]
 
-&lt;img src="picture/chp8/unnamed-chunk-56-1.png" width="100%" /&gt;
+&lt;img src="picture/chp8/unnamed-chunk-56-1.png" alt="" width="100%" /&gt;
 
 ]
 
