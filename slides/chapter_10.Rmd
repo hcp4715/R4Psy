@@ -735,22 +735,23 @@ stats::anova(model, model_full) %>% capture.output()
 ## 3.3 两层HLM的公式表达
 
 .size5[
-**第一层（个体内）**：$Y_{ij} = \beta_{0j} + \beta_{1j}X_{ij} + r_{ij}$
+**第一层（个体内）**：
+$$Y_{ij} = \beta_{0j} + \beta_{1j}X_{ij} + r_{ij}$$
 
--   $Y_{ij}$：第$j$组第$i$个个体的观测值
--   $\beta_{0j}$：第$j$组的截距
--   $\beta_{1j}$：第$j$组的斜率
--   $r_{ij}$：个体内残差
+-   Y_{ij}：第j组第i个个体的观测值
+-   $\beta_{0j}$：第j组的截距
+-   $\beta_{1j}$：第j组的斜率
+-   r_{ij}：个体内残差
 ]
 
 .size5[
 **第二层（组间）**：
 $$\beta_{0j} = \gamma_{00} + \gamma_{01}W_j + u_{0j}$$
 $$\beta_{1j} = \gamma_{10} + \gamma_{11}W_j + u_{1j}$$
-
+ 
 -   $\gamma_{00}$：总体截距
--   $\gamma_{01}$：组-level变量$W_j$对截距的效应
--   $u_{0j}, u_{1j}$：组-level残差
+-   $\gamma_{01}$：组-level变量W_j对截距的效应
+-   u_{0j}, u_{1j}：组-level残差
 ]
 
 ---
@@ -764,9 +765,9 @@ $$Y_{ij} = \gamma_{00} + \gamma_{10}X_{ij} + \gamma_{01}W_j + \gamma_{11}(X_{ij}
 
 各项含义：
 -   $\gamma_{00}$：总体截距
--   $\gamma_{10}$：$X$对$Y$的固定效应
--   $\gamma_{01}$：$W$对截距的效应
--   $\gamma_{11}$：$X \times W$交互效应
+-   $\gamma_{10}$：X对Y的固定效应
+-   $\gamma_{01}$：W对截距的效应
+-   $\gamma_{11}$：X，W交互效应
 -   $u_{0j}, u_{1j}$：随机效应（组间变异）
 -   $r_{ij}$：残差（个体内变异）
 ]
@@ -805,7 +806,7 @@ $$Y_{ij} = \gamma_{00} + \gamma_{10}X_{ij} + \gamma_{01}W_j + \gamma_{11}(X_{ij}
 
 .size5[
 **ICC计算公式**：
-$$\ICC = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2_r}$$
+$$ICC = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2_r}$$
 
 **判断标准**：
 -   ICC > 0.05 时，建议使用HLM
@@ -823,10 +824,10 @@ $$\ICC = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2_r}$$
 .size5[
 | 模型 | 随机效应 | 适用场景 |
 |------|----------|----------|
-| 模型1 | `(1 | Sub)` | 随机截距模型 |
-| 模型2 | `(1 + X | Sub)` | 随机截距+斜率 |
-| 模型3 | `(1 + X || Sub)` | 随机截距，独立斜率 |
-| 模型4 | `(X || Sub)` | 仅随机斜率 |
+| 模型1 | 1 | Sub | 随机截距模型 |
+| 模型2 | 1 + X | Sub | 随机截距+斜率 |
+| 模型3 | 1 + X | Sub | 随机截距，独立斜率 |
+| 模型4 | X | Sub| 仅随机斜率 |
 
 **模型比较工具**：
 -   `anova()`：似然比检验
@@ -839,7 +840,7 @@ $$\ICC = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2_r}$$
 
 .size5[
 **固定效应解读**（与普通回归相同）：
--   回归系数表示$X$对$Y$的影响
+-   回归系数表示X对Y的影响
 -   p值检验该效应是否显著
 
 **随机效应解读**：
@@ -925,7 +926,7 @@ lmer_model <- lmerTest::lmer(data = mt_raw,
 
 
 ---
-## 3.4 模型解读
+## 3.11 模型解读
 
 .panelset[
 .panel[.panel-name[变化的效应]
@@ -965,7 +966,7 @@ interactions::cat_plot(model = model_full,
 
 
 ---
-## 3.5 模型等价性
+## 3.12 模型等价性
 
 .size5[
 如果我们观察一下使用lme4::lmer()的结果与重复测量结果，可以发现存在差异：
