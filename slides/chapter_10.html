@@ -4,20 +4,20 @@
     <title>chapter_10.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.3.0/panelset.js"></script>
-    <link href="libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet" />
+    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.34.0/datatables.js"></script>
+    <script src="libs/datatables-binding-0.33/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
     <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -223,8 +223,8 @@ mt_raw &lt;- mt_raw %&gt;%
 ```
 
 .panel[.panel-name[数据展示]
-<div class="datatables html-widget html-fill-item" id="htmlwidget-e2ad108c6a5f6a745df7" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e2ad108c6a5f6a745df7">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Valence","targets":9},{"name":"Identity","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-00485cfe2e03cbfb9e35" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-00485cfe2e03cbfb9e35">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7302,7302,7302,7302,7302],[22,22,22,22,22],["female","female","female","female","female"],["R","R","R","R","R"],[1,1,1,1,1],[1,1,1,1,1],[1,2,3,4,5],["immoralSelf","moralOther","immoralOther","moralSelf","immoralSelf"],["immoral","moral","immoral","moral","immoral"],["Self","Other","Other","Self","Self"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Age","targets":2},{"name":"Sex","targets":3},{"name":"Hand","targets":4},{"name":"Block","targets":5},{"name":"Bin","targets":6},{"name":"Trial","targets":7},{"name":"Shape","targets":8},{"name":"Valence","targets":9},{"name":"Identity","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]
 
@@ -232,7 +232,7 @@ mt_raw &lt;- mt_raw %&gt;%
 ---
 ## 1.2 数据结构
 
-&lt;img src="picture/chp9/data.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/data.png" width="70%" style="display: block; margin: auto;" /&gt;
 
 &lt;br&gt;
 .size5[
@@ -374,7 +374,7 @@ m_aov
 重复测量方差分析有没有局限性？
 ]
 
-&lt;img src="picture/chp9/Neuron_LMM.png" alt="" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/Neuron_LMM.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 .bigfont[
 
@@ -423,8 +423,8 @@ layout: true
 
 
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-29b28ba98f8ccb69e60d" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-29b28ba98f8ccb69e60d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.27099999999,87351.30100000001,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"ids","targets":1},{"name":"department","targets":2},{"name":"bases","targets":3},{"name":"experience","targets":4},{"name":"raises","targets":5},{"name":"salary","targets":6}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-774853e8dfb0eff121f0" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-774853e8dfb0eff121f0">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6"],[1,2,3,4,5,6],["sociology","biology","english","informatics","statistics","sociology"],[39628.505,54578.738,57113.633,75941.27099999999,87351.30100000001,39802.471],[3,5,0,8,7,1],[1819.75,488.662,518.375,1770.109,471.033,2112.536],[45087.753,57022.049,57113.633,90102.143,90648.531,41915.007]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ids<\/th>\n      <th>department<\/th>\n      <th>bases<\/th>\n      <th>experience<\/th>\n      <th>raises<\/th>\n      <th>salary<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"ids","targets":1},{"name":"department","targets":2},{"name":"bases","targets":3},{"name":"experience","targets":4},{"name":"raises","targets":5},{"name":"salary","targets":6}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 
 
@@ -450,12 +450,12 @@ layout: true
 
 .panelset[
 .panel[.panel-name[数据结构]
-&lt;img src="picture/chp9/nest.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/nest.png" width="80%" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[OLS]
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-16-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-16-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ]]]
@@ -495,21 +495,21 @@ layout: true
 
 .panelset[
 .panel[.panel-name[fixI-fixS]
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-17-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-17-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[ranI-fixS]
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-18-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-18-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 .panel[.panel-name[fixI-ranS]
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-19-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-19-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[ranI-ranS]
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-20-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ]]]]]
@@ -536,10 +536,10 @@ layout: false
 
 
 .panel[.panel-name[match_data]
-&lt;img src="picture/chp9/data.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/data.png" width="70%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[shcool]
-&lt;img src="picture/chp9/nest.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/nest.png" width="80%" style="display: block; margin: auto;" /&gt;
 ]]]]
 
 
@@ -556,7 +556,7 @@ layout: false
 画图尝试一下，计算被试平均反应时后进行排序，选取首尾的几名被试：
 ]
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-23-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-23-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -631,14 +631,14 @@ stats::anova(model, model_full) %&gt;% capture.output()
 ```
 
 ```
-## [1] "Data: mt_raw"                                                                   
-## [2] "Models:"                                                                        
-## [3] "model: RT ~ Identity * Valence + (1 | Sub)"                                     
-## [4] "model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)"           
-## [5] "           npar    AIC    BIC logLik -2*log(L) Chisq Df          Pr(&gt;Chisq)    "
-## [6] "model         6 -29173 -29124  14592    -29185                                 "
-## [7] "model_full   15 -30024 -29902  15027    -30054   869  9 &lt;0.0000000000000002 ***"
-## [8] "---"                                                                            
+## [1] "Data: mt_raw"                                                                  
+## [2] "Models:"                                                                       
+## [3] "model: RT ~ Identity * Valence + (1 | Sub)"                                    
+## [4] "model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)"          
+## [5] "           npar    AIC    BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    "
+## [6] "model         6 -29173 -29124  14592   -29185                                 "
+## [7] "model_full   15 -30024 -29902  15027   -30054   869  9 &lt;0.0000000000000002 ***"
+## [8] "---"                                                                           
 ## [9] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
 ```
 
@@ -656,22 +656,23 @@ stats::anova(model, model_full) %&gt;% capture.output()
 ## 3.3 两层HLM的公式表达
 
 .size5[
-**第一层（个体内）**：$Y_{ij} = \beta_{0j} + \beta_{1j}X_{ij} + r_{ij}$
+**第一层（个体内）**：
+`$$Y_{ij} = \beta_{0j} + \beta_{1j}X_{ij} + r_{ij}$$`
 
--   `\(Y_{ij}\)`：第$j$组第$i$个个体的观测值
--   `\(\beta_{0j}\)`：第$j$组的截距
--   `\(\beta_{1j}\)`：第$j$组的斜率
--   `\(r_{ij}\)`：个体内残差
+-   Y_{ij}：第j组第i个个体的观测值
+-   `\(\beta_{0j}\)`：第j组的截距
+-   `\(\beta_{1j}\)`：第j组的斜率
+-   r_{ij}：个体内残差
 ]
 
 .size5[
 **第二层（组间）**：
 `$$\beta_{0j} = \gamma_{00} + \gamma_{01}W_j + u_{0j}$$`
 `$$\beta_{1j} = \gamma_{10} + \gamma_{11}W_j + u_{1j}$$`
-
+ 
 -   `\(\gamma_{00}\)`：总体截距
--   `\(\gamma_{01}\)`：组-level变量$W_j$对截距的效应
--   `\(u_{0j}, u_{1j}\)`：组-level残差
+-   `\(\gamma_{01}\)`：组-level变量W_j对截距的效应
+-   u_{0j}, u_{1j}：组-level残差
 ]
 
 ---
@@ -685,9 +686,9 @@ stats::anova(model, model_full) %&gt;% capture.output()
 
 各项含义：
 -   `\(\gamma_{00}\)`：总体截距
--   `\(\gamma_{10}\)`：$X$对$Y$的固定效应
--   `\(\gamma_{01}\)`：$W$对截距的效应
--   `\(\gamma_{11}\)`：$X \times W$交互效应
+-   `\(\gamma_{10}\)`：X对Y的固定效应
+-   `\(\gamma_{01}\)`：W对截距的效应
+-   `\(\gamma_{11}\)`：X，W交互效应
 -   `\(u_{0j}, u_{1j}\)`：随机效应（组间变异）
 -   `\(r_{ij}\)`：残差（个体内变异）
 ]
@@ -726,7 +727,7 @@ stats::anova(model, model_full) %&gt;% capture.output()
 
 .size5[
 **ICC计算公式**：
-`$$\ICC = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2_r}$$`
+`$$ICC = \frac{\sigma^2_u}{\sigma^2_u + \sigma^2_r}$$`
 
 **判断标准**：
 -   ICC &gt; 0.05 时，建议使用HLM
@@ -744,10 +745,10 @@ stats::anova(model, model_full) %&gt;% capture.output()
 .size5[
 | 模型 | 随机效应 | 适用场景 |
 |------|----------|----------|
-| 模型1 | `(1 | Sub)` | 随机截距模型 |
-| 模型2 | `(1 + X | Sub)` | 随机截距+斜率 |
-| 模型3 | `(1 + X || Sub)` | 随机截距，独立斜率 |
-| 模型4 | `(X || Sub)` | 仅随机斜率 |
+| 模型1 | 1 | Sub | 随机截距模型 |
+| 模型2 | 1 + X | Sub | 随机截距+斜率 |
+| 模型3 | 1 + X | Sub | 随机截距，独立斜率 |
+| 模型4 | X | Sub| 仅随机斜率 |
 
 **模型比较工具**：
 -   `anova()`：似然比检验
@@ -760,7 +761,7 @@ stats::anova(model, model_full) %&gt;% capture.output()
 
 .size5[
 **固定效应解读**（与普通回归相同）：
--   回归系数表示$X$对$Y$的影响
+-   回归系数表示X对Y的影响
 -   p值检验该效应是否显著
 
 **随机效应解读**：
@@ -818,9 +819,9 @@ stats::anova(model_full, model_null)
 ## Models:
 ## model_null: RT ~ (1 + Identity * Valence | Sub)
 ## model_full: RT ~ Identity * Valence + (1 + Identity * Valence | Sub)
-##            npar    AIC    BIC logLik -2*log(L) Chisq Df  Pr(&gt;Chisq)    
-## model_null   12 -29992 -29894  15008    -30016                         
-## model_full   15 -30024 -29902  15027    -30054  38.1  3 0.000000026 ***
+##            npar    AIC    BIC logLik deviance Chisq Df  Pr(&gt;Chisq)    
+## model_null   12 -29992 -29894  15008   -30016                         
+## model_full   15 -30024 -29902  15027   -30054  38.1  3 0.000000026 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -874,7 +875,7 @@ lmer_model &lt;- lmerTest::lmer(data = mt_raw,
 
 
 ---
-## 3.4 模型解读
+## 3.11 模型解读
 
 .panelset[
 .panel[.panel-name[变化的效应]
@@ -918,7 +919,7 @@ interactions::cat_plot(model = model_full,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_10_files/figure-html/unnamed-chunk-33-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_10_files/figure-html/unnamed-chunk-33-1.png" width="432" style="display: block; margin: auto;" /&gt;
 
 
 ]]]]
@@ -929,7 +930,7 @@ interactions::cat_plot(model = model_full,
 
 
 ---
-## 3.5 模型等价性
+## 3.12 模型等价性
 
 .size5[
 如果我们观察一下使用lme4::lmer()的结果与重复测量结果，可以发现存在差异：
@@ -1037,15 +1038,15 @@ HLM 非常复杂，本节课仅以重复测量为例，下面提供了一些其�
 .panelset[
 .panel[.panel-name[嵌套数据]
 
-&lt;img src="picture/chp9/nestdesign.jpg" alt="" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/nestdesign.jpg" width="700" style="display: block; margin: auto;" /&gt;
 .panel[.panel-name[元分析1]
 
 通过综合一组研究来评估效应量的大小。由于不同研究的结果之间往往涉及到不同质的群体或不同的实验条件。
 
-&lt;img src="picture/chp9/meta1.jpg" alt="" width="85%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/meta1.jpg" width="85%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[元分析2]
-&lt;img src="picture/chp9/meta2.jpg" alt="" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp9/meta2.jpg" width="60%" style="display: block; margin: auto;" /&gt;
 
 ]]]]
 
