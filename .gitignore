@@ -10,6 +10,7 @@
 # Rendered intermediates (keep *.html)
 *_files/
 output/
+slides/libs/
 
 # Local/temporary course files
 Survey_in_Lec1.xlsx
