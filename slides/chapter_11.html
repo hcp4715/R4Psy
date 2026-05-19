@@ -4,10 +4,10 @@
     <title>chapter_11.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
-    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.3.0/panelset.js"></script>
     <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
@@ -30,7 +30,7 @@ class: center, middle
 &lt;span style="font-size: 50px;"&gt;回归模型(三)：广义线性模型&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2025-04-30&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2026-05-21&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 ---
@@ -57,14 +57,6 @@ font-size: 60px;
 
 
 
-# 补充内容: easystats系统包的简介
-&lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
-
-&lt;br&gt;
-&lt;br&gt;
-&lt;center&gt;
-https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
-&lt;/center&gt;
 ---
 class: center, middle
 .tit_font[
@@ -78,9 +70,10 @@ class: center, middle
 head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-488292a7d2734b1202b6" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-488292a7d2734b1202b6">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"Label","targets":4},{"name":"Match","targets":5},{"name":"CorrResp","targets":6},{"name":"Resp","targets":7},{"name":"ACC","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-4d3674333fdb4dd060e4" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-4d3674333fdb4dd060e4">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"Label","targets":4},{"name":"Match","targets":5},{"name":"CorrResp","targets":6},{"name":"Resp","targets":7},{"name":"ACC","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
+]
 .panel[.panel-name[df.match.aov]
 
 ``` r
@@ -90,27 +83,28 @@ df.match.aov %&gt;%
   DT::datatable()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-26ec61e0b04e0b32233a" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-26ec61e0b04e0b32233a">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.9866666666666667,0.8333333333333334,0.821917808219178,0.7183098591549296,0.9324324324324325]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"mean_ACC","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-236521a30e4aef8f89e3" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-236521a30e4aef8f89e3">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.9866666666666667,0.8333333333333334,0.821917808219178,0.7183098591549296,0.9324324324324325]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"mean_ACC","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
-]]]
+]
+]
 ---
-.tit_font[  Contents&lt;/h1&gt;]
+.tit_font[Contents]
 &lt;br&gt;
 &lt;br&gt;
 .bigfont[
-    10.1 广义线性模型&lt;br&gt;
+    11.1 广义线性模型&lt;br&gt;
 &lt;br&gt;
-    10.2 二项分布&lt;br&gt;
+    11.2 二项分布&lt;br&gt;
 &lt;br&gt;
-    10.3 其他分布&lt;br&gt;
+    11.3 代码实操&lt;br&gt;
 &lt;br&gt;
-    10.4 代码实操&lt;br&gt;
+    11.4 方法比较&lt;br&gt;
 &lt;br&gt;
-    10.5 方法比较&lt;br&gt;
+    11.5 其他分布&lt;br&gt;
 ]
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ##多元线性回归（Multiple Linear Regression）
 &lt;br&gt;
 .normal[
@@ -122,16 +116,16 @@ df.match.aov %&gt;%
 - `\(\epsilon\)` : 残差，Residual (error)
 ]
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ##线性模型的组成部分
 ![](./picture/chp10/formula.png)
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ##线性模型的组成部分
 &lt;img src="./picture/chp10/plot.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ##回归方程的多种形式&lt;br&gt;
 .bigfont[
 - 简单线性回归：
@@ -144,7 +138,7 @@ df.match.aov %&gt;%
 `$$Y \sim X_1 + X_2 + ... + X_n$$`
 ]
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ##回归方程的多种表达形式&lt;br&gt;
 &lt;br&gt;
 .bigfont[
@@ -152,7 +146,7 @@ df.match.aov %&gt;%
 - 假定观测项是正态分布，上述公式可以重新表达为： &lt;br&gt;
 `$$y \sim N(\mu, \epsilon)$$` 
   &lt;br&gt;
-  其中，$\mu$为预测值，即
+  其中, `\(\mu\)`为预测值，即
   &lt;br&gt;
   `$$μ = \beta_0 + \beta_1 x$$`
 - 观测值服从以预测项为均值的**正态分布**，观测值与预测值之间的差值就是残差。&lt;br&gt;
@@ -163,24 +157,24 @@ df.match.aov %&gt;%
 如果因变量不服从正态分布，如何构建回归模型？
 ]
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 
 ![](./picture/chp10/function1.png)
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ![](./picture/chp10/function.png)
 
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ![](./picture/chp10/function2.png)
 
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 ##Generalized Linear Model, GLM
 ###在简单线性回归中，预测项的连接函数等于它本身
 ![](./picture/chp10/lm.png)
 ---
-#10.1 广义线性模型(Generalized Linear Model, GLM)
+#11.1 广义线性模型(Generalized Linear Model, GLM)
 .bigfont[
 - 简单线性模型可视为GLM的特殊形式，预测项的连接函数等于它本身，观测项为正态分布。
 - 在广义线性模型中：
@@ -190,7 +184,7 @@ df.match.aov %&gt;%
 - 广义线性模型，能够对非正态分布的因变量进行建模
 ]
 ---
-#10.2 二项分布(Binomial Distribution)
+#11.2 二项分布(Binomial Distribution)
 ##伯努利试验
 &lt;br&gt;
 .bigfont[
@@ -206,15 +200,15 @@ df.match.aov %&gt;%
 - n次独立重复的伯努利试验的概率分布服从二项分布
 ]
 ---
-#10.2 二项分布(Binomial Distribution)
+#11.2 二项分布(Binomial Distribution)
 .bigfont[
-- 每次试验中事件A发生的概率为p
+- 每次试验中事件A发生的概率为*p*
 &lt;br&gt;&lt;br&gt;
-- X表示n重伯努利试验中事件A发生的次数，X的可能取值为0，1，…，n
+- X表示*n*重伯努利试验中事件A发生的次数，X的可能取值为0，1，…，*n*
 &lt;br&gt;&lt;br&gt;
-- 对每一个k（0 ≤ k ≤ n）,事件{X = k} 指”n次试验中事件A恰好发生k次”
+- 对每一个k(`\(0 \le k \le n\)`), 事件{X = k} 指"*n*次试验中事件A恰好发生k次"
 &lt;br&gt;&lt;br&gt;
-- 随机变量X服从以n, p为参数的二项分布，写作 `\(X \sim B(n, p)\)` 
+- 随机变量X服从以*n*, *p*为参数的二项分布，写作 `\(X \sim B(n, p)\)` 
 &lt;br&gt;&lt;br&gt;
 - `\(p \in [0,1]\)`, `\(n \in N\)` 
 
@@ -222,7 +216,7 @@ df.match.aov %&gt;%
 $$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
 ]
 ---
-#10.2 二项分布(Binomial Distribution)
+#11.2 二项分布(Binomial Distribution)
 ##抛硬币
 
 
@@ -233,8 +227,9 @@ $$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
 simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-8-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
+]
 .panel[.panel-name[10人，每人10次]
 
 
@@ -242,8 +237,9 @@ simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
+]
 .panel[.panel-name[1000人，每人10次]
 
 
@@ -251,15 +247,16 @@ simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-11-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
-]]]]
+]
+]
 
 ---
-#10.2 二项分布(Binomial Distribution)
+#11.2 二项分布(Binomial Distribution)
 .bigfont[
 - 已知一次试验中的每次尝试中事件A发生的概率*p*，共进行*n*次独立重复的伯努利试验
-- 事件A在一次试验中出现k次，事件A在n次试验中出现次数的平均数
+- 事件A在一次试验中出现k次，事件A在*n*次试验中出现次数的平均数
 `$$（𝑘_1+𝑘_2+𝑘_3+...+𝑘_𝑛/𝑛)$$`
 - 当*n* → ∞，*p* ≠ *q*，*np* ≥ 5且*nq* ≥ 5，事件A在*n*次试验中出现次数的平均数：
 `$$\mu = np$$`
@@ -267,8 +264,8 @@ simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 $$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 ]
 ---
-#10.2 二项分布(Binomial Distribution)
-## 如何将$z$与二分变量进行连接？
+#11.2 二项分布(Binomial Distribution)
+## 如何将z与二分变量进行连接？
 ### (1)将预测项映射到(0,1)之间，例如，使用
 `$$\frac{1}{1+exp(-z)}$$`
 ### (2)找到一个分布，能根据(0,1)之间的值转成二分变量，例如，伯努利分布。
@@ -282,23 +279,23 @@ $$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 
 
 ---
-#10.2 二项分布(Binomial Distribution)
-&lt;img src="./picture/chp10/func2.png" width="80%" style="display: block; margin: auto;" /&gt;
+#11.2 二项分布(Binomial Distribution)
+&lt;img src="./picture/chp10/func2.JPG" width="80%" style="display: block; margin: auto;" /&gt;
 
 ---
-#10.2 二项分布(Binomial Distribution)
+#11.2 二项分布(Binomial Distribution)
 ##参数求解
 .bigfont[
 - 对于logit回归，我们可以使用极大似然估计对其进行求解
 - 该求解过程比较复杂，一般由计算机自动完成
 ]
 ![](./picture/chp10/logit.png)
-
+··
 
 
 
 ---
-#10.3 代码实操
+#11.3 代码实操
 ##首先分析一个被试的数据
 
 ``` r
@@ -326,7 +323,7 @@ summary(mod_7304_full) %&gt;% #查看模型信息
 ```
 
 ---
-#10.3 代码实操
+#11.3 代码实操
 
 .panelset[
 .panel[.panel-name[mod_null]
@@ -349,7 +346,7 @@ summary(mod_null) %&gt;%
 ##  [5] " Sub    (Intercept)                  1.53     1.24                      "
 ##  [6] "        IdentityOther                2.52     1.59     -0.86            "
 ##  [7] "        Valenceimmoral               2.40     1.55     -0.85  0.83      "
-##  [8] "        IdentityOther:Valenceimmoral 3.34     1.83      0.69 -0.87 -0.82"
+##  [8] "        IdentityOther:Valenceimmoral 3.33     1.82      0.69 -0.87 -0.82"
 ##  [9] "Number of obs: 12010, groups:  Sub, 41"                                  
 ## [10] ""                                                                        
 ## [11] "Fixed effects:"                                                          
@@ -357,6 +354,7 @@ summary(mod_null) %&gt;%
 ## [13] "(Intercept)    2.014      0.114    17.7 &lt;0.0000000000000002 ***"
 ```
 
+]
 .panel[.panel-name[mod]
 
 ``` r
@@ -382,7 +380,7 @@ summary(mod) %&gt;%
 ## [10] "(Intercept)                    2.4964     0.1015   24.60 &lt; 0.0000000000000002"
 ## [11] "IdentityOther                 -0.7161     0.0839   -8.53 &lt; 0.0000000000000002"
 ## [12] "Valenceimmoral                -0.9474     0.0818  -11.58 &lt; 0.0000000000000002"
-## [13] "IdentityOther:Valenceimmoral   0.8230     0.1085    7.58    0.000000000000034"
+## [13] "IdentityOther:Valenceimmoral   0.8230     0.1086    7.58    0.000000000000034"
 ## [14] "Valenceimmoral               ***"                                             
 ## [15] "IdentityOther:Valenceimmoral ***"                                             
 ## [16] "---"                                                                          
@@ -390,12 +388,14 @@ summary(mod) %&gt;%
 ## [18] ""
 ```
 
+]
 .panel[.panel-name[model_full]
 
 ``` r
 #随机截距，随机斜率
 mod_full &lt;- lme4::glmer(data = df.match, #数据
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), #模型
+                          formula = ACC ~ 1 + Identity * Valence + 
+                            (1 + Identity * Valence | Sub), #模型
                           family = binomial) #因变量二项分布
 ##performance::model_performance(mod_full)
 summary(mod_full) %&gt;%
@@ -410,14 +410,14 @@ summary(mod_full) %&gt;%
 ##  [5] "Random effects:"                                                              
 ##  [6] " Groups Name                         Variance Std.Dev. Corr             "     
 ##  [7] " Sub    (Intercept)                  0.972    0.986                     "     
-##  [8] "        IdentityOther                1.770    1.331    -0.79            "     
+##  [8] "        IdentityOther                1.771    1.331    -0.79            "     
 ##  [9] "        Valenceimmoral               1.028    1.014    -0.75  0.75      "     
 ## [10] ""                                                                             
 ## [11] "Fixed effects:"                                                               
 ## [12] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [13] "(Intercept)                     2.772      0.178   15.55 &lt; 0.0000000000000002"
-## [14] "IdentityOther                  -0.870      0.234   -3.72              0.00020"
-## [15] "Valenceimmoral                 -1.150      0.189   -6.07         0.0000000013"
+## [13] "(Intercept)                     2.772      0.179   15.51 &lt; 0.0000000000000002"
+## [14] "IdentityOther                  -0.870      0.235   -3.70              0.00021"
+## [15] "Valenceimmoral                 -1.150      0.190   -6.05         0.0000000014"
 ## [16] "IdentityOther                ***"                                             
 ## [17] "Valenceimmoral               ***"                                             
 ## [18] "IdentityOther:Valenceimmoral ***"                                             
@@ -425,6 +425,7 @@ summary(mod_full) %&gt;%
 ## [20] "Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
 ```
 
+]
 .panel[.panel-name[模型比较anova]
 
 ``` r
@@ -445,6 +446,7 @@ stats::anova(mod_null, mod, mod_full) #比较三个模型
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
+]
 .panel[.panel-name[模型比较compare_performance]
 
 ``` r
@@ -452,10 +454,11 @@ performance::compare_performance(mod_null, mod, mod_full, rank = TRUE, verbose =
 ```
 
 ![](./picture/chp10/performance1.png)
-]]]]]]
+]
+]
 
 ---
-#10.3 代码实操
+#11.3 代码实操
 ##结果解读
 
 ``` r
@@ -466,10 +469,10 @@ summary(mod_full) %&gt;% capture.output() %&gt;% .[c(21:27)]
 ## [1] ""                                                                             
 ## [2] "Fixed effects:"                                                               
 ## [3] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [4] "(Intercept)                     2.772      0.178   15.55 &lt; 0.0000000000000002"
-## [5] "IdentityOther                  -0.870      0.234   -3.72              0.00020"
-## [6] "Valenceimmoral                 -1.150      0.189   -6.07         0.0000000013"
-## [7] "IdentityOther:Valenceimmoral    0.988      0.272    3.64              0.00027"
+## [4] "(Intercept)                     2.772      0.179   15.51 &lt; 0.0000000000000002"
+## [5] "IdentityOther                  -0.870      0.235   -3.70              0.00021"
+## [6] "Valenceimmoral                 -1.150      0.190   -6.05         0.0000000014"
+## [7] "IdentityOther:Valenceimmoral    0.988      0.273    3.63              0.00029"
 ```
 
 &lt;img src="./picture/chp10/logit2.png" width="60%" style="display: block; margin: auto;" /&gt;
@@ -488,7 +491,7 @@ summary(mod_full) %&gt;% capture.output() %&gt;% .[c(21:27)]
 `\(P=\frac{e^{2.77-0.87-1.15+0.99}}{1+e^{2.77-0.87-1.15+0.99}} = 0.851\)`
 ]
 ---
-#10.3 代码实操
+#11.3 代码实操
 
 
 ``` r
@@ -498,11 +501,11 @@ interactions::cat_plot(model = mod_full,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-21-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ---
-#10.4 方法比较
+#11.4 方法比较
 
 .panelset[
 .panel[.panel-name[anova]
@@ -528,7 +531,7 @@ capture.output(res) %&gt;% .[3:8]
 ## [6] "---"
 ```
 
-
+]
 .panel[.panel-name[EMMAMNS]
 
 ``` r
@@ -578,6 +581,7 @@ res %&gt;%
 ## [38] ""
 ```
 
+]
 .panel[.panel-name[GLM]
 
 ``` r
@@ -592,13 +596,16 @@ stats::anova(mod_full)
 ## Identity:Valence    1   13.6    13.6    13.6
 ```
 
+]
 .panel[.panel-name[HLM]
 
 
 
 ``` r
-mod_anova &lt;- lme4::lmer(data = df.match,
-                        formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+mod_anova &lt;- lme4::lmer(
+  data = df.match,
+  formula = ACC ~ 1 + Identity * Valence + 
+    (1 + Identity * Valence | Sub))
 stats::anova(mod_anova)
 ```
 
@@ -610,11 +617,14 @@ stats::anova(mod_anova)
 ## Identity:Valence    1   0.98    0.98    8.54
 ```
 
+]
 .panel[.panel-name[HLM_mean]
 
 ``` r
-mod_mean &lt;- lme4::lmer(data = df.match.aov,
-                          formula = mean_ACC ~ 1 + Identity * Valence + (1|Sub) + (1|Identity:Sub) + (1|Valence:Sub))
+mod_mean &lt;- lme4::lmer(
+  data = df.match.aov,
+  formula = mean_ACC ~ 1 + Identity * Valence + 
+    (1 | Sub) + (1 | Identity:Sub) + (1 | Valence:Sub))
 stats::anova(mod_mean)
 ```
 
@@ -626,6 +636,7 @@ stats::anova(mod_mean)
 ## Identity:Valence    1 0.0769  0.0769    8.69
 ```
 
+]
 .panel[.panel-name[compare]
 
 ``` r
@@ -651,11 +662,11 @@ stats::anova(mod_full, mod_anova)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-
-]]]]]]]
+]
+]
 
 ---
-#10.4 方法比较
+#11.4 方法比较
 ## 交叉验证法(Cross-Validation)
 
 ``` r
@@ -669,10 +680,12 @@ test_data &lt;- df.match[-train_index, ]
 
 # 根据训练集生成模型
 model_full &lt;- lme4::glmer(data = train_data,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub), 
+                          formula = ACC ~ 1 + Identity * Valence + 
+                            (1 + Identity * Valence | Sub), 
                           family = binomial)
 model_anova &lt;- lme4::lmer(data = train_data,
-                          formula = ACC ~ 1 + Identity * Valence + (1 + Identity * Valence|Sub))
+                          formula = ACC ~ 1 + Identity * Valence + 
+                            (1 + Identity * Valence | Sub))
 
 # 使用模型进行预测
 pre_mod_full &lt;- stats::predict(model_full, newdata = test_data, type = 'response')
@@ -681,7 +694,7 @@ pre_mod_anova &lt;- stats::predict(model_anova, newdata = test_data)
 
 
 ---
-#10.4 方法比较
+#11.4 方法比较
 ## 留出法
 .pull-left[
 
@@ -695,7 +708,7 @@ print(performance_mod_full)
 
 ```
 ##     RMSE       R2 
-## 0.342402 0.074985
+## 0.342402 0.074984
 ```
 ]
 .pull-right[
@@ -717,18 +730,20 @@ print(performance_mod_anova)
 ]
 
 ---
-#10.4 方法比较
+#11.4 方法比较
 ## 留出法
 
 ``` r
 # 将预测概率转换为分类结果
 predicted_classes &lt;- ifelse(pre_mod_full &gt; 0.5, 1, 0)
 # 计算混淆矩阵
-confusion_matrix &lt;- caret::confusionMatrix(as.factor(predicted_classes), as.factor(test_data$ACC))
+confusion_matrix &lt;- caret::confusionMatrix(
+  as.factor(predicted_classes), 
+  as.factor(test_data$ACC))
 ```
 
 ---
-#10.4 方法比较
+#11.4 方法比较
 ## 留出法
 
 ``` r
@@ -767,7 +782,7 @@ print(confusion_matrix)
 ```
 
 ---
-#10.4 方法比较
+#11.4 方法比较
 ## 留出法
 .pull-left[
 
@@ -794,11 +809,11 @@ plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2) # 添加对角线
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-35-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-34-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 ]
 ---
-#10.4 方法比较
+#11.4 方法比较
 ## 重复测量分析的不足
 .bigfont[
 - 会产生难以解释的结果
@@ -814,7 +829,7 @@ Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformatio
 
 
 ---
-#10.5 其他分布
+#11.5 其他分布
 ##泊松分布(Poisson distribution)
 .bigfont[
 - 在固定时间间隔或空间区域内发生某种事件的次数的概率。
@@ -825,7 +840,7 @@ Jaeger, T. F. (2008). Categorical data analysis: Away from ANOVAs (transformatio
 - k:可能的事件发生次数，可以是0, 1, 2, …
 ]
 ---
-#10.5 其他分布
+#11.5 其他分布
 ##泊松分布(Poisson distribution)
 
 
@@ -835,14 +850,14 @@ random_samples &lt;- rpois(1000, lambda = 5)
 hist(random_samples,col = 'white', border = 'black',)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-36-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-35-1.png" width="540" style="display: block; margin: auto;" /&gt;
 
 ---
-#10.5 其他分布
+#11.5 其他分布
 ##泊松分布(Poisson distribution)
 ![](./picture/chp10/poission.png)
 ---
-#10.5 其他分布
+#11.5 其他分布
 ##伽马分布(Gamma distribution)
 &lt;br&gt;
 .bigfont[
@@ -853,11 +868,23 @@ hist(random_samples,col = 'white', border = 'black',)
 - β:尺度参数（scale parameter），影响分布的宽度；当尺度参数增大时，分布会变得更宽且矮平；尺度参数减小时，分布会变得更窄且高耸。
 ]
 ---
-#10.5 其他分布
+#11.5 其他分布
 ##伽马分布(Gamma distribution)
 &lt;img src="./picture/chp10/gamma.webp" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
+
+# 补充内容: easystats系统包的简介
+&lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+https://www.bilibili.com/video/BV1rz421D7iJ/?spm_id_from=333.337.search-card.all.click
+&lt;/center&gt;
+
+---
+
 class: center, middle
 .tit_font[
 思考
@@ -865,15 +892,214 @@ class: center, middle
 &lt;br&gt;
 &lt;span style="font-size: 50px;"&gt;信号检测论是否可以用广义线性模型分析？&lt;/span&gt; &lt;br&gt;
 
+---
+
+#11.6 课堂练习
+## 共同框架：我们到底在建模什么？
+
+.bigfont[
+- 两种方法面对的是同一个核心问题：
+  - “被试是否报告 `yes`？”
+- 传统 SDT：
+  - 先把数据压缩成 hit rate 和 false alarm rate。
+  - 再把两个概率转换成 z 分数。
+  - `d'` 反映 signal 和 noise 分布的可分性。
+  - criterion 反映反应偏向。
+- GLM：
+  - 直接对 trial-level 的 `yes/no` 反应建模。
+  - 使用二项分布：`family = binomial`。
+  - 如果使用 probit link，模型可以和传统 SDT 的 z 分数表达联系起来。
+- 传统 SDT 是先汇总再转换；GLM 是直接建模二分类反应。
+]
+
+---
+#11.6 课堂练习
+## 一个最小可执行的数据例子
+
+
+``` r
+set.seed(123)
+
+# 构造一个最小的信号检测数据
+# stimulus: 0 = noise, 1 = signal
+# response: 0 = no,    1 = yes
+
+n_noise  &lt;- 100
+n_signal &lt;- 100
+
+sdt_data &lt;- data.frame(
+  stimulus = c(rep(0, n_noise), rep(1, n_signal)),
+  response = c(
+    rbinom(n_noise,  size = 1, prob = 0.20),
+    rbinom(n_signal, size = 1, prob = 0.75)
+  )
+)
+
+sdt_data$stimulus_label &lt;- factor(
+  sdt_data$stimulus,
+  levels = c(0, 1),
+  labels = c("noise", "signal")
+)
+
+sdt_data$response_label &lt;- factor(
+  sdt_data$response,
+  levels = c(0, 1),
+  labels = c("no", "yes")
+)
+
+head(sdt_data)
+```
+
+```
+##   stimulus response stimulus_label response_label
+## 1        0        0          noise             no
+## 2        0        0          noise             no
+## 3        0        0          noise             no
+## 4        0        1          noise            yes
+## 5        0        1          noise            yes
+## 6        0        0          noise             no
+```
+
+``` r
+table(sdt_data$stimulus_label, sdt_data$response_label)
+```
+
+```
+##         
+##          no yes
+##   noise  82  18
+##   signal 20  80
+```
+
+---
+#11.6 课堂练习
+## 方法一：传统 SDT 计算
+
+
+``` r
+# hit rate: signal 出现时回答 yes 的比例
+H &lt;- mean(sdt_data$response[sdt_data$stimulus == 1])
+
+# false alarm rate: noise 出现时回答 yes 的比例
+FA &lt;- mean(sdt_data$response[sdt_data$stimulus == 0])
+
+# 避免 H 或 FA 恰好等于 0 或 1，导致 qnorm() 出现 Inf
+adjust_rate &lt;- function(p, n) {
+  if (p == 0) return(0.5 / n)
+  if (p == 1) return((n - 0.5) / n)
+  return(p)
+}
+
+H_adj  &lt;- adjust_rate(H,  n_signal)
+FA_adj &lt;- adjust_rate(FA, n_noise)
+
+# 传统 SDT 指标
+d_prime &lt;- qnorm(H_adj) - qnorm(FA_adj)
+
+criterion &lt;- -0.5 * (qnorm(H_adj) + qnorm(FA_adj))
+
+traditional_sdt &lt;- data.frame(
+  hit_rate = H,
+  false_alarm_rate = FA,
+  d_prime = d_prime,
+  criterion = criterion
+)
+
+traditional_sdt
+```
+
+```
+##   hit_rate false_alarm_rate d_prime criterion
+## 1      0.8             0.18   1.757  0.036872
+```
+
+.size5[
+- `hit rate` 是 signal 条件下回答 `yes` 的比例。
+- `false alarm rate` 是 noise 条件下回答 `yes` 的比例。
+- `d' = z(H) - z(FA)`
+- `c = -\frac{1}{2}[z(H) + z(FA)]`
+- `d'` 越大，说明 signal 和 noise 越容易区分。
+- criterion 越大，说明被试越保守；criterion 越小，说明被试越倾向回答 `yes`。
+]
+
+---
+#11.6 课堂练习
+## 方法二：用 GLM 分析同一组数据
+
+
+``` r
+# 用 probit GLM 建模 yes/no 反应
+# response 是 0/1，因此使用 binomial family
+
+glm_sdt &lt;- glm(
+  response ~ stimulus,
+  data = sdt_data,
+  family = binomial(link = "probit")
+)
+
+coef(glm_sdt)
+```
+
+```
+## (Intercept)    stimulus 
+##    -0.91537     1.75699
+```
+
+
+``` r
+beta0 &lt;- coef(glm_sdt)[1]
+beta1 &lt;- coef(glm_sdt)[2]
+
+comparison &lt;- data.frame(
+  method = c("Traditional SDT", "Probit GLM"),
+  d_prime_or_stimulus_effect = c(d_prime, beta1),
+  criterion_or_intercept_based_index = c(criterion, NA)
+)
+
+comparison
+```
+
+```
+##                   method d_prime_or_stimulus_effect
+##          Traditional SDT                      1.757
+## stimulus      Probit GLM                      1.757
+##          criterion_or_intercept_based_index
+##                                    0.036872
+## stimulus                                 NA
+```
+
+.size5[
+- `response` 是 0/1 二分类变量，所以使用 `family = binomial`。
+- `stimulus` 的 GLM 系数表示 signal 相对 noise 时，被试回答 `yes` 的潜在倾向增加了多少。
+- 在 `link = "probit"` 下，模型系数是在标准正态 z 分数尺度上表达的。
+- 传统 SDT 的 `d'` 来自 `qnorm(H) - qnorm(FA)`。
+- probit GLM 的 `stimulus` 系数也是在标准正态尺度上表达 signal 与 noise 的差异。
+- 在这个最简单的 `yes/no` 信号检测任务中，`stimulus` 系数可以和传统 SDT 的 `d'` 对照理解。
+- 二者数值应当接近，但不一定完全相同。
+]
+
+---
+#11.6 课堂练习
+## 比较：两种方法的相同点与不同点
+
+.pull-left[
+.bigfont[
+相同点：
+
+- 都在分析被试是否报告 `yes`。
+- 都可以描述 signal 与 noise 的可分性。
+- 在简单 `yes/no` 任务中，probit GLM 的 `stimulus` 系数可以和 `d'` 对照理解。
+]
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightLines": true,
-"highlightStyle": "github",
-"countIncrementalSlides": false,
-"seal": true,
-"ratio": "16:9"
+  "highlightLines": true,
+  "highlightStyle": "github",
+  "countIncrementalSlides": false,
+  "seal": true,
+  "ratio": "16:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
