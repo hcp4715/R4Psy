@@ -112,8 +112,7 @@ files <- list.files(  #<<
   full.names = TRUE)
 ```
 
-
-
+]
 .panel[.panel-name[数据类型转换]
 
 ```{r}
@@ -131,6 +130,7 @@ convert_data_types <- function(df) {
 }
 ```
 
+]
 .panel[.panel-name[批量合并]
 ```{r }
 df3 <- data.frame() 
@@ -147,6 +147,7 @@ for (i in seq_along(files)) {
 rm(df, files, i)
 ```
 
+]
 .panel[.panel-name[保存数据]
 
 ```{r eval=FALSE}
@@ -160,6 +161,7 @@ bruceR::export(
 
 ```
 
+]
 .panel[.panel-name[修改列名-rename]
 ```{r}
 ## 修改第一列列名 Date 为小写 date
@@ -177,8 +179,7 @@ df3 %>% dplyr::rename_with(
 
 ```
 
-
-
+]
 ]
 ]
 ]
@@ -358,20 +359,21 @@ quartets::datasaurus_dozen %>%  ## 包中的数据
   head(10)
 ```
 
+]
 .panel[.panel-name[`str()`]
 ```{r}
 quartets::datasaurus_dozen %>%  ## 包中的数据
   str()
 ```
 
-
+]
 .panel[.panel-name[`summary()`]
 ```{r}
 summary(datasaurus_dozen)
 ```
 
-
-]]]]
+]
+]
 
 
 ---
@@ -529,13 +531,15 @@ mt_raw <- bruceR::import(here::here(
 head(mt_raw, 3)  # 使用 base R 的 head 函数
 ```
 
+]
 .panel[.panel-name[`str`]
 ```{r}
 mt_raw %>% 
   str() 
 ```
 
-]]]
+]
+]
 
 ---
 ## 常用函数
@@ -550,7 +554,7 @@ summary(mt_raw) %>%
   )
 ```
 
-
+]
 .panel[.panel-name[`skimr::skim()--1`]
 ```{r}
 skimr::skim(mt_raw) %>% 
@@ -558,6 +562,7 @@ skimr::skim(mt_raw) %>%
   .[1:12]
 ```
 
+]
 .panel[.panel-name[`skimr::skim()--2`]
 
 ```{r}
@@ -566,7 +571,7 @@ skimr::skim(mt_raw) %>%
   .[13:24]
 ```
 
-
+]
 .panel[.panel-name[`skimr::skim()--3`]
 ```{r}
 skimr::skim(mt_raw) %>% 
@@ -574,6 +579,7 @@ skimr::skim(mt_raw) %>%
   .[25:41]
 ```
 
+]
 .panel[.panel-name[`bruceR::Describe()`]
 
 ```{r,warning=FALSE}
@@ -582,8 +588,8 @@ bruceR::Describe(mt_raw) %>%
   .[2:17] ## 可以使用 file参数输出 Word
 ```
 
-
-]]]]]]
+]
+]
 
 
 
@@ -735,16 +741,18 @@ p1 <- pg_raw %>%
 p1 ## 坐标轴名称已对应，虽然图片为空
 ```
 
-
+]
 .panel[.panel-name[添加图层-散点]
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center'}
 p1 + geom_point()
 ```
+]
 .panel[.panel-name[添加图层-拟合曲线]
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='60%',fig.align='center'}
 p1 + geom_point() + geom_smooth(method = 'lm')
 ```
 
+]
 .panel[.panel-name[改变映射]
 ```{r fig.width=7,fig.height=6,fig.dpi=600,out.width='50%',fig.align='center'}
 pg_raw %>% 
@@ -757,9 +765,9 @@ pg_raw %>%
 
 ```
 
-
-
-]]]]]]
+]
+]
+]
 
 
 ???

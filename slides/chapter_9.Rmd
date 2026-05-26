@@ -424,6 +424,7 @@ A: 可以先用<strong>独立样本 <em>t</em> 检验</strong>比较两组均值
 <br>
 $$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
 
+]
 .panel[.panel-name[数据清理]
 
 ```{r preprocessing}
@@ -446,6 +447,7 @@ DT::datatable(head(df.penguin),
               fillContainer = TRUE, options = list(pageLength = 4))
 ```
 
+]
 .panel[.panel-name[代码实操]
 
 ```{r ttest in stats}
@@ -455,8 +457,8 @@ stats::t.test(data = df.penguin,      # 数据框
   capture.output()                    # 将输出变整齐
 ```
 
-
-]]]]
+]
+]
 
 ---
 # 8.1 *t*-test作为回归模型的特例
@@ -699,6 +701,7 @@ bruceR::TTEST(
 
 
 ]
+]
 .panel[.panel-name[单样本t检验]
 .pull-left[
 
@@ -733,6 +736,7 @@ bruceR::TTEST(
 </p>
 
 ]
+]
 .panel[.panel-name[配对样本t检验]
 
 .pull-left[
@@ -766,7 +770,8 @@ bruceR::TTEST(
   <img src="./picture/chp8/pair.png" width="100%">
 </p>
 ]
-]]]]
+]
+]
 
 ---
 # 8.1 *t*-test系列均为回归模型的特例
@@ -873,7 +878,8 @@ df <- df.penguin %>%
 DT::datatable(head(df), fillContainer = TRUE)
 ```
 
-]]
+]
+]
 
 
 ---
@@ -894,6 +900,7 @@ df$Temperature_log <- log(df$Temperature)
 ks.test(df$Temperature_log, 'pnorm')
 ```
 
+]
 .panel[.panel-name[qq图]
 ```{r, fig.width=7, fig.height=5}
 # 正态性检验-qq图
@@ -901,6 +908,7 @@ qqnorm(df$Temperature)
 qqline(df$Temperature, col = "red") # 添加理论正态分布线
 ```
 
+]
 .panel[.panel-name[直方图]
 ```{r, fig.width=7, fig.height=5}
 ggplot(df, aes(Temperature)) +
@@ -908,7 +916,8 @@ ggplot(df, aes(Temperature)) +
     geom_density(alpha=.5, fill='red')
 ```
 
-]]]]
+]
+]
 
 
 ---
@@ -922,12 +931,14 @@ aov1 <- stats::aov(Temperature ~ climate * romantic, data = df)
 summary(aov1)
 ```
 
+]
 .panel[.panel-name[SPSS]
 ```{r, echo = FALSE, fig.width = 4.5, fig.height = 3}
 knitr::include_graphics('picture/chp8/SPSS.png')
 ```
 
-]]]
+]
+]
 
 
 ---
@@ -952,6 +963,7 @@ class: center, middle
 <br>
 **stats::aov()函数默认采用的就是Type I SS，它逐步将每一个因子引入模型进行计算。**<br>
 
+]
 .panel[.panel-name[Type II SS]
 <br>
 忽略了因子之间可能存在的交互作用，适用于所有主效应不涉及交互效应的情况。<br>
@@ -960,6 +972,7 @@ class: center, middle
 <br>
 **car::Anova()函数默认计算Type II SS，可以通过type = 3调整为Type III SS。**<br>
 
+]
 .panel[.panel-name[Type III SS]
 <br>
 更全面，假定所有因子（以及它们的交互项）都是重要的，并考虑所有因素。<br>
@@ -968,7 +981,8 @@ class: center, middle
 **SPSS默认采用Type III SS。**<br>
 **bruceR::MANOVA*()函数也默认采用Type III SS，可以通过ss.type = 2调整为Type II SS。**<br>
 
-]]]]
+]
+]
 
 
 
@@ -1017,6 +1031,7 @@ aov1 <- car::Anova(lm(Temperature ~ climate * romantic, data = df),
 aov1
 ```
 
+]
 .panel[.panel-name[afex::aov_ez()]
 ```{r}
 afex::aov_ez(id = "subjID", 
@@ -1032,8 +1047,8 @@ afex::aov_car(Temperature ~ climate * romantic + Error(subjID), data = df, type 
 afex::aov_4(Temperature ~ climate * romantic + (1|subjID), data = df)
 ```
 
-
-]]]
+]
+]
 
 ---
 # 8.2  ANOVA & linear regression
