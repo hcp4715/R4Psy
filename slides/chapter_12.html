@@ -4,20 +4,20 @@
     <title>chapter_12.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.31/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.3.0/panelset.js"></script>
-    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <link href="libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.33/datatables.js"></script>
+    <script src="libs/datatables-binding-0.34.0/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
     <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+    <link href="libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
   </head>
@@ -30,7 +30,7 @@ class: center, middle
 &lt;span style="font-size: 50px;"&gt;&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 30px;"&gt;胡传鹏&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; &lt;/span&gt; &lt;br&gt;
-&lt;span style="font-size: 30px;"&gt;2025-05-14&lt;/span&gt; &lt;br&gt;
+&lt;span style="font-size: 30px;"&gt;2026-05-27&lt;/span&gt; &lt;br&gt;
 &lt;span style="font-size: 20px;"&gt; Made with Rmarkdown&lt;/span&gt; &lt;br&gt;
 
 
@@ -106,7 +106,7 @@ options(scipen=99999,digits = 5)
 .panel[.panel-name[trial data]
 
 ``` r
-df.match.trial &lt;- bruceR::import(here::here('data','match','match_raw.csv')) %&gt;% 
+df.match.trial &lt;- bruceR::import(here::here('slides', 'data','match','match_raw.csv')) %&gt;% 
   tidyr::extract(Shape, 
                  into = c('Valence', 'Identity'),
                  regex = '(moral|immoral)(Self|Other)',
@@ -119,8 +119,8 @@ df.match.trial &lt;- bruceR::import(here::here('data','match','match_raw.csv')) 
                 (!Sub %in% c(7302,7303,7338))) 
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-ea6f384c2240eac2b4be" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ea6f384c2240eac2b4be">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["06-May-2018_14:45:42","06-May-2018_14:45:44","06-May-2018_14:45:50","06-May-2018_14:45:53"],["Exp","Exp","Exp","Exp"],[7304,7304,7304,7304],[25,25,25,25],["female","female","female","female"],["R","R","R","R"],[1,1,1,1],[1,1,1,1],[3,4,7,8],["moralOther","immoralOther","moralSelf","immoralOther"],["moral","immoral","moral","immoral"],["Other","Other","Self","Other"],["moralOther","immoralOther","moralSelf","immoralOther"],["match","match","match","match"],["n","n","n","n"],["n","m","n","m"],[1,0,1,0],[0.8167,0.8728,0.4951,0.8713]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,17,18]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Valence","targets":11},{"name":"Identity","targets":12},{"name":"Label","targets":13},{"name":"Match","targets":14},{"name":"CorrResp","targets":15},{"name":"Resp","targets":16},{"name":"ACC","targets":17},{"name":"RT","targets":18}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-16db07a021da10d15e29" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-16db07a021da10d15e29">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["06-May-2018_14:45:42","06-May-2018_14:45:44","06-May-2018_14:45:50","06-May-2018_14:45:53"],["Exp","Exp","Exp","Exp"],[7304,7304,7304,7304],[25,25,25,25],["female","female","female","female"],["R","R","R","R"],[1,1,1,1],[1,1,1,1],[3,4,7,8],["moralOther","immoralOther","moralSelf","immoralOther"],["moral","immoral","moral","immoral"],["Other","Other","Self","Other"],["moralOther","immoralOther","moralSelf","immoralOther"],["match","match","match","match"],["n","n","n","n"],["n","m","n","m"],[1,0,1,0],[0.8167,0.8728,0.4951,0.8713]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Date<\/th>\n      <th>Prac<\/th>\n      <th>Sub<\/th>\n      <th>Age<\/th>\n      <th>Sex<\/th>\n      <th>Hand<\/th>\n      <th>Block<\/th>\n      <th>Bin<\/th>\n      <th>Trial<\/th>\n      <th>Shape<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n      <th>RT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,7,8,9,17,18]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Date","targets":1},{"name":"Prac","targets":2},{"name":"Sub","targets":3},{"name":"Age","targets":4},{"name":"Sex","targets":5},{"name":"Hand","targets":6},{"name":"Block","targets":7},{"name":"Bin","targets":8},{"name":"Trial","targets":9},{"name":"Shape","targets":10},{"name":"Valence","targets":11},{"name":"Identity","targets":12},{"name":"Label","targets":13},{"name":"Match","targets":14},{"name":"CorrResp","targets":15},{"name":"Resp","targets":16},{"name":"ACC","targets":17},{"name":"RT","targets":18}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[subj data]
 
@@ -132,8 +132,8 @@ df.match.subj &lt;- df.match.trial %&gt;%
   dplyr::ungroup()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-5c0f0c67b4a8080cb782" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-5c0f0c67b4a8080cb782">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],[7304,7304,7304,7304],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.552276,0.706672602739726,0.7493875,0.7581492957746478],[0.9866666666666667,0.821917808219178,0.8333333333333334,0.7183098591549296]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>RT_mean<\/th>\n      <th>ACC_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Identity","targets":2},{"name":"Valence","targets":3},{"name":"RT_mean","targets":4},{"name":"ACC_mean","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-dbe941ecc7d091b9e299" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-dbe941ecc7d091b9e299">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],[7304,7304,7304,7304],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.552276,0.706672602739726,0.7493875,0.7581492957746478],[0.9866666666666667,0.821917808219178,0.8333333333333334,0.7183098591549296]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>RT_mean<\/th>\n      <th>ACC_mean<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Identity","targets":2},{"name":"Valence","targets":3},{"name":"RT_mean","targets":4},{"name":"ACC_mean","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[sum data]
 
@@ -150,8 +150,8 @@ df.match.sum &lt;- df.match.subj %&gt;%
   dplyr::ungroup()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-2d4ae456a4ba29caa516" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-2d4ae456a4ba29caa516">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973,0.6996564845828235],[0.06334254097700114,0.06957103122069196,0.07816459938618592,0.06950417219585882],[0.01001533511349354,0.01100014589120355,0.01235890832274734,0.01098957455117303],[0.9161836748531289,0.8142527831854576,0.8440248488102073,0.828686850170307],[0.09801447927048731,0.1197130892135965,0.1095526473381531,0.1107136186340657],[0.01549744990850494,0.01892830138249502,0.01732179446448731,0.01750536014414538],[41,41,41,41]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean_RT<\/th>\n      <th>SD_RT<\/th>\n      <th>SE_RT<\/th>\n      <th>grand_mean_ACC<\/th>\n      <th>SD_ACC<\/th>\n      <th>SE_ACC<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean_RT","targets":3},{"name":"SD_RT","targets":4},{"name":"SE_RT","targets":5},{"name":"grand_mean_ACC","targets":6},{"name":"SD_ACC","targets":7},{"name":"SE_ACC","targets":8},{"name":"n","targets":9}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-dfd1a28df02894db19e5" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-dfd1a28df02894db19e5">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["Self","Self","Other","Other"],["moral","immoral","moral","immoral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973,0.6996564845828235],[0.06334254097700114,0.06957103122069196,0.07816459938618592,0.06950417219585882],[0.01001533511349354,0.01100014589120355,0.01235890832274734,0.01098957455117303],[0.9161836748531289,0.8142527831854576,0.8440248488102073,0.828686850170307],[0.09801447927048731,0.1197130892135965,0.1095526473381531,0.1107136186340657],[0.01549744990850494,0.01892830138249502,0.01732179446448731,0.01750536014414538],[41,41,41,41]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean_RT<\/th>\n      <th>SD_RT<\/th>\n      <th>SE_RT<\/th>\n      <th>grand_mean_ACC<\/th>\n      <th>SD_ACC<\/th>\n      <th>SE_ACC<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean_RT","targets":3},{"name":"SD_RT","targets":4},{"name":"SE_RT","targets":5},{"name":"grand_mean_ACC","targets":6},{"name":"SD_ACC","targets":7},{"name":"SE_ACC","targets":8},{"name":"n","targets":9}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]]]]]
 
@@ -169,6 +169,8 @@ df.match.sum &lt;- df.match.subj %&gt;%
 &lt;br&gt;
 &lt;span style="font-size: 45px;"&gt;12.3 高级图片处理——magick&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
 &lt;br&gt;
+&lt;span style="font-size: 45px;"&gt;12.4 AI辅助科研绘图&lt;/span&gt;&lt;/center&gt; &lt;br&gt;
+&lt;br&gt;
 
 ---
 class: center, middle
@@ -178,12 +180,12 @@ class: center, middle
 # 12.1 ggplot2基础
 ## 什么是ggplot
 
-&lt;img src="./picture/chp12/ggplot.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/ggplot.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 ---
 # 12.1 ggplot2基础
 ## 图层叠加
-&lt;img src="./picture/chp12/gramma.png" width="65%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/gramma.png" alt="" width="65%" style="display: block; margin: auto;" /&gt;
 - 和PS类似，采用图层的设计方式；
 - 图层之间的叠加是靠 “+” 实现的，越往后，其图层越在上方；
 - 有明确的起始（ggplot()开始）与终止；
@@ -192,7 +194,7 @@ class: center, middle
 ---
 # 12.1 ggplot2基础
 ## 必须图层
-![](./picture/chp12/required.png)
+&lt;img src="./picture/chp12/required.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 
 ``` r
@@ -214,12 +216,12 @@ p1 &lt;- ggplot2::ggplot(data = df.match.sum, aes(x = Identity, y = grand_mean_R
 p1
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-12-1.png" alt="" width="100%" /&gt;
 
 ---
 # 12.1 ggplot2基础
 ## 可选图层
-&lt;img src="./picture/chp12/adjust.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/adjust.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 ``` r
@@ -240,12 +242,12 @@ p2 &lt;- p1 +
 p2
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-14-1.png" width="100%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-15-1.png" alt="" width="100%" /&gt;
 
 ---
 # 12.1 ggplot2基础
 ## 同理可以得到ACC的图
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-15-1.png" width="100%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-16-1.png" alt="" width="100%" /&gt;
 
 ---
 # 12.1 ggplot2基础
@@ -255,7 +257,7 @@ p2
 .panel[.panel-name[Facet]
 - Facet 也可以被认为是图层的一种，也是通过"+"加号叠加在原始图片上
 - 可以分为一维(facet_wrap)和二维(facet_grid)两种，图示为二维
-&lt;img src="./picture/chp12/facet.png" width="40%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/facet.png" alt="" width="40%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[Data preprocessing]
 
@@ -276,8 +278,8 @@ df.match.sum.long &lt;- df.match.sum[,-c(3, 4, 5)] %&gt;%
 rm(df1)
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-8bf52c5b48201094deab" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-8bf52c5b48201094deab">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[41,41,41],["RT","RT","RT"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean<\/th>\n      <th>SD<\/th>\n      <th>SE<\/th>\n      <th>n<\/th>\n      <th>DV<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean","targets":3},{"name":"SD","targets":4},{"name":"SE","targets":5},{"name":"n","targets":6},{"name":"DV","targets":7}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-224ced7369083e048d4f" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-224ced7369083e048d4f">{"x":{"filter":"none","vertical":false,"data":[["1","2","3"],["Self","Self","Other"],["moral","immoral","moral"],[0.6366372764212784,0.7150271256631987,0.6850132435574973],[0.06334254097700114,0.06957103122069196,0.07816459938618592],[0.01001533511349354,0.01100014589120355,0.01235890832274734],[41,41,41],["RT","RT","RT"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Identity<\/th>\n      <th>Valence<\/th>\n      <th>grand_mean<\/th>\n      <th>SD<\/th>\n      <th>SE<\/th>\n      <th>n<\/th>\n      <th>DV<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Identity","targets":1},{"name":"Valence","targets":2},{"name":"grand_mean","targets":3},{"name":"SD","targets":4},{"name":"SE","targets":5},{"name":"n","targets":6},{"name":"DV","targets":7}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .panel[.panel-name[figure code]
 
@@ -303,7 +305,7 @@ p4 &lt;- df.match.sum.long %&gt;%
 ```
 
 .panel[.panel-name[figure]
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-20-1.png" width="85%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-21-1.png" alt="" width="85%" /&gt;
 
 
 ]]]]]
@@ -317,20 +319,20 @@ p4 &lt;- df.match.sum.long %&gt;%
 p2 + p3 + plot_layout(guides = "collect")
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-21-1.png" width="85%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-22-1.png" alt="" width="85%" /&gt;
 
 
 ---
 # 12.1 ggplot2基础
 ## 总结
 
-&lt;img src="./picture/chp12/basic.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/basic.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 ---
 # 12.1 ggplot2基础
 ## 总结
 
-&lt;img src="./picture/chp12/summary.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/summary.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 .footnote[
 ----------------
@@ -346,7 +348,7 @@ class: center, middle
 # 12.2 进阶——细节调整
 ## 问题1：可视化RT, ACC的总体趋势与个体趋势
 ## 目标图片1
-&lt;img src="./picture/chp12/target1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp12/target1.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 ---
 # 12.2 进阶——细节调整(目标图片1)
@@ -373,7 +375,7 @@ s1 &lt;- df.match.sum %&gt;%
 ```
 
 .panel[.panel-name[figure]
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-27-1.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 ]]]
 
@@ -391,7 +393,7 @@ s2 &lt;- s1 +
                           group = Valence))
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-28-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-29-1.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 .panel[.panel-name[加入抖动——混乱]
 
@@ -403,7 +405,7 @@ s3 &lt;- s1 +
                       alpha = 0.5)
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-30-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-31-1.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 ]]]
 
@@ -432,7 +434,7 @@ s4 &lt;- s1 +
                        alpha = 0.2)
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-33-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-34-1.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 ]]]
 
@@ -450,7 +452,7 @@ s5 &lt;- s4 +
                      alpha=0.1)
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-35-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-36-1.png" alt="" width="70%" style="display: block; margin: auto;" /&gt;
 
 ---
 # 12.2 进阶——细节调整(目标图片1)
@@ -480,7 +482,7 @@ s6 &lt;- s1 +
 ```
 
 .panel[.panel-name[figure]
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-37-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-38-1.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 ]]]
 
@@ -490,7 +492,7 @@ s6 &lt;- s1 +
 
 &lt;br&gt;
 &lt;br&gt;
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-38-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-39-1.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 ---
 # 12.2 进阶——细节调整(目标图片1)
@@ -501,7 +503,7 @@ s9 &lt;- s6 + s8 + plot_layout(guides = "collect")
 s9
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-39-1.png" width="100%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-40-1.png" alt="" width="100%" /&gt;
 
 ---
 # 12.2 进阶——细节调整(目标图片1)
@@ -519,7 +521,7 @@ ggplot2::ggsave(filename = "./picture/chp12/p1.pdf",
 # 12.2 进阶——细节调整
 ## 问题2：可视化层级模型的random effect
 ## 目标图片2
-&lt;img src="picture/chp12/target2.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp12/target2.png" alt="" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -576,7 +578,7 @@ ranef_df %&gt;%
   papaja::theme_apa()
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-44-1.png" width="65%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-45-1.png" alt="" width="65%" /&gt;
 
 ]]]
 
@@ -585,7 +587,7 @@ ranef_df %&gt;%
 ## 问题3：使用雨云图(Raincloud plot)呈现数据的分布
 ## 雨云图将不在PPT中出现，感兴趣的同学可以自行回到rmd文件运行chunk
 ## 目标图片3
-&lt;img src="picture/chp12/target3.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="picture/chp12/target3.png" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -676,7 +678,7 @@ magick包可以应用于所有常见图片操作(甚至包括PDF)，具体功能
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
-&lt;img src="picture/chp12/r.jpg" width="80%" /&gt;
+&lt;img src="picture/chp12/r.jpg" alt="" width="80%" /&gt;
 ]
 
 .footnote[
@@ -695,7 +697,7 @@ magick包可以应用于所有常见图片操作(甚至包括PDF)，具体功能
 
 假设我们希望这两张图变为横向排版，那么首先需要对图片进行剪裁，然后进行横向拼接。
 
-&lt;img src="picture/chp6/pr1.png" width="40%" /&gt;
+&lt;img src="picture/chp6/pr1.png" alt="" width="35%" /&gt;
 
 
 .panel[.panel-name[读取图片]
@@ -731,7 +733,7 @@ img %&gt;% magick::image_info()
 
 .pull-right[
 
-&lt;img src="picture/chp12/crop_gram.jpg" width="100%" /&gt;
+&lt;img src="picture/chp12/crop_gram.jpg" alt="" width="100%" /&gt;
 
 ]
 
@@ -742,7 +744,7 @@ img %&gt;% magick::image_info()
 img %&gt;% magick::image_crop('850x480+10+10')
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-51-1.png" width="80%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-52-1.png" alt="" width="80%" /&gt;
 
 .panel[.panel-name[图片剪裁与合并]
 
@@ -762,7 +764,7 @@ img3 %&gt;% print()
 ## 1 PNG     1740    488 sRGB       FALSE        0 72x72
 ```
 
-&lt;img src="chapter_12_files/figure-html/unnamed-chunk-52-1.png" width="80%" /&gt;
+&lt;img src="chapter_12_files/figure-html/unnamed-chunk-53-1.png" alt="" width="80%" /&gt;
 
 .panel[.panel-name[其他]
 
@@ -784,6 +786,48 @@ magick::image_read("http://jeroen.github.io/images/testocr.png") %&gt;%
 ]]]]]]]
 
 ---
+class: center, middle
+&lt;span style="font-size: 60px;"&gt;12.4 AI 辅助科研绘图&lt;/span&gt; &lt;br&gt;
+
+---
+# 12.4 AI 辅助科研绘图
+## scientific-plotting-skill
+
+.pull-left[
+
+&lt;br&gt;
+
+**scientific-plotting-skill**
+
+GitHub: [https://github.com/dazhiyang/scientific-plotting-skill](https://github.com/dazhiyang/scientific-plotting-skill)
+
+&lt;br&gt;
+
+- 面向 coding agent 的科研绘图 skill；
+- 目标是帮助生成 publication-style figures；
+- 与本章 ggplot2、图形细节调整、论文图导出等内容直接相关；
+- 可作为科研绘图任务的 prompt / coding-agent 规范参考。
+
+]
+
+.pull-right[
+
+&lt;img src="picture/chp12/scientific_plots.png" alt="" width="85%" /&gt;
+
+]
+
+---
+# 12.4 AI 辅助科研绘图
+## 如何向 AI 描述你想要的图？
+
+在使用 AI 辅助科研绘图时，需要清楚说明任务背景、目标、风格和输出格式。 在用于组织绘图 prompt时，需要建立 结构化的思考模式。
+- 参考：[https://mp.weixin.qq.com/s/mrRpH-pRqHNZluxpK9NhxQ](https://mp.weixin.qq.com/s/mrRpH-pRqHNZluxpK9NhxQ)
+
+&lt;img src="picture/chp12/costar.png" alt="" width="50%" /&gt;
+
+
+---
+
 # 网络资源
 
 - ggplot2常用参数与函数汇总：https://zhuanlan.zhihu.com/p/637483028
@@ -791,6 +835,11 @@ magick::image_read("http://jeroen.github.io/images/testocr.png") %&gt;%
 - ggplot2主题总结：https://zhuanlan.zhihu.com/p/463041897
 - ggplot2分面总结：https://zhuanlan.zhihu.com/p/225852640
 - patchwork常用功能：https://zhuanlan.zhihu.com/p/384456335
+
+## AI辅助科研绘图
+
+- scientific-plotting-skill: https://github.com/dazhiyang/scientific-plotting-skill
+- CoSTAR prompt 写作参考: https://mp.weixin.qq.com/s/mrRpH-pRqHNZluxpK9NhxQ
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -168,6 +168,8 @@ head(df.match.sum, 4) %>% DT::datatable()
 <br>
 <span style="font-size: 45px;">12.3 高级图片处理——magick</span></center> <br>
 <br>
+<span style="font-size: 45px;">12.4 AI辅助科研绘图</span></center> <br>
+<br>
 
 ---
 class: center, middle
@@ -195,7 +197,9 @@ knitr::include_graphics('./picture/chp12/gramma.png')
 ---
 # 12.1 ggplot2基础
 ## 必须图层
-![](./picture/chp12/required.png)
+```{r echo=FALSE, out.width='70%', fig.align='center'}
+knitr::include_graphics('./picture/chp12/required.png')
+```
 
 ```{r}
 # 以柱状图为例
@@ -218,7 +222,7 @@ p1
 ---
 # 12.1 ggplot2基础
 ## 可选图层
-```{r echo=FALSE, out.width='70%', fig.align='center'}
+```{r echo=FALSE, out.width='50%', fig.align='center'}
 knitr::include_graphics('./picture/chp12/adjust.png')
 ```
 
@@ -579,7 +583,7 @@ ggplot2::ggsave(filename = "./picture/chp12/p1.pdf",
 # 12.2 进阶——细节调整
 ## 问题2：可视化层级模型的random effect
 ## 目标图片2
-```{r echo = F,out.width="80%", fig.align='center'}
+```{r echo = F,out.width="75%", fig.align='center'}
 knitr::include_graphics('picture/chp12/target2.png')
 ```
 
@@ -983,7 +987,7 @@ knitr::include_graphics('picture/chp12/r.jpg')
 
 假设我们希望这两张图变为横向排版，那么首先需要对图片进行剪裁，然后进行横向拼接。
 
-```{r echo = F,out.width="40%"}
+```{r echo = F,out.width="35%"}
 knitr::include_graphics('picture/chp6/pr1.png')
 ```
 
@@ -1055,6 +1059,52 @@ magick::image_read("http://jeroen.github.io/images/testocr.png") %>%
 ]]]]]]]
 
 ---
+class: center, middle
+<span style="font-size: 60px;">12.4 AI 辅助科研绘图</span> <br>
+
+---
+# 12.4 AI 辅助科研绘图
+## scientific-plotting-skill
+
+.pull-left[
+
+<br>
+
+**scientific-plotting-skill**
+
+GitHub: [https://github.com/dazhiyang/scientific-plotting-skill](https://github.com/dazhiyang/scientific-plotting-skill)
+
+<br>
+
+- 面向 coding agent 的科研绘图 skill；
+- 目标是帮助生成 publication-style figures；
+- 与本章 ggplot2、图形细节调整、论文图导出等内容直接相关；
+- 可作为科研绘图任务的 prompt / coding-agent 规范参考。
+
+]
+
+.pull-right[
+
+```{r echo = F,out.width="85%"}
+knitr::include_graphics('picture/chp12/scientific_plots.png')
+```
+
+]
+
+---
+# 12.4 AI 辅助科研绘图
+## 如何向 AI 描述你想要的图？
+
+在使用 AI 辅助科研绘图时，需要清楚说明任务背景、目标、风格和输出格式。 在用于组织绘图 prompt时，需要建立 结构化的思考模式。
+- 参考：[https://mp.weixin.qq.com/s/mrRpH-pRqHNZluxpK9NhxQ](https://mp.weixin.qq.com/s/mrRpH-pRqHNZluxpK9NhxQ)
+
+```{r echo = F,out.width="50%"}
+knitr::include_graphics('picture/chp12/costar.png')
+```
+
+
+---
+
 # 网络资源
 
 - ggplot2常用参数与函数汇总：https://zhuanlan.zhihu.com/p/637483028
@@ -1062,3 +1112,8 @@ magick::image_read("http://jeroen.github.io/images/testocr.png") %>%
 - ggplot2主题总结：https://zhuanlan.zhihu.com/p/463041897
 - ggplot2分面总结：https://zhuanlan.zhihu.com/p/225852640
 - patchwork常用功能：https://zhuanlan.zhihu.com/p/384456335
+
+## AI辅助科研绘图
+
+- scientific-plotting-skill: https://github.com/dazhiyang/scientific-plotting-skill
+- CoSTAR prompt 写作参考: https://mp.weixin.qq.com/s/mrRpH-pRqHNZluxpK9NhxQ
