@@ -473,7 +473,7 @@ s5 <- s4 +
   ggplot2::geom_line(data = df.match.plot,
                      aes(x = conds, y = RT_mean, group = Sub),
                      linetype = 1,
-                     size=0.8,
+                     linewidth=0.8,
                      color="#000000",
                      alpha=0.1)
 ```
