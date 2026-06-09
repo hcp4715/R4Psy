@@ -4,20 +4,20 @@
     <title>chapter_11.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.31/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.3.0/panelset.js"></script>
-    <link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+    <link href="libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet" />
     <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
     <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-    <script src="libs/datatables-binding-0.33/datatables.js"></script>
+    <script src="libs/datatables-binding-0.34.0/datatables.js"></script>
     <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
     <script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
-    <link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
-    <script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+    <link href="libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
     <link rel="stylesheet" href="css/zh-CN.css" type="text/css" />
     <link rel="stylesheet" href="css/Custumed_Style.css" type="text/css" />
   </head>
@@ -70,8 +70,8 @@ class: center, middle
 head(df.match[c(3,11:17)],5) %&gt;% DT::datatable()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-4d3674333fdb4dd060e4" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-4d3674333fdb4dd060e4">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"Label","targets":4},{"name":"Match","targets":5},{"name":"CorrResp","targets":6},{"name":"Resp","targets":7},{"name":"ACC","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-edd80f8fc41a73f9035c" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-edd80f8fc41a73f9035c">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7304],["moral","immoral","moral","immoral","moral"],["Other","Other","Self","Other","Self"],["moralOther","immoralOther","moralSelf","immoralOther","moralSelf"],["match","match","match","match","match"],["n","n","n","n","n"],["n","m","n","m","n"],[1,0,1,0,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>Label<\/th>\n      <th>Match<\/th>\n      <th>CorrResp<\/th>\n      <th>Resp<\/th>\n      <th>ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,8]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"Label","targets":4},{"name":"Match","targets":5},{"name":"CorrResp","targets":6},{"name":"Resp","targets":7},{"name":"ACC","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]
 .panel[.panel-name[df.match.aov]
@@ -83,8 +83,8 @@ df.match.aov %&gt;%
   DT::datatable()
 ```
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-236521a30e4aef8f89e3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-236521a30e4aef8f89e3">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.9866666666666667,0.8333333333333334,0.821917808219178,0.7183098591549296,0.9324324324324325]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"mean_ACC","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-34080d19c7d8f72bd901" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-34080d19c7d8f72bd901">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5"],[7304,7304,7304,7304,7305],["moral","moral","immoral","immoral","moral"],["Self","Other","Self","Other","Self"],[0.9866666666666667,0.8333333333333334,0.821917808219178,0.7183098591549296,0.9324324324324325]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sub<\/th>\n      <th>Valence<\/th>\n      <th>Identity<\/th>\n      <th>mean_ACC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Sub","targets":1},{"name":"Valence","targets":2},{"name":"Identity","targets":3},{"name":"mean_ACC","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 ]
 ]
@@ -122,7 +122,7 @@ df.match.aov %&gt;%
 ---
 #11.1 广义线性模型(Generalized Linear Model, GLM)
 ##线性模型的组成部分
-&lt;img src="./picture/chp10/plot.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp10/plot.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
 #11.1 广义线性模型(Generalized Linear Model, GLM)
@@ -227,7 +227,7 @@ $$𝐶_𝑛^𝑘= 𝑛!/𝑘!(𝑛−𝑘)! $$
 simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-8-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-8-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
 
 ]
 .panel[.panel-name[10人，每人10次]
@@ -237,7 +237,7 @@ simulate_coin_toss(prob_head = 0.5,num_people = 5, num_tosses = 10)
 simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-9-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-9-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
 
 ]
 .panel[.panel-name[1000人，每人10次]
@@ -247,7 +247,7 @@ simulate_coin_toss(prob_head = 0.5,num_people = 10, num_tosses = 10)
 simulate_coin_toss(prob_head = 0.5,num_people = 1000, num_tosses = 10)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-10-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-10-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
 
 ]
 ]
@@ -280,7 +280,7 @@ $$ \sigma = \sqrt{𝑛𝑝𝑞}$$
 
 ---
 #11.2 二项分布(Binomial Distribution)
-&lt;img src="./picture/chp10/func2.JPG" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp10/func2.JPG" alt="" width="80%" style="display: block; margin: auto;" /&gt;
 
 ---
 #11.2 二项分布(Binomial Distribution)
@@ -339,19 +339,19 @@ summary(mod_null) %&gt;%
 ```
 
 ```
-##  [1] "     AIC      BIC   logLik deviance df.resid "                           
-##  [2] "  9378.8   9460.2  -4678.4   9356.8    11999 "                           
+##  [1] "      AIC       BIC    logLik -2*log(L)  df.resid "                      
+##  [2] "   9378.8    9460.2   -4678.4    9356.8     11999 "                      
 ##  [3] "Random effects:"                                                         
 ##  [4] " Groups Name                         Variance Std.Dev. Corr             "
 ##  [5] " Sub    (Intercept)                  1.53     1.24                      "
 ##  [6] "        IdentityOther                2.52     1.59     -0.86            "
 ##  [7] "        Valenceimmoral               2.40     1.55     -0.85  0.83      "
-##  [8] "        IdentityOther:Valenceimmoral 3.33     1.82      0.69 -0.87 -0.82"
+##  [8] "        IdentityOther:Valenceimmoral 3.33     1.83      0.69 -0.87 -0.82"
 ##  [9] "Number of obs: 12010, groups:  Sub, 41"                                  
 ## [10] ""                                                                        
 ## [11] "Fixed effects:"                                                          
 ## [12] "            Estimate Std. Error z value            Pr(&gt;|z|)    "         
-## [13] "(Intercept)    2.014      0.114    17.7 &lt;0.0000000000000002 ***"
+## [13] "(Intercept)   2.0136     0.0802    25.1 &lt;0.0000000000000002 ***"
 ```
 
 ]
@@ -368,8 +368,8 @@ summary(mod) %&gt;%
 ```
 
 ```
-##  [1] "     AIC      BIC   logLik deviance df.resid "                                
-##  [2] "  9639.0   9675.9  -4814.5   9629.0    12005 "                                
+##  [1] "      AIC       BIC    logLik -2*log(L)  df.resid "                           
+##  [2] "   9639.0    9675.9   -4814.5    9629.0     12005 "                           
 ##  [3] "Random effects:"                                                              
 ##  [4] " Groups Name        Variance Std.Dev."                                        
 ##  [5] " Sub    (Intercept) 0.237    0.487   "                                        
@@ -378,9 +378,9 @@ summary(mod) %&gt;%
 ##  [8] "Fixed effects:"                                                               
 ##  [9] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
 ## [10] "(Intercept)                    2.4964     0.1015   24.60 &lt; 0.0000000000000002"
-## [11] "IdentityOther                 -0.7161     0.0839   -8.53 &lt; 0.0000000000000002"
-## [12] "Valenceimmoral                -0.9474     0.0818  -11.58 &lt; 0.0000000000000002"
-## [13] "IdentityOther:Valenceimmoral   0.8230     0.1086    7.58    0.000000000000034"
+## [11] "IdentityOther                 -0.7160     0.0841   -8.51 &lt; 0.0000000000000002"
+## [12] "Valenceimmoral                -0.9474     0.0820  -11.55 &lt; 0.0000000000000002"
+## [13] "IdentityOther:Valenceimmoral   0.8230     0.1088    7.57    0.000000000000039"
 ## [14] "Valenceimmoral               ***"                                             
 ## [15] "IdentityOther:Valenceimmoral ***"                                             
 ## [16] "---"                                                                          
@@ -404,8 +404,8 @@ summary(mod_full) %&gt;%
 
 ```
 ##  [1] ""                                                                             
-##  [2] "     AIC      BIC   logLik deviance df.resid "                                
-##  [3] "  9355.9   9459.4  -4664.0   9327.9    11996 "                                
+##  [2] "      AIC       BIC    logLik -2*log(L)  df.resid "                           
+##  [3] "   9355.9    9459.4   -4664.0    9327.9     11996 "                           
 ##  [4] ""                                                                             
 ##  [5] "Random effects:"                                                              
 ##  [6] " Groups Name                         Variance Std.Dev. Corr             "     
@@ -415,9 +415,9 @@ summary(mod_full) %&gt;%
 ## [10] ""                                                                             
 ## [11] "Fixed effects:"                                                               
 ## [12] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [13] "(Intercept)                     2.772      0.179   15.51 &lt; 0.0000000000000002"
-## [14] "IdentityOther                  -0.870      0.235   -3.70              0.00021"
-## [15] "Valenceimmoral                 -1.150      0.190   -6.05         0.0000000014"
+## [13] "(Intercept)                     2.772      0.174   15.91 &lt; 0.0000000000000002"
+## [14] "IdentityOther                  -0.870      0.230   -3.78              0.00016"
+## [15] "Valenceimmoral                 -1.150      0.185   -6.21        0.00000000054"
 ## [16] "IdentityOther                ***"                                             
 ## [17] "Valenceimmoral               ***"                                             
 ## [18] "IdentityOther:Valenceimmoral ***"                                             
@@ -438,10 +438,10 @@ stats::anova(mod_null, mod, mod_full) #比较三个模型
 ## mod: ACC ~ 1 + Identity * Valence + (1 | Sub)
 ## mod_null: ACC ~ (1 + Identity * Valence | Sub)
 ## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
-##          npar  AIC  BIC logLik deviance Chisq Df           Pr(&gt;Chisq)    
-## mod         5 9639 9676  -4814     9629                                  
-## mod_null   11 9379 9460  -4678     9357 272.1  6 &lt; 0.0000000000000002 ***
-## mod_full   14 9356 9459  -4664     9328  28.9  3            0.0000023 ***
+##          npar  AIC  BIC logLik -2*log(L) Chisq Df           Pr(&gt;Chisq)    
+## mod         5 9639 9676  -4814      9629                                  
+## mod_null   11 9379 9460  -4678      9357 272.1  6 &lt; 0.0000000000000002 ***
+## mod_full   14 9356 9459  -4664      9328  28.9  3            0.0000023 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -469,13 +469,13 @@ summary(mod_full) %&gt;% capture.output() %&gt;% .[c(21:27)]
 ## [1] ""                                                                             
 ## [2] "Fixed effects:"                                                               
 ## [3] "                             Estimate Std. Error z value             Pr(&gt;|z|)"
-## [4] "(Intercept)                     2.772      0.179   15.51 &lt; 0.0000000000000002"
-## [5] "IdentityOther                  -0.870      0.235   -3.70              0.00021"
-## [6] "Valenceimmoral                 -1.150      0.190   -6.05         0.0000000014"
-## [7] "IdentityOther:Valenceimmoral    0.988      0.273    3.63              0.00029"
+## [4] "(Intercept)                     2.772      0.174   15.91 &lt; 0.0000000000000002"
+## [5] "IdentityOther                  -0.870      0.230   -3.78              0.00016"
+## [6] "Valenceimmoral                 -1.150      0.185   -6.21        0.00000000054"
+## [7] "IdentityOther:Valenceimmoral    0.988      0.268    3.69              0.00022"
 ```
 
-&lt;img src="./picture/chp10/logit2.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp10/logit2.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 .pull-left[
 - MoralSelf:
 `\(P=\frac{e^{2.77}}{1+e^{2.77}} = 0.941\)`
@@ -501,7 +501,7 @@ interactions::cat_plot(model = mod_full,
                        modx = Valence)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-20-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-20-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -612,8 +612,8 @@ stats::anova(mod_anova)
 ```
 ## Analysis of Variance Table
 ##                  npar Sum Sq Mean Sq F value
-## Identity            1   0.42    0.42    3.70
-## Valence             1   3.17    3.17   27.70
+## Identity            1   0.42    0.42    3.71
+## Valence             1   3.17    3.17   27.69
 ## Identity:Valence    1   0.98    0.98    8.54
 ```
 
@@ -655,9 +655,9 @@ stats::anova(mod_full, mod_anova)
 ## Models:
 ## mod_full: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
 ## mod_anova: ACC ~ 1 + Identity * Valence + (1 + Identity * Valence | Sub)
-##           npar  AIC  BIC logLik deviance Chisq Df          Pr(&gt;Chisq)    
-## mod_full    14 9356 9459  -4664     9328                                 
-## mod_anova   15 8396 8507  -4183     8366   962  1 &lt;0.0000000000000002 ***
+##           npar  AIC  BIC logLik -2*log(L) Chisq Df          Pr(&gt;Chisq)    
+## mod_full    14 9356 9459  -4664      9328                                 
+## mod_anova   15 8396 8507  -4183      8366   962  1 &lt;0.0000000000000002 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -708,7 +708,7 @@ print(performance_mod_full)
 
 ```
 ##     RMSE       R2 
-## 0.342402 0.074984
+## 0.342401 0.074987
 ```
 ]
 .pull-right[
@@ -809,7 +809,7 @@ plot(roc_result, main = "ROC Curve", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2) # 添加对角线
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-34-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-34-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
 
 ]
 ---
@@ -850,7 +850,7 @@ random_samples &lt;- rpois(1000, lambda = 5)
 hist(random_samples,col = 'white', border = 'black',)
 ```
 
-&lt;img src="chapter_11_files/figure-html/unnamed-chunk-35-1.png" width="540" style="display: block; margin: auto;" /&gt;
+&lt;img src="chapter_11_files/figure-html/unnamed-chunk-35-1.png" alt="" width="540" style="display: block; margin: auto;" /&gt;
 
 ---
 #11.5 其他分布
@@ -870,12 +870,12 @@ hist(random_samples,col = 'white', border = 'black',)
 ---
 #11.5 其他分布
 ##伽马分布(Gamma distribution)
-&lt;img src="./picture/chp10/gamma.webp" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp10/gamma.webp" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # 补充内容: easystats系统包的简介
-&lt;img src="./picture/chp10/bilibili.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./picture/chp10/bilibili.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 
 &lt;br&gt;
 &lt;br&gt;

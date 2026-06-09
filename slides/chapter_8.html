@@ -4,7 +4,7 @@
     <title>chapter_8.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="Pac_B" />
-    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.31/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/panelset-0.3.0/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.3.0/panelset.js"></script>
@@ -103,8 +103,7 @@ class: inverse center middle
   full.names = TRUE)
 ```
 
-
-
+]
 .panel[.panel-name[数据类型转换]
 
 
@@ -123,6 +122,7 @@ convert_data_types &lt;- function(df) {
 }
 ```
 
+]
 .panel[.panel-name[批量合并]
 
 ``` r
@@ -140,6 +140,7 @@ for (i in seq_along(files)) {
 rm(df, files, i)
 ```
 
+]
 .panel[.panel-name[保存数据]
 
 
@@ -148,11 +149,12 @@ rm(df, files, i)
 ## 上节课介绍了write.csv,也可使用bruceR::export
 bruceR::export(
   df3, 
-  file = here::here("slides", "slides", "data", "match","match_raw.csv"))
+  file = here::here("slides", "data", "match", "match_raw.csv"))
 
 ## 当然，export 不仅可以保存数据，也可以输出模型结果
 ```
 
+]
 .panel[.panel-name[修改列名-rename]
 
 ``` r
@@ -183,13 +185,6 @@ df3 %&gt;% dplyr::rename_with(
 ##  [7] "block"    "bin"      "trial"    "shape"    "label"    "match"   
 ## [13] "corrresp" "resp"     "acc"      "rt"
 ```
-
-
-
-]
-]
-]
-]
 ]
 ]
 
@@ -383,6 +378,7 @@ quartets::datasaurus_dozen %&gt;%  ## 包中的数据
 ## 10 dino     26.2  71.4
 ```
 
+]
 .panel[.panel-name[`str()`]
 
 ``` r
@@ -403,7 +399,7 @@ quartets::datasaurus_dozen %&gt;%  ## 包中的数据
 ##   .. )
 ```
 
-
+]
 .panel[.panel-name[`summary()`]
 
 ``` r
@@ -420,8 +416,8 @@ summary(datasaurus_dozen)
 ##                     Max.   :98.29   Max.   :99.69468
 ```
 
-
-]]]]
+]
+]
 
 
 ---
@@ -465,7 +461,7 @@ class: middle,center
 
 &lt;br&gt;
 .font-size-14[
-配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+配套提示词手册：`slides/pure_agent_prompt/llm_prompt_guide.md`
 ]
 
 ---
@@ -535,6 +531,7 @@ head(mt_raw, 3)  # 使用 base R 的 head 函数
 ## 3   moralOther mismatch        n    n   1 0.9903
 ```
 
+]
 .panel[.panel-name[`str`]
 
 ``` r
@@ -562,7 +559,8 @@ mt_raw %&gt;%
 ##  $ RT      : num  0.756 0.704 0.99 1.042 0.821 ...
 ```
 
-]]]
+]
+]
 
 ---
 ## 常用函数
@@ -718,7 +716,7 @@ summary(mt_raw) %&gt;%
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-
+]
 .panel[.panel-name[`skimr::skim()--1`]
 
 ``` r
@@ -742,6 +740,7 @@ skimr::skim(mt_raw) %&gt;%
 ## [12] ""
 ```
 
+]
 .panel[.panel-name[`skimr::skim()--2`]
 
 
@@ -766,7 +765,7 @@ skimr::skim(mt_raw) %&gt;%
 ## [12] ""
 ```
 
-
+]
 .panel[.panel-name[`skimr::skim()--3`]
 
 ``` r
@@ -795,6 +794,7 @@ skimr::skim(mt_raw) %&gt;%
 ## [17] "7    0.702    0.805     1.18 ▁▂▇▅▁"
 ```
 
+]
 .panel[.panel-name[`bruceR::Describe()`]
 
 
@@ -823,8 +823,8 @@ bruceR::Describe(mt_raw) %&gt;%
 ## [16] "Label*     25920          2.49    1.11 |     2.00    1.00     4.00     0.02    -1.35"
 ```
 
-
-]]]]]]
+]
+]
 
 
 
@@ -961,7 +961,7 @@ p1 ## 坐标轴名称已对应，虽然图片为空
 
 &lt;img src="picture/chp8/unnamed-chunk-31-1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
-
+]
 .panel[.panel-name[添加图层-散点]
 
 ``` r
@@ -969,6 +969,7 @@ p1 + geom_point()
 ```
 
 &lt;img src="picture/chp8/unnamed-chunk-32-1.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
+]
 .panel[.panel-name[添加图层-拟合曲线]
 
 ``` r
@@ -977,6 +978,7 @@ p1 + geom_point() + geom_smooth(method = 'lm')
 
 &lt;img src="picture/chp8/unnamed-chunk-33-1.png" alt="" width="60%" style="display: block; margin: auto;" /&gt;
 
+]
 .panel[.panel-name[改变映射]
 
 ``` r
@@ -991,9 +993,9 @@ pg_raw %&gt;%
 
 &lt;img src="picture/chp8/unnamed-chunk-34-1.png" alt="" width="50%" style="display: block; margin: auto;" /&gt;
 
-
-
-]]]]]]
+]
+]
+]
 
 
 ???
@@ -1264,7 +1266,7 @@ pg_raw %&gt;%
 ---
 ## 练习前说明
 .font-size-14[
-- 开始练习前，可先查看配套提示词手册：`prompt_guides/llm_prompt_guide.md`
+- 开始练习前，可先查看配套提示词手册：`slides/pure_agent_prompt/llm_prompt_guide.md`
 - 如果不确定该选择什么图形，或在 `ggplot` / 数据探索代码中遇到报错，可以先参考手册中的对应 section，再开始练习。
 ]
 
