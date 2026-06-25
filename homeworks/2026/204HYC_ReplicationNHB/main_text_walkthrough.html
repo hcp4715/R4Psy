@@ -1,0 +1,1719 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Main-Text Statistical Walkthrough | Early Childcare RCT</title>
+  <style>
+    :root {
+      --purple-dark: #612A6E;
+      --purple: #8A4798;
+      --purple-light: #B096B6;
+      --purple-soft: #EFE5F1;
+      --green-dark: #2A6B3E;
+      --green: #489960;
+      --green-light: #96B5A0;
+      --green-soft: #E7F0E9;
+      --gray-dark: #3A3C45;
+      --gray: #5D606C;
+      --gray-light: #9E9FA3;
+      --gray-soft: #F3F4F6;
+      --ink: #1F2328;
+      --muted: #636A73;
+      --line: #D7D9DE;
+      --paper: #FBFAFC;
+      --white: #FFFFFF;
+      --shadow: 0 16px 40px rgba(35, 30, 42, 0.12);
+      --radius: 8px;
+      --maxw: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(239, 229, 241, 0.52), rgba(251, 250, 252, 0) 460px),
+        var(--paper);
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .page {
+      min-height: 100vh;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(251, 250, 252, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(215, 217, 222, 0.88);
+    }
+
+    .topbar-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 10px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 220px;
+      font-weight: 800;
+      color: var(--gray-dark);
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--purple-dark);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--purple-dark);
+      background: var(--white);
+    }
+
+    .brand-mark svg,
+    .icon svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .nav a {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+
+    .nav a:hover {
+      color: var(--purple-dark);
+      background: var(--purple-soft);
+    }
+
+    .hero {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 48px 22px 20px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .hero-grid > *,
+    .logic-board > *,
+    .timeline > *,
+    .results-shell > *,
+    .summary-strip > *,
+    .comparison-grid > *,
+    .method-grid > *,
+    .insight-grid > *,
+    .takeaway-band > * {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--purple-dark);
+      background: var(--purple-soft);
+      border: 1px solid rgba(97, 42, 110, 0.16);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.02;
+      max-width: 860px;
+      letter-spacing: 0;
+      color: var(--gray-dark);
+      overflow-wrap: anywhere;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gray);
+      font-size: 17px;
+      line-height: 1.68;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-strip {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      color: var(--purple-dark);
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .hero-panel {
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      position: relative;
+    }
+
+    .hero-panel h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: var(--purple-dark);
+    }
+
+    .mini-flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-node {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--purple-dark);
+      border-radius: 6px;
+      background: var(--white);
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--gray-dark);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .mini-node:nth-child(2) {
+      border-left-color: var(--green-dark);
+    }
+
+    .mini-node:nth-child(3) {
+      border-left-color: var(--gray);
+    }
+
+    section {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 34px 22px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .section-kicker {
+      color: var(--purple-dark);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
+      color: var(--gray-dark);
+      line-height: 1.15;
+    }
+
+    .section-note {
+      max-width: 420px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .logic-board {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .logic-map {
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .logic-step {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--white);
+      color: var(--gray-dark);
+      display: grid;
+      grid-template-columns: 38px 1fr 22px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .logic-step:hover,
+    .logic-step.active {
+      transform: translateX(4px);
+      border-color: var(--purple-dark);
+      background: var(--purple-soft);
+    }
+
+    .step-index {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: var(--purple-dark);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .logic-step:nth-child(2) .step-index,
+    .logic-step:nth-child(5) .step-index {
+      background: var(--green-dark);
+    }
+
+    .logic-step:nth-child(3) .step-index,
+    .logic-step:nth-child(6) .step-index {
+      background: var(--gray);
+    }
+
+    .logic-step strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .logic-step span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .logic-detail {
+      border: 2px solid var(--purple-dark);
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--white), #FAF7FB);
+      padding: 22px;
+      min-height: 360px;
+      box-shadow: var(--shadow);
+    }
+
+    .logic-detail .icon {
+      color: var(--purple-dark);
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(97, 42, 110, 0.25);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      background: var(--white);
+    }
+
+    .logic-detail h3 {
+      margin: 0 0 8px;
+      color: var(--purple-dark);
+      font-size: 22px;
+    }
+
+    .logic-detail p {
+      color: var(--gray);
+      line-height: 1.72;
+      margin: 0 0 14px;
+      font-weight: 600;
+    }
+
+    .detail-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      border: 1px solid rgba(42, 107, 62, 0.18);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .rct-wrap {
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 20px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1fr;
+      gap: 18px;
+      align-items: start;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 9%;
+      right: 9%;
+      top: 104px;
+      height: 2px;
+      background: var(--gray-dark);
+      z-index: 0;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 16px;
+      min-height: 164px;
+    }
+
+    .stage h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: var(--gray-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stage p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .stage .big {
+      font-size: 30px;
+      color: var(--purple-dark);
+      font-weight: 900;
+      margin: 10px 0 4px;
+    }
+
+    .arms {
+      display: grid;
+      gap: 10px;
+    }
+
+    .arm {
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 12px;
+    }
+
+    .arm.purple {
+      border-color: var(--purple);
+    }
+
+    .arm.green {
+      border-color: var(--green-dark);
+    }
+
+    .arm-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .arm-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray-dark);
+      font-weight: 900;
+    }
+
+    .arm-count {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .arm ul {
+      margin: 8px 0 0 19px;
+      padding: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .comparison-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .comparison {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      background: var(--gray-soft);
+    }
+
+    .comparison strong {
+      color: var(--gray-dark);
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .comparison span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .method {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 15px;
+    }
+
+    .method .icon {
+      color: var(--purple-dark);
+      margin-bottom: 10px;
+    }
+
+    .method h3 {
+      margin: 0 0 7px;
+      font-size: 16px;
+      color: var(--gray-dark);
+    }
+
+    .method p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .results-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .figure-tabs {
+      display: grid;
+      gap: 9px;
+      position: sticky;
+      top: 70px;
+    }
+
+    .fig-tab {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 11px 12px;
+      text-align: left;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 9px;
+      align-items: center;
+      color: var(--gray-dark);
+    }
+
+    .fig-tab.active {
+      border-color: var(--purple-dark);
+      background: var(--purple-soft);
+    }
+
+    .fig-tab .num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--gray-dark);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .fig-tab.active .num {
+      background: var(--purple-dark);
+    }
+
+    .fig-tab strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .fig-tab span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .figure-panel {
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .figure-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .figure-head h3 {
+      margin: 0 0 7px;
+      color: var(--purple-dark);
+      font-size: 22px;
+    }
+
+    .figure-head p {
+      margin: 0;
+      color: var(--gray);
+      line-height: 1.55;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ghost-btn,
+    .view-btn {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--gray-dark);
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .ghost-btn:hover,
+    .view-btn:hover {
+      border-color: var(--purple-dark);
+      color: var(--purple-dark);
+      background: var(--purple-soft);
+    }
+
+    .figure-frame {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .figure-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      cursor: zoom-in;
+    }
+
+    .insight-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .insight {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--gray-soft);
+      padding: 12px;
+    }
+
+    .insight strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 5px;
+      color: var(--gray-dark);
+    }
+
+    .insight span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .takeaway-band {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .takeaway {
+      border-radius: 8px;
+      border: 2px solid var(--gray);
+      background: var(--white);
+      padding: 18px;
+      min-height: 220px;
+    }
+
+    .takeaway:nth-child(1) {
+      border-color: var(--purple-dark);
+    }
+
+    .takeaway:nth-child(2) {
+      border-color: var(--green-dark);
+    }
+
+    .takeaway h3 {
+      margin: 8px 0 8px;
+      font-size: 18px;
+      color: var(--gray-dark);
+    }
+
+    .takeaway p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .primer-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .primer-card {
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      background: var(--white);
+      padding: 18px;
+    }
+
+    .primer-card.primary {
+      border-color: var(--purple-dark);
+      box-shadow: var(--shadow);
+    }
+
+    .primer-card h3 {
+      margin: 8px 0 10px;
+      color: var(--purple-dark);
+      font-size: 20px;
+    }
+
+    .primer-card p,
+    .primer-card li {
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .primer-card ul,
+    .primer-card ol {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .primer-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .primer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(97, 42, 110, 0.22);
+      background: var(--purple-soft);
+      color: var(--purple-dark);
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .primer-steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .primer-step {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      padding: 12px;
+    }
+
+    .primer-step strong {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--green-dark);
+      color: var(--white);
+      font-size: 13px;
+    }
+
+    .primer-step:nth-child(2n) strong {
+      background: var(--purple-dark);
+    }
+
+    .primer-step h4 {
+      margin: 0 0 4px;
+      color: var(--gray-dark);
+      font-size: 15px;
+    }
+
+    .primer-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .method-accordion {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .method-accordion details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    .method-accordion summary {
+      cursor: pointer;
+      padding: 13px 15px;
+      color: var(--gray-dark);
+      font-weight: 900;
+      list-style: none;
+    }
+
+    .method-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .method-accordion summary::after {
+      content: "+";
+      float: right;
+      color: var(--purple-dark);
+      font-weight: 900;
+    }
+
+    .method-accordion details[open] summary::after {
+      content: "-";
+    }
+
+    .method-accordion .accordion-body {
+      border-top: 1px solid var(--line);
+      padding: 0 15px 14px;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .method-accordion .accordion-body p {
+      margin: 12px 0 0;
+    }
+
+    .formula-strip {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .formula-box {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--gray-soft);
+      padding: 13px;
+    }
+
+    .formula-box strong {
+      display: block;
+      color: var(--gray-dark);
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .formula-box span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .footer {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 24px 22px 52px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .footer a {
+      color: var(--purple-dark);
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(31, 35, 40, 0.74);
+      padding: 26px;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-inner {
+      width: min(1280px, 96vw);
+      max-height: 92vh;
+      border-radius: 8px;
+      background: var(--white);
+      overflow: auto;
+      position: relative;
+      padding: 16px;
+    }
+
+    .modal-inner img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .close-modal {
+      position: sticky;
+      top: 0;
+      float: right;
+      z-index: 2;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--gray-dark);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .logic-board,
+      .results-shell,
+      .timeline,
+      .primer-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline::before {
+        display: none;
+      }
+
+      .summary-strip,
+      .comparison-grid,
+      .method-grid,
+      .insight-grid,
+      .takeaway-band,
+      .formula-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .figure-tabs {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar,
+      .topbar-inner,
+      .hero,
+      section,
+      .footer {
+        max-width: 100%;
+      }
+
+      .topbar-inner,
+      .hero,
+      section,
+      .footer {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .hero-grid,
+      .summary-strip,
+      .hero-panel,
+      .logic-board,
+      .logic-map,
+      .logic-detail,
+      .rct-wrap,
+      .timeline,
+      .stage,
+      .arm,
+      .method-grid,
+      .results-shell,
+      .figure-panel,
+      .takeaway-band,
+      .takeaway,
+      .primer-shell,
+      .primer-card,
+      .primer-step,
+      .formula-strip,
+      .formula-box,
+      .method-accordion {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      h1 {
+        font-size: 28px;
+        line-height: 1.12;
+        word-break: break-all;
+      }
+
+      .lead,
+      .mini-node,
+      .metric,
+      .metric span,
+      .section-note,
+      .logic-step,
+      .logic-detail p,
+      .stage p,
+      .arm p,
+      .arm li,
+      .comparison,
+      .figure-head p,
+      .primer-card p,
+      .primer-card li,
+      .primer-step p,
+      .formula-box span,
+      .method-accordion .accordion-body {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .section-head,
+      .figure-head {
+        display: block;
+      }
+
+      .view-btn {
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#top" aria-label="Back to top">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 13h5l2-8 3 14 2-6h4"/></svg>
+          </span>
+          <span>RCT Walkthrough</span>
+        </a>
+        <nav class="nav" aria-label="Page navigation">
+          <a href="#logic">逻辑链条</a>
+          <a href="#design">RCT 设计</a>
+          <a href="#methods">估计策略</a>
+          <a href="#evidence">结果图</a>
+          <a href="#conclusion">结论</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">
+              <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-7"/></svg></span>
+              Main-text statistical walkthrough
+            </span>
+            <h1>行政负担、信息成本和<br>早期托育不平等</h1>
+            <p class="lead">
+              这个页面把正文核心复现结果组织成一条可点击的研究链条：先解释法国早期托育为什么会产生申请和获得名额的摩擦，再说明作者如何用三臂 RCT 区分 information-only 和 information + support 的作用，最后用异质性和机制分析判断干预到底解决了哪一段不平等。
+            </p>
+            <div class="summary-strip" aria-label="Key study metrics">
+              <div class="metric"><strong>1,849</strong><span>随机分配家庭数，来自巴黎地区孕期招募样本</span></div>
+              <div class="metric"><strong>3 arms</strong><span>control、information-only、information + support</span></div>
+              <div class="metric"><strong>5 figures</strong><span>正文核心图：gap、异质性和机制结果</span></div>
+            </div>
+          </div>
+          <aside class="hero-panel" aria-label="Main conclusion">
+            <h2>主线结论</h2>
+            <div class="mini-flow">
+              <div class="mini-node">弱势家庭并非完全没有托育意愿，差距主要在申请和 access 转化中放大。</div>
+              <div class="mini-node">单纯发信息基本不足，加入个性化申请支持后申请率明显上升。</div>
+              <div class="mini-node">申请阶段的不平等被缩小，但 access 阶段仍受供给和分配机制限制。</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="logic">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Research logic</div>
+            <h2>从制度摩擦到因果检验</h2>
+          </div>
+          <p class="section-note">点击左侧步骤，可以看到作者为什么按这个顺序推进：先定位不平等发生在哪个环节，再检验哪类干预能改变行为。</p>
+        </div>
+        <div class="logic-board">
+          <div class="logic-map" role="list" aria-label="Research logic steps">
+            <button class="logic-step active" data-logic="0" type="button">
+              <span class="step-index">1</span>
+              <span><strong>制度背景</strong><span>法国早期托育需要家庭主动理解、选择和申请。</span></span>
+              <span>›</span>
+            </button>
+            <button class="logic-step" data-logic="1" type="button">
+              <span class="step-index">2</span>
+              <span><strong>核心疑问</strong><span>弱势家庭是不想用，还是想用但没有完成行动？</span></span>
+              <span>›</span>
+            </button>
+            <button class="logic-step" data-logic="2" type="button">
+              <span class="step-index">3</span>
+              <span><strong>干预设计</strong><span>把信息成本和行政支持拆成两个处理臂。</span></span>
+              <span>›</span>
+            </button>
+            <button class="logic-step" data-logic="3" type="button">
+              <span class="step-index">4</span>
+              <span><strong>平均效果</strong><span>ITT 和 ATT 判断处理是否改变申请和 access。</span></span>
+              <span>›</span>
+            </button>
+            <button class="logic-step" data-logic="4" type="button">
+              <span class="step-index">5</span>
+              <span><strong>不平等效果</strong><span>SES 和 migration heterogeneity 检验差距是否缩小。</span></span>
+              <span>›</span>
+            </button>
+            <button class="logic-step" data-logic="5" type="button">
+              <span class="step-index">6</span>
+              <span><strong>机制判断</strong><span>按知识、经验、规范、信任和活动状态分组。</span></span>
+              <span>›</span>
+            </button>
+          </div>
+          <article class="logic-detail" id="logic-detail" aria-live="polite">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 5h12l-1.5 4L16 13H4"/></svg></div>
+            <h3>制度背景</h3>
+            <p>法国 0-3 岁早期托育包括 daycare centres 和 childminders。它不是自动获得的福利，而是需要家庭理解选项、判断成本、提前申请并等待分配。名额供给不足和规则不透明会让申请之后的 access 仍然存在摩擦。</p>
+            <p>因此，这篇文章不是只问“家庭有没有需求”，而是把托育进入过程拆成 intention、application 和 access 三段。</p>
+            <div class="detail-tags"><span class="tag">demand-side friction</span><span class="tag">administrative burden</span><span class="tag">supply constraint</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="design">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">RCT design</div>
+            <h2>三臂实验如何拆解信息和行政支持</h2>
+          </div>
+          <p class="section-note">这里展开原文正文的设计部分：谁被招募、什么时候干预、control 暴露是什么、T1 和 T2 到底做了什么。</p>
+        </div>
+        <div class="rct-wrap">
+          <div class="timeline">
+            <div class="stage">
+              <h3><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Enrollment</h3>
+              <p>孕期在巴黎地区 maternity wards 招募。研究对象是未来需要为 0-3 岁儿童选择早期托育的家庭。</p>
+              <div class="big">1,849</div>
+              <p>households randomized across 3 arms</p>
+            </div>
+            <div class="stage">
+              <h3><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg></span>Assignment arms</h3>
+              <div class="arms">
+                <div class="arm">
+                  <div class="arm-head"><div class="arm-title">Control</div><div class="arm-count">n = 623</div></div>
+                  <p>没有收到研究团队的 childcare 信息视频或电话申请支持，作为 existing system 下的参照组。一年后同样接受 endline 测量。</p>
+                </div>
+                <div class="arm purple">
+                  <div class="arm-head"><div class="arm-title">T1: information-only</div><div class="arm-count">n = 608</div></div>
+                  <ul>
+                    <li>5 条短信，每条链接到一个短视频。</li>
+                    <li>介绍托育类型、费用估算、附近 childcare centres 和申请流程。</li>
+                    <li>额外提醒：尽早申请、多做申请以提高机会。</li>
+                    <li>3 次个性化提醒，约每 3 个月一次。</li>
+                    <li>信息以 plain language 呈现，并翻译为英语和阿拉伯语。</li>
+                  </ul>
+                </div>
+                <div class="arm green">
+                  <div class="arm-head"><div class="arm-title">T2: information + support</div><div class="arm-count">n = 615</div></div>
+                  <ul>
+                    <li>包含 T1 的全部信息内容。</li>
+                    <li>视频后 2-5 个月由 trained interviewers 进行电话支持。</li>
+                    <li>对尚未决定的家庭，讨论可及性、可负担性和费用模拟。</li>
+                    <li>对已经决定的家庭，帮助选择合适机构并完成申请表。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="stage">
+              <h3><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l3-3 3 2 5-7"/></svg></span>Endline outcomes</h3>
+              <p>约一年后调查 application 和 access。最终 endline 样本为 1,453 个家庭。</p>
+              <div class="big">1,453</div>
+              <p>responded at endline</p>
+            </div>
+          </div>
+          <div class="comparison-grid">
+            <div class="comparison"><strong>T1-C</strong><span>Information-only vs control，检验降低信息成本是否足够。</span></div>
+            <div class="comparison"><strong>T2-C</strong><span>Information + support vs control，检验完整干预包是否改变结果。</span></div>
+            <div class="comparison"><strong>T2-T1</strong><span>Support vs information-only，识别电话行政支持的边际贡献。</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="methods">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Estimation strategy</div>
+            <h2>统计分析如何层层推进</h2>
+          </div>
+          <p class="section-note">这部分对应正文复现脚本的核心分析顺序。重点是每一步回答的统计问题，而不是代码细节。</p>
+        </div>
+        <div class="method-grid">
+          <article class="method">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+            <h3>Control-group gaps</h3>
+            <p>只在 control group 内比较 intention、application 和 access，定位不平等在哪个阶段扩大。</p>
+          </article>
+          <article class="method">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/><circle cx="8" cy="7" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="11" cy="17" r="2"/></svg></div>
+            <h3>ITT</h3>
+            <p>用随机分配估计 treatment assignment 的平均因果效应，比较 T1-C、T2-C 和 T2-T1。</p>
+          </article>
+          <article class="method">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h6l3-7 3 14 3-7h3"/></svg></div>
+            <h3>ATT / LATE</h3>
+            <p>用 T2 assignment 工具化实际 support take-up，估计 compliers 的支持效果。</p>
+          </article>
+          <article class="method">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v5"/><path d="M14 3h5a2 2 0 0 1 2 2v5"/><path d="M10 21H5a2 2 0 0 1-2-2v-5"/><path d="M14 21h5a2 2 0 0 0 2-2v-5"/></svg></div>
+            <h3>Heterogeneity</h3>
+            <p>按 SES、移民背景和机制 proxy 分组，判断干预是否缩小不平等以及可能通过什么机制发挥作用。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Visual evidence</div>
+            <h2>五张正文核心图如何支撑结论</h2>
+          </div>
+          <p class="section-note">点击左侧图号切换结果图；点击图片可放大。所有图片来自当前复现输出文件夹。</p>
+        </div>
+        <div class="results-shell">
+          <div class="figure-tabs" role="tablist" aria-label="Main figures">
+            <button class="fig-tab active" type="button" data-fig="0"><span class="num">2</span><span><strong>Intention gap</strong><span>控制组内的意愿、申请、access 差距</span></span></button>
+            <button class="fig-tab" type="button" data-fig="1"><span class="num">3</span><span><strong>SES / migration</strong><span>早期托育申请和 access 的核心异质性</span></span></button>
+            <button class="fig-tab" type="button" data-fig="2"><span class="num">4</span><span><strong>Daycare</strong><span>正式 daycare 申请和 access</span></span></button>
+            <button class="fig-tab" type="button" data-fig="3"><span class="num">5</span><span><strong>Information costs</strong><span>知识、经验和 descriptive norms</span></span></button>
+            <button class="fig-tab" type="button" data-fig="4"><span class="num">6</span><span><strong>Psychological costs</strong><span>present orientation、trust、activity</span></span></button>
+          </div>
+
+          <article class="figure-panel" aria-live="polite">
+            <div class="figure-head">
+              <div>
+                <h3 id="fig-title">Figure 2. Intention-to-action gap</h3>
+                <p id="fig-desc">控制组显示：低 SES 和移民背景家庭不是完全没有托育意愿，差距从 intention 到 application，再到 access 逐步扩大。</p>
+              </div>
+              <button class="view-btn" type="button" id="open-figure">
+                <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v7h-7"/><path d="M3 10V3h7"/><path d="M3 21l11-11"/></svg></span>
+                放大
+              </button>
+            </div>
+            <div class="figure-frame">
+              <img id="fig-img" src="02 Output/Step 05 - main text figures/output figures/figure_2_attention_action.png" alt="Figure 2 intention-to-action gap">
+            </div>
+            <div class="insight-grid" id="fig-insights">
+              <div class="insight"><strong>-24.0 pp</strong><span>Low-SES 在申请阶段相对 High-SES 的差距。</span></div>
+              <div class="insight"><strong>-33.6 pp</strong><span>Low-SES 在 access 阶段的差距更大。</span></div>
+              <div class="insight"><strong>Gap widens</strong><span>关键不平等发生在行动转化过程。</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="conclusion">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Conclusion</div>
+            <h2>这条证据链最终说明什么</h2>
+          </div>
+          <p class="section-note">结论需要同时保留正向效果和边界条件：支持能提高申请，但不能单独解决 access。</p>
+        </div>
+        <div class="takeaway-band">
+          <article class="takeaway">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <h3>信息本身不足够</h3>
+            <p>Information-only treatment 的平均效果很小，说明把信息做得更清楚、更及时并不能自动让家庭完成申请。</p>
+          </article>
+          <article class="takeaway">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <h3>行政支持改变申请</h3>
+            <p>Information + support treatment 显著提高申请率，尤其帮助低 SES、移民背景、缺少既有经验或周围使用托育较少的家庭。</p>
+          </article>
+          <article class="takeaway">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg></div>
+            <h3>access 仍有后续障碍</h3>
+            <p>申请增加没有完全转化为获得名额。若政策目标是缩小最终 access inequality，还需要处理供给、分配和机构筛选环节。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="itt-att-primer">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Method Primer</div>
+            <h2>为什么 RCT 主分析通常先看 ITT</h2>
+          </div>
+          <p class="section-note">这一节是给第一次读 RCT 结果的人看的：先把“随机分配产生了什么因果比较”讲清楚，再解释为什么文中还会报告 ATT。</p>
+        </div>
+
+        <div class="primer-shell">
+          <article class="primer-card primary">
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v6H4z"/><path d="M4 14h7v6H4z"/><path d="M15 14h5v6h-5z"/><path d="M8 10v4"/><path d="M17.5 10v4"/></svg></div>
+            <h3>ITT 的核心问题</h3>
+            <p><strong>ITT, intention-to-treat, 估计的是“被随机分配到某个处理组”这件事的效果。</strong>它不问一个家庭最后有没有认真看完视频、有没有接到电话、有没有完整配合申请支持，而是按照最初随机分配的组别来比较结果。</p>
+            <p>这篇文章里，ITT 最关心的是一个政策式问题：如果把一批家庭随机分配到 information-only 或 information + support，会不会提高申请和获得托育的概率？这种问题很适合政策评估，因为现实中的政策推广本来就会遇到未接触、未使用、未完全配合等情况。</p>
+            <div class="primer-pill-row">
+              <span class="primer-pill">保留随机化</span>
+              <span class="primer-pill">估计“被提供干预”的效果</span>
+              <span class="primer-pill">主线结论最稳健</span>
+            </div>
+          </article>
+
+          <div class="primer-steps" aria-label="ITT workflow steps">
+            <article class="primer-step">
+              <strong>1</strong>
+              <div>
+                <h4>先固定随机分配组别</h4>
+                <p>控制组没有收到研究团队额外提供的视频信息和电话申请支持；T1 收到短信视频和提醒；T2 在 T1 的信息基础上再获得电话申请支持。</p>
+              </div>
+            </article>
+            <article class="primer-step">
+              <strong>2</strong>
+              <div>
+                <h4>不按实际参与程度重新分组</h4>
+                <p>ITT 的关键是“as randomized”。即使有人没有完整接触干预，也仍然留在原先被分配的组里，这样才不破坏随机化。</p>
+              </div>
+            </article>
+            <article class="primer-step">
+              <strong>3</strong>
+              <div>
+                <h4>比较三组政策暴露</h4>
+                <p>文中报告 T1-C、T2-C、T2-T1。前两个比较处理组相对控制组的效果，第三个比较“在已有信息基础上再加行政支持”的边际效果。</p>
+              </div>
+            </article>
+            <article class="primer-step">
+              <strong>4</strong>
+              <div>
+                <h4>把结果解释为百分点变化</h4>
+                <p>例如 T2-C 在 daycare application 上的正系数，表示被分配到 information + support 组让申请 daycare 的概率相对控制组提高了多少个百分点。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="formula-strip" aria-label="ITT and ATT comparison">
+          <div class="formula-box">
+            <strong>ITT 问的是 assigned effect</strong>
+            <span>被分配到某个干预组，相比被分配到对照组，结果是否改变。</span>
+          </div>
+          <div class="formula-box">
+            <strong>First stage 问的是 take-up</strong>
+            <span>被分配到支持组，是否真的提高了实际收到行政支持的概率。</span>
+          </div>
+          <div class="formula-box">
+            <strong>ATT/LATE 问的是 treated effect</strong>
+            <span>对实际因为随机分配而收到支持的家庭，支持本身带来多大效果。</span>
+          </div>
+        </div>
+
+        <div class="method-accordion">
+          <details open>
+            <summary>这篇文章具体怎样估计 ITT</summary>
+            <div class="accordion-body">
+              <p>复现脚本中，主 ITT 使用 R 的 <code>fixest::feols</code> 做线性概率模型。结果变量包括 early childcare application、daycare application、early childcare access 和 daycare access。模型把三类比较堆叠起来估计：information-only vs control、information + support vs control、information + support vs information-only。</p>
+              <p>估计时加入随机分层相关的固定效应，按 <code>StrataWave</code> 聚类标准误，并使用响应概率相关权重。多重检验部分用 <code>multcomp</code> 做 Westfall 调整，表格整理用 <code>modelsummary</code>。这些设置的目的不是替代随机化，而是让估计更贴合原始实验设计和正文表格报告方式。</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>为什么 ITT 是这篇文章的主线，而不是只看真正接到电话的人</summary>
+            <div class="accordion-body">
+              <p>如果只比较“真正接到电话支持的人”和“没有接到的人”，这个比较就不再是随机的。能接通电话、愿意沟通、已经更积极准备申请的家庭，本来就可能和其他家庭不同。这样得到的差异可能混合了家庭本身的主动性、可联系性和资源差异。</p>
+              <p>ITT 避开了这个问题。它只利用最初的随机分配，所以可以更直接地说：把家庭分配到某个政策暴露下，会不会改变后续申请和 access。这也是 RCT 学习里最重要的一点：先保护随机化，再解释因果效果。</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>ATT 在这里补充回答了什么</summary>
+            <div class="accordion-body">
+              <p>ATT, average treatment effect on the treated, 在这篇文章中对应的是实际收到行政支持的家庭的效果。由于不是所有被分配到 T2 的家庭都一定实际收到或完成电话支持，作者进一步用随机分配作为工具变量，估计实际支持对 compliers 的影响。复现脚本里这个部分用的是 <code>fixest</code> 的 IV 写法，函数名也保留了原代码里的 LATE 思路。</p>
+              <p>直觉上，ITT 是“发出这个政策包以后，平均带来什么变化”；ATT/LATE 是“在那些因为被分配到支持组而实际接受支持的家庭中，支持本身有多大作用”。当实际接受率不是 100% 时，ATT/LATE 往往会比 ITT 更大，因为 ITT 被没有实际接触支持的人稀释了。</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>读这篇文章时怎样把 ITT 和 ATT 放在一起理解</summary>
+            <div class="accordion-body">
+              <p>先看 ITT，因为它最接近可推广政策问题：研究团队把信息和支持提供出去以后，是否真的改变了申请行为。正文结论中的“information-only 基本不足、information + support 能提高申请”主要就是从这个视角成立的。</p>
+              <p>再看 ATT，是为了理解实际支持的强度和机制。如果 ITT 不大但 first stage 明确，ATT 可能显示实际接受支持的人受益更明显；如果 ITT 和 ATT 都集中在低 SES、移民背景或缺少既有经验的家庭，就更支持“行政负担和信息成本阻碍弱势家庭把意愿转化为申请”的解释。</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>第一次做 RCT 复现时最容易误解的地方</summary>
+            <div class="accordion-body">
+              <p>第一，不要把 ITT 理解成“真正使用干预的效果”。ITT 是分配效果，不是实际参与效果。第二，不要因为有人没有接受干预就把他从处理组删掉，这会破坏随机化。第三，控制变量和固定效应是为了提高精度和对应实验设计，不是因为没有它们就不能识别因果效果。第四，显著提高 application 不等于显著提高 access，因为 access 还受到名额供给、机构分配和后续筛选影响。</p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Source files: <a href=".plan/main_text_statistical_walkthrough.md">Markdown walkthrough</a>, <a href="Replication_Yuchang.R">Replication_Yuchang.R</a>, and figures under <a href="02 Output/Step 05 - main text figures/output figures/">02 Output/Step 05 - main text figures/output figures</a>. This HTML uses relative image paths, so keep the workspace folder structure unchanged when moving it to another computer.</p>
+    </footer>
+  </div>
+
+  <div class="modal" id="figure-modal" role="dialog" aria-modal="true" aria-label="Expanded figure">
+    <div class="modal-inner">
+      <button class="close-modal" type="button" id="close-modal">关闭</button>
+      <img id="modal-img" src="" alt="">
+    </div>
+  </div>
+
+  <script>
+    const logicItems = [
+      {
+        icon: '<svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 5h12l-1.5 4L16 13H4"/></svg>',
+        title: '制度背景',
+        body: [
+          '法国 0-3 岁早期托育包括 daycare centres 和 childminders。它不是自动获得的福利，而是需要家庭理解选项、判断成本、提前申请并等待分配。',
+          '因此，这篇文章不是只问“家庭有没有需求”，而是把托育进入过程拆成 intention、application 和 access 三段。'
+        ],
+        tags: ['demand-side friction', 'administrative burden', 'supply constraint']
+      },
+      {
+        icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>',
+        title: '核心疑问',
+        body: [
+          '如果弱势家庭本来就不想使用早期托育，那么信息或行政支持不会有大效果。',
+          '如果他们有意愿但没有完成申请，那么信息成本、过程成本和心理成本就可能解释 application gap。'
+        ],
+        tags: ['preference vs friction', 'intention-to-action gap']
+      },
+      {
+        icon: '<svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>',
+        title: '干预设计',
+        body: [
+          'T1 用短信和视频降低信息成本，T2 在同样信息基础上加入电话申请支持。',
+          'T2-T1 的比较让作者能把“单纯信息”和“额外行政支持”的边际贡献区分开。'
+        ],
+        tags: ['information-only', 'information + support', 'T2-T1 contrast']
+      },
+      {
+        icon: '<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-8"/></svg>',
+        title: '平均效果',
+        body: [
+          'ITT 估计被分配到处理组的平均因果效应。ATT/LATE 进一步估计实际接受电话支持的 compliers 效果。',
+          '结果显示 information-only 基本没有效果，information + support 明显提高申请，特别是 daycare application。'
+        ],
+        tags: ['ITT', 'ATT/LATE', 'first stage']
+      },
+      {
+        icon: '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
+        title: '不平等效果',
+        body: [
+          '核心异质性分析问的是：support 是否对低 SES 和移民背景家庭更有效。',
+          '答案是申请阶段基本是，但 access 阶段不是。低 SES 家庭申请增加后仍不一定拿到名额。'
+        ],
+        tags: ['SES heterogeneity', 'migration background', 'application vs access']
+      },
+      {
+        icon: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>',
+        title: '机制判断',
+        body: [
+          '机制分析按知识、既有托育经验、descriptive norms、trust 和 activity 状态切分。',
+          '更强的效果集中在缺少经验、信息环境弱或 inactive 的家庭，说明干预更像是在降低具体申请摩擦。'
+        ],
+        tags: ['information costs', 'process costs', 'psychological costs']
+      }
+    ];
+
+    const figures = [
+      {
+        title: 'Figure 2. Intention-to-action gap',
+        desc: '控制组显示：低 SES 和移民背景家庭不是完全没有托育意愿，差距从 intention 到 application，再到 access 逐步扩大。',
+        src: '02 Output/Step 05 - main text figures/output figures/figure_2_attention_action.png',
+        alt: 'Figure 2 intention-to-action gap',
+        insights: [
+          ['-24.0 pp', 'Low-SES 在申请阶段相对 High-SES 的差距。'],
+          ['-33.6 pp', 'Low-SES 在 access 阶段的差距更大。'],
+          ['Gap widens', '关键不平等发生在行动转化过程。']
+        ]
+      },
+      {
+        title: 'Figure 3. Heterogeneity by SES and migration background',
+        desc: 'Information + support 对弱势家庭的 application 效果更强。低 SES 和移民背景家庭的申请增加明显，但 access 的改善不稳定。',
+        src: '02 Output/Step 05 - main text figures/output figures/figure_3_early_childcare_heterogeneity.png',
+        alt: 'Figure 3 early childcare heterogeneity',
+        insights: [
+          ['+17.2 pp ATT', '低 SES 家庭 early childcare application 的估计效果。'],
+          ['+14.6 pp ATT', '移民背景家庭 application 的估计效果。'],
+          ['Access limited', '申请增加没有稳定转化为 access。']
+        ]
+      },
+      {
+        title: 'Figure 4. Daycare-specific heterogeneity',
+        desc: 'Daycare 是更正式、更受行政流程约束的托育形式。低 SES 家庭申请 daycare 明显增加，但 access 收益主要出现在 high-SES 家庭。',
+        src: '02 Output/Step 05 - main text figures/output figures/figure_4_daycare_heterogeneity.png',
+        alt: 'Figure 4 daycare heterogeneity',
+        insights: [
+          ['+18.1 pp ATT', '低 SES 家庭 daycare application 的估计效果。'],
+          ['+15.9 pp ATT', 'high-SES 家庭 daycare access 的估计效果。'],
+          ['Allocation issue', '申请后仍可能被供给和分配环节限制。']
+        ]
+      },
+      {
+        title: 'Figure 5. Information-cost mechanisms',
+        desc: '支持对缺少托育经验、周围使用托育较少的家庭尤其有效，说明社会网络信息和申请经验是重要摩擦。',
+        src: '02 Output/Step 05 - main text figures/output figures/figure_5_information_mechanisms.png',
+        alt: 'Figure 5 information mechanisms',
+        insights: [
+          ['+16.5 pp ATT', '从未使用过 early childcare 的家庭 application 效果。'],
+          ['+21.5 pp ATT', '周围使用托育较少家庭的 application 效果。'],
+          ['Mechanism', '信息环境和经验缺口影响申请转化。']
+        ]
+      },
+      {
+        title: 'Figure 6. Psychological-cost mechanisms',
+        desc: 'inactive mothers 和 low-trust 家庭的点估计更大，支持“过程成本和心理成本”解释，但部分结果属于探索性分析。',
+        src: '02 Output/Step 05 - main text figures/output figures/figure_6_psychological_mechanisms.png',
+        alt: 'Figure 6 psychological mechanisms',
+        insights: [
+          ['+31.6 pp ATT', 'inactive mothers 的 application 效果。'],
+          ['+36.4 pp ATT', 'low-trust compliers 的 access 效果。'],
+          ['Caution', 'low-trust access 属探索性结果，需谨慎解释。']
+        ]
+      }
+    ];
+
+    const logicButtons = document.querySelectorAll('.logic-step');
+    const logicDetail = document.getElementById('logic-detail');
+    logicButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.dataset.logic);
+        const item = logicItems[index];
+        logicButtons.forEach((b) => b.classList.remove('active'));
+        button.classList.add('active');
+        logicDetail.innerHTML = `
+          <div class="icon" aria-hidden="true">${item.icon}</div>
+          <h3>${item.title}</h3>
+          ${item.body.map((paragraph) => `<p>${paragraph}</p>`).join('')}
+          <div class="detail-tags">${item.tags.map((tag) => `<span class="tag">${tag}</span>`).join('')}</div>
+        `;
+      });
+    });
+
+    const figureTabs = document.querySelectorAll('.fig-tab');
+    const figTitle = document.getElementById('fig-title');
+    const figDesc = document.getElementById('fig-desc');
+    const figImg = document.getElementById('fig-img');
+    const figInsights = document.getElementById('fig-insights');
+    const openFigure = document.getElementById('open-figure');
+    const modal = document.getElementById('figure-modal');
+    const modalImg = document.getElementById('modal-img');
+    const closeModal = document.getElementById('close-modal');
+
+    let activeFigure = 0;
+
+    function renderFigure(index) {
+      activeFigure = index;
+      const figure = figures[index];
+      figureTabs.forEach((tab) => tab.classList.toggle('active', Number(tab.dataset.fig) === index));
+      figTitle.textContent = figure.title;
+      figDesc.textContent = figure.desc;
+      figImg.src = figure.src;
+      figImg.alt = figure.alt;
+      figInsights.innerHTML = figure.insights.map(([value, note]) => `
+        <div class="insight"><strong>${value}</strong><span>${note}</span></div>
+      `).join('');
+    }
+
+    figureTabs.forEach((tab) => {
+      tab.addEventListener('click', () => renderFigure(Number(tab.dataset.fig)));
+    });
+
+    function openModal() {
+      const figure = figures[activeFigure];
+      modalImg.src = figure.src;
+      modalImg.alt = figure.alt;
+      modal.classList.add('open');
+    }
+
+    openFigure.addEventListener('click', openModal);
+    figImg.addEventListener('click', openModal);
+    closeModal.addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) modal.classList.remove('open');
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') modal.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
